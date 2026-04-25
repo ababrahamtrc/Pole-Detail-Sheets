@@ -47,10 +47,10 @@ Sub RemedyGenerator()
         If Not found Then Exit For
     Next i
     
-    Dim applicant As wire: Set applicant = Nothing
+    Dim applicant As Wire: Set applicant = Nothing
     Set adjacentHeights = New Scripting.Dictionary
     Set midspans = New Scripting.Dictionary
-    Set applicant = New wire
+    Set applicant = New Wire
     applicant.owner = Trim(UCase(sheet.Range("APPLICANT")))
     applicant.height = Utilities.convertToInches(sheet.Range("PROPOSEDHEIGHT"))
     If Utilities.convertToInches(sheet.Range("CMRF1")) > 0 Then
@@ -185,20 +185,20 @@ Sub RemedyGenerator()
             
             
             If midspans.count > 0 Then
-                Dim wire As wire: Set wire = New wire
+                Dim Wire As Wire: Set Wire = New Wire
                 
                 overlash = False
-                If wire.owner = applicant.owner Then overlash = True
+                If Wire.owner = applicant.owner Then overlash = True
                 
-                wire.owner = owner
-                wire.height = height
+                Wire.owner = owner
+                Wire.height = height
                 Dim modification As String
-                Set modCell = findModCell(sheet, wire.height, wire.owner, False, modificationCells)
-                wire.modification = Utilities.convertToInches(modCell.Value)
+                Set modCell = findModCell(sheet, Wire.height, Wire.owner, False, modificationCells)
+                Wire.modification = Utilities.convertToInches(modCell.Value)
                 
                 Duplicate = False
                 For Each otherWire In wires
-                    If wire.owner = otherWire.owner And wire.height = otherWire.height Then
+                    If Wire.owner = otherWire.owner And Wire.height = otherWire.height Then
                         Duplicate = True
                         For Each key In otherWire.midspans
                             If midspans.Exists(key) Then Duplicate = False
@@ -216,9 +216,9 @@ Sub RemedyGenerator()
                 Next otherWire
                 
                 If Not Duplicate Then
-                    Set wire.midspans = midspans
-                    Set wire.adjacentHeights = adjacentHeights
-                    wires.Add wire
+                    Set Wire.midspans = midspans
+                    Set Wire.adjacentHeights = adjacentHeights
+                    wires.Add Wire
                 End If
             End If
         End If
