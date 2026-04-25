@@ -13,7 +13,8 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-Private project As project
+
+Private Project As Project
 
 Public Sub Initialize()
     On Error Resume Next
@@ -23,13 +24,13 @@ Public Sub Initialize()
     Me.Left = Application.Left + (0.5 * Application.Width) - (0.5 * Me.Width)
     Me.Top = Application.Top + (0.5 * Application.height) - (0.5 * Me.height)
     
-    Set project = New project
-    Call project.extractImportDataFormat
+    Set Project = New Project
+    Call Project.extractImportDataFormat
     
-    Dim poleNumbers() As Variant: ReDim poleNumbers(0 To project.poles.count - 1)
+    Dim poleNumbers() As Variant: ReDim poleNumbers(0 To Project.poles.count - 1)
     
-    For i = 0 To project.poles.count - 1
-        poleNumbers(i) = project.poles(i + 1).poleNumber
+    For i = 0 To Project.poles.count - 1
+        poleNumbers(i) = Project.poles(i + 1).poleNumber
     Next i
     
     ComboBox1.list = poleNumbers
@@ -38,7 +39,7 @@ Public Sub Initialize()
 End Sub
 
 Private Sub CommandButton1_Click()
-    Dim pole As pole: Set pole = project.findPole(GenerateSinglePDS_Form.ComboBox1.Value)
+    Dim pole As pole: Set pole = Project.findPole(GenerateSinglePDS_Form.ComboBox1.Value)
     
     If Not pole Is Nothing Then
         If Not Utilities.SheetExists(pole.poleNumber) Then
@@ -46,8 +47,8 @@ Private Sub CommandButton1_Click()
             Application.ScreenUpdating = False
             Application.DisplayAlerts = False
         
-            project.extractImportDataFormat
-            Call pole.createSheet(project, GenerateSinglePDS_Form.ComboBox2.Value)
+            Project.extractImportDataFormat
+            Call pole.createSheet(Project, GenerateSinglePDS_Form.ComboBox2.Value)
             
             Application.EnableEvents = True
             Application.ScreenUpdating = True
