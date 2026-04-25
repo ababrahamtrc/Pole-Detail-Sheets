@@ -40,7 +40,7 @@ Public Sub macro1_10_onAction(ByVal control As IRibbonControl)
 End Sub
 
 Public Sub macro1_11_onAction(ByVal control As IRibbonControl)
-    Call crewNotes.CrewNotesGenerator
+    Call CrewNotes.CrewNotesGenerator
 End Sub
 
 Public Sub macro1_12_onAction(ByVal control As IRibbonControl)
