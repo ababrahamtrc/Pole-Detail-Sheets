@@ -12,7 +12,7 @@ Public code As String
 Public qty As Integer
 Public action As String
 
-Public Function Equals(other As cu)
+Public Function Equals(other As CU)
     If other Is Nothing Then
         Equals = False
     Else
