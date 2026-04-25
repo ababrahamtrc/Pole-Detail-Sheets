@@ -21,7 +21,7 @@ Public commWires  As Collection
 Public utilComponents As Collection
 Public commComponents  As Collection
 Public spanGuys As Collection
-Public lowestPowerWire As wire
+Public lowestPowerWire As Wire
 
 Private Sub Class_Initialize()
     Set wires = New Collection
@@ -37,16 +37,16 @@ Private Sub Class_Initialize()
 End Sub
 
 Public Sub setLowestPowerWire()
-    Dim wire As wire
-    For Each wire In Me.utilWires
-        If wire.componentType <> "SPG" And wire.componentType <> "PRI" Then
+    Dim Wire As Wire
+    For Each Wire In Me.utilWires
+        If Wire.componentType <> "SPG" And Wire.componentType <> "PRI" Then
             If lowestPowerWire Is Nothing Then
-                If IsNumeric(wire.midspans(Me.spanSlot)) And wire.midspans(Me.spanSlot) > 0 Then Set lowestPowerWire = wire
+                If IsNumeric(Wire.midspans(Me.spanSlot)) And Wire.midspans(Me.spanSlot) > 0 Then Set lowestPowerWire = Wire
             Else
-                If lowestPowerWire.midspans(midspanSlot) < wire.midspans(Me.spanSlot) And wire.midspans(Me.spanSlot) > 0 Then Set lowestPowerWire = wire
+                If lowestPowerWire.midspans(midspanSlot) < Wire.midspans(Me.spanSlot) And Wire.midspans(Me.spanSlot) > 0 Then Set lowestPowerWire = Wire
             End If
         End If
-    Next wire
+    Next Wire
 End Sub
 
 Public Function getToSpan() As String
