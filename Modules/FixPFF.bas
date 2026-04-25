@@ -20,7 +20,7 @@ Public Sub FixPoleForemanJSON()
     Set fso = Nothing
     
     Dim pole As pole
-    Dim project As project
+    Dim Project As Project
     
     counter = 0
     
@@ -32,33 +32,33 @@ Public Sub FixPoleForemanJSON()
         poleID = jsonPole("Structure")("Pole")("PoleNumber")
         If poleID <> "" Then
             found = False
-            Set project = New project
-            project.extractFromSheets
-            For Each pole In project.poles
+            Set Project = New Project
+            Project.extractFromSheets
+            For Each pole In Project.poles
                 If pole.existingCEID = poleID Then
-                    jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(project.permit) & "_"
+                    jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(Project.permit) & "_"
                     found = True
                     Exit For
                 End If
             Next pole
             
             If Not found Then
-                Set project = New project
-                project.extractImportDataFormat
-                For Each pole In project.poles
+                Set Project = New Project
+                Project.extractImportDataFormat
+                For Each pole In Project.poles
                 If pole.existingCEID = poleID Then
-                    jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(project.permit) & "_"
+                    jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(Project.permit) & "_"
                     Exit For
                 End If
                 If pole.gisCEID = poleID Then
                     Dim Pole2 As pole: Set Pole2 = New pole
-                    Dim project2 As project: Set project2 = New project
+                    Dim project2 As Project: Set project2 = New Project
                     Call project2.extractFromSheets
                     Set Pole2 = project2.findPole(pole.poleNumber)
                     If Pole2 Is Nothing Then
-                        If Utilities.isCEID(pole.existingCEID) Or pole.existingCEID = "FOREIGN" Then jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(project.permit) & "_"
+                        If Utilities.isCEID(pole.existingCEID) Or pole.existingCEID = "FOREIGN" Then jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(Project.permit) & "_"
                     Else
-                        If Utilities.isCEID(Pole2.existingCEID) Or Pole2.existingCEID = "FOREIGN" Then jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & Pole2.existingCEID & "_" & correctFileName(project.permit) & "_"
+                        If Utilities.isCEID(Pole2.existingCEID) Or Pole2.existingCEID = "FOREIGN" Then jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & Pole2.existingCEID & "_" & correctFileName(Project.permit) & "_"
                     End If
                     Exit For
                 End If
