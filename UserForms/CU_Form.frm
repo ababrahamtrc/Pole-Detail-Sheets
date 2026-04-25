@@ -13,7 +13,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
 Public IsCancelled As Boolean
 
 Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
@@ -32,7 +31,7 @@ Public Sub Initialize(size As String)
 End Sub
 
 Private Sub CommandButton1_Click()
-    If Me.OptionButton1.visible And Not Me.OptionButton1.Value And Not Me.OptionButton2.Value Then
+    If Me.OptionButton1.Visible And Not Me.OptionButton1.Value And Not Me.OptionButton2.Value Then
         MsgBox "Please select whether it's top or side ties."
     End If
     
