@@ -1,12 +1,12 @@
 Attribute VB_Name = "UtilitiesKatapult"
 Option Explicit
 
-Public Function InitProjectFromKatapultJson(ByVal json As Object) As project
-    Dim project As project: Set project = New project
+Public Function InitProjectFromKatapultJson(ByVal json As Object) As Project
+    Dim Project As Project: Set Project = New Project
     Dim pole As pole
     Dim jsonNode As Object, jsonPhotoData As Object, jsonWire As Object, jsonArm As Object, jsonInsulator As Object, jsonPoleTag As Object, jsonConnection As Object, jsonGuy As Object
     
-    Dim wire As wire
+    Dim Wire As Wire
     Dim Arm As Arm
     Dim Insulator As Insulator
     Dim equipment As equipment
@@ -16,14 +16,14 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As project
     Dim nodeType As String
     
     If json.Exists("metadata") Then
-        If json("metadata").Exists("TRC_tracking_ID") Then project.Notification = Trim(json("metadata")("TRC_tracking_ID"))
-        If json("metadata").Exists("communication_tracking_ID") Then project.permit = Trim(json("metadata")("communication_tracking_ID"))
+        If json("metadata").Exists("TRC_tracking_ID") Then Project.Notification = Trim(json("metadata")("TRC_tracking_ID"))
+        If json("metadata").Exists("communication_tracking_ID") Then Project.permit = Trim(json("metadata")("communication_tracking_ID"))
         If json("metadata").Exists("communication_tracking_ID") Then
-            project.township = Trim(json("metadata")("job_city"))
-            project.jobLocation = project.township & ", MI"
+            Project.township = Trim(json("metadata")("job_city"))
+            Project.jobLocation = Project.township & ", MI"
         End If
-        If json("metadata").Exists("communication_company") Then project.applicant = Trim(json("metadata")("communication_company"))
-        If json("metadata").Exists("CE_MKR_fielder") Then project.fielder = Trim(json("metadata")("CE_MKR_fielder"))
+        If json("metadata").Exists("communication_company") Then Project.applicant = Trim(json("metadata")("communication_company"))
+        If json("metadata").Exists("CE_MKR_fielder") Then Project.fielder = Trim(json("metadata")("CE_MKR_fielder"))
     End If
 
     Dim nodeKeys As Scripting.Dictionary: Set nodeKeys = New Scripting.Dictionary
@@ -61,7 +61,7 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As project
                             Next key
                         End If
                         
-                        If jsonNode("attributes").Exists("county") And project.county = "" Then project.county = Replace(getFirstValueJson(jsonNode("attributes")("county")), " County", "")
+                        If jsonNode("attributes").Exists("county") And Project.county = "" Then Project.county = Replace(getFirstValueJson(jsonNode("attributes")("county")), " County", "")
                         If jsonNode("attributes").Exists("address") Then pole.address = getFirstValueJson(jsonNode("attributes")("address"))
                         
                         If jsonNode.Exists("photos") Then
@@ -89,17 +89,17 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As project
                                                                     If jsonInsulator("_children").Exists("wire") Then
                                                                         For Each wireKey In jsonInsulator("_children")("wire")
                                                                             Set jsonWire = jsonInsulator("_children")("wire")(wireKey)
-                                                                            Set wire = New wire
-                                                                            wire.height = getMesManHeight(jsonArm)
-                                                                            wire.modification = wire.height
-                                                                            If jsonWire.Exists("mr_move") Then wire.modification = wire.modification + CInt(jsonWire("mr_move"))
-                                                                            wire.trace = jsonWire("_trace")
-                                                                            wire.owner = UCase(json("traces")("trace_data")(wire.trace)("company"))
-                                                                            wire.componentType = getKatapultNameMapping(json("traces")("trace_data")(wire.trace)("cable_type"))
-                                                                            If wire.componentType = "NEUT" Then wire.crossArm = Arm.armSpec
-                                                                            Set Insulator.wire = wire
-                                                                            pole.wires.Add wire
-                                                                            Call splitUtilCommWires(wire, pole)
+                                                                            Set Wire = New Wire
+                                                                            Wire.height = getMesManHeight(jsonArm)
+                                                                            Wire.modification = Wire.height
+                                                                            If jsonWire.Exists("mr_move") Then Wire.modification = Wire.modification + CInt(jsonWire("mr_move"))
+                                                                            Wire.trace = jsonWire("_trace")
+                                                                            Wire.owner = UCase(json("traces")("trace_data")(Wire.trace)("company"))
+                                                                            Wire.componentType = getKatapultNameMapping(json("traces")("trace_data")(Wire.trace)("cable_type"))
+                                                                            If Wire.componentType = "NEUT" Then Wire.crossArm = Arm.armSpec
+                                                                            Set Insulator.Wire = Wire
+                                                                            pole.wires.Add Wire
+                                                                            Call splitUtilCommWires(Wire, pole)
                                                                         Next wireKey
                                                                     End If
                                                                 End If
@@ -130,16 +130,16 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As project
                                                     If jsonInsulator("_children").Exists("wire") Then
                                                         For Each wireKey In jsonInsulator("_children")("wire")
                                                             Set jsonWire = jsonInsulator("_children")("wire")(wireKey)
-                                                            Set wire = New wire
-                                                            wire.height = getMesManHeight(jsonInsulator)
-                                                            wire.modification = wire.height
-                                                            If jsonWire.Exists("mr_move") Then wire.modification = wire.modification + CInt(jsonWire("mr_move"))
-                                                            wire.trace = jsonWire("_trace")
-                                                            wire.owner = UCase(json("traces")("trace_data")(wire.trace)("company"))
-                                                            wire.componentType = getKatapultNameMapping(json("traces")("trace_data")(wire.trace)("cable_type"))
-                                                            Set Insulator.wire = wire
-                                                            pole.wires.Add wire
-                                                            Call splitUtilCommWires(wire, pole)
+                                                            Set Wire = New Wire
+                                                            Wire.height = getMesManHeight(jsonInsulator)
+                                                            Wire.modification = Wire.height
+                                                            If jsonWire.Exists("mr_move") Then Wire.modification = Wire.modification + CInt(jsonWire("mr_move"))
+                                                            Wire.trace = jsonWire("_trace")
+                                                            Wire.owner = UCase(json("traces")("trace_data")(Wire.trace)("company"))
+                                                            Wire.componentType = getKatapultNameMapping(json("traces")("trace_data")(Wire.trace)("cable_type"))
+                                                            Set Insulator.Wire = Wire
+                                                            pole.wires.Add Wire
+                                                            Call splitUtilCommWires(Wire, pole)
                                                         Next wireKey
                                                     End If
                                                 End If
@@ -155,18 +155,18 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As project
                                     If jsonPhotoData.Exists("wire") Then
                                         For Each wireKey In jsonPhotoData("wire")
                                             Set jsonWire = jsonPhotoData("wire")(wireKey)
-                                            Set wire = New wire
-                                            wire.height = getMesManHeight(jsonWire)
-                                            wire.modification = wire.height
-                                            If jsonWire.Exists("mr_move") Then wire.modification = wire.modification + CInt(jsonWire("mr_move"))
+                                            Set Wire = New Wire
+                                            Wire.height = getMesManHeight(jsonWire)
+                                            Wire.modification = Wire.height
+                                            If jsonWire.Exists("mr_move") Then Wire.modification = Wire.modification + CInt(jsonWire("mr_move"))
                                             If jsonWire.Exists("_trace") Then
-                                                wire.trace = jsonWire("_trace")
-                                                If json("traces")("trace_data")(wire.trace).Exists("company") Then
-                                                    wire.owner = UCase(json("traces")("trace_data")(wire.trace)("company"))
+                                                Wire.trace = jsonWire("_trace")
+                                                If json("traces")("trace_data")(Wire.trace).Exists("company") Then
+                                                    Wire.owner = UCase(json("traces")("trace_data")(Wire.trace)("company"))
                                                 End If
-                                                wire.componentType = getKatapultNameMapping(json("traces")("trace_data")(wire.trace)("cable_type"))
-                                                pole.wires.Add wire
-                                                Call splitUtilCommWires(wire, pole)
+                                                Wire.componentType = getKatapultNameMapping(json("traces")("trace_data")(Wire.trace)("cable_type"))
+                                                pole.wires.Add Wire
+                                                Call splitUtilCommWires(Wire, pole)
                                             End If
                                         Next wireKey
                                     End If
@@ -199,7 +199,7 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As project
                             Next poleTagKey
                         End If
                         
-                        project.poles.Add pole
+                        Project.poles.Add pole
                         nodeKeys.Add nodeKey, pole
                     End If
                 End If
@@ -222,19 +222,19 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As project
         Call addConnections(json, CStr(connectionKey), jsonConnection, nodeKeys, nodeType1, nodeId2, nodeId1)
     Next connectionKey
 
-    For Each pole In project.poles
+    For Each pole In Project.poles
         Call pole.setLineStructureTypes
     Next pole
 
-    If project.county = "" Then
-        project.county = InputBox("Enter the county and please be exact with no typos, future scripts will care about this:", "User Input")
+    If Project.county = "" Then
+        Project.county = InputBox("Enter the county and please be exact with no typos, future scripts will care about this:", "User Input")
     End If
     
-    If project.fielder = "" Then
-        project.fielder = InputBox("Enter the fielder:", "User Input")
+    If Project.fielder = "" Then
+        Project.fielder = InputBox("Enter the fielder:", "User Input")
     End If
     
-    Set InitProjectFromKatapultJson = project
+    Set InitProjectFromKatapultJson = Project
 End Function
 
 Private Sub addConnections(ByVal json As Object, connectionKey As String, ByVal jsonConnection As Object, nodeKeys As Scripting.Dictionary, nodeType As String, nodeId1 As String, nodeId2 As String)
@@ -244,7 +244,7 @@ Private Sub addConnections(ByVal json As Object, connectionKey As String, ByVal 
     Dim longitude As Double
     Dim span As span
     Dim trace As String
-    Dim wire As wire
+    Dim Wire As Wire
     Dim Anchor As Anchor
     Dim guy As guy
     Dim jsonGuy As Object
@@ -317,38 +317,38 @@ Private Sub addConnections(ByVal json As Object, connectionKey As String, ByVal 
                                         For Each wireKey In jsonPhoto("photofirst_data")("wire")
                                             Set jsonWire = jsonPhoto("photofirst_data")("wire")(wireKey)
                                             trace = jsonWire("_trace")
-                                            Set wire = pole.findWireByTrace(trace, getKatapultNameMapping(jsonWire("wire_spec")))
-                                            If Not wire Is Nothing Then
-                                                If wire.size <> "" And wire.size <> getKatapultNameMapping(jsonWire("wire_spec")) And wire.size <> "DROP" Then
-                                                    height = wire.height
-                                                    owner = wire.owner
-                                                    componentType = wire.componentType
-                                                    Set wire = New wire
-                                                    wire.height = height
-                                                    wire.trace = trace
-                                                    wire.owner = owner
-                                                    wire.componentType = componentType
+                                            Set Wire = pole.findWireByTrace(trace, getKatapultNameMapping(jsonWire("wire_spec")))
+                                            If Not Wire Is Nothing Then
+                                                If Wire.size <> "" And Wire.size <> getKatapultNameMapping(jsonWire("wire_spec")) And Wire.size <> "DROP" Then
+                                                    height = Wire.height
+                                                    owner = Wire.owner
+                                                    componentType = Wire.componentType
+                                                    Set Wire = New Wire
+                                                    Wire.height = height
+                                                    Wire.trace = trace
+                                                    Wire.owner = owner
+                                                    Wire.componentType = componentType
                                                     
-                                                    pole.wires.Add wire
-                                                    Call splitUtilCommWires(wire, pole)
+                                                    pole.wires.Add Wire
+                                                    Call splitUtilCommWires(Wire, pole)
                                                 End If
                                                 
-                                                If wire.componentType = "PROPOSED" Then
+                                                If Wire.componentType = "PROPOSED" Then
                                                     If jsonWire.Exists("diameter") Then
-                                                        If wire.diameter = "" Then
-                                                            wire.diameter = jsonWire("diameter")
-                                                        ElseIf InStr(wire.diameter, jsonWire("diameter")) = 0 Then
-                                                            wire.diameter = wire.diameter & ", " & jsonWire("diameter")
+                                                        If Wire.diameter = "" Then
+                                                            Wire.diameter = jsonWire("diameter")
+                                                        ElseIf InStr(Wire.diameter, jsonWire("diameter")) = 0 Then
+                                                            Wire.diameter = Wire.diameter & ", " & jsonWire("diameter")
                                                         End If
                                                     End If
-                                                    If jsonWire.Exists("tension") Then wire.tensions.Add span.spanSlot, jsonWire("tension")
-                                                    If jsonWire.Exists("mr_move") Then wire.mrMoves.Add span.spanSlot, jsonWire("mr_move")
+                                                    If jsonWire.Exists("tension") Then Wire.tensions.Add span.spanSlot, jsonWire("tension")
+                                                    If jsonWire.Exists("mr_move") Then Wire.mrMoves.Add span.spanSlot, jsonWire("mr_move")
                                                 End If
                                                 
-                                                wire.size = getKatapultNameMapping(jsonWire("wire_spec"))
-                                                If wire.componentType = "SEC" And isOpenWire(wire.size) Then wire.componentType = "OW"
+                                                Wire.size = getKatapultNameMapping(jsonWire("wire_spec"))
+                                                If Wire.componentType = "SEC" And isOpenWire(Wire.size) Then Wire.componentType = "OW"
                                                 
-                                                If wire.componentType = "SPG" And nodeType = "pole" Then
+                                                If Wire.componentType = "SPG" And nodeType = "pole" Then
                                                     Set jsonNode = json("nodes")(nodeId2)
                                                     If jsonNode.Exists("photos") Then
                                                         photoKey2 = getMainPhoto(jsonNode)
@@ -358,8 +358,8 @@ Private Sub addConnections(ByVal json As Object, connectionKey As String, ByVal 
                                                                 If jsonPhotoData.Exists("wire") Then
                                                                     For Each wireKey2 In jsonPhotoData("wire")
                                                                         Set jsonWire2 = jsonPhotoData("wire")(wireKey2)
-                                                                        If jsonWire2("_trace") = wire.trace Then
-                                                                            wire.wepHeight = getMesManHeight(jsonWire2)
+                                                                        If jsonWire2("_trace") = Wire.trace Then
+                                                                            Wire.wepHeight = getMesManHeight(jsonWire2)
                                                                             Exit For
                                                                         End If
                                                                     Next wireKey2
@@ -369,23 +369,23 @@ Private Sub addConnections(ByVal json As Object, connectionKey As String, ByVal 
                                                     End If
                                                 End If
                                                 
-                                                If wire.midspans.Exists(span.spanSlot) Then
-                                                    If wire.midspans(span.spanSlot) < 1 Or getMesManHeight(jsonWire) < wire.midspans(span.spanSlot) Then
-                                                        Call wire.midspans.Remove(span.spanSlot)
-                                                        If wire.crossArm <> "" And getMesManHeight(jsonWire) = 0 Then
-                                                            wire.midspans.Add span.spanSlot, "XARM"
+                                                If Wire.midspans.Exists(span.spanSlot) Then
+                                                    If Wire.midspans(span.spanSlot) < 1 Or getMesManHeight(jsonWire) < Wire.midspans(span.spanSlot) Then
+                                                        Call Wire.midspans.Remove(span.spanSlot)
+                                                        If Wire.crossArm <> "" And getMesManHeight(jsonWire) = 0 Then
+                                                            Wire.midspans.Add span.spanSlot, "XARM"
                                                         Else
-                                                            wire.midspans.Add span.spanSlot, getMesManHeight(jsonWire)
+                                                            Wire.midspans.Add span.spanSlot, getMesManHeight(jsonWire)
                                                         End If
                                                     End If
                                                 Else
-                                                    If wire.crossArm <> "" And getMesManHeight(jsonWire) = 0 Then
-                                                        wire.midspans.Add span.spanSlot, "XARM"
+                                                    If Wire.crossArm <> "" And getMesManHeight(jsonWire) = 0 Then
+                                                        Wire.midspans.Add span.spanSlot, "XARM"
                                                     Else
-                                                        wire.midspans.Add span.spanSlot, getMesManHeight(jsonWire)
+                                                        Wire.midspans.Add span.spanSlot, getMesManHeight(jsonWire)
                                                     End If
-                                                    span.wires.Add wire
-                                                    Call splitUtilCommWires(wire, span)
+                                                    span.wires.Add Wire
+                                                    Call splitUtilCommWires(Wire, span)
                                                 End If
                                             End If
                                         Next wireKey
@@ -600,16 +600,16 @@ Private Function getMesManHeight(ByVal json As Object) As Double
     End If
 End Function
 
-Private Sub splitUtilCommWires(wire As wire, poleOrSpan As Object)
-    If wire.componentType = "PRI" Or wire.componentType = "NEUT" Or wire.componentType = "SEC" Or wire.componentType = "OW" Or wire.componentType = "TRAFFIC" Or wire.componentType = "SVC" Or (wire.componentType = "SPG" And wire.owner = "CONSUMERS ENERGY") Then
-        poleOrSpan.utilWires.Add wire
-    ElseIf wire.componentType = "COM" Or wire.componentType = "MSG" Or wire.componentType = "DROP" Or wire.componentType = "PROPOSED" Or (wire.componentType = "SPG" And wire.owner <> "Consumers Energy") Then
-        If wire.componentType = "DROP" Then wire.size = "DROP"
-        If wire.componentType = "SPG" Then
-            wire.componentType = "MSG"
+Private Sub splitUtilCommWires(Wire As Wire, poleOrSpan As Object)
+    If Wire.componentType = "PRI" Or Wire.componentType = "NEUT" Or Wire.componentType = "SEC" Or Wire.componentType = "OW" Or Wire.componentType = "TRAFFIC" Or Wire.componentType = "SVC" Or (Wire.componentType = "SPG" And Wire.owner = "CONSUMERS ENERGY") Then
+        poleOrSpan.utilWires.Add Wire
+    ElseIf Wire.componentType = "COM" Or Wire.componentType = "MSG" Or Wire.componentType = "DROP" Or Wire.componentType = "PROPOSED" Or (Wire.componentType = "SPG" And Wire.owner <> "Consumers Energy") Then
+        If Wire.componentType = "DROP" Then Wire.size = "DROP"
+        If Wire.componentType = "SPG" Then
+            Wire.componentType = "MSG"
         End If
-        poleOrSpan.commComponents.Add wire
-        poleOrSpan.commWires.Add wire
+        poleOrSpan.commComponents.Add Wire
+        poleOrSpan.commWires.Add Wire
     End If
 End Sub
 
