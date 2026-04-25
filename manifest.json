@@ -1,9 +1,14 @@
 {
   "appName": "Excel Pole Detail Sheets",
-  "version": "2.1.21",
+  "version": "2.1.0",
   "updatedAt": "2026-04-25",
-  "versionChanges": "2",
+  "versionChanges": "dfgs",
   "versions": [
+    {
+      "version": "2.1.0",
+      "updatedAt": "2026-04-25",
+      "versionChanges": "dfgs"
+    },
     {
       "version": "2.1.21",
       "updatedAt": "2026-04-25",
