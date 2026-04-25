@@ -739,14 +739,14 @@ Private Sub OWSPAN5_Change()
     End If
 End Sub
 
-Private Function getOpenWireSizeFromSpan(span As String) As String
+Private Function getOpenWireSizeFromSpan(Span As String) As String
     Dim found As Integer: found = 0
     Dim name As Variant
     Dim openWireSizes As String: Output = ""
     For i = 1 To 12
         For Each name In pds.names
             If name.name = "'" & pds.name & "'" & "!" & "TOPOLE" & i Then
-                If pds.Range("TOPOLE" & i).Value = span Then found = i
+                If pds.Range("TOPOLE" & i).Value = Span Then found = i
                 Exit For
             End If
         Next name
@@ -2161,13 +2161,13 @@ Private Sub generateReconductorSection()
     
 End Sub
 
-Private Function getDirection(span As String) As String
+Private Function getDirection(Span As String) As String
 
-    StartPos = InStr(span, "(")
-    EndPos = InStr(StartPos + 1, span, ")")
+    StartPos = InStr(Span, "(")
+    EndPos = InStr(StartPos + 1, Span, ")")
     
     If StartPos > 0 And EndPos > 0 Then
-        degrees = CInt(Mid(span, StartPos + 1, EndPos - StartPos - 1))
+        degrees = CInt(Mid(Span, StartPos + 1, EndPos - StartPos - 1))
     Else
         degrees = 0
     End If
