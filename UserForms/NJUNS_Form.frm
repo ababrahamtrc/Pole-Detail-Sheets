@@ -13,6 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Private companies As Collection
 Private heights As Collection
 Private modifications As Collection
@@ -521,120 +522,120 @@ End Sub
 
 Private Sub CheckBox1_change()
     If CheckBox1 Then
-        CheckBox2.Visible = True
+        CheckBox2.visible = True
     Else
-        CheckBox2.Visible = False
+        CheckBox2.visible = False
     End If
 End Sub
 
 Private Sub CommMoveAnchor1_change()
-    DGAPrevious1.Visible = CommMoveAnchor1
-    DGAAfter1.Visible = CommMoveAnchor1 Or InstallAnchor1
-    CommDGAPrevious1.Visible = CommMoveAnchor1
-    CommDGAAfter1.Visible = CommMoveAnchor1 Or InstallAnchor1
-    RFAM1.Visible = CommMoveAnchor1
-    RFAML1.Visible = CommMoveAnchor1
+    DGAPrevious1.visible = CommMoveAnchor1
+    DGAAfter1.visible = CommMoveAnchor1 Or InstallAnchor1
+    CommDGAPrevious1.visible = CommMoveAnchor1
+    CommDGAAfter1.visible = CommMoveAnchor1 Or InstallAnchor1
+    RFAM1.visible = CommMoveAnchor1
+    RFAML1.visible = CommMoveAnchor1
 End Sub
 
 Private Sub CommMoveAnchor2_change()
-    DGAPrevious2.Visible = CommMoveAnchor2
-    DGAAfter2.Visible = CommMoveAnchor2 Or InstallAnchor2
-    CommDGAPrevious2.Visible = CommMoveAnchor2
-    CommDGAAfter2.Visible = CommMoveAnchor2 Or InstallAnchor2
-    RFAM2.Visible = CommMoveAnchor2
-    RFAML2.Visible = CommMoveAnchor2
+    DGAPrevious2.visible = CommMoveAnchor2
+    DGAAfter2.visible = CommMoveAnchor2 Or InstallAnchor2
+    CommDGAPrevious2.visible = CommMoveAnchor2
+    CommDGAAfter2.visible = CommMoveAnchor2 Or InstallAnchor2
+    RFAM2.visible = CommMoveAnchor2
+    RFAML2.visible = CommMoveAnchor2
 End Sub
 
 Private Sub CommMoveAnchor3_change()
-    DGAPrevious3.Visible = CommMoveAnchor3
-    DGAAfter3.Visible = CommMoveAnchor3 Or InstallAnchor3
-    CommDGAPrevious3.Visible = CommMoveAnchor3
-    CommDGAAfter3.Visible = CommMoveAnchor3 Or InstallAnchor3
-    RFAM3.Visible = CommMoveAnchor3
-    RFAML3.Visible = CommMoveAnchor3
+    DGAPrevious3.visible = CommMoveAnchor3
+    DGAAfter3.visible = CommMoveAnchor3 Or InstallAnchor3
+    CommDGAPrevious3.visible = CommMoveAnchor3
+    CommDGAAfter3.visible = CommMoveAnchor3 Or InstallAnchor3
+    RFAM3.visible = CommMoveAnchor3
+    RFAML3.visible = CommMoveAnchor3
 End Sub
 
 Private Sub CommMoveAnchor4_change()
-    DGAPrevious4.Visible = CommMoveAnchor4
-    DGAAfter4.Visible = CommMoveAnchor4 Or InstallAnchor4
-    CommDGAPrevious4.Visible = CommMoveAnchor4
-    CommDGAAfter4.Visible = CommMoveAnchor4 Or InstallAnchor4
-    RFAM4.Visible = CommMoveAnchor4
-    RFAML4.Visible = CommMoveAnchor4
+    DGAPrevious4.visible = CommMoveAnchor4
+    DGAAfter4.visible = CommMoveAnchor4 Or InstallAnchor4
+    CommDGAPrevious4.visible = CommMoveAnchor4
+    CommDGAAfter4.visible = CommMoveAnchor4 Or InstallAnchor4
+    RFAM4.visible = CommMoveAnchor4
+    RFAML4.visible = CommMoveAnchor4
 End Sub
 
 Private Sub CommMoveAnchor5_change()
-    DGAPrevious5.Visible = CommMoveAnchor5
-    DGAAfter5.Visible = CommMoveAnchor5 Or InstallAnchor5
-    CommDGAPrevious5.Visible = CommMoveAnchor5
-    CommDGAAfter5.Visible = CommMoveAnchor5 Or InstallAnchor5
-    RFAM5.Visible = CommMoveAnchor5
-    RFAML5.Visible = CommMoveAnchor5
+    DGAPrevious5.visible = CommMoveAnchor5
+    DGAAfter5.visible = CommMoveAnchor5 Or InstallAnchor5
+    CommDGAPrevious5.visible = CommMoveAnchor5
+    CommDGAAfter5.visible = CommMoveAnchor5 Or InstallAnchor5
+    RFAM5.visible = CommMoveAnchor5
+    RFAML5.visible = CommMoveAnchor5
 End Sub
 
 Private Sub CommMoveAnchor6_change()
-    DGAPrevious6.Visible = CommMoveAnchor6
-    DGAAfter6.Visible = CommMoveAnchor6 Or InstallAnchor6
-    CommDGAPrevious6.Visible = CommMoveAnchor6
-    CommDGAAfter6.Visible = CommMoveAnchor6 Or InstallAnchor6
-    RFAM6.Visible = CommMoveAnchor6
-    RFAML6.Visible = CommMoveAnchor6
+    DGAPrevious6.visible = CommMoveAnchor6
+    DGAAfter6.visible = CommMoveAnchor6 Or InstallAnchor6
+    CommDGAPrevious6.visible = CommMoveAnchor6
+    CommDGAAfter6.visible = CommMoveAnchor6 Or InstallAnchor6
+    RFAM6.visible = CommMoveAnchor6
+    RFAML6.visible = CommMoveAnchor6
 End Sub
 
 Private Sub CommMoveAnchor7_change()
-    DGAPrevious7.Visible = CommMoveAnchor7
-    DGAAfter7.Visible = CommMoveAnchor7 Or InstallAnchor7
-    CommDGAPrevious7.Visible = CommMoveAnchor7
-    CommDGAAfter7.Visible = CommMoveAnchor7 Or InstallAnchor7
-    RFAM7.Visible = CommMoveAnchor7
-    RFAML7.Visible = CommMoveAnchor7
+    DGAPrevious7.visible = CommMoveAnchor7
+    DGAAfter7.visible = CommMoveAnchor7 Or InstallAnchor7
+    CommDGAPrevious7.visible = CommMoveAnchor7
+    CommDGAAfter7.visible = CommMoveAnchor7 Or InstallAnchor7
+    RFAM7.visible = CommMoveAnchor7
+    RFAML7.visible = CommMoveAnchor7
 End Sub
 
 Private Sub CommMoveAnchor8_change()
-    DGAPrevious8.Visible = CommMoveAnchor8
-    DGAAfter8.Visible = CommMoveAnchor8 Or InstallAnchor8
-    CommDGAPrevious8.Visible = CommMoveAnchor8
-    CommDGAAfter8.Visible = CommMoveAnchor8 Or InstallAnchor8
-    RFAM8.Visible = CommMoveAnchor8
-    RFAML8.Visible = CommMoveAnchor8
+    DGAPrevious8.visible = CommMoveAnchor8
+    DGAAfter8.visible = CommMoveAnchor8 Or InstallAnchor8
+    CommDGAPrevious8.visible = CommMoveAnchor8
+    CommDGAAfter8.visible = CommMoveAnchor8 Or InstallAnchor8
+    RFAM8.visible = CommMoveAnchor8
+    RFAML8.visible = CommMoveAnchor8
 End Sub
 
 Private Sub InstallAnchor1_Click()
-    DGAAfter1.Visible = CommMoveAnchor1 Or InstallAnchor1
-    CommDGAAfter1.Visible = CommMoveAnchor1 Or InstallAnchor1
+    DGAAfter1.visible = CommMoveAnchor1 Or InstallAnchor1
+    CommDGAAfter1.visible = CommMoveAnchor1 Or InstallAnchor1
 End Sub
 
 Private Sub InstallAnchor2_Click()
-    DGAAfter2.Visible = CommMoveAnchor2 Or InstallAnchor2
-    CommDGAAfter2.Visible = CommMoveAnchor2 Or InstallAnchor2
+    DGAAfter2.visible = CommMoveAnchor2 Or InstallAnchor2
+    CommDGAAfter2.visible = CommMoveAnchor2 Or InstallAnchor2
 End Sub
 
 Private Sub InstallAnchor3_Click()
-    DGAAfter3.Visible = CommMoveAnchor3 Or InstallAnchor3
-    CommDGAAfter3.Visible = CommMoveAnchor3 Or InstallAnchor3
+    DGAAfter3.visible = CommMoveAnchor3 Or InstallAnchor3
+    CommDGAAfter3.visible = CommMoveAnchor3 Or InstallAnchor3
 End Sub
 
 Private Sub InstallAnchor4_Click()
-    DGAAfter4.Visible = CommMoveAnchor4 Or InstallAnchor4
-    CommDGAAfter4.Visible = CommMoveAnchor4 Or InstallAnchor4
+    DGAAfter4.visible = CommMoveAnchor4 Or InstallAnchor4
+    CommDGAAfter4.visible = CommMoveAnchor4 Or InstallAnchor4
 End Sub
 
 Private Sub InstallAnchor5_Click()
-    DGAAfter5.Visible = CommMoveAnchor5 Or InstallAnchor5
-    CommDGAAfter5.Visible = CommMoveAnchor5 Or InstallAnchor5
+    DGAAfter5.visible = CommMoveAnchor5 Or InstallAnchor5
+    CommDGAAfter5.visible = CommMoveAnchor5 Or InstallAnchor5
 End Sub
 
 Private Sub InstallAnchor6_Click()
-    DGAAfter6.Visible = CommMoveAnchor6 Or InstallAnchor6
-    CommDGAAfter6.Visible = CommMoveAnchor6 Or InstallAnchor6
+    DGAAfter6.visible = CommMoveAnchor6 Or InstallAnchor6
+    CommDGAAfter6.visible = CommMoveAnchor6 Or InstallAnchor6
 End Sub
 
 Private Sub InstallAnchor7_Click()
-    DGAAfter7.Visible = CommMoveAnchor7 Or InstallAnchor7
-    CommDGAAfter7.Visible = CommMoveAnchor7 Or InstallAnchor7
+    DGAAfter7.visible = CommMoveAnchor7 Or InstallAnchor7
+    CommDGAAfter7.visible = CommMoveAnchor7 Or InstallAnchor7
 End Sub
 
 Private Sub InstallAnchor8_Click()
-    DGAAfter8.Visible = CommMoveAnchor8 Or InstallAnchor8
-    CommDGAAfter8.Visible = CommMoveAnchor8 Or InstallAnchor8
+    DGAAfter8.visible = CommMoveAnchor8 Or InstallAnchor8
+    CommDGAAfter8.visible = CommMoveAnchor8 Or InstallAnchor8
 End Sub
