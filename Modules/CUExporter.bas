@@ -1070,14 +1070,14 @@ Private Sub generateReconductorCUs(cus As Collection, pole As pole, line1 As Str
 End Sub
 
 Private Sub checkForAdjacentPoleRecondcutoring(cus As Collection, Project As Project, pole As pole, missedLines As Collection)
-    Dim span As span
+    Dim Span As Span
     Dim otherPole As pole
-    Dim otherSpan As span
+    Dim otherSpan As Span
     Dim count As Integer
     Dim lines() As String
-    For Each span In pole.spans
-        If span.otherPole <> "" Then
-            Set otherPole = Project.findPole(span.otherPole)
+    For Each Span In pole.spans
+        If Span.otherPole <> "" Then
+            Set otherPole = Project.findPole(Span.otherPole)
             If InStr(otherPole.Alt1, "'") > 0 And InStr(line, "OPEN WIRE") > 0 And InStr(line, "SECONDARY") > 0 Then
                 If InStr(otherPole.Alt1, vbLf) > 0 Then
                     lines = Split(otherPole.Alt1, vbLf)
@@ -1085,9 +1085,9 @@ Private Sub checkForAdjacentPoleRecondcutoring(cus As Collection, Project As Pro
                         If InStr(line, "'") > 0 And InStr(line, "OPEN WIRE") > 0 And InStr(line, "SECONDARY") > 0 Then
                             distance = Utilities.OnlyNumbers(Left(line, InStr(line, "'")))
                             If IsNumeric(distance) Then
-                                If CInt(distance) = span.distance Then
+                                If CInt(distance) = Span.distance Then
                                     For Each otherSpan In otherPole.spans
-                                        If span.distance = otherSpan.distance And otherSpan.otherPole <> "" Then count = count + 1
+                                        If Span.distance = otherSpan.distance And otherSpan.otherPole <> "" Then count = count + 1
                                     Next otherSpan
                                     If count = 1 Then
                                         Call generateCU(cus, pole.location, "290048", 1, "INSTALL")
@@ -1102,7 +1102,7 @@ Private Sub checkForAdjacentPoleRecondcutoring(cus As Collection, Project As Pro
                 End If
             End If
         End If
-    Next span
+    Next Span
 End Sub
 
 Private Function MissedLineIgnorable(pole As pole, ByVal line As String) As Boolean
