@@ -112,7 +112,7 @@ Public Sub Initialize(sheet_ As Worksheet, powers_ As Collection, OGPowers_ As C
     End If
 
     For Each wep In weps
-        span.AddItem weps(wep)
+        Span.AddItem weps(wep)
         automateMidspan.Add wep, False
     Next wep
     
@@ -121,9 +121,9 @@ Public Sub Initialize(sheet_ As Worksheet, powers_ As Collection, OGPowers_ As C
     
     Call IgnoreBolt_Change
     
-    If span.ListCount > 0 Then
+    If Span.ListCount > 0 Then
         spanNumber = 0
-        span.ListIndex = 0
+        Span.ListIndex = 0
     End If
 End Sub
 
@@ -943,14 +943,14 @@ End Sub
 Private Sub Span_Change()
     Dim foundWep As Integer: foundWep = 0
     For Each wep In weps
-        If weps(wep) = span.text Then
+        If weps(wep) = Span.text Then
             foundWep = wep
             Exit For
         End If
     Next wep
 
     If foundWep > 0 Then
-        SpanText.caption = "Span " & span.ListIndex + 1
+        SpanText.caption = "Span " & Span.ListIndex + 1
         spanNumber = foundWep
         Call spanClear
         Call spanFill
@@ -958,21 +958,21 @@ Private Sub Span_Change()
 End Sub
 
 Private Sub SpanDown_Click()
-    If span.ListCount > 0 Then
-        If span.ListIndex = 0 Then
-            span.ListIndex = span.ListCount - 1
+    If Span.ListCount > 0 Then
+        If Span.ListIndex = 0 Then
+            Span.ListIndex = Span.ListCount - 1
         Else
-            span.ListIndex = span.ListIndex - 1
+            Span.ListIndex = Span.ListIndex - 1
         End If
     End If
 End Sub
 
 Private Sub SpanUp_Click()
-    If span.ListCount > 0 Then
-        If span.ListIndex = span.ListCount - 1 Then
-            span.ListIndex = 0
+    If Span.ListCount > 0 Then
+        If Span.ListIndex = Span.ListCount - 1 Then
+            Span.ListIndex = 0
         Else
-            span.ListIndex = span.ListIndex + 1
+            Span.ListIndex = Span.ListIndex + 1
         End If
     End If
 End Sub
