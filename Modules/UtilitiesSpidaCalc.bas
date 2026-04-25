@@ -75,28 +75,28 @@ Public Function InitProjectFromSpidaJson(ByVal json As Object) As Project
                 pole.agl = existing("pole")("agl")("value") * 39.3701
             
                 For Each wireEndPoint In existing("wireEndPoints")
-                    Dim span As span: Set span = New span
+                    Dim Span As Span: Set Span = New Span
                     
                     If wireEndPoint("connectionId") <> "" Then
-                        span.spanId = wireEndPoint("connectionId")
+                        Span.spanId = wireEndPoint("connectionId")
                     Else
-                        span.spanId = pole.poleNumber & wireEndPoint("id")
+                        Span.spanId = pole.poleNumber & wireEndPoint("id")
                     End If
                     
-                    span.spanSlot = pole.spans.count + 1
+                    Span.spanSlot = pole.spans.count + 1
                     
-                    span.distance = wireEndPoint("distance")("value") * 39.3701 / 12
-                    span.angle = wireEndPoint("direction")
-                    span.houseNumber = wireEndPoint("comments")
+                    Span.distance = wireEndPoint("distance")("value") * 39.3701 / 12
+                    Span.angle = wireEndPoint("direction")
+                    Span.houseNumber = wireEndPoint("comments")
                     
-                    pole.spans.Add span
+                    pole.spans.Add Span
                     
                     For Each wep In wireEndPoint("wires")
-                        Set wiresToSpansDict(pole.poleNumber & wep) = span
+                        Set wiresToSpansDict(pole.poleNumber & wep) = Span
                     Next wep
                     
                     For Each wep In wireEndPoint("spanGuys")
-                        Set wiresToSpansDict(pole.poleNumber & wep) = span
+                        Set wiresToSpansDict(pole.poleNumber & wep) = Span
                     Next wep
                 Next wireEndPoint
                 
@@ -138,30 +138,30 @@ Public Function InitProjectFromSpidaJson(ByVal json As Object) As Project
                 
                 For Each jsonSpanGuy In existing("spanGuys")
                     Set Wire = New Wire
-                    Set span = wiresToSpansDict(pole.poleNumber & jsonSpanGuy("id"))
+                    Set Span = wiresToSpansDict(pole.poleNumber & jsonSpanGuy("id"))
                     
                     Wire.size = getSpidaCalcNameMapping(jsonSpanGuy("clientItem")("size"))
                     Wire.owner = UCase(jsonSpanGuy("owner")("id"))
                     Wire.height = jsonSpanGuy("attachmentHeight")("value") * 39.3701
                     Wire.wepHeight = jsonSpanGuy("height")("value") * 39.3701
-                    Wire.midspans.Add span.spanSlot, jsonSpanGuy("midspanHeight")("value") * 39.3701
+                    Wire.midspans.Add Span.spanSlot, jsonSpanGuy("midspanHeight")("value") * 39.3701
                     
                     If jsonSpanGuy("owner")("industry") = "UTILITY" Then
                         Wire.componentType = "SPG"
-                        span.utilWires.Add Wire
+                        Span.utilWires.Add Wire
                     Else
                         Wire.componentType = "MSG"
-                        span.commWires.Add Wire
+                        Span.commWires.Add Wire
                     End If
                 Next jsonSpanGuy
                 
                 For Each jsonWire In existing("wires")
                     Set Wire = New Wire
-                    Set span = wiresToSpansDict(pole.poleNumber & jsonWire("id"))
+                    Set Span = wiresToSpansDict(pole.poleNumber & jsonWire("id"))
                     
                     Wire.owner = UCase(jsonWire("owner")("id"))
                     Wire.height = jsonWire("attachmentHeight")("value") * 39.3701
-                    Wire.midspans.Add span.spanSlot, jsonWire("midspanHeight")("value") * 39.3701
+                    Wire.midspans.Add Span.spanSlot, jsonWire("midspanHeight")("value") * 39.3701
                     Wire.componentType = getSpidaCalcNameMapping(jsonWire("usageGroup"))
                     If Wire.componentType = "DROP" Then
                         Wire.size = "DROP"
@@ -170,15 +170,15 @@ Public Function InitProjectFromSpidaJson(ByVal json As Object) As Project
                     End If
                     
                     If jsonWire("owner")("industry") = "UTILITY" Then
-                        span.utilWires.Add Wire
+                        Span.utilWires.Add Wire
                     Else
-                        span.commWires.Add Wire
+                        Span.commWires.Add Wire
                     End If
                 Next jsonWire
             End If
-        For Each span In pole.spans
-            Call updateOpenwireMidspans(span)
-        Next span
+        For Each Span In pole.spans
+            Call updateOpenwireMidspans(Span)
+        Next Span
         Project.poles.Add pole
         Next jsonPole
     Next lead
@@ -194,7 +194,7 @@ Public Function InitProjectFromSpidaJson(ByVal json As Object) As Project
     Set InitProjectFromSpidaJson = Project
 End Function
 
-Private Sub updateOpenwireMidspans(span As span)
+Private Sub updateOpenwireMidspans(Span As Span)
     Dim openWires As Collection: Set openWires = New Collection
     Dim midspans As Scripting.Dictionary: Set midspans = New Scripting.Dictionary
     Dim midspan As Integer, lowest As Integer
@@ -204,14 +204,14 @@ Private Sub updateOpenwireMidspans(span As span)
     Dim Wire As Wire
     Dim wire2 As Wire
     
-    For Each Wire In span.utilWires
+    For Each Wire In Span.utilWires
         If Wire.componentType = "OW" Then
-            midspan = Wire.midspans(span.spanSlot)
+            midspan = Wire.midspans(Span.spanSlot)
             If midspan = 0 Then
                 openWires.Add Wire
             ElseIf Not midspans.Exists(midspan) Then
                 near = False
-                For Each wire2 In span.utilWires
+                For Each wire2 In Span.utilWires
                     If wire2.componentType = "OW" Then
                         If Abs(Wire.height - wire2.height) < 16 And Wire.height <> wire2.height Then near = True
                     End If
@@ -234,12 +234,12 @@ Private Sub updateOpenwireMidspans(span As span)
             keys = midspans.keys
             lowest = keys(0)
         ElseIf openWires.count > 0 Then
-            lowest = openWires(openWires.count).midspans(span.spanSlot)
+            lowest = openWires(openWires.count).midspans(Span.spanSlot)
         End If
         
         If midspans.count = 1 And lowest > 0 Then
             For i = 1 To openWires.count
-                openWires(i).midspans(span.spanSlot) = lowest + ((openWires.count - i) * 8)
+                openWires(i).midspans(Span.spanSlot) = lowest + ((openWires.count - i) * 8)
             Next i
         End If
     End If
