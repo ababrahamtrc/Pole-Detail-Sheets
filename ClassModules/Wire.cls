@@ -30,21 +30,21 @@ Private Sub Class_Initialize()
     Set adjacentHeights = New Scripting.Dictionary
 End Sub
 
-Public Function getDisplayMidspan(span As span) As String
+Public Function getDisplayMidspan(Span As Span) As String
     Dim displayMidspan As String
     If Me.componentType = "PRI" Then
         displayMidspan = "PRI"
-    ElseIf IsNumeric(Me.midspans(span.spanSlot)) Then
-        displayMidspan = Utilities.inchesToFeetInches(Me.midspans(span.spanSlot))
+    ElseIf IsNumeric(Me.midspans(Span.spanSlot)) Then
+        displayMidspan = Utilities.inchesToFeetInches(Me.midspans(Span.spanSlot))
     Else
-        displayMidspan = Me.midspans(span.spanSlot)
+        displayMidspan = Me.midspans(Span.spanSlot)
     End If
     
-    If span.houseNumber <> "" Then
+    If Span.houseNumber <> "" Then
         If displayMidspan = "0'0""" Or displayMidspan = "N/A" Then
-            displayMidspan = span.houseNumber
+            displayMidspan = Span.houseNumber
         Else
-            displayMidspan = displayMidspan & "(" & span.houseNumber & ")"
+            displayMidspan = displayMidspan & "(" & Span.houseNumber & ")"
         End If
     End If
         
