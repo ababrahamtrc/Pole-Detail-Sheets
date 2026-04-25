@@ -5,7 +5,7 @@ Sub ImportNJUNSTicketCSV()
     Dim filePath As String
     With Application.FileDialog(msoFileDialogFilePicker)
         .Title = "Select a CSV File"
-        .Filters.clear
+        .Filters.Clear
         .Filters.Add "CSV Files", "*.csv"
         .AllowMultiSelect = False
         If .Show <> -1 Then
@@ -34,12 +34,12 @@ Sub ImportNJUNSTicketCSV()
     Loop
     ts.Close
 
-    Dim project As project: Set project = New project
-    Call project.extractFromSheets
+    Dim Project As Project: Set Project = New Project
+    Call Project.extractFromSheets
     
     Dim ticketsImported As Integer
     Dim pole As pole
-    For Each pole In project.poles
+    For Each pole In Project.poles
         If pole.NJUNS <> "" Then
             If tickets.Exists(pole.poleNumber) Then
                 If Utilities.OnlyNumbers(pole.njunsTicket) = -1 Then
