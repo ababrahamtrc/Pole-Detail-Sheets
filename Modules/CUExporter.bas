@@ -30,10 +30,10 @@ End Sub
 Public Sub ExportAllSheetCUs()
     Call LogMessage.SendLogMessage("ExportAllCUs")
     
-    Dim project As project: Set project = New project
-    Call project.extractFromSheets
+    Dim Project As Project: Set Project = New Project
+    Call Project.extractFromSheets
 
-    Dim cu As Variant
+    Dim CU As Variant
     Dim cus As Collection: Set cus = New Collection
     Dim missedLines As Collection: Set missedLines = New Collection
     Dim cusTemp As Collection
@@ -43,13 +43,13 @@ Public Sub ExportAllSheetCUs()
     
     For Each sheet In ThisWorkbook.sheets
         If Utilities.IsPDS(sheet) Then
-            Set inputCol = ExportSheetCUs(project, sheet)
+            Set inputCol = ExportSheetCUs(Project, sheet)
             If Not inputCol Is Nothing Then
                 Set cusTemp = inputCol(1)
                 Set missedLinesTemp = inputCol(2)
-                For Each cu In cusTemp
-                    cus.Add cu
-                Next cu
+                For Each CU In cusTemp
+                    cus.Add CU
+                Next CU
                 For Each line In missedLinesTemp
                     missedLines.Add "Location " & sheet.Range("DL") & ": " & line
                 Next line
@@ -60,7 +60,7 @@ Public Sub ExportAllSheetCUs()
     ThisWorkbook.sheets("Control").Activate
     
     If cus.count > 0 Then
-        Call generateCSV(project, cus)
+        Call generateCSV(Project, cus)
         If missedLines.count > 0 Then
             Call generateMissedLinesTXT(missedLines)
         Else
@@ -74,8 +74,8 @@ End Sub
 Public Sub ExportSingleSheetCUs()
     Call LogMessage.SendLogMessage("ExportSingleCUs")
 
-    Dim project As project: Set project = New project
-    Call project.extractFromSheets
+    Dim Project As Project: Set Project = New Project
+    Call Project.extractFromSheets
     
     Dim sheet As Worksheet: Set sheet = ThisWorkbook.ActiveSheet()
     If Not Utilities.IsPDS(sheet) Then
@@ -87,7 +87,7 @@ Public Sub ExportSingleSheetCUs()
     Dim missedLines As Collection
     
     Dim inputCol As Collection: Set inputCol = New Collection
-    Set inputCol = ExportSheetCUs(project, sheet)
+    Set inputCol = ExportSheetCUs(Project, sheet)
     If Not inputCol Is Nothing Then
         Set cus = inputCol(1)
         Set missedLines = inputCol(2)
@@ -95,7 +95,7 @@ Public Sub ExportSingleSheetCUs()
     
     If Not cus Is Nothing Then
         If cus.count > 0 Then
-            Call generateCSV(project, cus)
+            Call generateCSV(Project, cus)
             If missedLines.count > 0 Then
                 MsgBox "Lines unable to turn into CUS." & vbLf & Utilities.JoinCollection(missedLines, vbLf)
             Else
@@ -109,7 +109,7 @@ Public Sub ExportSingleSheetCUs()
     End If
 End Sub
 
-Private Function ExportSheetCUs(project As project, sheet As Worksheet) As Collection
+Private Function ExportSheetCUs(Project As Project, sheet As Worksheet) As Collection
     Dim installSection As Boolean, replaceSection As Boolean, removeSection As Boolean, transferSection As Boolean
     Dim line As Variant
     Dim lines() As String
@@ -212,7 +212,7 @@ Private Function ExportSheetCUs(project As project, sheet As Worksheet) As Colle
         Call findAdditonalCUs(cus, pole, needAdditionalCUs, missedLines)
     End If
     
-    If Not reconductored Then Call checkForAdjacentPoleRecondcutoring(cus, project, pole, missedLines)
+    If Not reconductored Then Call checkForAdjacentPoleRecondcutoring(cus, Project, pole, missedLines)
     
     Dim outputCol As Collection: Set outputCol = New Collection
     outputCol.Add cus
@@ -224,20 +224,20 @@ End Function
 Private Sub fixCUErrors(cus As Collection, needAdditionalCUs As Collection, missedLines As Collection)
     Dim transferSpg As Integer
     Dim removeSpg As Boolean
-    Dim cu As Variant
+    Dim CU As Variant
     Dim transferServices As Boolean
     Dim missedLine As String
     Dim hardware As String
     Dim regex As Object: Set regex = CreateObject("VBScript.RegExp")
     
     For i = 1 To cus.count
-        If TypeOf cus(i) Is cu Then
-            Set cu = cus(i)
-            If TypeOf cu Is cu Then
-                If cu.code = "106121" Then transferSpg = i
-                If cu.code = "505040" And cu.action = "RET REM" Then removeSpg = True
-                If cu.code = "106115" Then transferServices = True
-                If vpoPole And cu.code = "100052" Then cu.qty = cu.qty - 1
+        If TypeOf cus(i) Is CU Then
+            Set CU = cus(i)
+            If TypeOf CU Is CU Then
+                If CU.code = "106121" Then transferSpg = i
+                If CU.code = "505040" And CU.action = "RET REM" Then removeSpg = True
+                If CU.code = "106115" Then transferServices = True
+                If vpoPole And CU.code = "100052" Then CU.qty = CU.qty - 1
             End If
         End If
     Next i
@@ -282,7 +282,7 @@ Private Sub generateTTCCU(cus As Collection, location As String, ttc As Integer)
 End Sub
 
 Private Sub findAdditonalCUs(cus As Collection, pole As pole, needAdditionalCUs As Collection, missedLines As Collection)
-    Dim wire As wire
+    Dim Wire As Wire
     Dim cuCode As String
     Dim priCount As Integer
     Dim neutCount As Integer
@@ -296,44 +296,44 @@ Private Sub findAdditonalCUs(cus As Collection, pole As pole, needAdditionalCUs 
     Call SortCollectionByAction(needAdditionalCUs)
     
     'Running total of sizes, these go down as they're matched to a CU
-    For Each wire In pole.primaries
-        If Not priSizes.Exists(wire.size) Then priSizes(wire.size) = 0
-        For Each midspan In wire.midspans
-            priCount = priCount + wire.phase
-            priSizes(wire.size) = priSizes(wire.size) + wire.phase
+    For Each Wire In pole.primaries
+        If Not priSizes.Exists(Wire.size) Then priSizes(Wire.size) = 0
+        For Each midspan In Wire.midspans
+            priCount = priCount + Wire.phase
+            priSizes(Wire.size) = priSizes(Wire.size) + Wire.phase
         Next midspan
-    Next wire
-    For Each wire In pole.neutrals
-        If Not neutSizes.Exists(wire.size) Then neutSizes(wire.size) = 0
-        For Each midspan In wire.midspans
+    Next Wire
+    For Each Wire In pole.neutrals
+        If Not neutSizes.Exists(Wire.size) Then neutSizes(Wire.size) = 0
+        For Each midspan In Wire.midspans
             neutCount = neutCount + 1
-            neutSizes(wire.size) = neutSizes(wire.size) + 1
+            neutSizes(Wire.size) = neutSizes(Wire.size) + 1
         Next midspan
-    Next wire
-    For Each wire In pole.secondaries
-        If Not secSizes.Exists(wire.size) Then secSizes(wire.size) = 0
-        For Each midspan In wire.midspans
+    Next Wire
+    For Each Wire In pole.secondaries
+        If Not secSizes.Exists(Wire.size) Then secSizes(Wire.size) = 0
+        For Each midspan In Wire.midspans
             secCount = secCount + 1
-            secSizes(wire.size) = secSizes(wire.size) + 1
+            secSizes(Wire.size) = secSizes(Wire.size) + 1
         Next midspan
-    Next wire
-    For Each wire In pole.openWires
-        If Not owSizes.Exists(wire.size) Then owSizes(wire.size) = 0
-        For Each midspan In wire.midspans
+    Next Wire
+    For Each Wire In pole.openWires
+        If Not owSizes.Exists(Wire.size) Then owSizes(Wire.size) = 0
+        For Each midspan In Wire.midspans
             owCount = owCount + 1
-            owSizes(wire.size) = owSizes(wire.size) + 1
+            owSizes(Wire.size) = owSizes(Wire.size) + 1
         Next midspan
-    Next wire
+    Next Wire
     
-    Dim cu As Variant
-    For Each cu In cus
-        If TypeOf cu Is cu Then
-            If cu.location = properLocation(pole.location) And cu.code = "101036" And cu.action = "RET REM" Then
-                owCount = owCount - cu.qty
+    Dim CU As Variant
+    For Each CU In cus
+        If TypeOf CU Is CU Then
+            If CU.location = properLocation(pole.location) And CU.code = "101036" And CU.action = "RET REM" Then
+                owCount = owCount - CU.qty
                 Exit For
             End If
         End If
-    Next cu
+    Next CU
     
     Dim neededCU() As Variant
     Dim hardware As String
@@ -397,9 +397,9 @@ Private Sub findAdditonalCUs(cus As Collection, pole As pole, needAdditionalCUs 
     End If
     
     If uniqueTopSideTieSizes.count = 0 Then
-        For Each wire In pole.primaries
-            If Not uniqueTopSideTieSizes.Exists(Utilities.OnlyNumbers(CStr(wire.size))) Then uniqueTopSideTieSizes.Add Utilities.OnlyNumbers(CStr(wire.size)), Nothing
-        Next wire
+        For Each Wire In pole.primaries
+            If Not uniqueTopSideTieSizes.Exists(Utilities.OnlyNumbers(CStr(Wire.size))) Then uniqueTopSideTieSizes.Add Utilities.OnlyNumbers(CStr(Wire.size)), Nothing
+        Next Wire
     End If
     
     Dim size As String
@@ -652,12 +652,12 @@ Private Sub getExtraDECU(cus As Collection, pole As pole, needAdditionalCUs As C
     End If
 End Sub
 
-Private Sub generateCSV(project As project, cus As Collection)
-    Dim cu As Variant
+Private Sub generateCSV(Project As Project, cus As Collection)
+    Dim CU As Variant
     Dim filePath As String
     
-    filePath = ThisWorkbook.path & "\" & project.Notification & " - " & "cus.csv"
-    If InStr(filePath, "sharepoint") > 0 Then filePath = Environ("USERPROFILE") & "\Downloads\" & project.Notification & " - " & "cus.csv"
+    filePath = ThisWorkbook.path & "\" & Project.Notification & " - " & "cus.csv"
+    If InStr(filePath, "sharepoint") > 0 Then filePath = Environ("USERPROFILE") & "\Downloads\" & Project.Notification & " - " & "cus.csv"
     
     Call CheckAndCloseWorkbook(filePath)
     
@@ -665,13 +665,13 @@ Private Sub generateCSV(project As project, cus As Collection)
     Open filePath For Output As #FileNumber
 
     Print #FileNumber, "Location, CU, QTY, ACTION, CMPLX"
-    For Each cu In cus
-        If TypeOf cu Is cu Then
-            Print #FileNumber, cu.location & "," & cu.code & "," & cu.qty & "," & cu.action & ", "
+    For Each CU In cus
+        If TypeOf CU Is CU Then
+            Print #FileNumber, CU.location & "," & CU.code & "," & CU.qty & "," & CU.action & ", "
         Else
-            Print #FileNumber, cu(0) & ", , , ," & cu(1)
+            Print #FileNumber, CU(0) & ", , , ," & CU(1)
         End If
-    Next cu
+    Next CU
 
     Close #FileNumber
     
@@ -697,7 +697,7 @@ Private Sub generateCSV(project As project, cus As Collection)
     Next cell
     
     With csvWs.Sort
-        .SortFields.clear
+        .SortFields.Clear
         .SortFields.Add key:=csvWs.Range("A1"), Order:=xlAscending
         .SortFields.Add key:=csvWs.Range("F1"), Order:=xlAscending
         .SortFields.Add key:=csvWs.Range("D1"), Order:=xlDescending
@@ -716,12 +716,12 @@ End Sub
 
 Private Sub generateMissedLinesTXT(missedLines As Collection)
     Dim issues As String
-    Dim project As project: Set project = New project
-    Call project.extractFromSheets
+    Dim Project As Project: Set Project = New Project
+    Call Project.extractFromSheets
     
     issues = "Lines unable to turn into CUS." & vbLf & Utilities.JoinCollection(missedLines, vbLf)
-    filePath = ThisWorkbook.path & "\" & project.Notification & " - " & "MissedLineCUs.txt"
-    If InStr(filePath, "sharepoint") > 0 Then filePath = Environ("USERPROFILE") & "\" & project.Notification & " - " & "MissedLineCUs.txt"
+    filePath = ThisWorkbook.path & "\" & Project.Notification & " - " & "MissedLineCUs.txt"
+    If InStr(filePath, "sharepoint") > 0 Then filePath = Environ("USERPROFILE") & "\" & Project.Notification & " - " & "MissedLineCUs.txt"
     
     fNum = FreeFile
     Open filePath For Output As #fNum
@@ -736,7 +736,7 @@ Private Sub parseLineToCUs(needAdditionalCUs As Collection, missedLines As Colle
     Dim regex2 As Object: Set regex2 = CreateObject("VBScript.RegExp")
     Dim amount As Integer: amount = 1
     Dim hardware As String: hardware = Trim(line)
-    Dim cu As cu, otherCu As cu
+    Dim CU As CU, otherCu As CU
     Dim cuCode As String
     
     addedCU = False
@@ -981,11 +981,11 @@ Private Sub generateReplaceStreetlightMoldingCU(cus As Collection, pole As pole,
         Call generateCU(cus, pole.location, "100598", Application.WorksheetFunction.RoundUp(distance / 8, 0), mode)
     Else
         closestDistance = 0
-        For Each wire In pole.utilWires
-            If wire.componentType = "OW" Or wire.componentType = "SEC" Or wire.componentType = "TRAFFIC" Then
-                If Abs(wire.height - streetlightBottomBracketHeight) < closestDistance Or closestDistance = 0 Then closestDistance = Abs(wire.height - streetlightBottomBracketHeight)
+        For Each Wire In pole.utilWires
+            If Wire.componentType = "OW" Or Wire.componentType = "SEC" Or Wire.componentType = "TRAFFIC" Then
+                If Abs(Wire.height - streetlightBottomBracketHeight) < closestDistance Or closestDistance = 0 Then closestDistance = Abs(Wire.height - streetlightBottomBracketHeight)
             End If
-        Next wire
+        Next Wire
         Call generateCU(cus, pole.location, "100598", WorksheetFunction.RoundUp((closestDistance / 12) / 8, 0), mode)
     End If
 End Sub
@@ -1069,7 +1069,7 @@ Private Sub generateReconductorCUs(cus As Collection, pole As pole, line1 As Str
     End If
 End Sub
 
-Private Sub checkForAdjacentPoleRecondcutoring(cus As Collection, project As project, pole As pole, missedLines As Collection)
+Private Sub checkForAdjacentPoleRecondcutoring(cus As Collection, Project As Project, pole As pole, missedLines As Collection)
     Dim span As span
     Dim otherPole As pole
     Dim otherSpan As span
@@ -1077,7 +1077,7 @@ Private Sub checkForAdjacentPoleRecondcutoring(cus As Collection, project As pro
     Dim lines() As String
     For Each span In pole.spans
         If span.otherPole <> "" Then
-            Set otherPole = project.findPole(span.otherPole)
+            Set otherPole = Project.findPole(span.otherPole)
             If InStr(otherPole.Alt1, "'") > 0 And InStr(line, "OPEN WIRE") > 0 And InStr(line, "SECONDARY") > 0 Then
                 If InStr(otherPole.Alt1, vbLf) > 0 Then
                     lines = Split(otherPole.Alt1, vbLf)
@@ -1135,12 +1135,12 @@ Private Function MissedLineIgnorable(pole As pole, ByVal line As String) As Bool
 End Function
 
 Private Sub generateCU(cus As Collection, location As String, code As String, qty As Integer, action As String)
-    Dim cu As cu: Set cu = New cu
-    cu.location = properLocation(location)
-    cu.code = code
-    cu.qty = qty
-    cu.action = action
-    Call AddCu(cus, cu)
+    Dim CU As CU: Set CU = New CU
+    CU.location = properLocation(location)
+    CU.code = code
+    CU.qty = qty
+    CU.action = action
+    Call AddCu(cus, CU)
 End Sub
 
 Private Sub generateGuyCU(cus As Collection, location As String, hardware As String, qty As Integer, action As String)
@@ -1234,11 +1234,11 @@ Private Sub generateTransferStreetlightCU(line As String, cus As Collection, pol
     If InStr(streetlightMolding, "Install") > 0 Then Call generateCU(cus, pole.location, "100598", Application.WorksheetFunction.RoundUp(amount / 8, 0), "INSTALL")
 
     closestDistance = 0
-    For Each wire In pole.utilWires
-        If wire.componentType = "OW" Or wire.componentType = "SEC" Or wire.componentType = "TRAFFIC" Then
-            If Abs(wire.height - streetlightBottomBracketHeight) < closestDistance Or closestDistance = 0 Then closestDistance = Abs(wire.height - streetlightBottomBracketHeight)
+    For Each Wire In pole.utilWires
+        If Wire.componentType = "OW" Or Wire.componentType = "SEC" Or Wire.componentType = "TRAFFIC" Then
+            If Abs(Wire.height - streetlightBottomBracketHeight) < closestDistance Or closestDistance = 0 Then closestDistance = Abs(Wire.height - streetlightBottomBracketHeight)
         End If
-    Next wire
+    Next Wire
     amount = WorksheetFunction.RoundUp(closestDistance / 12, 0)
 
     Call generateCU(cus, pole.location, "718146", amount, "RET REM")
@@ -1337,14 +1337,14 @@ Private Function properAction(mode As String) As String
      End Select
 End Function
 
-Private Sub AddCu(cus As Collection, cu As cu)
+Private Sub AddCu(cus As Collection, CU As CU)
     Dim alreadyExists As Boolean
-    Dim otherCu As cu
+    Dim otherCu As CU
     For i = 1 To cus.count
-        If TypeOf cus(i) Is cu Then
+        If TypeOf cus(i) Is CU Then
             Set otherCu = cus(i)
-            If cu.Equals(otherCu) Then
-                If cu.code <> "290048" And cu.code <> "200548" Then otherCu.qty = otherCu.qty + cu.qty
+            If CU.Equals(otherCu) Then
+                If CU.code <> "290048" And CU.code <> "200548" Then otherCu.qty = otherCu.qty + CU.qty
                 alreadyExists = True
                 Exit For
             End If
@@ -1352,5 +1352,5 @@ Private Sub AddCu(cus As Collection, cu As cu)
     Next i
     
     addedCU = True
-    If Not alreadyExists Then cus.Add cu
+    If Not alreadyExists Then cus.Add CU
 End Sub
