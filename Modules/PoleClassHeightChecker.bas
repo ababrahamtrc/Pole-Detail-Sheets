@@ -2,6 +2,8 @@ Attribute VB_Name = "PoleClassHeightChecker"
 Public Sub CheckPole()
     On Error Resume Next
 
+    Debug.Print "hi"
+
     Call LogMessage.SendLogMessage("CheckPole")
 
     Set sheet = Application.ActiveSheet()
