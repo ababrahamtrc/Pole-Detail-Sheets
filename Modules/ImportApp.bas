@@ -5,7 +5,7 @@ Sub ImportApplication()
     Set fileDiag = Application.FileDialog(msoFileDialogFilePicker)
     With fileDiag
         .AllowMultiSelect = False
-        .Filters.clear
+        .Filters.Clear
         .Filters.Add Description:="Excel Files", Extensions:="*.xls,*.xlsx,*.csv"
         .Title = "Select the File ... "
         .InitialFileName = ThisWorkbook.path & Application.PathSeparator
