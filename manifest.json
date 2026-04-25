@@ -1,13 +1,1 @@
-{
-  "appName": "Excel Pole Detail Sheets",
-  "version": "2.1.0",
-  "updatedAt": "2026-04-25",
-  "versionChanges" : "Automatic updating of PDS without teams."
-  "versions": [
-    {
-      "version": "2.1.0",
-      "updatedAt": "2026-04-25",
-      "versionChanges": "Automatic updating of PDS without teams."
-    }
-  ]
-}
+{"appName":"Excel Pole Detail Sheets","version":"2.1.1","updatedAt":"2026-04-25","versionChanges":"test","versions":[{"version":"2.1.1","updatedAt":"2026-04-25","versionChanges":"test"},{"version":"2.1.0","updatedAt":"2026-04-25","versionChanges":"Automatic updating of PDS without teams."}]}
