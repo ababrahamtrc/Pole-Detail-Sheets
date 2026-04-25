@@ -13,9 +13,10 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Dim sheet As Worksheet
 Dim objects As Collection
-Dim applicant As wire
+Dim applicant As Wire
 Dim wires As Collection
 Dim weps As Scripting.Dictionary
 Dim clearanceMidspans As Scripting.Dictionary
@@ -46,7 +47,7 @@ Const COMM_WIRE_TEXT_COLOR As Long = &HFFFFFF  'RGB(255, 255, 255)
 Const APPLICANT_WIRE_TEXT_COLOR As Long = &H0& 'RGB(0, 0, 0)
 Const CLEARANCE_WIRE_TEXT_COLOR As Long = &H0& 'RGB(0, 0, 0)
 
-Public Sub Initialize(sheet_ As Worksheet, powers_ As Collection, OGPowers_ As Collection, clearanceMidspans_ As Scripting.Dictionary, OGClearanceMidspans_ As Scripting.Dictionary, weps_ As Scripting.Dictionary, applicant_ As wire, wires_ As Collection, IgnoreBolt_ As Boolean, Bonded_ As Boolean, overlash As Boolean)
+Public Sub Initialize(sheet_ As Worksheet, powers_ As Collection, OGPowers_ As Collection, clearanceMidspans_ As Scripting.Dictionary, OGClearanceMidspans_ As Scripting.Dictionary, weps_ As Scripting.Dictionary, applicant_ As Wire, wires_ As Collection, IgnoreBolt_ As Boolean, Bonded_ As Boolean, overlash As Boolean)
     
     On Error Resume Next
     
@@ -84,7 +85,7 @@ Public Sub Initialize(sheet_ As Worksheet, powers_ As Collection, OGPowers_ As C
     LWSTPWR.Value = Utilities.inchesToFeetInches(powers(1))
     STLTBRKT.Value = Utilities.inchesToFeetInches(powers(2))
     STLTDL.Value = Utilities.inchesToFeetInches(powers(3))
-    If powers(2) > 0 Then TrimDL.Visible = True
+    If powers(2) > 0 Then TrimDL.visible = True
     
     Set OGPowers = OGPowers_
     OGLWSTPWR.Value = Utilities.inchesToFeetInches(OGPowers(1))
@@ -159,27 +160,27 @@ Private Sub spanFill()
     End If
     
     Dim i As Integer: i = 1
-    For Each wire In wires
-        If wire.midspans.Exists(spanNumber) Then
-            Controls("Owner" & i).caption = wire.owner
-            Controls("Height" & i).Value = Utilities.inchesToFeetInches(wire.height)
-            Controls("Mod" & i).Value = Utilities.inchesToFeetInches(wire.modification)
-            Controls("Midspan" & i).Value = Utilities.inchesToFeetInches(wire.midspans(spanNumber))
-            If wire.adjacentHeights.Exists(spanNumber) Then
-                If wire.adjacentHeights(spanNumber).count > 0 Then
-                    Controls("OtherOwner" & i).caption = wire.owner
-                    Controls("OtherHeight" & i).text = Utilities.inchesToFeetInches(wire.adjacentHeights(spanNumber)(1))
-                    Controls("OtherMod" & i).text = Utilities.inchesToFeetInches(wire.adjacentHeights(spanNumber)(2))
+    For Each Wire In wires
+        If Wire.midspans.Exists(spanNumber) Then
+            Controls("Owner" & i).caption = Wire.owner
+            Controls("Height" & i).Value = Utilities.inchesToFeetInches(Wire.height)
+            Controls("Mod" & i).Value = Utilities.inchesToFeetInches(Wire.modification)
+            Controls("Midspan" & i).Value = Utilities.inchesToFeetInches(Wire.midspans(spanNumber))
+            If Wire.adjacentHeights.Exists(spanNumber) Then
+                If Wire.adjacentHeights(spanNumber).count > 0 Then
+                    Controls("OtherOwner" & i).caption = Wire.owner
+                    Controls("OtherHeight" & i).text = Utilities.inchesToFeetInches(Wire.adjacentHeights(spanNumber)(1))
+                    Controls("OtherMod" & i).text = Utilities.inchesToFeetInches(Wire.adjacentHeights(spanNumber)(2))
                     Call makeOtherVisibile(i)
                 End If
             End If
-            wire.index = i
+            Wire.index = i
             Call makeVisibile(i)
             i = i + 1
         Else
-            wire.index = 0
+            Wire.index = 0
         End If
-    Next wire
+    Next Wire
     
     Call Mod0_Change
     
@@ -226,30 +227,30 @@ Private Sub makeVisibile(i As Integer)
     
     On Error Resume Next
     
-    Controls("Owner" & i).Visible = True
-    Controls("Height" & i).Visible = True
-    Controls("Mod" & i).Visible = True
-    Controls("Midspan" & i).Visible = True
-    Controls("MidspanMod" & i).Visible = True
-    Controls("FootUp" & i).Visible = True
-    Controls("FootDown" & i).Visible = True
-    Controls("InchUp" & i).Visible = True
-    Controls("InchDown" & i).Visible = True
-    Controls("HeightText" & i).Visible = True
-    Controls("ModText" & i).Visible = True
-    Controls("MidspanModText" & i).Visible = True
-    Controls("MidspanText" & i).Visible = True
+    Controls("Owner" & i).visible = True
+    Controls("Height" & i).visible = True
+    Controls("Mod" & i).visible = True
+    Controls("Midspan" & i).visible = True
+    Controls("MidspanMod" & i).visible = True
+    Controls("FootUp" & i).visible = True
+    Controls("FootDown" & i).visible = True
+    Controls("InchUp" & i).visible = True
+    Controls("InchDown" & i).visible = True
+    Controls("HeightText" & i).visible = True
+    Controls("ModText" & i).visible = True
+    Controls("MidspanModText" & i).visible = True
+    Controls("MidspanText" & i).visible = True
 End Sub
 
 Private Sub makeOtherVisibile(i As Integer)
     
     On Error Resume Next
     
-    Controls("OtherOwner" & i).Visible = True
-    Controls("OtherHeight" & i).Visible = True
-    Controls("OtherMod" & i).Visible = True
-    Controls("OtherHeightText" & i).Visible = True
-    Controls("OtherModText" & i).Visible = True
+    Controls("OtherOwner" & i).visible = True
+    Controls("OtherHeight" & i).visible = True
+    Controls("OtherMod" & i).visible = True
+    Controls("OtherHeightText" & i).visible = True
+    Controls("OtherModText" & i).visible = True
 End Sub
 
 
@@ -262,28 +263,28 @@ Private Sub spanClear()
     Application.EnableEvents = False
 
     For i = 0 To 12
-        Controls("Owner" & i).Visible = False
-        Controls("Height" & i).Visible = False
+        Controls("Owner" & i).visible = False
+        Controls("Height" & i).visible = False
         If Controls("Height" & i).text <> "" Then Controls("Height" & i).text = ""
-        Controls("Mod" & i).Visible = False
+        Controls("Mod" & i).visible = False
         If Controls("Mod" & i).text <> "" Then Controls("Mod" & i).text = ""
-        Controls("Midspan" & i).Visible = False
+        Controls("Midspan" & i).visible = False
         If Controls("Midspan" & i).text <> "" Then Controls("Midspan" & i).text = ""
-        Controls("MidspanMod" & i).Visible = False
+        Controls("MidspanMod" & i).visible = False
         If Controls("MidspanMod" & i).text <> "" Then Controls("MidspanMod" & i).text = ""
-        Controls("FootUp" & i).Visible = False
-        Controls("FootDown" & i).Visible = False
-        Controls("InchUp" & i).Visible = False
-        Controls("InchDown" & i).Visible = False
-        Controls("HeightText" & i).Visible = False
-        Controls("ModText" & i).Visible = False
-        Controls("MidspanModText" & i).Visible = False
-        Controls("MidspanText" & i).Visible = False
-        Controls("OtherOwner" & i).Visible = False
-        Controls("OtherHeight" & i).Visible = False
-        Controls("OtherMod" & i).Visible = False
-        Controls("OtherHeightText" & i).Visible = False
-        Controls("OtherModText" & i).Visible = False
+        Controls("FootUp" & i).visible = False
+        Controls("FootDown" & i).visible = False
+        Controls("InchUp" & i).visible = False
+        Controls("InchDown" & i).visible = False
+        Controls("HeightText" & i).visible = False
+        Controls("ModText" & i).visible = False
+        Controls("MidspanModText" & i).visible = False
+        Controls("MidspanText" & i).visible = False
+        Controls("OtherOwner" & i).visible = False
+        Controls("OtherHeight" & i).visible = False
+        Controls("OtherMod" & i).visible = False
+        Controls("OtherHeightText" & i).visible = False
+        Controls("OtherModText" & i).visible = False
     Next i
     
     For Each Object In objects
@@ -337,12 +338,12 @@ Private Sub updateLabel(ByVal height As String, ByVal name As String, ByVal mids
     inches = Utilities.convertToInches(height)
     
     If inches > 0 Then
-        For Each wire In wires
-            If wire.index = index And index <> 0 And wire.modification <> inches Then
-                wire.modification = inches
+        For Each Wire In wires
+            If Wire.index = index And index <> 0 And Wire.modification <> inches Then
+                Wire.modification = inches
                 Exit For
             End If
-        Next wire
+        Next Wire
     
         If lbl.caption <> midspan Then lbl.caption = midspan
         If Pole1.Top <> Pole1.Top + Pole1.height - inches Then
@@ -402,7 +403,7 @@ Private Sub updateMidspan(ByVal i As Integer)
     If Utilities.convertToInches(Controls("Mod" & i).text) > 0 And Utilities.convertToInches(Controls("Height" & i).text) > 0 Then
         Dim newMidspan As String
         difference = Utilities.convertToInches(Controls("Mod" & i).text) - Utilities.convertToInches(Controls("Height" & i).text)
-        If Controls("OtherHeight" & i).Visible And Utilities.convertToInches(Controls("OtherHeight" & i).text) > 0 Then
+        If Controls("OtherHeight" & i).visible And Utilities.convertToInches(Controls("OtherHeight" & i).text) > 0 Then
             difference = difference + Utilities.convertToInches(Controls("OtherMod" & i).text) - Utilities.convertToInches(Controls("OtherHeight" & i).text)
         End If
         newMidspan = Utilities.inchesToFeetInches(Utilities.convertToInches(Controls("Midspan" & i).text) + Int(difference / 2))
@@ -428,9 +429,9 @@ Private Function checkViolations(Optional report As Boolean) As String
     If Not stltbrktClearanceInches > 0 Then stltbrktClearanceInches = 9999
     If Not STLTDLClearanceInches > 0 Then stltbrktClearanceInches = 9999
     
-    applicantSpan = Mod0.Visible
+    applicantSpan = Mod0.visible
     For i = IIf(applicantSpan, 0, 1) To 12
-        If Not Controls("Mod" & i).Visible Then Exit For
+        If Not Controls("Mod" & i).visible Then Exit For
         inchesOne = Utilities.convertToInches(Controls("Mod" & i).text)
         MidspanOne = Utilities.convertToInches(Controls("MidspanMod" & i).text)
         violates = False
@@ -497,11 +498,11 @@ Private Function checkViolations(Optional report As Boolean) As String
         End If
         
         If i > 0 Then
-            For Each wire In wires
-                If wire.index = i Then
+            For Each Wire In wires
+                If Wire.index = i Then
                     For Each otherWire In wires
-                        If otherWire.index = 0 And wire.owner <> otherWire.owner Then
-                            inchesOne = wire.modification
+                        If otherWire.index = 0 And Wire.owner <> otherWire.owner Then
+                            inchesOne = Wire.modification
                             inchesTwo = otherWire.modification
                             If Abs(inchesOne - inchesTwo) < 12 Then
                                 violationsReport = violationsReport & "Wire" & i + IIf(applicantSpan, 1, 0) & " 12"" separation violation with wire in another span" & vbLf
@@ -510,7 +511,7 @@ Private Function checkViolations(Optional report As Boolean) As String
                         End If
                     Next otherWire
                     If Not applicant Is Nothing Then
-                        inchesOne = wire.modification
+                        inchesOne = Wire.modification
                         inchesTwo = applicant.modification
                         If Abs(inchesOne - inchesTwo) < 12 Then
                                 violationsReport = violationsReport & "Wire" & i + IIf(applicantSpan, 1, 0) & " 12"" separation violation with wire in another span" & vbLf
@@ -518,7 +519,7 @@ Private Function checkViolations(Optional report As Boolean) As String
                         End If
                     End If
                 End If
-            Next wire
+            Next Wire
         Else
             If Not applicant Is Nothing And applicantSpan Then
                 For Each otherWire In wires
@@ -614,7 +615,7 @@ Private Sub automateApplicantMidspan()
     Dim applicantHeight As Integer: applicantHeight = Utilities.convertToInches(Controls("Mod0").text)
 
     For i = 1 To 12
-        If Not Controls("MidspanMod" & i).Visible Then Exit For
+        If Not Controls("MidspanMod" & i).visible Then Exit For
         attachHeight = Utilities.convertToInches(Controls("Mod" & i).text)
         midspanHeight = Utilities.convertToInches(Controls("MidspanMod" & i).text)
         If attachHeight <= applicantHeight And attachHeight >= heightBelow And midspanHeight >= midspanbelow Then
@@ -643,7 +644,7 @@ End Sub
 Private Sub IgnoreBolt_Change()
     If done Then Call checkViolations
     For Each Object In boltHoles
-        Object.Visible = Not IgnoreBolt.Value
+        Object.visible = Not IgnoreBolt.Value
     Next Object
 End Sub
 
@@ -1540,16 +1541,16 @@ Private Sub UpdateMods_Click()
         
         If sheet.Range("CMRF2") <> midspanText Then sheet.Range("CMRF2") = midspanText
         
-        For Each wire In wires
-            Set modCell = findModCell(sheet, wire.height, wire.owner, True)
+        For Each Wire In wires
+            Set modCell = findModCell(sheet, Wire.height, Wire.owner, True)
             If Not modCell Is Nothing Then
-                If wire.modification <> wire.height Then
-                    modCell.Value = Utilities.inchesToFeetInches(wire.modification)
+                If Wire.modification <> Wire.height Then
+                    modCell.Value = Utilities.inchesToFeetInches(Wire.modification)
                 Else
                     modCell.Value = ""
                 End If
             End If
-        Next wire
+        Next Wire
         
         If LWSTPWR.text <> "" And powers.count > 0 Then
             If LWSTPWR.text <> powers(1) Then
