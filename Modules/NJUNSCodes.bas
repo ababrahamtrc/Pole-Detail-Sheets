@@ -6,17 +6,17 @@ Public Sub generateNJUNSCodes()
     
     Dim companies As Scripting.Dictionary: Set companies = New Scripting.Dictionary
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
-    Dim project As project: Set project = New project
-    Call project.extractFromSheets
+    Dim Project As Project: Set Project = New Project
+    Call Project.extractFromSheets
     
     controlWs.Range("NJUNSCODES").offset(0, 0).Value = "Place(Check NJUNS)"
-    controlWs.Range("NJUNSCODES").offset(0, 1).Value = project.township
+    controlWs.Range("NJUNSCODES").offset(0, 1).Value = Project.township
     
-    controlWs.Range("NJUNSCODES").offset(1, 0).Value = "Applicant(" & project.applicant & ")"
-    controlWs.Range("NJUNSCODES").offset(1, 1).Value = getNJUNSNameMapping(project, project.applicant)
+    controlWs.Range("NJUNSCODES").offset(1, 0).Value = "Applicant(" & Project.applicant & ")"
+    controlWs.Range("NJUNSCODES").offset(1, 1).Value = getNJUNSNameMapping(Project, Project.applicant)
     
     Dim pole As pole
-    For Each pole In project.poles
+    For Each pole In Project.poles
         If pole.njunsTicket <> "" Then
             For Each step In pole.njunsSteps
                 company = Application.WorksheetFunction.Proper(Utilities.GetFirstWord(CStr(step)))
@@ -33,7 +33,7 @@ Public Sub generateNJUNSCodes()
     Dim i As Integer: i = 2
     For Each company In companies
         controlWs.Range("NJUNSCODES").offset(i, 0).Value = company & "(" & companies(company) & ")"
-        controlWs.Range("NJUNSCODES").offset(i, 1).Value = getNJUNSNameMapping(project, company)
+        controlWs.Range("NJUNSCODES").offset(i, 1).Value = getNJUNSNameMapping(Project, company)
         i = i + 1
     Next company
     
@@ -46,7 +46,7 @@ Public Sub clearNJUNSCodes()
     controlWs.Range("NJUNSCODES").offset(0, 1).EntireColumn.ClearContents
 End Sub
 
-Private Function getNJUNSNameMapping(project, ByVal key As String) As String
+Private Function getNJUNSNameMapping(Project, ByVal key As String) As String
     key = UCase(Replace(key, " ", ""))
     key = Replace(key, ":", "")
     key = Replace(key, vbLf, "")
@@ -59,8 +59,8 @@ Private Function getNJUNSNameMapping(project, ByVal key As String) As String
     If NJUNSCodes.Exists(key) Then
         getNJUNSNameMapping = NJUNSCodes(key)
     Else
-        If NJUNSCodes.Exists(key & UCase(project.county)) Then
-            getNJUNSNameMapping = NJUNSCodes(key & UCase(project.county))
+        If NJUNSCodes.Exists(key & UCase(Project.county)) Then
+            getNJUNSNameMapping = NJUNSCodes(key & UCase(Project.county))
         Else
             getNJUNSNameMapping = ""
         End If
