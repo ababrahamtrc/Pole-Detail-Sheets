@@ -1,26 +1,29 @@
 {
   "12 Spans": {
-    "visibile": false
+    "visible": false
   },
   "4 Spans": {
-    "visibile": false
+    "visible": false
   },
   "8 Spans": {
-    "visibile": false
+    "visible": false
   },
   "CUCode": {
-    "visibile": false
+    "visible": false
   },
   "CUSortOrder": {
-    "visibile": false
-  },
-  "NJUNSCode": {
-    "visibile": false
+    "visible": false
   },
   "Control": {
-    "visibile": true
+    "visible": true
+  },
+  "NJUNSCode": {
+    "visible": false
   },
   "Span": {
-    "visibile": false
+    "visible": false
+  },
+  "Temp": {
+    "visible": true
   }
 }
