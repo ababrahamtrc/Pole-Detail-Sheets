@@ -347,24 +347,24 @@ Private Function getHeight(sheet As Worksheet, owner As String, midspan As Integ
         .Global = False
     End With
     
-    Dim span As Integer: span = 0
+    Dim Span As Integer: Span = 0
     For i = 1 To 12
         If Utilities.RangeExists(sheet, "TOPOLE" & i) Then
             If regex.test(sheet.Range("TOPOLE" & i)) Then
                 Set matches = regex.Execute(sheet.Range("TOPOLE" & i))
                 If matches(0) = poleNumber Then
-                    span = i
+                    Span = i
                     Exit For
                 End If
             End If
         End If
-        If span <> 0 Then Exit For
+        If Span <> 0 Then Exit For
     Next i
     
-    If span <> 0 Then
+    If Span <> 0 Then
         For i = 0 To 100
-            If sheet.Range("CMMIDSPAN" & span).offset(i + 1, 0).Interior.color <> 16312794 Then Exit For
-            If Utilities.convertToInches(sheet.Range("CMMIDSPAN" & span).offset(i, 0).text) = midspan And InStr(sheet.Range("CMOWNER").offset(i, 0).text, owner) > 0 Then
+            If sheet.Range("CMMIDSPAN" & Span).offset(i + 1, 0).Interior.color <> 16312794 Then Exit For
+            If Utilities.convertToInches(sheet.Range("CMMIDSPAN" & Span).offset(i, 0).text) = midspan And InStr(sheet.Range("CMOWNER").offset(i, 0).text, owner) > 0 Then
                 getHeight = Utilities.convertToInches(sheet.Range("CMHEIGHT").offset(i, 0).text)
                 Exit Function
             End If
