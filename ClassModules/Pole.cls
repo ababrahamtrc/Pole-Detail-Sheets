@@ -166,19 +166,19 @@ Public Sub extractFromSheet(sheet As Worksheet)
     
     If InStr(sheet.Range("PROPOSEDHEIGHT"), "OL") > 0 Then Me.overlash = True
     
-    Dim span As span
+    Dim Span As Span
     For i = 1 To 12
         If Not Utilities.RangeExists(sheet, "TOPOLE" & i) Then Exit For
         If sheet.Range("TOPOLE" & i) = "" Or InStr(sheet.Range("TOPOLE" & i), "(") = 0 Or InStr(sheet.Range("TOPOLE" & i), ")") = 0 Then Exit For
-        Set span = New span
-        span.distance = Utilities.OnlyNumbers(sheet.Range("SPAN" & i))
-        span.angle = CInt(ThisWorkbook.InsideParentheses(sheet.Range("TOPOLE" & i)))
+        Set Span = New Span
+        Span.distance = Utilities.OnlyNumbers(sheet.Range("SPAN" & i))
+        Span.angle = CInt(ThisWorkbook.InsideParentheses(sheet.Range("TOPOLE" & i)))
         If Utilities.SheetExists(ThisWorkbook.RemoveParentheses(sheet.Range("TOPOLE" & i))) Then
-            span.otherPole = ThisWorkbook.RemoveParentheses(sheet.Range("TOPOLE" & i))
+            Span.otherPole = ThisWorkbook.RemoveParentheses(sheet.Range("TOPOLE" & i))
         End If
-        span.direction = Utilities.degreesToDirection(span.angle)
-        span.spanSlot = i
-        Me.spans.Add span
+        Span.direction = Utilities.degreesToDirection(Span.angle)
+        Span.spanSlot = i
+        Me.spans.Add Span
     Next i
     
     Dim comp As Component
@@ -208,16 +208,16 @@ Public Sub extractFromSheet(sheet As Worksheet)
                 Set Wire = comp.getWire()
                 If overlash And Wire.owner = applicant.owner Then applicant.height = Wire.height
                 
-                For Each span In Me.spans
-                    If Replace(sheet.Range("CMMIDSPAN" & span.spanSlot).offset(i, 0).text, "-", "") <> "" Then
-                        Wire.midspans.Add span.spanSlot, Utilities.convertToInches(sheet.Range("CMMIDSPAN" & span.spanSlot).offset(i, 0).text)
+                For Each Span In Me.spans
+                    If Replace(sheet.Range("CMMIDSPAN" & Span.spanSlot).offset(i, 0).text, "-", "") <> "" Then
+                        Wire.midspans.Add Span.spanSlot, Utilities.convertToInches(sheet.Range("CMMIDSPAN" & Span.spanSlot).offset(i, 0).text)
                         If Wire.componentType = "" Then Wire.componentType = "COM"
-                        span.commComponents.Add Wire
-                        span.commWires.Add Wire
-                        span.wires.Add Wire
-                        If span.houseNumber = "" Then span.houseNumber = ThisWorkbook.InsideParentheses(sheet.Range("CMMIDSPAN" & span.spanSlot).offset(i, 0))
+                        Span.commComponents.Add Wire
+                        Span.commWires.Add Wire
+                        Span.wires.Add Wire
+                        If Span.houseNumber = "" Then Span.houseNumber = ThisWorkbook.InsideParentheses(sheet.Range("CMMIDSPAN" & Span.spanSlot).offset(i, 0))
                     End If
-                Next span
+                Next Span
                 
                 Set modCell = findModCell(sheet, Wire.height, Wire.owner, False, modificationCells)
                 If Not modCell Is Nothing Then Wire.modification = Utilities.convertToInches(modCell)
@@ -256,15 +256,15 @@ Public Sub extractFromSheet(sheet As Worksheet)
                 End If
                 If Wire.componentType = "SPG" Then Wire.wepHeight = Utilities.convertToInches(ThisWorkbook.InsideParentheses(sheet.Range("UTHEIGHT").offset(i, 0).text))
                 
-                For Each span In Me.spans
-                    If Replace(sheet.Range("UTMIDSPAN" & span.spanSlot).offset(i, 0).text, "-", "") <> "" Then
-                        Wire.midspans.Add span.spanSlot, Utilities.convertToInches(sheet.Range("UTMIDSPAN" & span.spanSlot).offset(i, 0).text)
-                        span.utilComponents.Add Wire
-                        span.utilWires.Add Wire
-                        span.wires.Add Wire
-                        If span.houseNumber = "" Then span.houseNumber = ThisWorkbook.InsideParentheses(sheet.Range("UTMIDSPAN" & span.spanSlot).offset(i, 0))
+                For Each Span In Me.spans
+                    If Replace(sheet.Range("UTMIDSPAN" & Span.spanSlot).offset(i, 0).text, "-", "") <> "" Then
+                        Wire.midspans.Add Span.spanSlot, Utilities.convertToInches(sheet.Range("UTMIDSPAN" & Span.spanSlot).offset(i, 0).text)
+                        Span.utilComponents.Add Wire
+                        Span.utilWires.Add Wire
+                        Span.wires.Add Wire
+                        If Span.houseNumber = "" Then Span.houseNumber = ThisWorkbook.InsideParentheses(sheet.Range("UTMIDSPAN" & Span.spanSlot).offset(i, 0))
                     End If
-                Next span
+                Next Span
                 
                 If Wire.componentType = "PRI" Then Me.primaries.Add Wire
                 If Wire.componentType = "NEUT" Then Me.neutrals.Add Wire
@@ -419,26 +419,26 @@ Public Sub fillSheet(sheet As Worksheet, maxSpans As Integer, Project As Project
     sheet.Range("PROPOSEDDIAMETER") = Me.applicant.diameter
     
     'Span info
-    Dim span As span
-    For Each span In Me.spans
-        sheet.Range("SPAN" & span.spanSlot).Value = CInt(span.distance) & "'"
-        sheet.Range("SPAN" & span.spanSlot).HorizontalAlignment = xlLeft
-        sheet.Range("TOPOLE" & span.spanSlot).Value = span.getToSpan()
-        sheet.Range("TOPOLE" & span.spanSlot).HorizontalAlignment = xlLeft
-        sheet.Range("CLEARANCE" & span.spanSlot).Value = "15'6"""
-        If Me.applicant.midspans.Exists(span.spanSlot) Then
-            sheet.Range("TOPOLE" & span.spanSlot).offset(1, 0).Value = Utilities.inchesToFeetInches(Me.applicant.midspans(span.spanSlot))
-            If Me.applicant.tensions.Exists(span.spanSlot) Then sheet.Range("TOPOLE" & span.spanSlot).offset(2, 0).Value = Me.applicant.tensions(span.spanSlot)
+    Dim Span As Span
+    For Each Span In Me.spans
+        sheet.Range("SPAN" & Span.spanSlot).Value = CInt(Span.distance) & "'"
+        sheet.Range("SPAN" & Span.spanSlot).HorizontalAlignment = xlLeft
+        sheet.Range("TOPOLE" & Span.spanSlot).Value = Span.getToSpan()
+        sheet.Range("TOPOLE" & Span.spanSlot).HorizontalAlignment = xlLeft
+        sheet.Range("CLEARANCE" & Span.spanSlot).Value = "15'6"""
+        If Me.applicant.midspans.Exists(Span.spanSlot) Then
+            sheet.Range("TOPOLE" & Span.spanSlot).offset(1, 0).Value = Utilities.inchesToFeetInches(Me.applicant.midspans(Span.spanSlot))
+            If Me.applicant.tensions.Exists(Span.spanSlot) Then sheet.Range("TOPOLE" & Span.spanSlot).offset(2, 0).Value = Me.applicant.tensions(Span.spanSlot)
         End If
-        Call span.setLowestPowerWire
-        If Not span.lowestPowerWire Is Nothing Then
-            If span.lowestPowerWire.componentType = "SVC" Then
-                sheet.Range("CMMIDSPAN" & span.spanSlot).offset(-2, 0).Value = Utilities.inchesToFeetInches(span.lowestPowerWire.midspans(span.spanSlot) - 12)
+        Call Span.setLowestPowerWire
+        If Not Span.lowestPowerWire Is Nothing Then
+            If Span.lowestPowerWire.componentType = "SVC" Then
+                sheet.Range("CMMIDSPAN" & Span.spanSlot).offset(-2, 0).Value = Utilities.inchesToFeetInches(Span.lowestPowerWire.midspans(Span.spanSlot) - 12)
             Else
-                sheet.Range("CMMIDSPAN" & span.spanSlot).offset(-2, 0).Value = Utilities.inchesToFeetInches(span.lowestPowerWire.midspans(span.spanSlot) - 30)
+                sheet.Range("CMMIDSPAN" & Span.spanSlot).offset(-2, 0).Value = Utilities.inchesToFeetInches(Span.lowestPowerWire.midspans(Span.spanSlot) - 30)
             End If
         End If
-    Next span
+    Next Span
     
     'Make space for anchors if needed
     If Me.anchors.count > 6 Then
@@ -499,7 +499,7 @@ Public Sub fillSheet(sheet As Worksheet, maxSpans As Integer, Project As Project
         If TypeOf comp Is Wire Then
             For j = 1 To maxSpans
                 If comp.midspans.Exists(j) Then
-                    Set span = Me.findSpan(j)
+                    Set Span = Me.findSpan(j)
                     sheet.Range("CMMIDSPAN" & j).offset(i, 0).Value = comp.getDisplayMidspan(Me.findSpan(j))
                     sheet.Range("CMMIDSPAN" & j).offset(i, 0).HorizontalAlignment = xlLeft
                 Else
@@ -596,12 +596,12 @@ Public Sub fillSheet(sheet As Worksheet, maxSpans As Integer, Project As Project
         If Me.notes <> "" Then Me.notes = Me.notes & vbLf
         Me.notes = Me.notes & "Tree work needed for pole."
     End If
-    For Each span In Me.spans
-        If span.treeWork Then
+    For Each Span In Me.spans
+        If Span.treeWork Then
             If Me.notes <> "" Then Me.notes = Me.notes & vbLf
-            Me.notes = Me.notes & "Tree work needed in " & span.direction & " span."
+            Me.notes = Me.notes & "Tree work needed in " & Span.direction & " span."
         End If
-    Next span
+    Next Span
     If Me.hammerTestFailed Then
         sheet.Range("DET").offset(0, 1).Value = "Hammer Test Failed"
         If Me.notes <> "" Then Me.notes = Me.notes & vbLf
@@ -725,17 +725,17 @@ Private Function Calculate30MSSV() As String
     Dim comMidspan As Integer
     Dim direction As String
     
-    Dim span As span
-    For Each span In Me.spans
-        If Not span.lowestPowerWire Is Nothing Then
-            lowestMidspan = span.lowestPowerWire.midspans(span.spanSlot)
+    Dim Span As Span
+    For Each Span In Me.spans
+        If Not Span.lowestPowerWire Is Nothing Then
+            lowestMidspan = Span.lowestPowerWire.midspans(Span.spanSlot)
             For i = 1 To Me.commComponents.count
                 Set Wire = Me.commComponents(i)
                 If TypeOf Wire Is Wire Then
-                    If Wire.midspans.Exists(span.spanSlot) Then
-                        comMidspan = Wire.midspans(span.spanSlot)
+                    If Wire.midspans.Exists(Span.spanSlot) Then
+                        comMidspan = Wire.midspans(Span.spanSlot)
                         If lowestMidspan - 30 < comMidspan Then
-                            direction = span.direction
+                            direction = Span.direction
                             If Not violators.Exists(direction) Then violators.Add direction, New Collection
                             violators(direction).Add i
                         End If
@@ -743,7 +743,7 @@ Private Function Calculate30MSSV() As String
                 End If
             Next i
         End If
-    Next span
+    Next Span
     
     For Each key In violators
         If result <> "" Then result = result & ", "
@@ -949,23 +949,23 @@ Public Sub setLineStructureTypes()
     Next i
 End Sub
 
-Public Function findSpan(ByVal midspanSlot As Integer) As span
-    For Each span In Me.spans
-        If span.spanSlot = midspanSlot Then
-            Set findSpan = span
+Public Function findSpan(ByVal midspanSlot As Integer) As Span
+    For Each Span In Me.spans
+        If Span.spanSlot = midspanSlot Then
+            Set findSpan = Span
             Exit Function
         End If
-    Next span
+    Next Span
     Set findSpan = Nothing
 End Function
 
-Public Function findSpanBySpanId(ByVal spanId As String) As span
-    For Each span In Me.spans
-        If span.spanId = spanId Then
-            Set findSpanBySpanId = span
+Public Function findSpanBySpanId(ByVal spanId As String) As Span
+    For Each Span In Me.spans
+        If Span.spanId = spanId Then
+            Set findSpanBySpanId = Span
             Exit Function
         End If
-    Next span
+    Next Span
     Set findSpanBySpanId = Nothing
 End Function
 
