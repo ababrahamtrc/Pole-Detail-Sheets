@@ -9,7 +9,7 @@ Public Sub ImportJSONData()
     
     With fileDiag
         .AllowMultiSelect = False
-        .Filters.clear
+        .Filters.Clear
         .Filters.Add Description:="Import Files", Extensions:="*.json"
         .Title = "Select the File ... "
         .InitialFileName = ThisWorkbook.path & Application.PathSeparator
@@ -66,15 +66,15 @@ Public Sub ImportJSONData()
     
         Call ClearData
         
-        Dim wire As wire
-        Dim project As project:
+        Dim Wire As Wire
+        Dim Project As Project:
         
         If (jsonType = "Spida") Then
-            Set project = UtilitiesSpidaCalc.InitProjectFromSpidaJson(json)
-            Call project.fillImportDataFormat
+            Set Project = UtilitiesSpidaCalc.InitProjectFromSpidaJson(json)
+            Call Project.fillImportDataFormat
         ElseIf jsonType = "Katapult" Then
-            Set project = UtilitiesKatapult.InitProjectFromKatapultJson(json)
-            Call project.fillImportDataFormat
+            Set Project = UtilitiesKatapult.InitProjectFromKatapultJson(json)
+            Call Project.fillImportDataFormat
         End If
     End If
     
@@ -87,14 +87,14 @@ End Sub
 
 Public Sub ClearData()
 
-    ThisWorkbook.sheets("Collection").Cells.clear
-    ThisWorkbook.sheets("Job Info").Cells.clear
-    ThisWorkbook.sheets("Span").Cells.clear
-    ThisWorkbook.sheets("Span.Power Circuit").Cells.clear
-    ThisWorkbook.sheets("Span.Communication").Cells.clear
-    ThisWorkbook.sheets("Anchor").Cells.clear
-    ThisWorkbook.sheets("Anchor.Guys").Cells.clear
-    ThisWorkbook.sheets("Equipment").Cells.clear
+    ThisWorkbook.sheets("Collection").Cells.Clear
+    ThisWorkbook.sheets("Job Info").Cells.Clear
+    ThisWorkbook.sheets("Span").Cells.Clear
+    ThisWorkbook.sheets("Span.Power Circuit").Cells.Clear
+    ThisWorkbook.sheets("Span.Communication").Cells.Clear
+    ThisWorkbook.sheets("Anchor").Cells.Clear
+    ThisWorkbook.sheets("Anchor.Guys").Cells.Clear
+    ThisWorkbook.sheets("Equipment").Cells.Clear
     ThisWorkbook.sheets("Control").Range("PHOTODIR").Value = ""
     
 End Sub
