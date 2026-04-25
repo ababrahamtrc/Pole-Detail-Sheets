@@ -209,7 +209,7 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As Project
         
     Dim latitude As Double
     Dim longitude As Double
-    Dim span As span
+    Dim Span As Span
     For Each connectionKey In json("connections")
         Set jsonConnection = json("connections")(connectionKey)
         
@@ -242,7 +242,7 @@ Private Sub addConnections(ByVal json As Object, connectionKey As String, ByVal 
     Dim otherPole As pole
     Dim latitude As Double
     Dim longitude As Double
-    Dim span As span
+    Dim Span As Span
     Dim trace As String
     Dim Wire As Wire
     Dim Anchor As Anchor
@@ -266,17 +266,17 @@ Private Sub addConnections(ByVal json As Object, connectionKey As String, ByVal 
             latitude = json("nodes")(nodeId2)("latitude")
             longitude = json("nodes")(nodeId2)("longitude")
             result = DistanceAngleFromLatLong(pole.latitude, pole.longitude, latitude, longitude)
-            Set span = New span
-            span.distance = result(0)
-            span.angle = result(1)
-            span.spanId = connectionKey
-            span.spanSlot = pole.spans.count + 1
+            Set Span = New Span
+            Span.distance = result(0)
+            Span.angle = result(1)
+            Span.spanId = connectionKey
+            Span.spanSlot = pole.spans.count + 1
             If jsonConnection.Exists("sections") Then
                 Dim section As Variant
                 For Each section In jsonConnection("sections")
                     If jsonConnection("sections")(section).Exists("multi_attributes") Then
                         If jsonConnection("sections")(section)("multi_attributes").Exists("CE_MKR_tree_trimming") Then
-                            span.treeWork = getFirstValueJson(jsonConnection("sections")(section)("multi_attributes")("CE_MKR_tree_trimming"))
+                            Span.treeWork = getFirstValueJson(jsonConnection("sections")(section)("multi_attributes")("CE_MKR_tree_trimming"))
                         End If
                     End If
                 Next section
@@ -285,7 +285,7 @@ Private Sub addConnections(ByVal json As Object, connectionKey As String, ByVal 
             
             If nodeType = "pole" Then
                 Set otherPole = nodeKeys(nodeId2)
-                span.otherPole = otherPole.poleNumber
+                Span.otherPole = otherPole.poleNumber
             End If
             
             If nodeType = "building" Then
@@ -294,13 +294,13 @@ Private Sub addConnections(ByVal json As Object, connectionKey As String, ByVal 
                     Set jsonAttributes = jsonNode("attributes")
                     If jsonAttributes.Exists("address") Then
                         address = getFirstValueJson(jsonNode("attributes")("address"))
-                        span.houseNumber = Left(address, InStr(address, " "))
-                        If span.houseNumber = "" Then span.houseNumber = address
+                        Span.houseNumber = Left(address, InStr(address, " "))
+                        If Span.houseNumber = "" Then Span.houseNumber = address
                     End If
                 End If
             End If
         
-            pole.spans.Add span
+            pole.spans.Add Span
                
             If jsonConnection.Exists("sections") Then
                 For Each sectionKey In jsonConnection("sections")
@@ -341,8 +341,8 @@ Private Sub addConnections(ByVal json As Object, connectionKey As String, ByVal 
                                                             Wire.diameter = Wire.diameter & ", " & jsonWire("diameter")
                                                         End If
                                                     End If
-                                                    If jsonWire.Exists("tension") Then Wire.tensions.Add span.spanSlot, jsonWire("tension")
-                                                    If jsonWire.Exists("mr_move") Then Wire.mrMoves.Add span.spanSlot, jsonWire("mr_move")
+                                                    If jsonWire.Exists("tension") Then Wire.tensions.Add Span.spanSlot, jsonWire("tension")
+                                                    If jsonWire.Exists("mr_move") Then Wire.mrMoves.Add Span.spanSlot, jsonWire("mr_move")
                                                 End If
                                                 
                                                 Wire.size = getKatapultNameMapping(jsonWire("wire_spec"))
@@ -369,23 +369,23 @@ Private Sub addConnections(ByVal json As Object, connectionKey As String, ByVal 
                                                     End If
                                                 End If
                                                 
-                                                If Wire.midspans.Exists(span.spanSlot) Then
-                                                    If Wire.midspans(span.spanSlot) < 1 Or getMesManHeight(jsonWire) < Wire.midspans(span.spanSlot) Then
-                                                        Call Wire.midspans.Remove(span.spanSlot)
+                                                If Wire.midspans.Exists(Span.spanSlot) Then
+                                                    If Wire.midspans(Span.spanSlot) < 1 Or getMesManHeight(jsonWire) < Wire.midspans(Span.spanSlot) Then
+                                                        Call Wire.midspans.Remove(Span.spanSlot)
                                                         If Wire.crossArm <> "" And getMesManHeight(jsonWire) = 0 Then
-                                                            Wire.midspans.Add span.spanSlot, "XARM"
+                                                            Wire.midspans.Add Span.spanSlot, "XARM"
                                                         Else
-                                                            Wire.midspans.Add span.spanSlot, getMesManHeight(jsonWire)
+                                                            Wire.midspans.Add Span.spanSlot, getMesManHeight(jsonWire)
                                                         End If
                                                     End If
                                                 Else
                                                     If Wire.crossArm <> "" And getMesManHeight(jsonWire) = 0 Then
-                                                        Wire.midspans.Add span.spanSlot, "XARM"
+                                                        Wire.midspans.Add Span.spanSlot, "XARM"
                                                     Else
-                                                        Wire.midspans.Add span.spanSlot, getMesManHeight(jsonWire)
+                                                        Wire.midspans.Add Span.spanSlot, getMesManHeight(jsonWire)
                                                     End If
-                                                    span.wires.Add Wire
-                                                    Call splitUtilCommWires(Wire, span)
+                                                    Span.wires.Add Wire
+                                                    Call splitUtilCommWires(Wire, Span)
                                                 End If
                                             End If
                                         Next wireKey
