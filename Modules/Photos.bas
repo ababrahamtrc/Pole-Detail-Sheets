@@ -35,8 +35,8 @@ Public Sub photoNameValidate()
     
     Dim cleanedName As String
     
-    Dim project As New project
-    Call project.extractFromSheets
+    Dim Project As New Project
+    Call Project.extractFromSheets
     
     Dim regex2 As Object
     Set regex2 = CreateObject("VBScript.RegExp")
@@ -56,7 +56,7 @@ Public Sub photoNameValidate()
     Dim fso As Object
     Set fso = CreateObject("Scripting.FileSystemObject")
     
-    For Each pole In project.poles
+    For Each pole In Project.poles
         fileName = Dir(path & "*")
         photoCounter = 1
         Do While fileName <> ""
@@ -86,44 +86,44 @@ Public Sub photoNameValidate()
                 Name path & fileName As path & newName
                 renameCount = renameCount + 1
             ElseIf regex2.test(fileName) Then
-                newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.permit & "." & fileExtension
+                newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & Project.permit & "." & fileExtension
                 
                 Do While fso.FileExists(path & correctFileName(newName))
                     photoCounter = photoCounter + 1
-                    newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.permit & "." & fileExtension
+                    newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & Project.permit & "." & fileExtension
                 Loop
                 
                 Name path & fileName As path & correctFileName(newName)
                 photoCounter = photoCounter + 1
                 renameCount = renameCount + 1
             ElseIf regEx3.test(fileName) Then
-                newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.permit & "." & fileExtension
+                newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & Project.permit & "." & fileExtension
                             
                 Do While fso.FileExists(path & correctFileName(newName))
                     photoCounter = photoCounter + 1
-                    newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.permit & "." & fileExtension
+                    newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & Project.permit & "." & fileExtension
                 Loop
                 
                 Name path & fileName As path & correctFileName(newName)
                 photoCounter = photoCounter + 1
                 renameCount = renameCount + 1
             ElseIf regEx4.test(fileName) Then
-                newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.permit & "." & fileExtension
+                newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & Project.permit & "." & fileExtension
                 
                 Do While fso.FileExists(path & correctFileName(newName))
                     photoCounter = photoCounter + 1
-                    newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.permit & "." & fileExtension
+                    newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & Project.permit & "." & fileExtension
                 Loop
                 
                 Name path & fileName As path & correctFileName(newName)
                 photoCounter = photoCounter + 1
                 renameCount = renameCount + 1
             ElseIf regEx5.test(fileName) Then
-                newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.permit & "." & fileExtension
+                newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & Project.permit & "." & fileExtension
                 
                 Do While fso.FileExists(path & correctFileName(newName))
                     photoCounter = photoCounter + 1
-                    newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.permit & "." & fileExtension
+                    newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & Project.permit & "." & fileExtension
                 Loop
                 
                 Name path & fileName As path & correctFileName(newName)
@@ -135,7 +135,7 @@ Public Sub photoNameValidate()
         Loop
     Next pole
     
-    For Each pole In project.poles
+    For Each pole In Project.poles
         fileName = Dir(path & "*")
         photoCounter = 1
         
@@ -145,14 +145,14 @@ Public Sub photoNameValidate()
         Do While fileName <> ""
             If regEx6.test(fileName) Then
                 photoCounter = 1
-                newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.permit & "." & fileExtension
+                newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & Project.permit & "." & fileExtension
                 Set matches = regEx6.Execute(fileName)
                 existingPhotoCounter = matches(0).SubMatches(0)
                 
                 
                 Do While fso.FileExists(path & correctFileName(newName))
                     photoCounter = photoCounter + 1
-                    newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.permit & "." & fileExtension
+                    newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & Project.permit & "." & fileExtension
                 Loop
                 
                 If CInt(existingPhotoCounter) > CInt(photoCounter) Then
