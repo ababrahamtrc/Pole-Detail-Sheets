@@ -94,16 +94,16 @@ Sub MikeLExcel()
         row = row + 1
     Next location
     
-    Dim project As project: Set project = New project
-    Call project.extractFromSheets
+    Dim Project As Project: Set Project = New Project
+    Call Project.extractFromSheets
     Dim pole As pole
     Dim poleReplacements As Collection: Set poleReplacements = New Collection
-    For Each pole In project.poles
+    For Each pole In Project.poles
         If pole.replacePole Then poleReplacements.Add pole.location
     Next pole
     
     Dim transferWorkLocations As Collection: Set transferWorkLocations = New Collection
-    For Each pole In project.poles
+    For Each pole In Project.poles
         If InStr(Replace(UCase(pole.Alt1), " ", ""), "TRANSFERAGREEMENT") > 0 Then transferWorkLocations.Add pole.location
     Next pole
     
