@@ -13,6 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Public Sub Initialize()
     ComboBox1.list = Array("35", "40", "45", "50", "55", "60", "65", "70")
     ComboBox2.list = Array("2", "3", "4")
@@ -32,16 +33,16 @@ Private Sub CommandButton1_Click()
         Exit Sub
     End If
     
-    Dim project As project: Set project = New project
+    Dim Project As Project: Set Project = New Project
     Dim pole As pole: Set pole = New pole
-    project.extractFromSheets
+    Project.extractFromSheets
     
     pole.poleNumber = TextBox1.Value
     pole.height = ComboBox1.Value
     pole.Class = ComboBox2.Value
     pole.species = TextBox2.Value
     
-    Call pole.createSheet(project)
+    Call pole.createSheet(Project)
     
     Me.Hide
 End Sub
