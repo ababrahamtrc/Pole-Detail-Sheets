@@ -215,32 +215,32 @@ Public Sub extractImportDataFormat()
             modification = spanComWs.Cells(spanComWsRow, 8)
             key = size & owner & height & componentType
             
-            Dim wire As wire
+            Dim Wire As Wire
             If Not wireDict.Exists(key) Then
-                Set wire = New wire
+                Set Wire = New Wire
             
-                wire.size = size
-                wire.owner = owner
-                wire.height = height
-                wire.componentType = componentType
-                wire.modification = modification
+                Wire.size = size
+                Wire.owner = owner
+                Wire.height = height
+                Wire.componentType = componentType
+                Wire.modification = modification
                 
-                wireDict.Add key, wire
+                wireDict.Add key, Wire
             Else
                 continue = True
                 Do While continue
                     If wireDict(key).midspans.Exists(span.spanSlot) Then
                         key = key & "A"
                         If Not wireDict.Exists(key) Then
-                            Set wire = New wire
+                            Set Wire = New Wire
                 
-                            wire.size = size
-                            wire.owner = owner
-                            wire.height = height
-                            wire.componentType = componentType
-                            wire.modification = modification
+                            Wire.size = size
+                            Wire.owner = owner
+                            Wire.height = height
+                            Wire.componentType = componentType
+                            Wire.modification = modification
                             
-                            wireDict.Add key, wire
+                            wireDict.Add key, Wire
                             
                             continue = False
                         End If
@@ -250,25 +250,25 @@ Public Sub extractImportDataFormat()
                 Loop
             End If
             
-            Set wire = wireDict(key)
-            wire.midspans.Add span.spanSlot, spanComWs.Cells(spanComWsRow, 6)
-            If spanComWs.Cells(spanComWsRow, 9) <> "" Then wire.diameter = spanComWs.Cells(spanComWsRow, 9)
-            If spanComWs.Cells(spanComWsRow, 10) <> "" Then wire.tensions.Add span.spanSlot, spanComWs.Cells(spanComWsRow, 10)
-            If spanComWs.Cells(spanComWsRow, 11) <> "" Then wire.mrMoves.Add span.spanSlot, spanComWs.Cells(spanComWsRow, 11)
+            Set Wire = wireDict(key)
+            Wire.midspans.Add span.spanSlot, spanComWs.Cells(spanComWsRow, 6)
+            If spanComWs.Cells(spanComWsRow, 9) <> "" Then Wire.diameter = spanComWs.Cells(spanComWsRow, 9)
+            If spanComWs.Cells(spanComWsRow, 10) <> "" Then Wire.tensions.Add span.spanSlot, spanComWs.Cells(spanComWsRow, 10)
+            If spanComWs.Cells(spanComWsRow, 11) <> "" Then Wire.mrMoves.Add span.spanSlot, spanComWs.Cells(spanComWsRow, 11)
             
-            span.wires.Add wire
-            span.commWires.Add wire
+            span.wires.Add Wire
+            span.commWires.Add Wire
         Next spanComWsRow
         
         For Each key In wireDict
-            Set wire = wireDict(key)
+            Set Wire = wireDict(key)
         
-            If wire.componentType <> "PROPOSED" Then
-                pole.wires.Add wire
-                pole.commWires.Add wire
-                pole.commComponents.Add wire
+            If Wire.componentType <> "PROPOSED" Then
+                pole.wires.Add Wire
+                pole.commWires.Add Wire
+                pole.commComponents.Add Wire
             Else
-                Set pole.applicant = wire
+                Set pole.applicant = Wire
             End If
         Next key
         
@@ -284,25 +284,25 @@ Public Sub extractImportDataFormat()
             key = size & height & componentType
             
             If Not wireDict.Exists(key) Then
-                Set wire = New wire
+                Set Wire = New Wire
             
-                wire.size = size
-                wire.height = height
-                wire.componentType = componentType
+                Wire.size = size
+                Wire.height = height
+                Wire.componentType = componentType
                 
-                wireDict.Add key, wire
+                wireDict.Add key, Wire
             Else
                 continue = True
                 Do While continue
                     If wireDict(key).midspans.Exists(span.spanSlot) Then
                         key = key & "A"
                         If Not wireDict.Exists(key) Then
-                            Set wire = New wire
+                            Set Wire = New Wire
                 
-                            wire.size = size
-                            wire.height = height
-                            wire.componentType = componentType
-                            wireDict.Add key, wire
+                            Wire.size = size
+                            Wire.height = height
+                            Wire.componentType = componentType
+                            wireDict.Add key, Wire
                             
                             continue = False
                         End If
@@ -312,20 +312,20 @@ Public Sub extractImportDataFormat()
                 Loop
             End If
             
-            Set wire = wireDict(key)
-            wire.midspans.Add span.spanSlot, spanPowWs.Cells(spanPowWsRow, 5)
+            Set Wire = wireDict(key)
+            Wire.midspans.Add span.spanSlot, spanPowWs.Cells(spanPowWsRow, 5)
             
-            span.wires.Add wire
-            span.utilWires.Add wire
+            span.wires.Add Wire
+            span.utilWires.Add Wire
         Next spanPowWsRow
         
         For Each key In wireDict
-            Set wire = wireDict(key)
+            Set Wire = wireDict(key)
         
-            pole.wires.Add wire
-            pole.utilWires.Add wire
+            pole.wires.Add Wire
+            pole.utilWires.Add Wire
             
-            If wire.componentType <> "PRI" Then pole.utilComponents.Add wire
+            If Wire.componentType <> "PRI" Then pole.utilComponents.Add Wire
         Next key
         
         'Anchor section
@@ -399,7 +399,7 @@ End Sub
 Public Sub fillImportDataFormat()
     Dim pole As pole
     Dim span As span
-    Dim wire As wire
+    Dim Wire As Wire
     Dim Anchor As Anchor
     Dim guy As guy
     Dim equipment As equipment
@@ -535,33 +535,33 @@ Public Sub fillImportDataFormat()
             
             spanRow = spanRow + 1
             Set primaryBundles = New Scripting.Dictionary
-            For Each wire In span.utilWires
+            For Each Wire In span.utilWires
                 spanPowWs.Cells(spanPowRow, 1).Value = pole.poleNumber
                 spanPowWs.Cells(spanPowRow, 2).Value = span.spanId
-                spanPowWs.Cells(spanPowRow, 3).Value = wire.size
-                spanPowWs.Cells(spanPowRow, 4).Value = wire.height
-                spanPowWs.Cells(spanPowRow, 5).Value = wire.midspans(span.spanSlot)
-                spanPowWs.Cells(spanPowRow, 6).Value = wire.componentType
-                spanPowWs.Cells(spanPowRow, 7).Value = wire.wepHeight
+                spanPowWs.Cells(spanPowRow, 3).Value = Wire.size
+                spanPowWs.Cells(spanPowRow, 4).Value = Wire.height
+                spanPowWs.Cells(spanPowRow, 5).Value = Wire.midspans(span.spanSlot)
+                spanPowWs.Cells(spanPowRow, 6).Value = Wire.componentType
+                spanPowWs.Cells(spanPowRow, 7).Value = Wire.wepHeight
                 
                 spanPowRow = spanPowRow + 1
-            Next wire
+            Next Wire
             
-            For Each wire In span.commWires
+            For Each Wire In span.commWires
                 spanComWs.Cells(spanComRow, 1).Value = pole.poleNumber
                 spanComWs.Cells(spanComRow, 2).Value = span.spanId
-                spanComWs.Cells(spanComRow, 3).Value = wire.size
-                spanComWs.Cells(spanComRow, 4).Value = wire.owner
-                spanComWs.Cells(spanComRow, 5).Value = wire.height
-                spanComWs.Cells(spanComRow, 6).Value = wire.midspans(span.spanSlot)
-                spanComWs.Cells(spanComRow, 7).Value = wire.componentType
-                spanComWs.Cells(spanComRow, 8).Value = wire.modification
-                spanComWs.Cells(spanComRow, 9).Value = wire.diameter
-                spanComWs.Cells(spanComRow, 10).Value = wire.tensions(span.spanSlot)
-                spanComWs.Cells(spanComRow, 11).Value = wire.mrMoves(span.spanSlot)
+                spanComWs.Cells(spanComRow, 3).Value = Wire.size
+                spanComWs.Cells(spanComRow, 4).Value = Wire.owner
+                spanComWs.Cells(spanComRow, 5).Value = Wire.height
+                spanComWs.Cells(spanComRow, 6).Value = Wire.midspans(span.spanSlot)
+                spanComWs.Cells(spanComRow, 7).Value = Wire.componentType
+                spanComWs.Cells(spanComRow, 8).Value = Wire.modification
+                spanComWs.Cells(spanComRow, 9).Value = Wire.diameter
+                spanComWs.Cells(spanComRow, 10).Value = Wire.tensions(span.spanSlot)
+                spanComWs.Cells(spanComRow, 11).Value = Wire.mrMoves(span.spanSlot)
                 
                 spanComRow = spanComRow + 1
-            Next wire
+            Next Wire
 
         Next span
         
