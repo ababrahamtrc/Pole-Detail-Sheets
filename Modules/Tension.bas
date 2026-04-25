@@ -7,5 +7,4 @@ Public Sub getTension()
     
     Call TensionCalculator_Form.Initialize
     TensionCalculator_Form.Show vbModeless
-    
 End Sub
