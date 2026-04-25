@@ -13,9 +13,10 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Dim pds As Worksheet
 Dim pole As pole
-Dim crewNotes As String, installNotes As String, removeNotes As String, replaceNotes As String, transferNotes, notes As String
+Dim CrewNotes As String, installNotes As String, removeNotes As String, replaceNotes As String, transferNotes, notes As String
 Dim ohsCount As Integer, dg11KCount As Integer, dg20KCount As Integer, spg11KCount As Integer, spg20KCount As Integer, replace11kCount As Integer, replace20kCount As Integer
 Dim priBool As Boolean, neutBool As Boolean, secBool As Boolean, owBool As Boolean, riserBool As Boolean
 Dim fuRP1 As Boolean, fuRP2 As Boolean, fuRP3 As Boolean, fuIN1 As Boolean, fuIN2 As Boolean, fuIN3 As Boolean, fuRM1 As Boolean, fuRM2 As Boolean, fuRM3 As Boolean
@@ -279,11 +280,11 @@ Private Sub BAFIG_Click()
 End Sub
 
 Private Sub BSL_Click()
-    BSLRFW.Visible = BSL.Value
+    BSLRFW.visible = BSL.Value
     RPBSL.Value = BSL.Value
-    RPBSLRFW.Visible = RPP.Value And BSL.Value
-    SLRFWL.Visible = RPP.Value And BSL.Value
-    RFWL2.Visible = BSL.Value
+    RPBSLRFW.visible = RPP.Value And BSL.Value
+    SLRFWL.visible = RPP.Value And BSL.Value
+    RFWL2.visible = BSL.Value
 End Sub
 
 Private Sub BSLRFW_Change()
@@ -304,7 +305,7 @@ Private Sub MHT1_Change()
 End Sub
 
 Private Sub MH1_Click()
-    MHC1.Visible = MH1.Value
+    MHC1.visible = MH1.Value
     If MHT1.Value = "RP" Then
         If mhRP1 <> MH1.Value Then mhRP1 = MH1.Value
     ElseIf MHT1.Value = "IN" Then
@@ -338,7 +339,7 @@ Private Sub MHT2_Change()
 End Sub
 
 Private Sub MH2_Click()
-    MHC2.Visible = MH2.Value
+    MHC2.visible = MH2.Value
     If MHT2.Value = "RP" Then
         If mhRP2 <> MH2.Value Then mhRP2 = MH2.Value
     ElseIf MHT2.Value = "IN" Then
@@ -372,7 +373,7 @@ Private Sub FUT1_Change()
 End Sub
 
 Private Sub FU1_Click()
-    FUC1.Visible = FU1.Value
+    FUC1.visible = FU1.Value
     If FUT1.Value = "RP" Then
         If fuRP1 <> FU1.Value Then fuRP1 = FU1.Value
     ElseIf FUT1.Value = "IN" Then
@@ -406,7 +407,7 @@ Private Sub FUT2_Change()
 End Sub
 
 Private Sub FU2_Click()
-    FUC2.Visible = FU2.Value
+    FUC2.visible = FU2.Value
     If FUT2.Value = "RP" Then
         If fuRP2 <> FU2.Value Then fuRP2 = FU2.Value
     ElseIf FUT2.Value = "IN" Then
@@ -440,7 +441,7 @@ Private Sub FUT3_Change()
 End Sub
 
 Private Sub FU3_Click()
-    FUC3.Visible = FU3.Value
+    FUC3.visible = FU3.Value
     If FUT3.Value = "RP" Then
         If fuRP3 <> FU3.Value Then fuRP3 = FU3.Value
     ElseIf FUT3.Value = "IN" Then
@@ -630,42 +631,42 @@ End Sub
 Private Sub IAC_Change()
     For i = 1 To 3
         If CInt(IAC.Value) >= i Then
-            Me.Controls("IA" & i & "1").Visible = True
-            Me.Controls("IA" & i & "2").Visible = True
-            Me.Controls("IA" & i & "3").Visible = True
-            Me.Controls("IA" & i & "4").Visible = True
-            Me.Controls("IA" & i & "5").Visible = True
-            Me.Controls("IGRFW" & i).Visible = True
-            Me.Controls("IGFIG" & i).Visible = True
-            IL1.Visible = True
-            IL2.Visible = True
-            IL3.Visible = True
-            IL4.Visible = True
+            Me.Controls("IA" & i & "1").visible = True
+            Me.Controls("IA" & i & "2").visible = True
+            Me.Controls("IA" & i & "3").visible = True
+            Me.Controls("IA" & i & "4").visible = True
+            Me.Controls("IA" & i & "5").visible = True
+            Me.Controls("IGRFW" & i).visible = True
+            Me.Controls("IGFIG" & i).visible = True
+            IL1.visible = True
+            IL2.visible = True
+            IL3.visible = True
+            IL4.visible = True
         Else
-            Me.Controls("IA" & i & "1").Visible = False
-            Me.Controls("IA" & i & "2").Visible = False
-            Me.Controls("IA" & i & "3").Visible = False
-            Me.Controls("IA" & i & "4").Visible = False
-            Me.Controls("IA" & i & "5").Visible = False
-            Me.Controls("IGRFW" & i).Visible = False
-            Me.Controls("IGFIG" & i).Visible = False
+            Me.Controls("IA" & i & "1").visible = False
+            Me.Controls("IA" & i & "2").visible = False
+            Me.Controls("IA" & i & "3").visible = False
+            Me.Controls("IA" & i & "4").visible = False
+            Me.Controls("IA" & i & "5").visible = False
+            Me.Controls("IGRFW" & i).visible = False
+            Me.Controls("IGFIG" & i).visible = False
             If i = 1 Then
-                IL1.Visible = False
-                IL2.Visible = False
-                IL3.Visible = False
-                IL4.Visible = False
+                IL1.visible = False
+                IL2.visible = False
+                IL3.visible = False
+                IL4.visible = False
             End If
         End If
     Next i
 End Sub
 
 Private Sub OWSPAN1_Change()
-    OWSIZE1.Visible = OWSPAN1.Value <> ""
-    OWNEWSIZE1.Visible = OWSPAN1.Value <> ""
-    OWLENGTH1.Visible = OWSPAN1.Value <> ""
-    OW1L2.Visible = OWSPAN1.Value <> ""
-    OW1L3.Visible = OWSPAN1.Value <> ""
-    OW1L4.Visible = OWSPAN1.Value <> ""
+    OWSIZE1.visible = OWSPAN1.Value <> ""
+    OWNEWSIZE1.visible = OWSPAN1.Value <> ""
+    OWLENGTH1.visible = OWSPAN1.Value <> ""
+    OW1L2.visible = OWSPAN1.Value <> ""
+    OW1L3.visible = OWSPAN1.Value <> ""
+    OW1L4.visible = OWSPAN1.Value <> ""
     If OWSPAN1.Value <> "" Then
         OWSIZE1.Value = getOpenWireSizeFromSpan(OWSPAN1.Value)
         Set cell = pds.UsedRange.find(what:=OWSPAN1.Value, LookIn:=xlValues, lookat:=xlWhole, MatchCase:=True)
@@ -676,12 +677,12 @@ Private Sub OWSPAN1_Change()
 End Sub
 
 Private Sub OWSPAN2_Change()
-    OWSIZE2.Visible = OWSPAN2.Value <> ""
-    OWNEWSIZE2.Visible = OWSPAN2.Value <> ""
-    OWLENGTH2.Visible = OWSPAN2.Value <> ""
-    OW2L2.Visible = OWSPAN2.Value <> ""
-    OW2L3.Visible = OWSPAN2.Value <> ""
-    OW2L4.Visible = OWSPAN2.Value <> ""
+    OWSIZE2.visible = OWSPAN2.Value <> ""
+    OWNEWSIZE2.visible = OWSPAN2.Value <> ""
+    OWLENGTH2.visible = OWSPAN2.Value <> ""
+    OW2L2.visible = OWSPAN2.Value <> ""
+    OW2L3.visible = OWSPAN2.Value <> ""
+    OW2L4.visible = OWSPAN2.Value <> ""
     If OWSPAN2.Value <> "" Then
         OWSIZE2.Value = getOpenWireSizeFromSpan(OWSPAN2.Value)
         Set cell = pds.UsedRange.find(what:=OWSPAN2.Value, LookIn:=xlValues, lookat:=xlWhole, MatchCase:=True)
@@ -692,12 +693,12 @@ Private Sub OWSPAN2_Change()
 End Sub
 
 Private Sub OWSPAN3_Change()
-    OWSIZE3.Visible = OWSPAN3.Value <> ""
-    OWNEWSIZE3.Visible = OWSPAN3.Value <> ""
-    OWLENGTH3.Visible = OWSPAN3.Value <> ""
-    OW3L2.Visible = OWSPAN3.Value <> ""
-    OW3L3.Visible = OWSPAN3.Value <> ""
-    OW3L4.Visible = OWSPAN3.Value <> ""
+    OWSIZE3.visible = OWSPAN3.Value <> ""
+    OWNEWSIZE3.visible = OWSPAN3.Value <> ""
+    OWLENGTH3.visible = OWSPAN3.Value <> ""
+    OW3L2.visible = OWSPAN3.Value <> ""
+    OW3L3.visible = OWSPAN3.Value <> ""
+    OW3L4.visible = OWSPAN3.Value <> ""
     If OWSPAN3.Value <> "" Then
         OWSIZE3.Value = getOpenWireSizeFromSpan(OWSPAN3.Value)
         Set cell = pds.UsedRange.find(what:=OWSPAN3.Value, LookIn:=xlValues, lookat:=xlWhole, MatchCase:=True)
@@ -708,12 +709,12 @@ Private Sub OWSPAN3_Change()
 End Sub
 
 Private Sub OWSPAN4_Change()
-    OWSIZE4.Visible = OWSPAN4.Value <> ""
-    OWNEWSIZE4.Visible = OWSPAN4.Value <> ""
-    OWLENGTH4.Visible = OWSPAN4.Value <> ""
-    OW4L2.Visible = OWSPAN4.Value <> ""
-    OW4L3.Visible = OWSPAN4.Value <> ""
-    OW4L4.Visible = OWSPAN4.Value <> ""
+    OWSIZE4.visible = OWSPAN4.Value <> ""
+    OWNEWSIZE4.visible = OWSPAN4.Value <> ""
+    OWLENGTH4.visible = OWSPAN4.Value <> ""
+    OW4L2.visible = OWSPAN4.Value <> ""
+    OW4L3.visible = OWSPAN4.Value <> ""
+    OW4L4.visible = OWSPAN4.Value <> ""
     If OWSPAN4.Value <> "" Then
         OWSIZE4.Value = getOpenWireSizeFromSpan(OWSPAN4.Value)
         Set cell = pds.UsedRange.find(what:=OWSPAN4.Value, LookIn:=xlValues, lookat:=xlWhole, MatchCase:=True)
@@ -724,12 +725,12 @@ Private Sub OWSPAN4_Change()
 End Sub
 
 Private Sub OWSPAN5_Change()
-    OWSIZE5.Visible = OWSPAN5.Value <> ""
-    OWNEWSIZE5.Visible = OWSPAN5.Value <> ""
-    OWLENGTH5.Visible = OWSPAN5.Value <> ""
-    OW5L2.Visible = OWSPAN5.Value <> ""
-    OW5L3.Visible = OWSPAN5.Value <> ""
-    OW5L4.Visible = OWSPAN5.Value <> ""
+    OWSIZE5.visible = OWSPAN5.Value <> ""
+    OWNEWSIZE5.visible = OWSPAN5.Value <> ""
+    OWLENGTH5.visible = OWSPAN5.Value <> ""
+    OW5L2.visible = OWSPAN5.Value <> ""
+    OW5L3.visible = OWSPAN5.Value <> ""
+    OW5L4.visible = OWSPAN5.Value <> ""
     If OWSPAN5.Value <> "" Then
         OWSIZE5.Value = getOpenWireSizeFromSpan(OWSPAN5.Value)
         Set cell = pds.UsedRange.find(what:=OWSPAN5.Value, LookIn:=xlValues, lookat:=xlWhole, MatchCase:=True)
@@ -797,7 +798,7 @@ Private Sub PRIT1_Change()
 End Sub
 
 Private Sub PRI1_Click()
-    PRIC1.Visible = PRI1.Value
+    PRIC1.visible = PRI1.Value
     
     If PRIT1.Value = "RP" Then
         If priRP1 <> PRI1.Value Then
@@ -862,7 +863,7 @@ Private Sub PRIT2_Change()
 End Sub
 
 Private Sub PRI2_Click()
-    PRIC2.Visible = PRI2.Value
+    PRIC2.visible = PRI2.Value
     
     If PRIT2.Value = "RP" Then
         If priRP2 <> PRI2.Value Then
@@ -927,7 +928,7 @@ Private Sub PRIT3_Change()
 End Sub
 
 Private Sub PRI3_Click()
-    PRIC3.Visible = PRI3.Value
+    PRIC3.visible = PRI3.Value
     
     If PRIT3.Value = "RP" Then
         If priRP3 <> PRI3.Value Then
@@ -992,7 +993,7 @@ Private Sub PRIT4_Change()
 End Sub
 
 Private Sub PRI4_Click()
-    PRIC4.Visible = PRI4.Value
+    PRIC4.visible = PRI4.Value
     
     If PRIT4.Value = "RP" Then
         If priRP4 <> PRI4.Value Then
@@ -1057,7 +1058,7 @@ Private Sub PRIT5_Change()
 End Sub
 
 Private Sub PRI5_Click()
-    PRIC5.Visible = PRI5.Value
+    PRIC5.visible = PRI5.Value
     
     If PRIT5.Value = "RP" Then
         If priRP5 <> PRI5.Value Then
@@ -1122,7 +1123,7 @@ Private Sub PRIT6_Change()
 End Sub
 
 Private Sub PRI6_Click()
-    PRIC6.Visible = PRI6.Value
+    PRIC6.visible = PRI6.Value
     
     If PRIT6.Value = "RP" Then
         If priRP6 <> PRI6.Value Then
@@ -1187,7 +1188,7 @@ Private Sub PRIT7_Change()
 End Sub
 
 Private Sub PRI7_Click()
-    PRIC7.Visible = PRI7.Value
+    PRIC7.visible = PRI7.Value
     
     If PRIT7.Value = "RP" Then
         If priRP7 <> PRI7.Value Then
@@ -1239,8 +1240,8 @@ Private Sub PRIC7_Change()
 End Sub
 
 Private Sub REC1_Click()
-    RECA1.Visible = REC1.Value
-    RECO1.Visible = REC1.Value
+    RECA1.visible = REC1.Value
+    RECO1.visible = REC1.Value
     
     If REC1.Value Then
         UASN.Value = CInt(UASN.Value) - (CInt(RECA1.Value) * 6)
@@ -1250,8 +1251,8 @@ Private Sub REC1_Click()
 End Sub
 
 Private Sub REC2_Click()
-    RECA2.Visible = REC2.Value
-    RECO2.Visible = REC2.Value
+    RECA2.visible = REC2.Value
+    RECO2.visible = REC2.Value
     
     If REC2.Value Then
         UASN.Value = CInt(UASN.Value) - (CInt(RECA2.Value) * 3)
@@ -1261,8 +1262,8 @@ Private Sub REC2_Click()
 End Sub
 
 Private Sub REC3_Click()
-    RECA3.Visible = REC3.Value
-    RECO3.Visible = REC3.Value
+    RECA3.visible = REC3.Value
+    RECO3.visible = REC3.Value
     
     If REC3.Value Then
         UASN.Value = CInt(UASN.Value) - (CInt(RECA3.Value) * 6)
@@ -1272,8 +1273,8 @@ Private Sub REC3_Click()
 End Sub
 
 Private Sub REC4_Click()
-    RECA4.Visible = REC4.Value
-    RECO4.Visible = REC4.Value
+    RECA4.visible = REC4.Value
+    RECO4.visible = REC4.Value
     
     If REC4.Value Then
         UASN.Value = CInt(UASN.Value) - (CInt(RECA4.Value) * 6)
@@ -1284,9 +1285,9 @@ End Sub
 
 Private Sub RPBSL_Click()
     BSL.Value = RPBSL.Value
-    RPBSLRFW.Visible = BSL.Value
-    BSLRFW.Visible = BSL.Value
-    SLRFWL.Visible = BSL.Value
+    RPBSLRFW.visible = BSL.Value
+    BSLRFW.visible = BSL.Value
+    SLRFWL.visible = BSL.Value
 End Sub
 
 Private Sub RPBSLRFW_Change()
@@ -1294,114 +1295,114 @@ Private Sub RPBSLRFW_Change()
 End Sub
 
 Private Sub RPP_Click()
-    MHL.Visible = RPP.Value
-    MH1.Visible = RPP.Value
-    MHC1.Visible = MH1.Value And RPP.Value
-    MHT1.Visible = RPP.Value
-    MH2.Visible = RPP.Value
-    MHC2.Visible = MH2.Value And RPP.Value
-    MHT2.Visible = RPP.Value
-    RPPSIZE.Visible = RPP.Value
-    RPPCLASS.Visible = RPP.Value
-    RPPRFW.Visible = RPP.Value
-    RDST.Visible = RPP.Value
-    RDSV.Visible = RPP.Value
-    DGFV.Visible = RPP.Value And RPDG.Value
-    DGFL.Visible = RPP.Value And RPDG.Value
-    RPSWB.Visible = RPP.Value And RPDG.Value
-    DSL.Visible = RPP.Value
-    DSV.Visible = RPP.Value
-    PSL.Visible = RPP.Value
-    PSV.Visible = RPP.Value
-    BAFIG.Visible = RPP.Value
-    FIGL.Visible = priBool And RPP.Value
-    FIG.Visible = priBool And RPP.Value
-    TRT.Visible = RPP.Value
-    RPT.Visible = RPP.Value
-    RPR.Visible = RPP.Value
-    TRSL.Visible = RPP.Value
-    SLM1.Visible = RPP.Value And TRSL
-    SLM2.Visible = RPP.Value And TRSL
+    MHL.visible = RPP.Value
+    MH1.visible = RPP.Value
+    MHC1.visible = MH1.Value And RPP.Value
+    MHT1.visible = RPP.Value
+    MH2.visible = RPP.Value
+    MHC2.visible = MH2.Value And RPP.Value
+    MHT2.visible = RPP.Value
+    RPPSIZE.visible = RPP.Value
+    RPPCLASS.visible = RPP.Value
+    RPPRFW.visible = RPP.Value
+    RDST.visible = RPP.Value
+    RDSV.visible = RPP.Value
+    DGFV.visible = RPP.Value And RPDG.Value
+    DGFL.visible = RPP.Value And RPDG.Value
+    RPSWB.visible = RPP.Value And RPDG.Value
+    DSL.visible = RPP.Value
+    DSV.visible = RPP.Value
+    PSL.visible = RPP.Value
+    PSV.visible = RPP.Value
+    BAFIG.visible = RPP.Value
+    FIGL.visible = priBool And RPP.Value
+    FIG.visible = priBool And RPP.Value
+    TRT.visible = RPP.Value
+    RPT.visible = RPP.Value
+    RPR.visible = RPP.Value
+    TRSL.visible = RPP.Value
+    SLM1.visible = RPP.Value And TRSL
+    SLM2.visible = RPP.Value And TRSL
     SLM3.Value = SLM1.Value And RPP.Value
     SLM4.Value = SLM2.Value And RPP.Value
-    TRSPG.Visible = RPP.Value
-    RPR.Visible = RPP.Value
-    RPDG.Visible = RPP.Value
-    TRSIZE.Visible = RPP.Value And (TRT.Value Or RPT.Value)
-    TRRPSIZE.Visible = RPP.Value And RPT.Value
-    STLTBTMBRKT.Visible = RPP.Value And TRSL.Value
-    COLA.Visible = RPP.Value And (TRT.Value Or RPT.Value)
-    TRLETTER.Visible = RPP.Value And (TRT.Value Or RPT.Value)
-    RPBSL.Visible = RPP.Value
-    RPBSLRFW.Visible = RPP.Value And RPBSL.Value
-    CETL.Visible = RPP.Value
-    CETV.Visible = RPP.Value
-    UAPL.Visible = RPP.Value
-    UAP.Visible = RPP.Value
-    FUT1.Visible = RPP.Value
-    FUT2.Visible = RPP.Value
-    FUT3.Visible = RPP.Value
-    PRIT1.Visible = RPP.Value
-    PRIT2.Visible = RPP.Value
-    PRIT3.Visible = RPP.Value
-    PRIT4.Visible = RPP.Value
-    PRIT5.Visible = RPP.Value
-    PRIT6.Visible = RPP.Value
-    PRIT7.Visible = RPP.Value
-    PRI1.Visible = RPP.Value
-    PRI2.Visible = RPP.Value
-    PRI3.Visible = RPP.Value
-    PRI4.Visible = RPP.Value
-    PRI5.Visible = RPP.Value
-    PRI6.Visible = RPP.Value
-    PRI7.Visible = RPP.Value
-    PRIC1.Visible = PRI1.Value And RPP.Value
-    PRIC2.Visible = PRI2.Value And RPP.Value
-    PRIC3.Visible = PRI3.Value And RPP.Value
-    PRIC4.Visible = PRI4.Value And RPP.Value
-    PRIC5.Visible = PRI5.Value And RPP.Value
-    PRIC6.Visible = PRI6.Value And RPP.Value
-    PRIC7.Visible = PRI7.Value And RPP.Value
-    USNL.Visible = RPP.Value
-    UASN.Visible = RPP.Value
-    USNL2.Visible = RPP.Value
-    UASN2.Visible = RPP.Value
-    SNT1.Visible = RPP.Value
-    SNT2.Visible = RPP.Value
-    SNT3.Visible = RPP.Value
-    SNT4.Visible = RPP.Value
-    SNT5.Visible = RPP.Value
-    SNT6.Visible = RPP.Value
-    SNT7.Visible = RPP.Value
-    SN1.Visible = RPP.Value
-    SN2.Visible = RPP.Value
-    SN3.Visible = RPP.Value
-    SN4.Visible = RPP.Value
-    SN5.Visible = RPP.Value
-    SN6.Visible = RPP.Value
-    SN7.Visible = RPP.Value
-    SNC1.Visible = SN1.Value And RPP.Value
-    SNC2.Visible = SN2.Value And RPP.Value
-    SNC3.Visible = SN3.Value And RPP.Value
-    SNC4.Visible = SN4.Value And RPP.Value
-    SNC5.Visible = SN5.Value And RPP.Value
-    SNC6.Visible = SN6.Value And RPP.Value
-    SNC7.Visible = SN7.Value And RPP.Value
-    FUL.Visible = RPP.Value
-    FU1.Visible = RPP.Value
-    FU2.Visible = RPP.Value
-    FU3.Visible = RPP.Value
-    FUC1.Visible = FU1.Value And RPP.Value
-    FUC2.Visible = FU2.Value And RPP.Value
-    FUC3.Visible = FU3.Value And RPP.Value
-    NPL.Visible = RPP.Value
-    RFWL.Visible = RPP.Value
-    XRL.Visible = RPP.Value And RPT.Value
-    XSL.Visible = RPP.Value And (TRT.Value Or RPT.Value)
-    CLL.Visible = RPP.Value And (TRT.Value Or RPT.Value)
-    XDL.Visible = RPP.Value And (TRT.Value Or RPT.Value)
-    SLL.Visible = RPP.Value And TRSL.Value
-    SLRFWL.Visible = RPP.Value And RPBSL.Value
+    TRSPG.visible = RPP.Value
+    RPR.visible = RPP.Value
+    RPDG.visible = RPP.Value
+    TRSIZE.visible = RPP.Value And (TRT.Value Or RPT.Value)
+    TRRPSIZE.visible = RPP.Value And RPT.Value
+    STLTBTMBRKT.visible = RPP.Value And TRSL.Value
+    COLA.visible = RPP.Value And (TRT.Value Or RPT.Value)
+    TRLETTER.visible = RPP.Value And (TRT.Value Or RPT.Value)
+    RPBSL.visible = RPP.Value
+    RPBSLRFW.visible = RPP.Value And RPBSL.Value
+    CETL.visible = RPP.Value
+    CETV.visible = RPP.Value
+    UAPL.visible = RPP.Value
+    UAP.visible = RPP.Value
+    FUT1.visible = RPP.Value
+    FUT2.visible = RPP.Value
+    FUT3.visible = RPP.Value
+    PRIT1.visible = RPP.Value
+    PRIT2.visible = RPP.Value
+    PRIT3.visible = RPP.Value
+    PRIT4.visible = RPP.Value
+    PRIT5.visible = RPP.Value
+    PRIT6.visible = RPP.Value
+    PRIT7.visible = RPP.Value
+    PRI1.visible = RPP.Value
+    PRI2.visible = RPP.Value
+    PRI3.visible = RPP.Value
+    PRI4.visible = RPP.Value
+    PRI5.visible = RPP.Value
+    PRI6.visible = RPP.Value
+    PRI7.visible = RPP.Value
+    PRIC1.visible = PRI1.Value And RPP.Value
+    PRIC2.visible = PRI2.Value And RPP.Value
+    PRIC3.visible = PRI3.Value And RPP.Value
+    PRIC4.visible = PRI4.Value And RPP.Value
+    PRIC5.visible = PRI5.Value And RPP.Value
+    PRIC6.visible = PRI6.Value And RPP.Value
+    PRIC7.visible = PRI7.Value And RPP.Value
+    USNL.visible = RPP.Value
+    UASN.visible = RPP.Value
+    USNL2.visible = RPP.Value
+    UASN2.visible = RPP.Value
+    SNT1.visible = RPP.Value
+    SNT2.visible = RPP.Value
+    SNT3.visible = RPP.Value
+    SNT4.visible = RPP.Value
+    SNT5.visible = RPP.Value
+    SNT6.visible = RPP.Value
+    SNT7.visible = RPP.Value
+    SN1.visible = RPP.Value
+    SN2.visible = RPP.Value
+    SN3.visible = RPP.Value
+    SN4.visible = RPP.Value
+    SN5.visible = RPP.Value
+    SN6.visible = RPP.Value
+    SN7.visible = RPP.Value
+    SNC1.visible = SN1.Value And RPP.Value
+    SNC2.visible = SN2.Value And RPP.Value
+    SNC3.visible = SN3.Value And RPP.Value
+    SNC4.visible = SN4.Value And RPP.Value
+    SNC5.visible = SN5.Value And RPP.Value
+    SNC6.visible = SN6.Value And RPP.Value
+    SNC7.visible = SN7.Value And RPP.Value
+    FUL.visible = RPP.Value
+    FU1.visible = RPP.Value
+    FU2.visible = RPP.Value
+    FU3.visible = RPP.Value
+    FUC1.visible = FU1.Value And RPP.Value
+    FUC2.visible = FU2.Value And RPP.Value
+    FUC3.visible = FU3.Value And RPP.Value
+    NPL.visible = RPP.Value
+    RFWL.visible = RPP.Value
+    XRL.visible = RPP.Value And RPT.Value
+    XSL.visible = RPP.Value And (TRT.Value Or RPT.Value)
+    CLL.visible = RPP.Value And (TRT.Value Or RPT.Value)
+    XDL.visible = RPP.Value And (TRT.Value Or RPT.Value)
+    SLL.visible = RPP.Value And TRSL.Value
+    SLRFWL.visible = RPP.Value And RPBSL.Value
 End Sub
 
 Private Sub RPPSIZE_Change()
@@ -1433,93 +1434,93 @@ Private Sub determineRecDSpace()
 End Sub
 
 Private Sub RSL_Click()
-    RSLD.Visible = RSL.Value
-    RSLRFW.Visible = RSL.Value
-    RFWL4.Visible = RSL.Value
+    RSLD.visible = RSL.Value
+    RSLRFW.visible = RSL.Value
+    RFWL4.visible = RSL.Value
 End Sub
 
 Private Sub RSPANS_Change()
     
     If RSPANS.Value >= 1 Then
-        OWSPAN1.Visible = True
-        OW1L1.Visible = True
+        OWSPAN1.visible = True
+        OW1L1.visible = True
     Else
-        OWSPAN1.Visible = False
-        OW1L1.Visible = False
+        OWSPAN1.visible = False
+        OW1L1.visible = False
     End If
     
     If RSPANS.Value >= 2 Then
-        OWSPAN2.Visible = True
-        OW2L1.Visible = True
+        OWSPAN2.visible = True
+        OW2L1.visible = True
     Else
-        OWSPAN2.Visible = False
-        OW2L1.Visible = False
+        OWSPAN2.visible = False
+        OW2L1.visible = False
     End If
     
     If RSPANS.Value >= 3 Then
-        OWSPAN3.Visible = True
-        OW3L1.Visible = True
+        OWSPAN3.visible = True
+        OW3L1.visible = True
     Else
-        OWSPAN3.Visible = False
-        OW3L1.Visible = False
+        OWSPAN3.visible = False
+        OW3L1.visible = False
     End If
     
     If RSPANS.Value >= 4 Then
-        OWSPAN4.Visible = True
-        OW4L1.Visible = True
+        OWSPAN4.visible = True
+        OW4L1.visible = True
     Else
-        OWSPAN4.Visible = False
-        OW4L1.Visible = False
+        OWSPAN4.visible = False
+        OW4L1.visible = False
     End If
     
     If RSPANS.Value >= 5 Then
-        OWSPAN5.Visible = True
-        OW5L1.Visible = True
+        OWSPAN5.visible = True
+        OW5L1.visible = True
     Else
-        OWSPAN5.Visible = False
-        OW5L1.Visible = False
+        OWSPAN5.visible = False
+        OW5L1.visible = False
     End If
     
-    OWSIZE1.Visible = OWSPAN1.Value <> "" And OWSPAN1.Visible
-    OWNEWSIZE1.Visible = OWSPAN1.Value <> "" And OWSPAN1.Visible
-    OWLENGTH1.Visible = OWSPAN1.Value <> "" And OWSPAN1.Visible
-    OW1L2.Visible = OWSPAN1.Value <> "" And OWSPAN1.Visible
-    OW1L3.Visible = OWSPAN1.Value <> "" And OWSPAN1.Visible
-    OW1L4.Visible = OWSPAN1.Value <> "" And OWSPAN1.Visible
+    OWSIZE1.visible = OWSPAN1.Value <> "" And OWSPAN1.visible
+    OWNEWSIZE1.visible = OWSPAN1.Value <> "" And OWSPAN1.visible
+    OWLENGTH1.visible = OWSPAN1.Value <> "" And OWSPAN1.visible
+    OW1L2.visible = OWSPAN1.Value <> "" And OWSPAN1.visible
+    OW1L3.visible = OWSPAN1.Value <> "" And OWSPAN1.visible
+    OW1L4.visible = OWSPAN1.Value <> "" And OWSPAN1.visible
     
-    OWSIZE2.Visible = OWSPAN2.Value <> "" And OWSPAN2.Visible
-    OWNEWSIZE2.Visible = OWSPAN2.Value <> "" And OWSPAN2.Visible
-    OWLENGTH2.Visible = OWSPAN2.Value <> "" And OWSPAN2.Visible
-    OW2L2.Visible = OWSPAN2.Value <> "" And OWSPAN2.Visible
-    OW2L3.Visible = OWSPAN2.Value <> "" And OWSPAN2.Visible
-    OW2L4.Visible = OWSPAN2.Value <> "" And OWSPAN2.Visible
+    OWSIZE2.visible = OWSPAN2.Value <> "" And OWSPAN2.visible
+    OWNEWSIZE2.visible = OWSPAN2.Value <> "" And OWSPAN2.visible
+    OWLENGTH2.visible = OWSPAN2.Value <> "" And OWSPAN2.visible
+    OW2L2.visible = OWSPAN2.Value <> "" And OWSPAN2.visible
+    OW2L3.visible = OWSPAN2.Value <> "" And OWSPAN2.visible
+    OW2L4.visible = OWSPAN2.Value <> "" And OWSPAN2.visible
     
-    OWSIZE3.Visible = OWSPAN3.Value <> "" And OWSPAN3.Visible
-    OWNEWSIZE3.Visible = OWSPAN3.Value <> "" And OWSPAN3.Visible
-    OWLENGTH3.Visible = OWSPAN3.Value <> "" And OWSPAN3.Visible
-    OW3L2.Visible = OWSPAN3.Value <> "" And OWSPAN3.Visible
-    OW3L3.Visible = OWSPAN3.Value <> "" And OWSPAN3.Visible
-    OW3L4.Visible = OWSPAN3.Value <> "" And OWSPAN3.Visible
+    OWSIZE3.visible = OWSPAN3.Value <> "" And OWSPAN3.visible
+    OWNEWSIZE3.visible = OWSPAN3.Value <> "" And OWSPAN3.visible
+    OWLENGTH3.visible = OWSPAN3.Value <> "" And OWSPAN3.visible
+    OW3L2.visible = OWSPAN3.Value <> "" And OWSPAN3.visible
+    OW3L3.visible = OWSPAN3.Value <> "" And OWSPAN3.visible
+    OW3L4.visible = OWSPAN3.Value <> "" And OWSPAN3.visible
     
-    OWSIZE4.Visible = OWSPAN4.Value <> "" And OWSPAN4.Visible
-    OWNEWSIZE4.Visible = OWSPAN4.Value <> "" And OWSPAN4.Visible
-    OWLENGTH4.Visible = OWSPAN4.Value <> "" And OWSPAN4.Visible
-    OW4L2.Visible = OWSPAN4.Value <> "" And OWSPAN4.Visible
-    OW4L3.Visible = OWSPAN4.Value <> "" And OWSPAN4.Visible
-    OW4L4.Visible = OWSPAN4.Value <> "" And OWSPAN4.Visible
+    OWSIZE4.visible = OWSPAN4.Value <> "" And OWSPAN4.visible
+    OWNEWSIZE4.visible = OWSPAN4.Value <> "" And OWSPAN4.visible
+    OWLENGTH4.visible = OWSPAN4.Value <> "" And OWSPAN4.visible
+    OW4L2.visible = OWSPAN4.Value <> "" And OWSPAN4.visible
+    OW4L3.visible = OWSPAN4.Value <> "" And OWSPAN4.visible
+    OW4L4.visible = OWSPAN4.Value <> "" And OWSPAN4.visible
     
-    OWSIZE5.Visible = OWSPAN5.Value <> "" And OWSPAN5.Visible
-    OWNEWSIZE5.Visible = OWSPAN5.Value <> "" And OWSPAN5.Visible
-    OWLENGTH5.Visible = OWSPAN5.Value <> "" And OWSPAN5.Visible
-    OW5L2.Visible = OWSPAN5.Value <> "" And OWSPAN5.Visible
-    OW5L3.Visible = OWSPAN5.Value <> "" And OWSPAN5.Visible
-    OW5L4.Visible = OWSPAN5.Value <> "" And OWSPAN5.Visible
+    OWSIZE5.visible = OWSPAN5.Value <> "" And OWSPAN5.visible
+    OWNEWSIZE5.visible = OWSPAN5.Value <> "" And OWSPAN5.visible
+    OWLENGTH5.visible = OWSPAN5.Value <> "" And OWSPAN5.visible
+    OW5L2.visible = OWSPAN5.Value <> "" And OWSPAN5.visible
+    OW5L3.visible = OWSPAN5.Value <> "" And OWSPAN5.visible
+    OW5L4.visible = OWSPAN5.Value <> "" And OWSPAN5.visible
     
 End Sub
 
 Private Sub SLDL_Click()
-    SLDLRFW.Visible = SLDL.Value
-    RFWL3.Visible = SLDL.Value
+    SLDLRFW.visible = SLDL.Value
+    RFWL3.visible = SLDL.Value
 End Sub
 
 Private Sub SLM1_Click()
@@ -1539,20 +1540,20 @@ Private Sub SLM4_Click()
 End Sub
 
 Private Sub TRSL_Click()
-    SLL.Visible = RPP.Value And TRSL.Value
-    STLTBTMBRKT.Visible = RPP.Value And TRSL.Value
+    SLL.visible = RPP.Value And TRSL.Value
+    STLTBTMBRKT.visible = RPP.Value And TRSL.Value
 End Sub
 
 Private Sub TSDL_Click()
-    TSDLRFW.Visible = TSDL.Value
-    RFWL1.Visible = TSDL.Value
+    TSDLRFW.visible = TSDL.Value
+    RFWL1.visible = TSDL.Value
 End Sub
 
 Private Sub CommandButton1_Click()
 
     Set figuresUsed = New Scripting.Dictionary
 
-    crewNotes = ""
+    CrewNotes = ""
     installNotes = ""
     removeNotes = ""
     replaceNotes = ""
@@ -1585,19 +1586,19 @@ Private Sub CommandButton1_Click()
         If answer = vbNo Or answer = vbCancel Then Exit Sub
     End If
     
-    If crewNotes <> "" Then
-        crewNotes = Left(crewNotes, Len(crewNotes) - 1)
+    If CrewNotes <> "" Then
+        CrewNotes = Left(CrewNotes, Len(CrewNotes) - 1)
 
         Dim DataObj As DataObject: Set DataObj = New DataObject
-        DataObj.SetText crewNotes
+        DataObj.SetText CrewNotes
         DataObj.PutInClipboard
     
         If Trim(pds.Range("ALTONE")) = "" Then
-            pds.Range("ALTONE").Value = crewNotes
+            pds.Range("ALTONE").Value = CrewNotes
             Call Figures.getSheetFigures(pds)
         End If
     
-        MsgBox crewNotes
+        MsgBox CrewNotes
     Else
         MsgBox "No work selected"
     End If
@@ -1623,7 +1624,7 @@ Private Function findErrors() As String
         Errors = Errors & "Error: Outage note not selected, outage needs to be selected when replacing a pole with a transformer." & vbLf
     ElseIf RPP.Value And (ohsCount > 0) And Not RPPNOTE2.Value Then
         Errors = Errors & "Error: Outage note not selected, outage needs to be selected when replacing services." & vbLf
-    ElseIf Not RPPNOTE2.Value And (REC1.Value Or REC2.Value Or REC3.Value Or REC4.Value Or (OWSPAN1.Value <> "" And OWSPAN1.Visible) Or (OWSPAN2.Value <> "" And OWSPAN2.Visible) Or (OWSPAN3.Value <> "" And OWSPAN3.Visible) Or (OWSPAN4.Value <> "" And OWSPAN4.Visible) Or (OWSPAN5.Value <> "" And OWSPAN5.Visible)) Then
+    ElseIf Not RPPNOTE2.Value And (REC1.Value Or REC2.Value Or REC3.Value Or REC4.Value Or (OWSPAN1.Value <> "" And OWSPAN1.visible) Or (OWSPAN2.Value <> "" And OWSPAN2.visible) Or (OWSPAN3.Value <> "" And OWSPAN3.visible) Or (OWSPAN4.Value <> "" And OWSPAN4.visible) Or (OWSPAN5.Value <> "" And OWSPAN5.visible)) Then
         Errors = Errors & "Error: Outage note not selected, outage needs to be selected when reconductoring." & vbLf
     End If
     
@@ -2086,27 +2087,27 @@ Private Function secondaryFigures(hardware As Variant) As String
 End Function
 
 Private Sub generateReconductorSection()
-    If OWSPAN1.Value <> "" And OWSPAN1.Visible Then
+    If OWSPAN1.Value <> "" And OWSPAN1.visible Then
         direction = getDirection(OWSPAN1)
         replaceNotes = replaceNotes & OWLENGTH1.Value & " " & OWSIZE1.Value & " OPEN WIRE / " & OWNEWSIZE1.Value & " SECONDARY TO THE " & direction & vbLf
     End If
     
-    If OWSPAN2.Value <> "" And OWSPAN2.Visible Then
+    If OWSPAN2.Value <> "" And OWSPAN2.visible Then
         direction = getDirection(OWSPAN2)
         replaceNotes = replaceNotes & OWLENGTH2.Value & " " & OWSIZE2.Value & " OPEN WIRE / " & OWNEWSIZE2.Value & " SECONDARY TO THE " & direction & vbLf
     End If
     
-    If OWSPAN3.Value <> "" And OWSPAN3.Visible Then
+    If OWSPAN3.Value <> "" And OWSPAN3.visible Then
         direction = getDirection(OWSPAN3)
         replaceNotes = replaceNotes & OWLENGTH3.Value & " " & OWSIZE3.Value & " OPEN WIRE / " & OWNEWSIZE3.Value & " SECONDARY TO THE " & direction & vbLf
     End If
     
-    If OWSPAN4.Value <> "" And OWSPAN4.Visible Then
+    If OWSPAN4.Value <> "" And OWSPAN4.visible Then
         direction = getDirection(OWSPAN4)
         replaceNotes = replaceNotes & OWLENGTH4.Value & " " & OWSIZE4.Value & " OPEN WIRE / " & OWNEWSIZE4.Value & " SECONDARY TO THE " & direction & vbLf
     End If
     
-    If OWSPAN5.Value <> "" And OWSPAN5.Visible Then
+    If OWSPAN5.Value <> "" And OWSPAN5.visible Then
         direction = getDirection(OWSPAN5)
         replaceNotes = replaceNotes & OWLENGTH5.Value & " " & OWSIZE5.Value & " OPEN WIRE / " & OWNEWSIZE5.Value & " SECONDARY TO THE " & direction & vbLf
     End If
@@ -2155,7 +2156,7 @@ Private Sub generateReconductorSection()
         End If
     End If
     
-    If REC1.Value Or REC2.Value Or REC3.Value Or REC4.Value Or (OWSPAN1.Value <> "" And OWSPAN1.Visible) Or (OWSPAN2.Value <> "" And OWSPAN2.Visible) Or (OWSPAN3.Value <> "" And OWSPAN3.Visible) Or (OWSPAN4.Value <> "" And OWSPAN4.Visible) Or (OWSPAN5.Value <> "" And OWSPAN5.Visible) Then
+    If REC1.Value Or REC2.Value Or REC3.Value Or REC4.Value Or (OWSPAN1.Value <> "" And OWSPAN1.visible) Or (OWSPAN2.Value <> "" And OWSPAN2.visible) Or (OWSPAN3.Value <> "" And OWSPAN3.visible) Or (OWSPAN4.Value <> "" And OWSPAN4.visible) Or (OWSPAN5.Value <> "" And OWSPAN5.visible) Then
         replaceNotes = replaceNotes & "TO REPLACE OPEN WIRE" & vbLf
     End If
     
@@ -2269,7 +2270,7 @@ Private Sub generateDownguysSection()
     Dim insulators As String: insulators = "[XP-FG]"
     If pole.primaries.count = 0 Then insulators = "[XP]"
     For i = 1 To 3
-        If Me.Controls("IA" & i & "1").Value <> "" And Me.Controls("IA" & i & "1").Visible Then
+        If Me.Controls("IA" & i & "1").Value <> "" And Me.Controls("IA" & i & "1").visible Then
             If Me.Controls("IA" & i & "1").Value = "RS" Then
                 installNotes = installNotes & "11K-" & insulators & "-" & IIf(Me.Controls("IA" & i & "3").Value = "", [lead], Me.Controls("IA" & i & "3").Value) & "-RS " & IIf(Me.Controls("IA" & i & "4").Value = "", "[DIRECTION]", Me.Controls("IA" & i & "4").Value) & vbLf
             ElseIf Me.Controls("IA" & i & "1").Value = "RT" Then
@@ -2402,19 +2403,19 @@ End Sub
 
 Private Sub compileCrewNotes()
     If installNotes <> "" Then
-        crewNotes = crewNotes & "INSTALL" & vbLf & installNotes & vbLf
+        CrewNotes = CrewNotes & "INSTALL" & vbLf & installNotes & vbLf
     End If
     If removeNotes <> "" Then
-        crewNotes = crewNotes & "REMOVE" & vbLf & removeNotes & vbLf
+        CrewNotes = CrewNotes & "REMOVE" & vbLf & removeNotes & vbLf
     End If
     If replaceNotes <> "" Then
-        crewNotes = crewNotes & "REPLACE" & vbLf & replaceNotes & vbLf
+        CrewNotes = CrewNotes & "REPLACE" & vbLf & replaceNotes & vbLf
     End If
     If transferNotes <> "" Then
-        crewNotes = crewNotes & "TRANSFER" & vbLf & transferNotes & vbLf
+        CrewNotes = CrewNotes & "TRANSFER" & vbLf & transferNotes & vbLf
     End If
     If notes <> "" Then
-        crewNotes = crewNotes & notes
+        CrewNotes = CrewNotes & notes
     End If
 End Sub
 
@@ -2647,27 +2648,27 @@ Private Sub Initialize_Downguys()
             Me.Controls("RA" & anchorCount & 3).Value = pds.Range("ANCHOROWNER").offset(i, 0).offset(0, 1).Value
             Me.Controls("EA" & anchorCount & 4).Value = getDirection(pds.Range("ANCHOROWNER").offset(i, 0).offset(0, 1).offset(0, 1).Value)
             For j = 1 To 4
-                Me.Controls("DGFIG" & anchorCount).Visible = True
-                Me.Controls("DGRFW" & anchorCount).Visible = True
-                Me.Controls("EA" & anchorCount & j).Visible = True
-                If j <> 4 Then Me.Controls("RA" & anchorCount & j).Visible = True
+                Me.Controls("DGFIG" & anchorCount).visible = True
+                Me.Controls("DGRFW" & anchorCount).visible = True
+                Me.Controls("EA" & anchorCount & j).visible = True
+                If j <> 4 Then Me.Controls("RA" & anchorCount & j).visible = True
             Next j
         If anchorCount = 4 Then Exit For
         End If
     Next i
     
     If anchorCount > 0 Then
-        ANCHORL.Visible = True
-        ANCHORBAR.Visible = True
-        EL.Visible = True
-        RL.Visible = True
-        EL1.Visible = True
-        EL2.Visible = True
-        EL3.Visible = True
-        EL4.Visible = True
-        RL1.Visible = True
-        RL2.Visible = True
-        RL3.Visible = True
+        ANCHORL.visible = True
+        ANCHORBAR.visible = True
+        EL.visible = True
+        RL.visible = True
+        EL1.visible = True
+        EL2.visible = True
+        EL3.visible = True
+        EL4.visible = True
+        RL1.visible = True
+        RL2.visible = True
+        RL3.visible = True
     End If
     
     For i = 1 To 4
@@ -2750,7 +2751,7 @@ Private Sub SNT1_Change()
 End Sub
 
 Private Sub SN1_Click()
-    SNC1.Visible = SN1.Value
+    SNC1.visible = SN1.Value
     
     If SNT1.Value = "RP" Then
         If snRP1 <> SN1.Value Then
@@ -2815,7 +2816,7 @@ Private Sub SNT2_Change()
 End Sub
 
 Private Sub SN2_Click()
-    SNC2.Visible = SN2.Value
+    SNC2.visible = SN2.Value
     
     If SNT2.Value = "RP" Then
         If snRP2 <> SN2.Value Then
@@ -2880,7 +2881,7 @@ Private Sub SNT3_Change()
 End Sub
 
 Private Sub SN3_Click()
-    SNC3.Visible = SN3.Value
+    SNC3.visible = SN3.Value
     
     If SNT3.Value = "RP" Then
         If snRP3 <> SN3.Value Then
@@ -2945,7 +2946,7 @@ Private Sub SNT4_Change()
 End Sub
 
 Private Sub SN4_Click()
-    SNC4.Visible = SN4.Value
+    SNC4.visible = SN4.Value
     
     If SNT4.Value = "RP" Then
         If snRP4 <> SN4.Value Then
@@ -3010,7 +3011,7 @@ Private Sub SNT5_Change()
 End Sub
 
 Private Sub SN5_Click()
-    SNC5.Visible = SN5.Value
+    SNC5.visible = SN5.Value
     
     If SNT5.Value = "RP" Then
         If snRP5 <> SN5.Value Then
@@ -3075,7 +3076,7 @@ Private Sub SNT6_Change()
 End Sub
 
 Private Sub SN6_Click()
-    SNC6.Visible = SN6.Value
+    SNC6.visible = SN6.Value
     
     If SNT6.Value = "RP" Then
         If snRP6 <> SN6.Value Then
@@ -3140,7 +3141,7 @@ Private Sub SNT7_Change()
 End Sub
 
 Private Sub SN7_Click()
-    SNC7.Visible = SN7.Value
+    SNC7.visible = SN7.Value
     
     If SNT7.Value = "RP" Then
         If snRP7 <> SN7.Value Then
@@ -3197,25 +3198,25 @@ End Sub
 
 Private Sub TRT_Click()
     If TRT.Value And RPT.Value Then RPT.Value = False
-    XSL.Visible = RPP.Value And (TRT.Value Or RPT.Value)
-    TRSIZE.Visible = RPP.Value And (TRT.Value Or RPT.Value)
-    CLL.Visible = RPP.Value And (TRT.Value Or RPT.Value)
-    COLA.Visible = RPP.Value And (TRT.Value Or RPT.Value)
-    XDL.Visible = RPP.Value And (TRT.Value Or RPT.Value)
-    TRLETTER.Visible = RPP.Value And (TRT.Value Or RPT.Value)
+    XSL.visible = RPP.Value And (TRT.Value Or RPT.Value)
+    TRSIZE.visible = RPP.Value And (TRT.Value Or RPT.Value)
+    CLL.visible = RPP.Value And (TRT.Value Or RPT.Value)
+    COLA.visible = RPP.Value And (TRT.Value Or RPT.Value)
+    XDL.visible = RPP.Value And (TRT.Value Or RPT.Value)
+    TRLETTER.visible = RPP.Value And (TRT.Value Or RPT.Value)
     Call determineRecDSpace
 End Sub
 
 Private Sub RPT_Click()
     If RPT.Value And TRT.Value Then TRT.Value = False
-    XSL.Visible = RPP.Value And (TRT.Value Or RPT.Value)
-    TRSIZE.Visible = TRT.Value Or RPT.Value
-    XRL.Visible = RPP.Value And RPT.Value
-    TRRPSIZE.Visible = RPP.Value And RPT.Value
-    CLL.Visible = RPP.Value And (TRT.Value Or RPT.Value)
-    COLA.Visible = RPP.Value And (TRT.Value Or RPT.Value)
-    XDL.Visible = RPP.Value And (TRT.Value Or RPT.Value)
-    TRLETTER.Visible = RPP.Value And (TRT.Value Or RPT.Value)
+    XSL.visible = RPP.Value And (TRT.Value Or RPT.Value)
+    TRSIZE.visible = TRT.Value Or RPT.Value
+    XRL.visible = RPP.Value And RPT.Value
+    TRRPSIZE.visible = RPP.Value And RPT.Value
+    CLL.visible = RPP.Value And (TRT.Value Or RPT.Value)
+    COLA.visible = RPP.Value And (TRT.Value Or RPT.Value)
+    XDL.visible = RPP.Value And (TRT.Value Or RPT.Value)
+    TRLETTER.visible = RPP.Value And (TRT.Value Or RPT.Value)
     Call determineRecDSpace
 End Sub
 
