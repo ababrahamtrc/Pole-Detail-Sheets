@@ -18,15 +18,15 @@ Private Sub Class_Initialize()
     Set midspans = New Scripting.Dictionary
 End Sub
 
-Public Function getWire() As wire
-    Dim wire As wire: Set wire = New wire
-    Set wire.midspans = Me.midspans
-    wire.height = Me.height
-    wire.size = Me.size
-    wire.owner = Me.owner
-    wire.componentType = Me.componentType
+Public Function getWire() As Wire
+    Dim Wire As Wire: Set Wire = New Wire
+    Set Wire.midspans = Me.midspans
+    Wire.height = Me.height
+    Wire.size = Me.size
+    Wire.owner = Me.owner
+    Wire.componentType = Me.componentType
     
-    Set getWire = wire
+    Set getWire = Wire
 End Function
 
 Public Function getDownGuy() As guy
