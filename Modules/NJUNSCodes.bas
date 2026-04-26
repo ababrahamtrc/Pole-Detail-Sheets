@@ -42,8 +42,25 @@ End Sub
 
 Public Sub clearNJUNSCodes()
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
-    controlWs.Range("NJUNSCODES").EntireColumn.ClearContents
-    controlWs.Range("NJUNSCODES").offset(0, 1).EntireColumn.ClearContents
+    
+    controlWs.Unprotect
+    
+    Dim startCell As Range: Set startCell = controlWs.Range("NJUNSCODES")
+    
+    controlWs.Range(startCell, startCell.offset(26, 1)).ClearContents
+    
+    controlWs.Protect _
+        Password:="", _
+        DrawingObjects:=False, _
+        contents:=True, _
+        Scenarios:=False, _
+        AllowFormattingCells:=True, _
+        AllowFormattingColumns:=True, _
+        AllowFormattingRows:=True, _
+        AllowInsertingColumns:=False, _
+        AllowInsertingRows:=False, _
+        AllowDeletingColumns:=False, _
+        AllowDeletingRows:=False
 End Sub
 
 Private Function getNJUNSNameMapping(Project, ByVal key As String) As String
