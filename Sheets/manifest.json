@@ -14,10 +14,10 @@
   "CUSortOrder": {
     "visible": false
   },
-  "Control": {
-    "visible": true
-  },
   "NJUNSCode": {
     "visible": false
+  },
+  "Control": {
+    "visible": true
   }
 }
