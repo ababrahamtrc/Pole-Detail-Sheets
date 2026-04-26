@@ -15,6 +15,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
 
+
 Public IsCancelled As Boolean
 
 Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
