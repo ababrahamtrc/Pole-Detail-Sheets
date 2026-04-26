@@ -15,6 +15,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
 
+
 Dim sheet As Worksheet
 Dim objects As Collection
 Dim applicant As Wire
