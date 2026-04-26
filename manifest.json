@@ -1,13 +1,8 @@
 {
   "appName": "Excel Pole Detail Sheets",
-  "version": "2.1.0",
+  "version": "",
   "updatedAt": "2026-04-26",
   "versionChanges": "Syncing Pole Detail Sheet versions",
   "versions": [
-    {
-      "version": "2.1.0",
-      "updatedAt": "2026-04-26",
-      "versionChanges": "Syncing Pole Detail Sheet versions"
-    }
   ]
 }
