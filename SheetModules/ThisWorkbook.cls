@@ -119,8 +119,10 @@ Public Function fixSpecialCharacters(ByVal inputStr As String) As String
 End Function
 
 Private Sub Workbook_Open()
-    Call UpdatePoleDetailSheets.checkVersion(True)
+    Call UpdatePoleDetailSheets.CheckVersion(True)
 End Sub
+
+
 
 
 
