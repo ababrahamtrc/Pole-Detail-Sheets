@@ -15,6 +15,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
 
+
 Private companies As Collection
 Private heights As Collection
 Private modifications As Collection
