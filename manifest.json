@@ -1,8 +1,13 @@
 {
   "appName": "Excel Pole Detail Sheets",
-  "version": "2.1.1",
+  "version": "2.1.0",
   "updatedAt": "2026-04-27",
-  "versionChanges": "Hi ML",
+  "versionChanges": "Syncing Pole Detail Sheet versions through github",
   "versions": [
+    {
+      "version": "2.1.0",
+      "updatedAt": "2026-04-27",
+      "versionChanges": "Syncing Pole Detail Sheet versions through github"
+    }
   ]
 }
