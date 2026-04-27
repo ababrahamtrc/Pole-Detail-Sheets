@@ -974,7 +974,6 @@ Public Sub DownloadAllTickets()
     Dim copiedCode As String
     
     Call LogMessage.SendLogMessage("DownloadAllTickets")
-    If Not checkCodes Then Exit Sub
     
     Dim Project As Project: Set Project = New Project
     Call Project.extractFromSheets
