@@ -10,20 +10,23 @@ Public streetlightMolding As String
 
 Public Sub CopyCUImportCode()
     Call LogMessage.SendLogMessage("CopyCUImportCode")
- 
+
     Dim url As String: url = "https://api.github.com/repos/ElijahRademaker/Automation-tools/contents/cuimport.js"
     Dim file As Object
     Dim strText As String
+    
     Set http = CreateObject("MSXML2.XMLHTTP")
     http.Open "GET", url, False
     http.Send
+ 
     If http.Status <> 200 Then
         MsgBox "Failed to get cuimport.js from github: " & http.Status & vbLf & JsonConverter.ParseJson(http.responseText)("message")
         Exit Sub
     End If
+ 
     Set file = JsonConverter.ParseJson(http.responseText)
     Call UpdatePoleDetailSheets.DownloadFile(file)
- 
+
     Dim stm As Object: Set stm = CreateObject("ADODB.Stream")
     stm.Type = 2
     stm.Charset = "utf-8"
@@ -31,7 +34,7 @@ Public Sub CopyCUImportCode()
     stm.LoadFromFile Environ$("TEMP") & "\cuimport.js"
     strText = stm.ReadText
     stm.Close
- 
+
     Dim DataObj As DataObject: Set DataObj = New DataObject
     If Len(strText) > 0 Then
         DataObj.SetText strText
