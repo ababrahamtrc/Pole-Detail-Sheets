@@ -1,6 +1,4 @@
 Attribute VB_Name = "AHK"
-' hi zek
-
 Public drawAdjacentPoles, drawServices, drawTrees, drawGuys, drawStreetlights, drawTransformers As Boolean
 Public primaryLevel As Integer
 Public finished As Scripting.Dictionary
