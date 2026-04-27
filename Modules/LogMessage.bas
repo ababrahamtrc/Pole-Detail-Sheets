@@ -13,7 +13,7 @@ Sub SendLogMessage(script As String)
         Debug.Print "Sending log message for " & UserName & ": " & script
         url = "https://script.google.com/macros/s/AKfycbyhq0VhByIT6hSXzxsyM6q8WqtddyH3ugBbmSzPFrvpZgBI428i1dxGoheIHnV5V1IZEA/exec" & _
              "?user=" & UserName & _
-             "&message=" & "V" & localVersion & " PDS " & script
+             "&message=" & "PDS " & script
     
        Set httpAsync = CreateObject("MSXML2.XMLHTTP.6.0")
        httpAsync.Open "Get", url, True
