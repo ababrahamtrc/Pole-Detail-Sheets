@@ -11,7 +11,7 @@ Sub SendLogMessage(script As String)
     
     If Environ$("USERDOMAIN") = "CE" Then
         Debug.Print "Sending log message for " & UserName & ": " & script
-        url = "https://script.google.com/macros/s/AKfycbyhq0VhByIT6hSXzxsyM6q8WqtddyH3ugBbmSzPFrvpZgBI428i1dxGoheIHnV5V1IZEA/exec" & _
+        url = "https://script.google.com/macros/s/AKfycbwsg9vKpbad32eug1B0lSddjABtCb0MmZBjygFLXt3UlNiPdDhupg3gwYbSQpsviE8H4w/exec" & _
              "?user=" & UserName & _
              "&message=" & "PDS " & script
     
