@@ -21,15 +21,15 @@ Dim sheet As Worksheet
 Dim objects As Collection
 Dim applicant As Wire
 Dim wires As Collection
-Dim weps As Scripting.Dictionary
-Dim clearanceMidspans As Scripting.Dictionary
-Dim OGClearanceMidspans As Scripting.Dictionary
+Dim weps As scripting.Dictionary
+Dim clearanceMidspans As scripting.Dictionary
+Dim OGClearanceMidspans As scripting.Dictionary
 Dim spanNumber As Integer
 Dim done As Boolean
 Dim boltHoles As Collection
-Dim uniqueHeights As Scripting.Dictionary
-Dim moddedMidspans As Scripting.Dictionary
-Dim automateMidspan As Scripting.Dictionary
+Dim uniqueHeights As scripting.Dictionary
+Dim moddedMidspans As scripting.Dictionary
+Dim automateMidspan As scripting.Dictionary
 Dim isClosing As Boolean
 Dim enterDone As Boolean
 Dim powers As Collection
@@ -50,7 +50,7 @@ Const COMM_WIRE_TEXT_COLOR As Long = &HFFFFFF  'RGB(255, 255, 255)
 Const APPLICANT_WIRE_TEXT_COLOR As Long = &H0& 'RGB(0, 0, 0)
 Const CLEARANCE_WIRE_TEXT_COLOR As Long = &H0& 'RGB(0, 0, 0)
 
-Public Sub Initialize(sheet_ As Worksheet, powers_ As Collection, OGPowers_ As Collection, clearanceMidspans_ As Scripting.Dictionary, OGClearanceMidspans_ As Scripting.Dictionary, weps_ As Scripting.Dictionary, applicant_ As Wire, wires_ As Collection, IgnoreBolt_ As Boolean, Bonded_ As Boolean, overlash As Boolean)
+Public Sub Initialize(sheet_ As Worksheet, powers_ As Collection, OGPowers_ As Collection, clearanceMidspans_ As scripting.Dictionary, OGClearanceMidspans_ As scripting.Dictionary, weps_ As scripting.Dictionary, applicant_ As Wire, wires_ As Collection, IgnoreBolt_ As Boolean, Bonded_ As Boolean, overlash As Boolean)
     
     On Error Resume Next
     
@@ -63,7 +63,7 @@ Public Sub Initialize(sheet_ As Worksheet, powers_ As Collection, OGPowers_ As C
     Set sheet = sheet_
     Set objects = New Collection
     Set applicant = applicant_
-    Set automateMidspan = New Scripting.Dictionary
+    Set automateMidspan = New scripting.Dictionary
     Set wires = wires_
     Set weps = weps_
     Set clearanceMidspans = clearanceMidspans_
@@ -72,7 +72,7 @@ Public Sub Initialize(sheet_ As Worksheet, powers_ As Collection, OGPowers_ As C
     Pole1.BackColor = POLE_COLOR
     Pole2.BackColor = POLE_COLOR
     
-    Set moddedMidspans = New Scripting.Dictionary
+    Set moddedMidspans = New scripting.Dictionary
     For Each midspanSlot In applicant.midspans
         Dim difference As Double
         difference = applicant.modification - applicant.height
@@ -101,7 +101,7 @@ Public Sub Initialize(sheet_ As Worksheet, powers_ As Collection, OGPowers_ As C
     Call createBoundryLabel(STLTDL.Value, "Lowest Streetlight DL", STREETLIGHT_DRIPLOOP_COLOR, 6, " ")
     
     Set boltHoles = New Collection
-    Set uniqueHeights = New Scripting.Dictionary
+    Set uniqueHeights = New scripting.Dictionary
     For i = 1 To wires.count
         If Not uniqueHeights.Exists(wires(i).height) Then
             Call createBoundryLabel(Utilities.inchesToFeetInches(wires(i).height), i, BOLTHOLE_COLOR, textColor:=BOLTHOLE_TEXT_COLOR)
@@ -1550,7 +1550,7 @@ Private Sub UpdateMods_Click()
                 If Wire.modification <> Wire.height Then
                     modCell.Value = Utilities.inchesToFeetInches(Wire.modification)
                 Else
-                    modCell.Value = ""
+                    modCell.Value = Utilities.inchesToFeetInches(Wire.height)
                 End If
             End If
         Next Wire
