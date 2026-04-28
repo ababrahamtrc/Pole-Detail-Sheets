@@ -306,10 +306,10 @@ Private Sub findAdditonalCUs(cus As Collection, pole As pole, needAdditionalCUs 
     Dim neutCount As Integer
     Dim secCount As Integer
     Dim owCount As Integer
-    Dim priSizes As Scripting.Dictionary: Set priSizes = New Scripting.Dictionary
-    Dim neutSizes As Scripting.Dictionary: Set neutSizes = New Scripting.Dictionary
-    Dim secSizes As Scripting.Dictionary: Set secSizes = New Scripting.Dictionary
-    Dim owSizes As Scripting.Dictionary: Set owSizes = New Scripting.Dictionary
+    Dim priSizes As scripting.Dictionary: Set priSizes = New scripting.Dictionary
+    Dim neutSizes As scripting.Dictionary: Set neutSizes = New scripting.Dictionary
+    Dim secSizes As scripting.Dictionary: Set secSizes = New scripting.Dictionary
+    Dim owSizes As scripting.Dictionary: Set owSizes = New scripting.Dictionary
     
     Call SortCollectionByAction(needAdditionalCUs)
     
@@ -376,7 +376,7 @@ Private Sub findAdditonalCUs(cus As Collection, pole As pole, needAdditionalCUs 
     Next i
 
     'Find all the lines that would require a spool tie
-    Dim neededSpoolCUs As Scripting.Dictionary: Set neededSpoolCUs = New Scripting.Dictionary
+    Dim neededSpoolCUs As scripting.Dictionary: Set neededSpoolCUs = New scripting.Dictionary
     neededSpoolCUs("INSTALL") = 0
     neededSpoolCUs("RET REM") = 0
     For i = needAdditionalCUs.count To 1 Step -1
@@ -400,7 +400,7 @@ Private Sub findAdditonalCUs(cus As Collection, pole As pole, needAdditionalCUs 
     
     'Prompt user for top/side ties if size can be found
     Dim topSideTie As String
-    Dim uniqueTopSideTieSizes As Scripting.Dictionary: Set uniqueTopSideTieSizes = New Scripting.Dictionary
+    Dim uniqueTopSideTieSizes As scripting.Dictionary: Set uniqueTopSideTieSizes = New scripting.Dictionary
     
     For Each priSize In priSizes
         If Not uniqueTopSideTieSizes.Exists(Utilities.OnlyNumbers(CStr(priSize))) Then uniqueTopSideTieSizes.Add Utilities.OnlyNumbers(CStr(priSize)), Nothing
@@ -514,8 +514,8 @@ Public Sub SortCollectionByAction(col As Collection)
     Next i
 End Sub
 
-Private Sub getSpoolTies(cus As Collection, pole As pole, needAdditionalCUs As Collection, neutSizes As Scripting.Dictionary, neutCount As Integer, secSizes As Scripting.Dictionary, secCount As Integer, owSizes As Scripting.Dictionary, owCount As Integer, amount As Integer, action As String)
-    Dim uniqueSizes As Scripting.Dictionary: Set uniqueSizes = New Scripting.Dictionary
+Private Sub getSpoolTies(cus As Collection, pole As pole, needAdditionalCUs As Collection, neutSizes As scripting.Dictionary, neutCount As Integer, secSizes As scripting.Dictionary, secCount As Integer, owSizes As scripting.Dictionary, owCount As Integer, amount As Integer, action As String)
+    Dim uniqueSizes As scripting.Dictionary: Set uniqueSizes = New scripting.Dictionary
     Dim totalWires As Integer
     Dim failed As Boolean
     
@@ -620,7 +620,7 @@ Private Sub getSpoolTies(cus As Collection, pole As pole, needAdditionalCUs As C
     End If
 End Sub
 
-Private Sub getExtraDECU(cus As Collection, pole As pole, needAdditionalCUs As Collection, index As Integer, sizes As Scripting.Dictionary, sizeCount As Integer, neededCU() As Variant, Optional componentType As String)
+Private Sub getExtraDECU(cus As Collection, pole As pole, needAdditionalCUs As Collection, index As Integer, sizes As scripting.Dictionary, sizeCount As Integer, neededCU() As Variant, Optional componentType As String)
     Dim hardware As String: hardware = neededCU(0)
     Dim amount As Integer: amount = neededCU(1)
     Dim action As String: action = neededCU(2)
@@ -1011,7 +1011,7 @@ End Sub
 Private Sub generateTransferServiceCU(cus As Collection, pole As pole, amount As Integer)
     Dim cuCode As String
     Dim totalServices As Integer
-    Dim serviceDict As Scripting.Dictionary: Set serviceDict = New Scripting.Dictionary
+    Dim serviceDict As scripting.Dictionary: Set serviceDict = New scripting.Dictionary
     
     For Each service In pole.services
         For Each midspan In service.midspans
