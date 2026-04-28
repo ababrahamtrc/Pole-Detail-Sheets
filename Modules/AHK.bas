@@ -1,18 +1,18 @@
 Attribute VB_Name = "AHK"
 Public drawAdjacentPoles, drawServices, drawTrees, drawGuys, drawStreetlights, drawTransformers As Boolean
 Public primaryLevel As Integer
-Public finished As Scripting.Dictionary
+Public finished As scripting.Dictionary
 
 Sub generateAHKJson()
-    Dim json As Scripting.Dictionary
-    Set json = New Scripting.Dictionary
+    Dim json As scripting.Dictionary
+    Set json = New scripting.Dictionary
     
-    Dim generatedPoles As Scripting.Dictionary
-    Set generatedPoles = New Scripting.Dictionary
+    Dim generatedPoles As scripting.Dictionary
+    Set generatedPoles = New scripting.Dictionary
     
-    Set finished = New Scripting.Dictionary
+    Set finished = New scripting.Dictionary
     
-    Dim result As Scripting.Dictionary
+    Dim result As scripting.Dictionary
     Dim startingSheet As Worksheet
     Dim sheet As Worksheet
     
@@ -79,8 +79,8 @@ Sub generateAHKJson()
     file.Close
 End Sub
 
-Private Function getServices(sheet As Worksheet) As Scripting.Dictionary
-    Dim connectedServices As Scripting.Dictionary: Set connectedServices = New Scripting.Dictionary
+Private Function getServices(sheet As Worksheet) As scripting.Dictionary
+    Dim connectedServices As scripting.Dictionary: Set connectedServices = New scripting.Dictionary
     
     Set regex = CreateObject("VBScript.RegExp")
     With regex
@@ -128,8 +128,8 @@ Private Function getServices(sheet As Worksheet) As Scripting.Dictionary
     Set getServices = connectedServices
 End Function
 
-Private Function getConnectedOtherPoles(ByRef generatedPoles As Scripting.Dictionary, sheet As Worksheet) As Scripting.Dictionary
-    Dim connectedPoles As Scripting.Dictionary: Set connectedPoles = New Scripting.Dictionary
+Private Function getConnectedOtherPoles(ByRef generatedPoles As scripting.Dictionary, sheet As Worksheet) As scripting.Dictionary
+    Dim connectedPoles As scripting.Dictionary: Set connectedPoles = New scripting.Dictionary
     
     Set regex = CreateObject("VBScript.RegExp")
     With regex
@@ -169,8 +169,8 @@ Private Function getConnectedOtherPoles(ByRef generatedPoles As Scripting.Dictio
     Set getConnectedOtherPoles = connectedPoles
 End Function
 
-Private Function getConnectedPoles(sheet As Worksheet) As Scripting.Dictionary
-    Dim connectedPoles As Scripting.Dictionary: Set connectedPoles = New Scripting.Dictionary
+Private Function getConnectedPoles(sheet As Worksheet) As scripting.Dictionary
+    Dim connectedPoles As scripting.Dictionary: Set connectedPoles = New scripting.Dictionary
     
     Set regex = CreateObject("VBScript.RegExp")
     With regex
@@ -212,7 +212,7 @@ Private Function getItems(sheet As Worksheet, ByVal i As String, uttype As Strin
         If sheet.Range("UTTYPE").offset(j, 0).Interior.color <> 16312794 Then Exit For
         If InStr(sheet.Range("UTTYPE").offset(j, 0), uttype) > 0 Then
             If Replace(sheet.Range("UTMIDSPAN" & i).offset(j, 0), "-", "") <> "" Then
-                Dim item As Scripting.Dictionary: Set item = New Scripting.Dictionary
+                Dim item As scripting.Dictionary: Set item = New scripting.Dictionary
                 item("size") = OnlyNumbers(sheet.Range("UTSIZE").offset(j, 0), True)
                 item("type") = uttype
                 If uttype = "PRI" Then
@@ -344,8 +344,8 @@ Private Function getClosestAngle(sheet As Worksheet, ByVal k As Integer, ByVal a
     Set getClosestAngle = closestAngle
 End Function
 
-Private Sub generateJson(ByRef json As Scripting.Dictionary, ByRef generatedPoles As Scripting.Dictionary, sheet As Worksheet, Optional starting As Boolean = False)
-    Dim pole As Scripting.Dictionary: Set pole = New Scripting.Dictionary
+Private Sub generateJson(ByRef json As scripting.Dictionary, ByRef generatedPoles As scripting.Dictionary, sheet As Worksheet, Optional starting As Boolean = False)
+    Dim pole As scripting.Dictionary: Set pole = New scripting.Dictionary
     
     locationAdjacent = False
     drawConductors = False
@@ -417,17 +417,17 @@ Private Sub generateJson(ByRef json As Scripting.Dictionary, ByRef generatedPole
     poleNumber = sheet.Range("POLENUM")
     generatedPoles.Add poleNumber, Nothing
     
-    Dim connectedServices As Scripting.Dictionary: Set connectedServices = getServices(sheet)
-    Dim connectedOtherPoles As Scripting.Dictionary: Set connectedOtherPoles = getConnectedOtherPoles(generatedPoles, sheet)
-    Dim connectedPoles As Scripting.Dictionary: Set connectedPoles = getConnectedPoles(sheet)
+    Dim connectedServices As scripting.Dictionary: Set connectedServices = getServices(sheet)
+    Dim connectedOtherPoles As scripting.Dictionary: Set connectedOtherPoles = getConnectedOtherPoles(generatedPoles, sheet)
+    Dim connectedPoles As scripting.Dictionary: Set connectedPoles = getConnectedPoles(sheet)
     
     If drawGuys Then
-        Dim guy As Scripting.Dictionary
+        Dim guy As scripting.Dictionary
         For i = 0 To 15
             If Trim(sheet.Range("ANCHOROWNER").offset(i, 0).Value) = "" Then Exit For
             If Trim(sheet.Range("ANCHOROWNER").offset(i, 0).Value) = "New App" Then Exit For
             If UCase(Trim(sheet.Range("ANCHOROWNER").offset(i, 0).Value)) = "CONSUMERS ENERGY" Then
-                Set guy = New Scripting.Dictionary
+                Set guy = New scripting.Dictionary
                 guy("angle") = OnlyNumbers(sheet.Range("ANCHORDIRECTION").offset(i, 0).Value)
                 guys.Add guy
             End If
@@ -435,10 +435,10 @@ Private Sub generateJson(ByRef json As Scripting.Dictionary, ByRef generatedPole
     End If
     
     If drawServices And locationAdjacent Then
-        Dim service As Scripting.Dictionary
+        Dim service As scripting.Dictionary
         Dim connectedService As Variant
         For Each connectedService In connectedServices
-            Set service = New Scripting.Dictionary
+            Set service = New scripting.Dictionary
             Set distanceAngle = getDistanceAngle(sheet, connectedServices(connectedService)(1))
             service("distance") = distanceAngle(1)
             service("angle") = distanceAngle(2)
@@ -447,11 +447,11 @@ Private Sub generateJson(ByRef json As Scripting.Dictionary, ByRef generatedPole
         Next connectedService
     End If
     
-    Dim connection As Scripting.Dictionary
+    Dim connection As scripting.Dictionary
     Dim connectedPole As Variant
     If drawAdjacentPoles Then
         For Each connectedPole In connectedOtherPoles
-            Set connection = New Scripting.Dictionary
+            Set connection = New scripting.Dictionary
             Set distanceAngle = getDistanceAngle(sheet, connectedOtherPoles(connectedPole))
             connection("distance") = distanceAngle(1)
             connection("angle") = distanceAngle(2)
@@ -465,7 +465,7 @@ Private Sub generateJson(ByRef json As Scripting.Dictionary, ByRef generatedPole
                 Next OPENWIRE
                 If openWireString <> "" Then
                     openWireString = Left(openWireString, Len(openWireString) - 1)
-                    Set item = New Scripting.Dictionary
+                    Set item = New scripting.Dictionary
                     item("size") = openWireString
                     item("type") = "OW"
                     connection("secondaries").Add item
@@ -482,7 +482,7 @@ Private Sub generateJson(ByRef json As Scripting.Dictionary, ByRef generatedPole
             If SheetExists(connectedPole) Then
                 For Each oSheet In ThisWorkbook.sheets
                     If ThisWorkbook.RemoveParentheses(oSheet.name) = connectedPole Then
-                        Set connection = New Scripting.Dictionary
+                        Set connection = New scripting.Dictionary
                         connection("poleNumber") = connectedPole
                         Set distanceAngle = getDistanceAngle(sheet, connectedPoles(connectedPole))
                         connection("distance") = distanceAngle(1)
@@ -497,7 +497,7 @@ Private Sub generateJson(ByRef json As Scripting.Dictionary, ByRef generatedPole
                             Next OPENWIRE
                             If openWireString <> "" Then
                                 openWireString = Left(openWireString, Len(openWireString) - 1)
-                                Set item = New Scripting.Dictionary
+                                Set item = New scripting.Dictionary
                                 item("size") = openWireString
                                 item("type") = "OW"
                                 connection("secondaries").Add item
@@ -513,7 +513,7 @@ Private Sub generateJson(ByRef json As Scripting.Dictionary, ByRef generatedPole
             End If
         Else
             If finished.Exists(CStr(connectedPole)) Then
-                Set connection = New Scripting.Dictionary
+                Set connection = New scripting.Dictionary
                 connection("poleNumber") = "skip"
                 Set distanceAngle = getDistanceAngle(sheet, connectedPoles(connectedPole))
                 connection("distance") = distanceAngle(1)
@@ -528,7 +528,7 @@ Private Sub generateJson(ByRef json As Scripting.Dictionary, ByRef generatedPole
                     Next OPENWIRE
                     If openWireString <> "" Then
                         openWireString = Left(openWireString, Len(openWireString) - 1)
-                        Set item = New Scripting.Dictionary
+                        Set item = New scripting.Dictionary
                         item("size") = openWireString
                         item("type") = "OW"
                         connection("secondaries").Add item
