@@ -1,9 +1,14 @@
 {
   "appName": "Excel Pole Detail Sheets",
-  "version": "2.1.0",
-  "updatedAt": "2026-04-27",
-  "versionChanges": "Syncing Pole Detail Sheet versions through github",
+  "version": "2.1.1",
+  "updatedAt": "2026-04-28",
+  "versionChanges": "Generate NJUNS button now works for multiple comms of the same owner.",
   "versions": [
+    {
+      "version": "2.1.1",
+      "updatedAt": "2026-04-28",
+      "versionChanges": "Generate NJUNS button now works for multiple comms of the same owner."
+    },
     {
       "version": "2.1.0",
       "updatedAt": "2026-04-27",
