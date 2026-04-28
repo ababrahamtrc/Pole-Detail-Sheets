@@ -26,9 +26,9 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As Project
         If json("metadata").Exists("CE_MKR_fielder") Then Project.fielder = Trim(json("metadata")("CE_MKR_fielder"))
     End If
 
-    Dim nodeKeys As Scripting.Dictionary: Set nodeKeys = New Scripting.Dictionary
-    Dim insulators As Scripting.Dictionary: Set insulators = New Scripting.Dictionary
-    Dim wires As Scripting.Dictionary: Set wires = New Scripting.Dictionary
+    Dim nodeKeys As scripting.Dictionary: Set nodeKeys = New scripting.Dictionary
+    Dim insulators As scripting.Dictionary: Set insulators = New scripting.Dictionary
+    Dim wires As scripting.Dictionary: Set wires = New scripting.Dictionary
     
     If json.Exists("nodes") Then
         For Each nodeKey In json("nodes").keys
@@ -237,7 +237,7 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As Project
     Set InitProjectFromKatapultJson = Project
 End Function
 
-Private Sub addConnections(ByVal json As Object, connectionKey As String, ByVal jsonConnection As Object, nodeKeys As Scripting.Dictionary, nodeType As String, nodeId1 As String, nodeId2 As String)
+Private Sub addConnections(ByVal json As Object, connectionKey As String, ByVal jsonConnection As Object, nodeKeys As scripting.Dictionary, nodeType As String, nodeId1 As String, nodeId2 As String)
     Dim pole As pole
     Dim otherPole As pole
     Dim latitude As Double
