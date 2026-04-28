@@ -25,8 +25,8 @@ Sub ImportAllPDS()
     ProgressBar_Form.Repaint
 
 
-    Dim poleNumbers As Scripting.Dictionary: Set poleNumbers = New Scripting.Dictionary
-    Dim duplicateNumbers As Scripting.Dictionary: Set duplicateNumbers = New Scripting.Dictionary
+    Dim poleNumbers As scripting.Dictionary: Set poleNumbers = New scripting.Dictionary
+    Dim duplicateNumbers As scripting.Dictionary: Set duplicateNumbers = New scripting.Dictionary
     Dim duplicateNumbersString As String: duplicateNumbersString = ""
     Dim sheet As Worksheet
     Dim sheetCount As Integer: sheetCount = 0
@@ -189,8 +189,8 @@ Sub ImportLocationPDS()
     ProgressBar_Form.Label1.caption = "Importing Pole Detail Sheets... Please wait..."
     ProgressBar_Form.Repaint
     
-    Dim poleNumbers As Scripting.Dictionary: Set poleNumbers = New Scripting.Dictionary
-    Dim duplicateNumbers As Scripting.Dictionary: Set duplicateNumbers = New Scripting.Dictionary
+    Dim poleNumbers As scripting.Dictionary: Set poleNumbers = New scripting.Dictionary
+    Dim duplicateNumbers As scripting.Dictionary: Set duplicateNumbers = New scripting.Dictionary
     Dim duplicateNumbersString As String: duplicateNumbersString = ""
     
     Dim sheetCount As Integer: sheetCount = 0
@@ -286,8 +286,8 @@ Sub ImportNjunsPDS()
     ProgressBar_Form.Label1.caption = "Importing Pole Detail Sheets... Please wait..."
     ProgressBar_Form.Repaint
     
-    Dim poleNumbers As Scripting.Dictionary: Set poleNumbers = New Scripting.Dictionary
-    Dim duplicateNumbers As Scripting.Dictionary: Set duplicateNumbers = New Scripting.Dictionary
+    Dim poleNumbers As scripting.Dictionary: Set poleNumbers = New scripting.Dictionary
+    Dim duplicateNumbers As scripting.Dictionary: Set duplicateNumbers = New scripting.Dictionary
     Dim duplicateNumbersString As String: duplicateNumbersString = ""
     
     Dim sheetCount As Integer: sheetCount = 0
