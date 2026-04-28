@@ -158,7 +158,7 @@ Public Function sortComponents(components As Variant) As Collection
         For i = 0 To components.count - 1
             Set arr(i) = components(i + 1)
         Next i
-    ElseIf TypeOf components Is Scripting.Dictionary Then
+    ElseIf TypeOf components Is scripting.Dictionary Then
         If components.count < 2 Then
             For Each v In components.items: sortedcomponents.Add v: Next
             Set sortComponents = sortedcomponents
@@ -246,7 +246,7 @@ Public Function IsPDS(sheet As Worksheet) As Boolean
     End If
 End Function
 
-Function ShareAKey(dict1 As Scripting.Dictionary, dict2 As Scripting.Dictionary) As Boolean
+Function ShareAKey(dict1 As scripting.Dictionary, dict2 As scripting.Dictionary) As Boolean
     Dim key As Variant
     
     ShareAKey = False
