@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-Public midspans As Scripting.Dictionary
+Public midspans As scripting.Dictionary
 Public height As Integer
 Public bottomHeight  As Integer
 Public size As String
@@ -15,7 +15,7 @@ Public owner As String
 Public componentType As String
 
 Private Sub Class_Initialize()
-    Set midspans = New Scripting.Dictionary
+    Set midspans = New scripting.Dictionary
 End Sub
 
 Public Function getWire() As Wire
