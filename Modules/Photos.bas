@@ -27,7 +27,7 @@ Public Sub photoNameValidate()
     Dim newName As String
     Dim deleteCounter As Integer
     Dim renameCount As Integer: renameCount = 0
-    Dim photoCounts As Scripting.Dictionary: Set photoCounts = New Scripting.Dictionary
+    Dim photoCounts As scripting.Dictionary: Set photoCounts = New scripting.Dictionary
     
     regex.Pattern = "M1P([^-]+)-([^_]+)_([^_]+)_([^.]+)\.(jpg|png)"
     regex.Global = True
