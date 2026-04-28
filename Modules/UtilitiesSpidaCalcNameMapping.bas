@@ -1,11 +1,11 @@
 Attribute VB_Name = "UtilitiesSpidaCalcNameMapping"
-Private SpidaCalcNameMapping As Scripting.Dictionary
+Private SpidaCalcNameMapping As scripting.Dictionary
 
 Public Function getSpidaCalcNameMapping(ByVal key As String) As String
     key = Trim(UCase(key))
     
     If SpidaCalcNameMapping Is Nothing Then
-        Set SpidaCalcNameMapping = New Scripting.Dictionary
+        Set SpidaCalcNameMapping = New scripting.Dictionary
         Call InitializeSpidaCalcNameMapping
     End If
     
