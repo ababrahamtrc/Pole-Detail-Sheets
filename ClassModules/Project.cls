@@ -52,7 +52,7 @@ Public Sub createAndFillSheets()
     Application.ScreenUpdating = False
     Application.DisplayAlerts = False
     
-    Dim sheetsCreated As Scripting.Dictionary: Set sheetsCreated = New Scripting.Dictionary
+    Dim sheetsCreated As scripting.Dictionary: Set sheetsCreated = New scripting.Dictionary
     
     For i = 1 To Me.poles.count
         Set pole = Me.poles(i)
@@ -203,7 +203,7 @@ Public Sub extractImportDataFormat()
         Next spanWsRow
         
         'Communication wire section
-        Dim wireDict As Scripting.Dictionary: Set wireDict = New Scripting.Dictionary
+        Dim wireDict As scripting.Dictionary: Set wireDict = New scripting.Dictionary
         For spanComWsRow = spanComWsRow To spanComWsLastRow
             If spanComWs.Cells(spanComWsRow, 1) <> pole.poleNumber Then Exit For
             
@@ -273,7 +273,7 @@ Public Sub extractImportDataFormat()
         Next key
         
         'Utility Wire Section
-        Set wireDict = New Scripting.Dictionary
+        Set wireDict = New scripting.Dictionary
         For spanPowWsRow = spanPowWsRow To spanPowWsLastRow
             If spanPowWs.Cells(spanPowWsRow, 1) <> pole.poleNumber Then Exit For
             
@@ -403,7 +403,7 @@ Public Sub fillImportDataFormat()
     Dim Anchor As Anchor
     Dim guy As guy
     Dim equipment As equipment
-    Dim primaryBundles As Scripting.Dictionary
+    Dim primaryBundles As scripting.Dictionary
     
     Set colWs = ThisWorkbook.sheets("Collection")
     colWs.Cells(1, 1).Value = "ID"
@@ -534,7 +534,7 @@ Public Sub fillImportDataFormat()
             spanWs.Cells(spanRow, 6).Value = Span.treeWork
             
             spanRow = spanRow + 1
-            Set primaryBundles = New Scripting.Dictionary
+            Set primaryBundles = New scripting.Dictionary
             For Each Wire In Span.utilWires
                 spanPowWs.Cells(spanPowRow, 1).Value = pole.poleNumber
                 spanPowWs.Cells(spanPowRow, 2).Value = Span.spanId
