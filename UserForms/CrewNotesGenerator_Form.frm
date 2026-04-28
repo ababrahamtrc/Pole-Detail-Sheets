@@ -37,8 +37,8 @@ Dim PreviousValueINSNC1 As Integer, PreviousValueINSNC2 As Integer, PreviousValu
 Dim PreviousValueRMSNC1 As Integer, PreviousValueRMSNC2 As Integer, PreviousValueRMSNC3 As Integer, PreviousValueRMSNC4 As Integer, PreviousValueRMSNC5 As Integer, PreviousValueRMSNC6 As Integer, PreviousValueRMSNC7 As Integer
 Dim previousValueRPMHC1 As Integer, previousValueINMHC1 As Integer, previousValueRMMHC1 As Integer, previousValueRPMHC2 As Integer, previousValueINMHC2 As Integer, previousValueRMMHC2 As Integer
 Dim mhRP1 As Boolean, mhIN1 As Boolean, mhRM1 As Boolean, mhRP2 As Boolean, mhIN2 As Boolean, mhRM2 As Boolean
-Dim figuresUsed As Scripting.Dictionary
-Dim comms As Scripting.Dictionary
+Dim figuresUsed As scripting.Dictionary
+Dim comms As scripting.Dictionary
 Dim commTransfers As Collection
 
 Public Sub Initialize(sheet As Worksheet)
@@ -50,7 +50,7 @@ Public Sub Initialize(sheet As Worksheet)
     Me.Left = Application.Left + (0.5 * Application.Width) - (0.5 * Me.Width)
     Me.Top = Application.Top + (0.5 * Application.height) - (0.5 * Me.height)
     
-    Set figuresUsed = New Scripting.Dictionary
+    Set figuresUsed = New scripting.Dictionary
     
     priBool = Not pds.Range("SECONLY")
     neutBool = False
@@ -196,7 +196,7 @@ Public Sub Initialize(sheet As Worksheet)
     PreviousValueRMSNC6 = 1
     PreviousValueRMSNC7 = 1
     
-    Set comms = New Scripting.Dictionary
+    Set comms = New scripting.Dictionary
     
     Dim name As Variant
     
@@ -1553,7 +1553,7 @@ End Sub
 
 Private Sub CommandButton1_Click()
 
-    Set figuresUsed = New Scripting.Dictionary
+    Set figuresUsed = New scripting.Dictionary
 
     CrewNotes = ""
     installNotes = ""
@@ -1771,9 +1771,9 @@ Private Sub generateReplacePoleSection()
         End If
     End If
     
-    Dim rpDict As Scripting.Dictionary: Set rpDict = New Scripting.Dictionary
-    Dim inDict As Scripting.Dictionary: Set inDict = New Scripting.Dictionary
-    Dim rmDict As Scripting.Dictionary: Set rmDict = New Scripting.Dictionary
+    Dim rpDict As scripting.Dictionary: Set rpDict = New scripting.Dictionary
+    Dim inDict As scripting.Dictionary: Set inDict = New scripting.Dictionary
+    Dim rmDict As scripting.Dictionary: Set rmDict = New scripting.Dictionary
     
     If fuRP1 Then rpDict("S8S") = PreviousValueRPFUC1
     If fuIN1 Then inDict("S8S") = PreviousValueINFUC1
@@ -1904,7 +1904,7 @@ Private Sub generateReplacePoleSection()
     If ohsCount > 0 Then
         If conductors <> "" Then conductors = conductors & ","
         conductors = conductors & "SERVICE" & IIf(ohsCount > 1, "S", "")
-        Dim serviceSizes As Scripting.Dictionary: Set serviceSizes = New Scripting.Dictionary
+        Dim serviceSizes As scripting.Dictionary: Set serviceSizes = New scripting.Dictionary
         For Each service In pole.services
             For Each midspan In service.midspans
                 If Not serviceSizes.Exists(service.size) Then serviceSizes(service.size) = 0
@@ -1991,7 +1991,7 @@ Private Sub generateReplacePoleSection()
     replaceNotes = replacePoleSection & replaceNotes
 End Sub
 
-Private Sub extractFromRPINRMDicts(ByRef replacePoleSection As String, rpDict As Scripting.Dictionary, inDict As Scripting.Dictionary, rmDict As Scripting.Dictionary)
+Private Sub extractFromRPINRMDicts(ByRef replacePoleSection As String, rpDict As scripting.Dictionary, inDict As scripting.Dictionary, rmDict As scripting.Dictionary)
     For Each key In inDict
         If rmDict.Exists(key) Then
             If inDict(key) >= rmDict(key) Then
@@ -2048,9 +2048,9 @@ Private Sub extractFromRPINRMDicts(ByRef replacePoleSection As String, rpDict As
         removeNotes = removeNotes & secondaryFigures(key)
     Next key
     
-    Call rpDict.RemoveAll: Set rpDict = New Scripting.Dictionary
-    Call inDict.RemoveAll: Set inDict = New Scripting.Dictionary
-    Call rmDict.RemoveAll: Set rmDict = New Scripting.Dictionary
+    Call rpDict.RemoveAll: Set rpDict = New scripting.Dictionary
+    Call inDict.RemoveAll: Set inDict = New scripting.Dictionary
+    Call rmDict.RemoveAll: Set rmDict = New scripting.Dictionary
 End Sub
 
 Private Function secondaryFigures(hardware As Variant) As String
