@@ -24,7 +24,7 @@ Public Sub FixPoleForemanJSON()
     
     counter = 0
     
-    Dim PFNameMapping As Scripting.Dictionary: Set PFNameMapping = New Scripting.Dictionary
+    Dim PFNameMapping As scripting.Dictionary: Set PFNameMapping = New scripting.Dictionary
     Call InitializePFNameMapping(PFNameMapping)
     
     For Each jsonPole In json
@@ -108,7 +108,7 @@ Public Sub FixPoleForemanJSON()
                 End If
             Next jsonCircuit
             
-            Dim oppositeBearings As Scripting.Dictionary: Set oppositeBearings = New Scripting.Dictionary
+            Dim oppositeBearings As scripting.Dictionary: Set oppositeBearings = New scripting.Dictionary
             Dim oppositeSpan As Object: Set oppositeSpan = Nothing
             Dim oppositeBearing As Double
             Dim bearingDifference As Double
@@ -197,7 +197,7 @@ Public Sub FixPoleForemanJSON()
     MsgBox "Done"
 End Sub
 
-Private Sub InitializePFNameMapping(PFNameMapping As Scripting.Dictionary)
+Private Sub InitializePFNameMapping(PFNameMapping As scripting.Dictionary)
     'Primary/Neutral sizes
     PFNameMapping("4 ACSR (7/1)") = 380
     PFNameMapping("2 ACSR (7/1)") = "440"
