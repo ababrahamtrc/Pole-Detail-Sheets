@@ -1,10 +1,10 @@
 Attribute VB_Name = "NJUNSCodes"
-Public NJUNSCodes As Scripting.Dictionary
+Public NJUNSCodes As scripting.Dictionary
 
 Public Sub generateNJUNSCodes()
     Call clearNJUNSCodes
     
-    Dim companies As Scripting.Dictionary: Set companies = New Scripting.Dictionary
+    Dim companies As scripting.Dictionary: Set companies = New scripting.Dictionary
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
     Dim Project As Project: Set Project = New Project
     Call Project.extractFromSheets
@@ -69,7 +69,7 @@ Private Function getNJUNSNameMapping(Project, ByVal key As String) As String
     key = Replace(key, vbLf, "")
     
     If NJUNSCodes Is Nothing Then
-        Set NJUNSCodes = New Scripting.Dictionary
+        Set NJUNSCodes = New scripting.Dictionary
         Call InitializeNJUNSNameCorrecting
     End If
     
