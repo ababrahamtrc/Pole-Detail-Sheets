@@ -4,12 +4,15 @@ Sub RemedyGenerator()
     
     Call LogMessage.SendLogMessage("RemedyGenerator")
     
+    Dim modificationCells As Collection
+    Dim otherModificationCells As scripting.Dictionary
+    
     Dim wires As Collection: Set wires = New Collection
     Dim sheet As Worksheet: Set sheet = ThisWorkbook.ActiveSheet
     Dim spans As Integer: spans = 0
-    Dim weps As Scripting.Dictionary: Set weps = New Scripting.Dictionary
+    Dim weps As scripting.Dictionary: Set weps = New scripting.Dictionary
     Dim i, j As Integer
-    Dim midspans As Scripting.Dictionary
+    Dim midspans As scripting.Dictionary
     Dim overlash As Boolean
     
     If sheet.name = "4 Spans" Or sheet.name = "8 Spans" Or sheet.name = "12 Spans" Or sheet.Cells(2, 2).Value <> "Notification:" Then
@@ -48,8 +51,8 @@ Sub RemedyGenerator()
     Next i
     
     Dim applicant As Wire: Set applicant = Nothing
-    Set adjacentHeights = New Scripting.Dictionary
-    Set midspans = New Scripting.Dictionary
+    Set adjacentHeights = New scripting.Dictionary
+    Set midspans = New scripting.Dictionary
     Set applicant = New Wire
     applicant.owner = Trim(UCase(sheet.Range("APPLICANT")))
     applicant.height = Utilities.convertToInches(sheet.Range("PROPOSEDHEIGHT"))
@@ -88,7 +91,8 @@ Sub RemedyGenerator()
     Set applicant.adjacentHeights = adjacentHeights
     
     overlash = False
-    Dim modificationCells As Collection: Set modificationCells = New Collection
+    Set modificationCells = New Collection
+    Set otherModificationCells = New scripting.Dictionary
     For i = 0 To 50
         If sheet.Range("CMOWNER").offset(i, 0).Interior.color = 16777215 Then Exit For
         If sheet.Range("CMOWNER").offset(i, 0) = "" Then Exit For
@@ -109,8 +113,8 @@ Sub RemedyGenerator()
             Next j
         End If
         If addComm Then
-            Set midspans = New Scripting.Dictionary
-            Set adjacentHeights = New Scripting.Dictionary
+            Set midspans = New scripting.Dictionary
+            Set adjacentHeights = New scripting.Dictionary
             For j = 1 To spans
                 midspan = Utilities.convertToInches(sheet.Range("CMMIDSPAN" & j).offset(i, 0).text)
                 If midspan > 0 Then
@@ -121,8 +125,10 @@ Sub RemedyGenerator()
                         otherSheetName = matches(0)
                         If SheetExists(otherSheetName) Then
                             Set otherSheet = Utilities.GetPDS(otherSheetName)
+                            If Not otherModificationCells.Exists(otherSheet.name) Then otherModificationCells.Add otherSheet.name, New Collection
                             adjacentHeight = getHeight(otherSheet, owner, midspan, sheet.Range("POLENUM").text)
-                            adjacentModification = getMod(otherSheet, adjacentHeight, owner, comms)
+                            Set modCell = findModCell(otherSheet, adjacentHeight, owner, False, otherModificationCells(otherSheet.name))
+                            adjacentModification = Utilities.convertToInches(modCell.Value)
                             If adjacentModification < 1 Then adjacentModification = adjacentHeight
                             
                             If adjacentModification > 0 Then
@@ -195,6 +201,7 @@ Sub RemedyGenerator()
                 Dim modification As String
                 Set modCell = findModCell(sheet, Wire.height, Wire.owner, False, modificationCells)
                 Wire.modification = Utilities.convertToInches(modCell.Value)
+                If Wire.modification < 1 Then Wire.modification = Wire.height
                 
                 Duplicate = False
                 For Each otherWire In wires
@@ -278,8 +285,8 @@ Sub RemedyGenerator()
         End If
     End If
     
-    Dim clearanceMidspans As Scripting.Dictionary: Set clearanceMidspans = New Scripting.Dictionary
-    Dim OGClearanceMidspans As Scripting.Dictionary: Set OGClearanceMidspans = New Scripting.Dictionary
+    Dim clearanceMidspans As scripting.Dictionary: Set clearanceMidspans = New scripting.Dictionary
+    Dim OGClearanceMidspans As scripting.Dictionary: Set OGClearanceMidspans = New scripting.Dictionary
     
     For Each wep In weps
         If sheet.Range("CMMIDSPAN" & wep).offset(-2, 0).text <> "" Then
