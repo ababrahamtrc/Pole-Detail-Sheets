@@ -11,7 +11,7 @@ Public Sub ExportAllNJUNS()
     Dim Project As Project: Set Project = New Project
     Call Project.extractFromSheets
     
-    Dim njunsSheets As Scripting.Dictionary: Set njunsSheets = New Scripting.Dictionary
+    Dim njunsSheets As scripting.Dictionary: Set njunsSheets = New scripting.Dictionary
     njunsSheets.Add "NOTIFY", New Collection
     njunsSheets.Add "CA", New Collection
     njunsSheets.Add "PT", New Collection
@@ -714,7 +714,7 @@ Public Sub ExportUpdateAllNJUNS()
     Dim Project As Project: Set Project = New Project
     Call Project.extractFromSheets
     
-    Dim njunsSheets As Scripting.Dictionary: Set njunsSheets = New Scripting.Dictionary
+    Dim njunsSheets As scripting.Dictionary: Set njunsSheets = New scripting.Dictionary
     njunsSheets.Add "NOTIFY", New Collection
     njunsSheets.Add "CA", New Collection
     njunsSheets.Add "PT", New Collection
