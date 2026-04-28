@@ -1,11 +1,11 @@
 Attribute VB_Name = "UtilitiesKatapultNameMapping"
-Private KatapultNameMapping As Scripting.Dictionary
+Private KatapultNameMapping As scripting.Dictionary
 
 Public Function getKatapultNameMapping(ByVal key As String) As String
     key = Trim(UCase(key))
     
     If KatapultNameMapping Is Nothing Then
-        Set KatapultNameMapping = New Scripting.Dictionary
+        Set KatapultNameMapping = New scripting.Dictionary
         Call InitializeKatapultNameMapping
     End If
     
