@@ -332,7 +332,7 @@ Public Sub createSheet(Project As Project, Optional selectedTemplate As Integer)
     End If
                 
     Dim insertSpot As Worksheet: Set insertSpot = Nothing
-    Set existingNames = New Scripting.Dictionary
+    Set existingNames = New scripting.Dictionary
     
     ' copy the template
     For Each sheet In ThisWorkbook.sheets
@@ -678,7 +678,7 @@ End Function
 
 Private Function Calculate156MSGCV(components As Collection) As String
     Dim result As String
-    Dim violators As Scripting.Dictionary: Set violators = New Scripting.Dictionary
+    Dim violators As scripting.Dictionary: Set violators = New scripting.Dictionary
     Dim Wire As Variant
     Dim midspan As Integer
     Dim direction As String
@@ -719,7 +719,7 @@ End Function
 
 Private Function Calculate30MSSV() As String
     Dim result As String
-    Dim violators As Scripting.Dictionary: Set violators = New Scripting.Dictionary
+    Dim violators As scripting.Dictionary: Set violators = New scripting.Dictionary
     Dim Wire As Variant
     Dim lowestMidspan As Integer
     Dim comMidspan As Integer
@@ -757,8 +757,8 @@ End Function
 
 Private Function CalculateCommViolations() As String()
     Dim results(0 To 1) As String
-    Dim separationViolators As Scripting.Dictionary: Set separationViolators = New Scripting.Dictionary
-    Dim midspanViolators As Scripting.Dictionary: Set midspanViolators = New Scripting.Dictionary
+    Dim separationViolators As scripting.Dictionary: Set separationViolators = New scripting.Dictionary
+    Dim midspanViolators As scripting.Dictionary: Set midspanViolators = New scripting.Dictionary
     Dim wire1 As Variant
     Dim wire2 As Variant
     Dim Midspan1 As Integer
@@ -864,8 +864,8 @@ End Sub
 
 Public Sub fillCMRF(sheet As Worksheet)
     Dim Wire As Wire
-    Dim comms As Scripting.Dictionary
-    Set comms = New Scripting.Dictionary
+    Dim comms As scripting.Dictionary
+    Set comms = New scripting.Dictionary
     
     Set Me.commWires = Utilities.sortComponents(Me.commWires)
     
@@ -989,7 +989,7 @@ End Function
 
 Public Sub condensePrimaries()
     Dim comp As Variant
-    Dim primaryBundles As Scripting.Dictionary: Set primaryBundles = New Scripting.Dictionary
+    Dim primaryBundles As scripting.Dictionary: Set primaryBundles = New scripting.Dictionary
     Dim i As Integer
     Dim Wire As Wire
     Dim bundleKey As Variant
