@@ -25,6 +25,7 @@ Public Bracket As Boolean
 Public InstallAnchor As Boolean
 Public reasonForMovement As String
 Public reasonForAnchorMovement As String
+Public orientation As String
 
 Public Function Equals(other As Comm)
     If other Is Nothing Then
