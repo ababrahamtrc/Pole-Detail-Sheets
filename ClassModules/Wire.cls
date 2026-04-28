@@ -7,10 +7,10 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-Public midspans As Scripting.Dictionary
-Public tensions As Scripting.Dictionary
-Public mrMoves As Scripting.Dictionary
-Public adjacentHeights As Scripting.Dictionary
+Public midspans As scripting.Dictionary
+Public tensions As scripting.Dictionary
+Public mrMoves As scripting.Dictionary
+Public adjacentHeights As scripting.Dictionary
 Public owner As String
 Public size As String
 Public height As Integer
@@ -24,10 +24,10 @@ Public wepHeight As Integer 'for spanguys
 Public phase As Integer 'for primary
 
 Private Sub Class_Initialize()
-    Set midspans = New Scripting.Dictionary
-    Set tensions = New Scripting.Dictionary
-    Set mrMoves = New Scripting.Dictionary
-    Set adjacentHeights = New Scripting.Dictionary
+    Set midspans = New scripting.Dictionary
+    Set tensions = New scripting.Dictionary
+    Set mrMoves = New scripting.Dictionary
+    Set adjacentHeights = New scripting.Dictionary
 End Sub
 
 Public Function getDisplayMidspan(Span As Span) As String
