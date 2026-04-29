@@ -442,7 +442,7 @@ Private Function getSheetNJUNSCode(Project As Project, pole As pole, Optional pr
         
         copiedCode = copiedCode & vbLf & "pdfList.push({"
             copiedCode = copiedCode & vbLf & "url: download ? await getPDFURL() : null,"
-            copiedCode = copiedCode & vbLf & "filename: `" & Project.Notification & " - " & "${ticketNumber} - " & NJUNSType & " TICKET`,"
+            copiedCode = copiedCode & vbLf & "filename: `" & Project.Notification & " - " & "${ticketNumber} - " & NJUNSType & " NJUNS`,"
             copiedCode = copiedCode & vbLf & "poleNumber: """ & pole.poleNumber & ""","
             copiedCode = copiedCode & vbLf & "ticketNumber: ticketNumber"
         copiedCode = copiedCode & vbLf & "});"
@@ -537,7 +537,7 @@ Private Function getDuplicateSheetNJUNSCode(Project As Project, pole As pole) As
         
         copiedCode = copiedCode & vbLf & "pdfList.push({"
             copiedCode = copiedCode & vbLf & "url: download ? await getPDFURL() : null,"
-            copiedCode = copiedCode & vbLf & "filename: `" & Project.Notification & " - " & "${ticketNumber} - " & NJUNSType & " TICKET`,"
+            copiedCode = copiedCode & vbLf & "filename: `" & Project.Notification & " - " & "${ticketNumber} - " & NJUNSType & " NJUNS`,"
             copiedCode = copiedCode & vbLf & "poleNumber: """ & pole.poleNumber & ""","
             copiedCode = copiedCode & vbLf & "ticketNumber: ticketNumber"
         copiedCode = copiedCode & vbLf & "});"
@@ -675,7 +675,7 @@ Private Function getAlmostDuplicateSheetNJUNSCode(Project As Project, pole As po
     
         copiedCode = copiedCode & vbLf & "pdfList.push({"
             copiedCode = copiedCode & vbLf & "url: download ? await getPDFURL() : null,"
-            copiedCode = copiedCode & vbLf & "filename: `" & Project.Notification & " - " & "${ticketNumber} - " & NJUNSType & " TICKET`,"
+            copiedCode = copiedCode & vbLf & "filename: `" & Project.Notification & " - " & "${ticketNumber} - " & NJUNSType & " NJUNS`,"
             copiedCode = copiedCode & vbLf & "poleNumber: """ & pole.poleNumber & ""","
             copiedCode = copiedCode & vbLf & "ticketNumber: ticketNumber"
         copiedCode = copiedCode & vbLf & "});"
@@ -956,7 +956,7 @@ Private Function getUpdateSheetNJUNSCode(Project As Project, pole As pole) As St
         
         copiedCode = copiedCode & vbLf & "pdfList.push({"
             copiedCode = copiedCode & vbLf & "url: download ? await getPDFURL() : null,"
-            copiedCode = copiedCode & vbLf & "filename: `" & Project.Notification & " - " & "${ticketNumber} - " & NJUNSType & " TICKET`,"
+            copiedCode = copiedCode & vbLf & "filename: `" & Project.Notification & " - " & "${ticketNumber} - " & NJUNSType & " NJUNS`,"
             copiedCode = copiedCode & vbLf & "poleNumber: """ & pole.poleNumber & ""","
             copiedCode = copiedCode & vbLf & "ticketNumber: ticketNumber"
         copiedCode = copiedCode & vbLf & "});"
