@@ -209,6 +209,13 @@ Private Function getSelectProjectTabCode(Project As Project) As String
     
     copiedCode = copiedCode & vbLf & "if (navigated) await waitLoadingTime();"
     copiedCode = copiedCode & vbLf & "if(!consumersCode) consumersCode = document.querySelectorAll('.v-filterselect-input')[0].value;"
+    copiedCode = copiedCode & vbLf & "for (i = 0; i < document.querySelectorAll('.c-groupbox-expander').length; i++) {"
+    copiedCode = copiedCode & vbLf & "let el = document.querySelectorAll('.c-groupbox-expander')[i];"
+    copiedCode = copiedCode & vbLf & "if (!el.classList.contains('expanded')) {"
+    copiedCode = copiedCode & vbLf & "realClick(el);"
+    copiedCode = copiedCode & vbLf & "await new Promise(r => setTimeout(r, 500));"
+    copiedCode = copiedCode & vbLf & "}}"
+
     copiedCode = copiedCode & vbLf & "if (navigated) await waitLoadingTime();"
 
     getSelectProjectTabCode = copiedCode
@@ -688,7 +695,7 @@ Private Function findNJUNSCode(ByVal company As String) As String
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
     Dim codeRange As Range: Set codeRange = controlWs.Range("NJUNSCODES").EntireColumn
     lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).row
-    Set codeRange = controlWs.Range(controlWs.Cells(3, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
+    Set codeRange = controlWs.Range(controlWs.Cells(controlWs.Range("NJUNSCODES").row, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
 
     company = UCase(Replace(company, " ", ""))
     company = Replace(company, ":", "")
@@ -921,6 +928,22 @@ Private Function getUpdateSheetNJUNSCode(Project As Project, pole As pole) As St
     copiedCode = copiedCode & vbLf & "await clickButton("".v-button.v-widget.primary"", ""Apply Changes"");"
     copiedCode = copiedCode & vbLf & "if(cancelled) break;"
     
+    copiedCode = copiedCode & vbLf & "await clickButton("".v-captiontext"", ""Parties"");"
+    copiedCode = copiedCode & vbLf & "copyExists = false"
+    copiedCode = copiedCode & vbLf & "for (i = 0; i< document.querySelectorAll('.v-grid-row.v-grid-row-has-data').length; i++) {"
+    copiedCode = copiedCode & vbLf & "let el = document.querySelectorAll('.v-grid-row.v-grid-row-has-data')[i];"
+    copiedCode = copiedCode & vbLf & "if (el.childNodes[1].textContent === 'Copy' && el.childNodes[2].textContent === '" & findNJUNSCode("Applicant") & "') copyExists = true;"
+    copiedCode = copiedCode & vbLf & "}"
+    copiedCode = copiedCode & vbLf & "if(cancelled) break;"
+    copiedCode = copiedCode & vbLf & "if(!copyExists) {"
+    copiedCode = copiedCode & vbLf & "await clickButton("".v-button.v-widget.c-primary-action.v-button-c-primary-action.icon"", ""Create"");"
+    copiedCode = copiedCode & vbLf & "await selectDropDownOption(document.querySelectorAll("".v-filterselect-input"")[2], ""Copy"");"
+    copiedCode = copiedCode & vbLf & "await commitLookupValue(document.querySelectorAll("".v-filterselect-input"")[3], """ & findNJUNSCode("Applicant") & """)"
+    copiedCode = copiedCode & vbLf & "await clickButton("".v-button.v-widget.primary"", ""Create"");"
+    copiedCode = copiedCode & vbLf & "}"
+    
+    copiedCode = copiedCode & vbLf & "if(cancelled) break;"
+    
     If save Then
         copiedCode = copiedCode & vbLf & "if(cancelled) break;"
         copiedCode = copiedCode & vbLf & "await clickButton("".v-button.v-widget.blueIcon.v-button-blueIcon.icon"", ""Save"");"
@@ -1031,7 +1054,7 @@ Public Sub DownloadAllTickets()
 
     copiedCode = copiedCode & vbLf & "pdfList.push({"
     copiedCode = copiedCode & vbLf & "url: download ? await getPDFURL() : null,"
-    copiedCode = copiedCode & vbLf & "filename: `" & Project.Notification & " - ${ticketNumber} - ${ticketType} TICKET`,"
+    copiedCode = copiedCode & vbLf & "filename: `" & Project.Notification & " - ${ticketNumber} - ${ticketType} NJUNS`,"
     copiedCode = copiedCode & vbLf & "poleNumber: poleNumber,"
     copiedCode = copiedCode & vbLf & "ticketNumber: ticketNumber"
     copiedCode = copiedCode & vbLf & "});"
@@ -1045,6 +1068,6 @@ Public Sub DownloadAllTickets()
     Dim DataObj As DataObject: Set DataObj = New DataObject
     DataObj.SetText copiedCode
     DataObj.PutInClipboard
-    
+     
     MsgBox ("Copied code to clipboard to downloadf all tickets. Go to NJUNS website and press f12 to paste code into console on the project tab for the project you wish to download the tickets of.")
 End Sub
