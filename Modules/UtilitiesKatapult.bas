@@ -52,7 +52,7 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As Project
                         If jsonNode("attributes").Exists("existing_CE_ID_tag") Then pole.existingCEID = getFirstValueJson(jsonNode("attributes")("existing_CE_ID_tag"))
                         If jsonNode("attributes").Exists("measured_groundline_circumference") Then pole.glc = getFirstValueJson(jsonNode("attributes")("measured_groundline_circumference"))
                         If jsonNode("attributes").Exists("CE_MKR_tree_trimming") Then pole.treeWork = getFirstValueJson(jsonNode("attributes")("CE_MKR_tree_trimming"))
-                        If pole.glc = "" And pole.height <> "" Then pole.glc = autoGLC(pole.height, pole.species, pole.Class)
+                        If Utilities.OnlyNumbers(pole.glc) = "" And pole.height <> "" Then pole.glc = autoGLC(pole.height, pole.species, pole.Class)
                         If jsonNode("attributes").Exists("note") Then
                             Dim key As Variant
                             For Each key In jsonNode("attributes")("note")
