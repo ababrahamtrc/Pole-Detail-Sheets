@@ -130,6 +130,8 @@ Private Sub InitializeCUNameMapping()
     CUNameMapping("D8M") = "100004"
     CUNameMapping("D8L") = "100011"
     CUNameMapping("S8FGDE") = "107000"
+    CUNameMapping("SSA") = "100027"
+    CUNameMapping("DSA") = "100007"
     CUNameMapping("SPINS") = "100022"
     CUNameMapping("SCORS") = "100105"
     CUNameMapping("WR") = "100052"
