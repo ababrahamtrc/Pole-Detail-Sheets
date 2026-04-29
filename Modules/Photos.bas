@@ -134,27 +134,27 @@ Public Sub photoNameValidate()
             fileName = Dir()
         Loop
     Next pole
-    
+                
     For Each pole In Project.poles
         fileName = Dir(path & "*")
         photoCounter = 1
-        
+
         regEx6.Pattern = "M1P" & pole.poleNumber & "-(\d*)_.*_"
         regEx6.IgnoreCase = True
-        
+
         Do While fileName <> ""
             If regEx6.test(fileName) Then
                 photoCounter = 1
                 newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & Project.permit & "." & fileExtension
                 Set matches = regEx6.Execute(fileName)
                 existingPhotoCounter = matches(0).SubMatches(0)
-                
-                
+
+
                 Do While fso.FileExists(path & correctFileName(newName))
                     photoCounter = photoCounter + 1
                     newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & Project.permit & "." & fileExtension
                 Loop
-                
+
                 If CInt(existingPhotoCounter) > CInt(photoCounter) Then
                     Name path & fileName As path & correctFileName(newName)
                     renameCount = renameCount + 1
@@ -163,7 +163,7 @@ Public Sub photoNameValidate()
             fileName = Dir()
         Loop
     Next pole
-                
+    
     fileName = Dir(path & "*")
     Do While fileName <> ""
         cleanedName = fileName
@@ -206,6 +206,16 @@ Public Sub photoNameValidate()
                         Name path & fileName As path & correctFileName(newName)
                         renameCount = renameCount + 1
                     End If
+                ElseIf ceid = pds.Range("CEID") Then
+                    newName = "M1P" & poleNumber & "-" & photoCounter & "_" & pds.Range("CEID") & "_" & Project.permit & "." & fileExtension
+                        
+                    Do While fso.FileExists(path & correctFileName(newName))
+                        photoCounter = photoCounter + 1
+                        newName = "M1P" & poleNumber & "-" & photoCounter & "_" & pds.Range("CEID") & "_" & Project.permit & "." & fileExtension
+                    Loop
+                        
+                    Name path & fileName As path & correctFileName(newName)
+                    renameCount = renameCount + 1
                 Else
                     MsgBox "Missmatching permit on photo and pole " & poleNumber & vbLf & "Can't verify this is the correct photos folder"
                     Exit Sub
