@@ -1172,7 +1172,7 @@ Private Sub generateGuyCU(cus As Collection, location As String, hardware As Str
     Dim pQty As Integer
     If InStr(hardware, "P") > 0 Then
         pQty = qty
-        If InStr(hardware, "P") > 0 Then
+        If InStr(hardware, "P") > 1 Then
             If IsNumeric(Mid(hardware, InStr(hardware, "P") - 1, 1)) Then pQty = Mid(hardware, InStr(hardware, "P") - 1, 1)
         End If
         
@@ -1187,7 +1187,7 @@ Private Sub generateGuyCU(cus As Collection, location As String, hardware As Str
     If InStr(hardware, "FG") > 0 Then
         hotsite = True
         fgQty = qty
-        If InStr(hardware, "FG") > 0 Then
+        If InStr(hardware, "FG") > 1 Then
             If IsNumeric(Mid(hardware, InStr(hardware, "FG") - 1, 1)) Then fgQty = Mid(hardware, InStr(hardware, "FG") - 1, 1)
         End If
         
