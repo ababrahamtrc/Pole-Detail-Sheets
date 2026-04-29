@@ -1,9 +1,14 @@
 {
   "appName": "Excel Pole Detail Sheets",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "updatedAt": "2026-04-29",
-  "versionChanges": "Fixed naming convention on NJUNS tickets from \"TICKET\" -> \"NJUNS\"",
+  "versionChanges": "Fixed some major NJUNS bugs from 2.1.0 where the extra row at the top messed up the script.",
   "versions": [
+    {
+      "version": "2.1.3",
+      "updatedAt": "2026-04-29",
+      "versionChanges": "Fixed some major NJUNS bugs from 2.1.0 where the extra row at the top messed up the script."
+    },
     {
       "version": "2.1.2",
       "updatedAt": "2026-04-29",
