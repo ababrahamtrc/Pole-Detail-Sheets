@@ -116,9 +116,12 @@ Private Sub InitializeNJUNSNameCorrecting()
     NJUNSCodes("AT&TOTTAWA") = "ATT170"
     NJUNSCodes("AT&TSAGINAW") = "ATT173"
     
+    NJUNSCodes("FRONTIERCRAWFORD") = "FCALPN"
+    
     NJUNSCodes("CHARTERNEWAYGO") = "CRTROC"
     NJUNSCodes("CHARTERALCONA") = "CRTSAG"
     NJUNSCodes("CHARTERSAGINAW") = "CRTSAG"
+    NJUNSCodes("CHARTERCRAWFORD") = "CRTTVC"
     
     NJUNSCodes("WOW") = "MILLDG"
     NJUNSCodes("SFN") = "MASDCE"
