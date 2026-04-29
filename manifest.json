@@ -1,9 +1,14 @@
 {
   "appName": "Excel Pole Detail Sheets",
-  "version": "2.1.1",
-  "updatedAt": "2026-04-28",
-  "versionChanges": "Generate NJUNS button now works for multiple comms of the same owner.",
+  "version": "2.1.2",
+  "updatedAt": "2026-04-29",
+  "versionChanges": "Fixed naming convention on NJUNS tickets from \"TICKET\" -> \"NJUNS\"",
   "versions": [
+    {
+      "version": "2.1.2",
+      "updatedAt": "2026-04-29",
+      "versionChanges": "Fixed naming convention on NJUNS tickets from \"TICKET\" -> \"NJUNS\""
+    },
     {
       "version": "2.1.1",
       "updatedAt": "2026-04-28",
