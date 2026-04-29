@@ -143,12 +143,18 @@ Private Sub InitializeCUNameMapping()
     CUNameMapping("3VPO") = "290030"
     CUNameMapping("FGSTANDOFFBRACKETWITHSPIN") = "100029"
     CUNameMapping("18""FGSTANDOFFBRKTW|INS") = "100029"
-    
     CUNameMapping("18FGSTANDOFF") = "100029"
     CUNameMapping("18""FGARM") = "100068"
     CUNameMapping("FGSTANDOFF") = "100029"
     CUNameMapping("FGSTANDOFFBRACKET") = "100029"
     
+    CUNameMapping("TEMPORARYJUMPERTOCOMMPOWERSUPPLY") = "106277"
+    CUNameMapping("TEMPORARYJUMPER") = "106277"
+    CUNameMapping("TEMPJUMPER") = "106277"
+    
+    CUNameMapping("FGINSULATOR") = "100191"
+    CUNameMapping("FG") = "100191"
+    CUNameMapping("FGLINK") = "100191"
     
     CUNameMapping("CLUSTERMOUNT") = "200548"
     CUNameMapping("SIDEWALKBRACE") = "100432"
