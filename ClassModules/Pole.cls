@@ -374,6 +374,7 @@ Public Sub fillSheet(sheet As Worksheet, maxSpans As Integer, Project As Project
     Dim comp As Variant
 
     'Header info
+    sheet.Unprotect
     sheet.Range("NOTIFICATION").Value = Project.Notification
     sheet.Range("PERMIT").Value = Project.permit
     sheet.Range("APPLICANT").Value = Project.applicant
