@@ -40,7 +40,7 @@ Public Function moveComms(ByVal index As Long, ByVal comms As Collection, ByVal 
     End If
     If movements(index) = "Lower" Then
         If Comm.Mainline Then
-            movement = movement & "Lower " & Comm.orientation & " mainline a minimum of " & findDifference(Comm.height, Comm.modification) & " on the pole" & IIf(Comm.drops, drops, " ") & "to " & Comm.reasonForMovement
+            movement = movement & "Lower" & Comm.orientation & " mainline a minimum of " & findDifference(Comm.height, Comm.modification) & " on the pole" & IIf(Comm.drops, drops, " ") & "to " & Comm.reasonForMovement
         Else
             movement = movement & "Lower drop a minimum of " & findDifference(Comm.height, Comm.modification) & " on the pole" & IIf(Comm.drops, drops, " ") & "to " & Comm.reasonForMovement
         End If
@@ -51,7 +51,7 @@ Public Function moveComms(ByVal index As Long, ByVal comms As Collection, ByVal 
         End If
     ElseIf movements(index) = "Raise" Then
         If Comm.Mainline Then
-            movement = movement & "Raise " & Comm.orientation & " mainline a minimum of " & findDifference(Comm.height, Comm.modification) & " on the pole" & IIf(Comm.drops, drops, " ") & "to " & Comm.reasonForMovement
+            movement = movement & "Raise" & Comm.orientation & " mainline a minimum of " & findDifference(Comm.height, Comm.modification) & " on the pole" & IIf(Comm.drops, drops, " ") & "to " & Comm.reasonForMovement
         Else
             movement = movement & "Raise drop a minimum of " & findDifference(Comm.height, Comm.modification) & " on the pole" & IIf(Comm.drops, drops, " ") & "to " & Comm.reasonForMovement
         End If
@@ -61,7 +61,7 @@ Public Function moveComms(ByVal index As Long, ByVal comms As Collection, ByVal 
             movement = movement & "Maintain minimum 12"" comm separation on the pole and 6"" separation at the midspan below " & IIf(comms(index - 1).owner = comms(index).owner, "other " & comms(index - 1).owner & " mainline", comms(index - 1).owner) & "." & vbCrLf
         End If
     ElseIf movements(index) = "Attach" Then
-        movement = movement & "Attach to pole. "
+        movement = movement & "Attach" & Comm.orientation & " mainline to pole. "
         If (index = 1) Then
             movement = movement & "Maintain minimum " & IIf(applicant And ApplyAbove, "52""", "40""") & " pole separation and " & IIf(applicant And ApplyAbove, "36""", "30""") & " midspan separation below lowest power. "
         End If
@@ -193,17 +193,17 @@ Public Function topPole(ByVal comms As Collection, applicant As Boolean, ApplyAb
         If i = 1 Then
             If applicant Then
                 If ApplyAbove Then
-                    movement = movement & Comm.owner & vbCrLf & "To transfer " & Comm.orientation & " mainline to new pole" & IIf(Comm.drops, drops, " ") & "with a minimum 52"" safety zone separation on the pole and 36"" separation at the midspan below lowest power. Maintain minimum " & clearanceDict(comms.count) & " midspan ground clearance." & vbCrLf
+                    movement = movement & Comm.owner & vbCrLf & "To transfer" & Comm.orientation & " mainline to new pole" & IIf(Comm.drops, drops, " ") & "with a minimum 52"" safety zone separation on the pole and 36"" separation at the midspan below lowest power. Maintain minimum " & clearanceDict(comms.count) & " midspan ground clearance." & vbCrLf
                 Else
-                    movement = movement & Comm.owner & vbCrLf & "To transfer " & Comm.orientation & " mainline to new pole" & IIf(Comm.drops, drops, " ") & "with a minimum 40"" safety zone separation on the pole and 30"" separation at the midspan below lowest power. Maintain minimum " & clearanceDict(comms.count + 1) & " midspan ground clearance." & vbCrLf
+                    movement = movement & Comm.owner & vbCrLf & "To transfer" & Comm.orientation & " mainline to new pole" & IIf(Comm.drops, drops, " ") & "with a minimum 40"" safety zone separation on the pole and 30"" separation at the midspan below lowest power. Maintain minimum " & clearanceDict(comms.count + 1) & " midspan ground clearance." & vbCrLf
                 End If
                 previousOwner = Comm.owner
             Else
-                movement = movement & Comm.owner & vbCrLf & "To transfer " & Comm.orientation & " mainline to new pole" & IIf(Comm.drops, drops, " ") & "with a minimum 40"" safety zone separation on the pole and 30"" separation at the midspan below lowest power. Maintain minimum " & clearanceDict(comms.count - i + IIf(applicant And Not ApplyAbove, 2, 1)) & " midspan ground clearance." & vbCrLf
+                movement = movement & Comm.owner & vbCrLf & "To transfer" & Comm.orientation & " mainline to new pole" & IIf(Comm.drops, drops, " ") & "with a minimum 40"" safety zone separation on the pole and 30"" separation at the midspan below lowest power. Maintain minimum " & clearanceDict(comms.count - i + IIf(applicant And Not ApplyAbove, 2, 1)) & " midspan ground clearance." & vbCrLf
                 previousOwner = Comm.owner
             End If
         Else
-            movement = movement & Comm.owner & vbCrLf & "To transfer " & Comm.orientation & " mainline to new pole" & IIf(Comm.drops, drops, " ") & "with a minimum 12"" comm separation on the pole and 6"" separation at the midspan below " & previousOwner & ". Maintain minimum " & clearanceDict(comms.count - i + IIf(applicant And Not ApplyAbove, 2, 1)) & " midspan ground clearance." & vbCrLf
+            movement = movement & Comm.owner & vbCrLf & "To transfer" & Comm.orientation & " mainline to new pole" & IIf(Comm.drops, drops, " ") & "with a minimum 12"" comm separation on the pole and 6"" separation at the midspan below " & previousOwner & ". Maintain minimum " & clearanceDict(comms.count - i + IIf(applicant And Not ApplyAbove, 2, 1)) & " midspan ground clearance." & vbCrLf
             previousOwner = Comm.owner
         End If
         If Not Comm.Mainline Then
