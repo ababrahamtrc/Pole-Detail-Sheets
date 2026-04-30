@@ -634,7 +634,7 @@ Private Sub getExtraDECU(cus As Collection, pole As pole, needAdditionalCUs As C
             cuCode = CUNameMapping.getCUNameMapping(size & "DE")
             If cuCode = "" Then cuCode = CUNameMapping.getCUNameMapping(size & "DEGRIP")
             If cuCode <> "" Then
-                Call generateCU(cus, pole.location, cuCode, sizes(size), action)
+                Call generateCU(cus, pole.location, cuCode, IIf(Not singleSize, sizes(size), amount), action)
                 amountUsed = amountUsed + IIf(Not singleSize, sizes(size), amount)
                 If action = "RET REM" Then
                     sizeCount = sizeCount - IIf(Not singleSize, sizes(size), amount)
