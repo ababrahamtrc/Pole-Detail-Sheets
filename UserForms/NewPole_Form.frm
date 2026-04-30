@@ -17,6 +17,7 @@ Attribute VB_Exposed = False
 
 
 
+
 Public Sub Initialize()
     ComboBox1.list = Array("35", "40", "45", "50", "55", "60", "65", "70")
     ComboBox2.list = Array("2", "3", "4")
