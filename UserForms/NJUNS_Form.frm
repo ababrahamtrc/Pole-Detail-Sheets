@@ -13,6 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Private companies As Collection
 Private heights As Collection
 Private modifications As Collection
@@ -590,14 +591,14 @@ Public Function findOrientation(heights As Collection, companies As Collection, 
     Next j
     
     If highestCompany Then
-        orientation = "top"
+        orientation = " top"
     ElseIf lowestCompany Then
-        orientation = "bottom"
+        orientation = " bottom"
     Else
-        orientation = "middle"
+        orientation = " middle"
     End If
     
-    If duplicateHeight Then orientation = "one of the " & orientation
+    If duplicateHeight Then orientation = " one of the" & orientation
     
     findOrientation = orientation
 End Function
