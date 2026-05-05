@@ -647,7 +647,7 @@ End Sub
 Public Sub calculateViolations()
     Me.violation40SZV = Calculate40SZV()
     Me.violationUtil156MSGCV = Calculate156MSGCV(Me.utilWires)
-    Me.violationCom156MSGCV = Calculate156MSGCV(Me.commWires)
+    Me.violationCom156MSGCV = Calculate156MSGCV(Me.commComponents)
     Me.violation30MSSV = Calculate30MSSV()
     results = CalculateCommViolations()
     violation12CSV = results(0)
@@ -833,7 +833,7 @@ Public Function Calculate40SLSV() As String()
         If TypeOf Wire Is Wire Then
             If sLBracket.bottomHeight - 40 < Wire.height Then sLBracketViolators.Add i
             If Not SLDL Is Nothing Then
-                If SLDL.height - 12 < Wire.height Then sLDLViolators.Add i
+                If Abs(SLDL.height - Wire.height) < 12 Then sLDLViolators.Add i
             End If
         End If
     Next i
