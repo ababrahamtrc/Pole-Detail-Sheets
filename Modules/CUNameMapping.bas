@@ -113,6 +113,7 @@ End Sub
 Private Sub InitializeCUNameCorrecting()
     CUNameCorrecting("DEVICEARM") = "S8S"
     CUNameCorrecting("SPIN") = "SPINS"
+    CUNameCorrecting("JUMPERSPIN") = "JUMPERSPINS"
     CUNameCorrecting("SCOR") = "SCORS"
     CUNameCorrecting("LCPTAGS") = "LCPTAG"
     CUNameCorrecting("VDE") = "PRIDE"
@@ -133,6 +134,7 @@ Private Sub InitializeCUNameMapping()
     CUNameMapping("SSA") = "100027"
     CUNameMapping("DSA") = "100007"
     CUNameMapping("SPINS") = "100022"
+    CUNameMapping("JUMPERSPINS") = "100022"
     CUNameMapping("SCORS") = "100105"
     CUNameMapping("WR") = "100052"
     CUNameMapping("TANGENTCLAMP") = "100056"
