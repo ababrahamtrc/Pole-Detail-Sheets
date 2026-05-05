@@ -385,11 +385,11 @@ Public Sub calculateProposedMidspans(Optional poleSheet As Worksheet)
 
     On Error Resume Next
     
-    Call LogMessage.SendLogMessage("calculateProposedMidspans")
-    
     Dim sheet As Worksheet, Sheet2 As Worksheet
 
     If poleSheet Is Nothing Then
+        Call LogMessage.SendLogMessage("calculateProposedMidspans")
+    
         Set sheet = ThisWorkbook.ActiveSheet()
         If sheet.name = "4 Spans" Or sheet.name = "8 Spans" Or sheet.name = "12 Spans" Or sheet.Cells(2, 2).Value <> "Notification:" Then
             MsgBox "You need to have a pole detail sheet active to run this script."
