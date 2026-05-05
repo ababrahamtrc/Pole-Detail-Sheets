@@ -1,9 +1,14 @@
 {
   "appName": "Excel Pole Detail Sheets",
-  "version": "2.1.4",
-  "updatedAt": "2026-04-30",
-  "versionChanges": "Fixed issue with templates not being able to increase in size during generation due to sheet protection. ",
+  "version": "2.1.5",
+  "updatedAt": "2026-05-05",
+  "versionChanges": "Various bug fixes across multiple scripts.",
   "versions": [
+    {
+      "version": "2.1.5",
+      "updatedAt": "2026-05-05",
+      "versionChanges": "Various bug fixes across multiple scripts."
+    },
     {
       "version": "2.1.4",
       "updatedAt": "2026-04-30",
