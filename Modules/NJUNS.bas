@@ -203,7 +203,7 @@ Public Function topPole(ByVal comms As Collection, applicant As Boolean, ApplyAb
                 previousOwner = Comm.owner
             End If
         Else
-            movement = movement & Comm.owner & vbCrLf & "To transfer" & Comm.orientation & " mainline to new pole" & IIf(Comm.drops, drops, " ") & "with a minimum 12"" comm separation on the pole and 6"" separation at the midspan below " & previousOwner & ". Maintain minimum " & clearanceDict(comms.count - i + IIf(applicant And Not ApplyAbove, 2, 1)) & " midspan ground clearance." & vbCrLf
+            movement = movement & Comm.owner & vbCrLf & "To transfer" & Comm.orientation & " mainline to new pole" & IIf(Comm.drops, drops, " ") & "with a minimum 12"" comm separation on the pole and 6"" separation at the midspan below " & IIf(previousOwner = Comm.owner, "other " & Comm.owner & " mainline", Comm.owner) & ". Maintain minimum " & clearanceDict(comms.count - i + IIf(applicant And Not ApplyAbove, 2, 1)) & " midspan ground clearance." & vbCrLf
             previousOwner = Comm.owner
         End If
         If Not Comm.Mainline Then
