@@ -209,6 +209,7 @@ Private Function getSelectProjectTabCode(Project As Project) As String
     
     copiedCode = copiedCode & vbLf & "if (navigated) await waitLoadingTime();"
     copiedCode = copiedCode & vbLf & "if(!consumersCode) consumersCode = document.querySelectorAll('.v-filterselect-input')[0].value;"
+    copiedCode = copiedCode & vbLf & "if(consumersCode === 'CETWS') consumersCode = 'CEWBR';"
     copiedCode = copiedCode & vbLf & "for (i = 0; i < document.querySelectorAll('.c-groupbox-expander').length; i++) {"
     copiedCode = copiedCode & vbLf & "let el = document.querySelectorAll('.c-groupbox-expander')[i];"
     copiedCode = copiedCode & vbLf & "if (!el.classList.contains('expanded')) {"
@@ -836,6 +837,22 @@ Private Function getUpdateSheetNJUNSCode(Project As Project, pole As pole) As St
     copiedCode = copiedCode & vbLf & "break;"
     copiedCode = copiedCode & vbLf & "}};"
     
+    copiedCode = copiedCode & vbLf & "await clickButton("".v-captiontext"", ""Parties"");"
+    copiedCode = copiedCode & vbLf & "copyExists = false"
+    copiedCode = copiedCode & vbLf & "for (i = 0; i< document.querySelectorAll('.v-grid-row.v-grid-row-has-data').length; i++) {"
+    copiedCode = copiedCode & vbLf & "let el = document.querySelectorAll('.v-grid-row.v-grid-row-has-data')[i];"
+    copiedCode = copiedCode & vbLf & "if (el.childNodes[1].textContent === 'Copy' && el.childNodes[2].textContent === '" & findNJUNSCode("Applicant") & "') copyExists = true;"
+    copiedCode = copiedCode & vbLf & "}"
+    copiedCode = copiedCode & vbLf & "if(cancelled) break;"
+    copiedCode = copiedCode & vbLf & "if(!copyExists) {"
+    copiedCode = copiedCode & vbLf & "await clickButton("".v-button.v-widget.c-primary-action.v-button-c-primary-action.icon"", ""Create"");"
+    copiedCode = copiedCode & vbLf & "await selectDropDownOption(document.querySelectorAll("".v-filterselect-input"")[2], ""Copy"");"
+    copiedCode = copiedCode & vbLf & "await commitLookupValue(document.querySelectorAll("".v-filterselect-input"")[3], """ & findNJUNSCode("Applicant") & """)"
+    copiedCode = copiedCode & vbLf & "await clickButton("".v-button.v-widget.primary"", ""Create"");"
+    copiedCode = copiedCode & vbLf & "}"
+    
+    copiedCode = copiedCode & vbLf & "await clickButton("".v-captiontext"", ""Details"");"
+    
     njunsRemarks = "Updated " & Format(Date, "mm/dd/yyyy") & "\nNotification: " & Project.Notification & " Permit: " & Project.permit & "\n"
     copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelectorAll("".v-textfield.v-widget.v-has-width"")[8], ""Holly Webb"");"
     copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelectorAll("".v-textfield.v-widget.v-has-width"")[9], ""517-788-1690"");"
@@ -927,20 +944,6 @@ Private Function getUpdateSheetNJUNSCode(Project As Project, pole As pole) As St
     copiedCode = copiedCode & vbLf & "await clickButton("".v-button.v-widget.primary"", ""Create"");"
     copiedCode = copiedCode & vbLf & "await clickButton("".v-button.v-widget.primary"", ""Apply Changes"");"
     copiedCode = copiedCode & vbLf & "if(cancelled) break;"
-    
-    copiedCode = copiedCode & vbLf & "await clickButton("".v-captiontext"", ""Parties"");"
-    copiedCode = copiedCode & vbLf & "copyExists = false"
-    copiedCode = copiedCode & vbLf & "for (i = 0; i< document.querySelectorAll('.v-grid-row.v-grid-row-has-data').length; i++) {"
-    copiedCode = copiedCode & vbLf & "let el = document.querySelectorAll('.v-grid-row.v-grid-row-has-data')[i];"
-    copiedCode = copiedCode & vbLf & "if (el.childNodes[1].textContent === 'Copy' && el.childNodes[2].textContent === '" & findNJUNSCode("Applicant") & "') copyExists = true;"
-    copiedCode = copiedCode & vbLf & "}"
-    copiedCode = copiedCode & vbLf & "if(cancelled) break;"
-    copiedCode = copiedCode & vbLf & "if(!copyExists) {"
-    copiedCode = copiedCode & vbLf & "await clickButton("".v-button.v-widget.c-primary-action.v-button-c-primary-action.icon"", ""Create"");"
-    copiedCode = copiedCode & vbLf & "await selectDropDownOption(document.querySelectorAll("".v-filterselect-input"")[2], ""Copy"");"
-    copiedCode = copiedCode & vbLf & "await commitLookupValue(document.querySelectorAll("".v-filterselect-input"")[3], """ & findNJUNSCode("Applicant") & """)"
-    copiedCode = copiedCode & vbLf & "await clickButton("".v-button.v-widget.primary"", ""Create"");"
-    copiedCode = copiedCode & vbLf & "}"
     
     copiedCode = copiedCode & vbLf & "if(cancelled) break;"
     
