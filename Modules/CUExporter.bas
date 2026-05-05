@@ -972,7 +972,10 @@ Private Sub parseLineToCUs(needAdditionalCUs As Collection, missedLines As Colle
             cuCode = CUNameMapping.getCUNameMapping(hardware)
             If cuCode = "" Then cuCode = CUNameMapping.getCUNameMapping(Utilities.OnlyLetters(hardware))
             If cuCode = "" And InStr(hardware, "SWAMP FIXTURE") > 0 Then cuCode = "100085"
-            If cuCode <> "" Then Call generateCU(cus, pole.location, cuCode, amount, properAction(mode))
+            If cuCode <> "" Then
+                If InStr(hardware, "JUMPER") > 0 And InStr(hardware, "SPIN") > 0 Then Call generateCU(cus, pole.location, "100724", amount, properAction(mode))
+                Call generateCU(cus, pole.location, cuCode, amount, properAction(mode))
+            End If
             
             If CUNameMapping.CheckForAdditionalCUs(hardware) Then needAdditionalCUs.Add Array(hardware, amount, properAction(mode))
         End If
