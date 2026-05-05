@@ -13,10 +13,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
-
-
-
 Dim pds As Worksheet
 Dim pole As pole
 Dim CrewNotes As String, installNotes As String, removeNotes As String, replaceNotes As String, transferNotes, notes As String
@@ -43,6 +39,8 @@ Dim comms As scripting.Dictionary
 Dim commTransfers As Collection
 
 Public Sub Initialize(sheet As Worksheet)
+    Dim priC As Integer, snC As Integer
+    
     Set pds = sheet
     Set pole = New pole
     Call pole.extractFromSheet(sheet)
@@ -504,6 +502,7 @@ Private Sub IA31_Change()
 End Sub
 
 Private Sub EA11_Change()
+    RA11.Value = EA11.Value
     If EA11.Value = "RS" Then
         EA12.list = Array("11K")
         EA12.ListIndex = 0
@@ -514,7 +513,6 @@ Private Sub EA11_Change()
         EA12.list = Array("(3)11K", "20K + 11K", "(2)20K")
         EA12.ListIndex = 0
     End If
-    RA11.Value = EA11.Value
 End Sub
 
 Private Sub EA21_Change()
@@ -1585,7 +1583,7 @@ Private Sub CommandButton1_Click()
     End If
     
     If warnings <> "" Then
-        answer = MsgBox(warnings & vbLf & "Do you to generate crew notes even with the warnings? Select no or cancel to fix the issues first.", vbYesNoCancel + vbQuestion, "Confirm")
+        answer = MsgBox(warnings & vbLf & "Do you want to generate crew notes even with the warnings? Select no or cancel to fix the issues first.", vbYesNoCancel + vbQuestion, "Confirm")
         If answer = vbNo Or answer = vbCancel Then Exit Sub
     End If
     
@@ -1615,7 +1613,7 @@ Private Function findErrors() As String
         Errors = Errors & "Error: P space shouldn't be blank if there's a buckarm on the pole." & vbLf
     End If
     
-    If RPP.Value And comms.count > CInt(CETV.Value) And Not RPPNOTE1.Value Then
+    If RPP.Value And pole.commWires.count > CInt(CETV.Value) And Not RPPNOTE1.Value Then
         Errors = Errors & "Error: Not all comms accounted for on pole replace, either have CE transfer more comms or add top pole note." & vbLf
     End If
     
@@ -1647,8 +1645,6 @@ Private Function findWarnings() As String
     
     If TSDL.Value And Not RPPNOTE2.Value Then
         warnings = warnings & "Warning: Outage required not selected when trimming driploop." & vbLf
-    ElseIf Not RPPNOTE2.Value And RPP.Value Then
-        warnings = warnings & "Warning: Outage required not selected replacing pole." & vbLf
     End If
     
     If RPP.Value And PSV.Value = "" And Not BAFIG.Value Then
@@ -1788,9 +1784,13 @@ Private Sub generateReplacePoleSection()
     If fuIN3 Then inDict("S8FGDE") = PreviousValueINFUC3
     If fuRM3 Then rmDict("S8FGDE") = PreviousValueRMFUC3
     
+    If mhRP1 Then rpDict("JUMPER SPINS") = previousValueRPMHC1
+    If mhIN1 Then inDict("JUMPER SPINS") = previousValueINMHC1
+    If mhRM1 Then rmDict("JUMPER SPINS") = previousValueRMMHC1
+    
     Call extractFromRPINRMDicts(replacePoleSection, rpDict, inDict, rmDict)
     
-    If priRP1 Or priRP2 Or snRP1 Or snRP2 Or mhRP1 Then
+    If priRP1 Or priRP2 Or snRP1 Or snRP2 Then
         spinCount = 0
         If priRP1 Then spinCount = spinCount + PreviousValueRPPRIC1
         If priRP2 Then spinCount = spinCount + (PreviousValueRPPRIC2 * 2)
@@ -1801,7 +1801,7 @@ Private Sub generateReplacePoleSection()
         rpDict("SPINS") = spinCount
     End If
     
-    If priIN1 Or priIN2 Or snIN1 Or snIN2 Or mhIN1 Then
+    If priIN1 Or priIN2 Or snIN1 Or snIN2 Then
         spinCount = 0
         If priIN1 Then spinCount = spinCount + PreviousValueINPRIC1
         If priIN2 Then spinCount = spinCount + (PreviousValueINPRIC2 * 2)
@@ -1812,7 +1812,7 @@ Private Sub generateReplacePoleSection()
         inDict("SPINS") = spinCount
     End If
     
-    If priRM1 Or priRM2 Or snRM1 Or snRM2 Or mhRM1 Then
+    If priRM1 Or priRM2 Or snRM1 Or snRM2 Then
         spinCount = 0
         If priRM1 Then spinCount = spinCount + PreviousValueRMPRIC1
         If priRM2 Then spinCount = spinCount + (PreviousValueRMPRIC2 * 2)
@@ -1920,7 +1920,7 @@ Private Sub generateReplacePoleSection()
                 replacePoleSection = replacePoleSection & Replace(size, " ", "") & " SERVICE DEADEND" & vbLf
             End If
         Next size
-        replacePoleSection = replacePoleSection & "FIGURE 23-302-1 DETAIL A"
+        replacePoleSection = replacePoleSection & "FIGURE 23-302-1 DETAIL A" & vbLf
     End If
     
     If conductors <> "" Then transferNotes = transferNotes & conductors & vbLf
@@ -2427,7 +2427,9 @@ Private Sub Initialize_ReplacePole()
     RPPCLASS.list = Array("1", "2", "3", "4")
     If InStr(pds.Range("HEIGHT"), "(") > 0 Then
         If RPPSIZE.Value = "" Then
-            RPPSIZE.Value = Left(Trim(pds.Range("HEIGHT")), InStr(Trim(pds.Range("HEIGHT")), "(") - 1)
+            tempHeight = Left(Trim(pds.Range("HEIGHT")), InStr(Trim(pds.Range("HEIGHT")), "(") - 1)
+            If IsNumeric(tempHeight) And tempHeight < "35" Then tempHeight = "35"
+            RPPSIZE.Value = tempHeight
         ElseIf CInt(Left(Trim(pds.Range("HEIGHT")), InStr(Trim(pds.Range("HEIGHT")), "(") - 1)) > 40 Then
             RPPSIZE.Value = Left(Trim(pds.Range("HEIGHT")), InStr(Trim(pds.Range("HEIGHT")), "(") - 1)
         End If
@@ -2564,7 +2566,7 @@ Private Sub Initialize_Basic()
     RSLRFW.ListIndex = 0
     RSLD.list = Array("24""", "23""", "22""", "21""", "20""", "19""", "18""", "17""", "16""", "15""", "14""", "13""", "12""", "11""", "10""", "9""", "8""", "7""", "6""", "5""", "4""")
     RSLD.ListIndex = 0
-    SLDLRFW.list = Array("TO CORRECT 12 STREETLIGHT DRIP LOOP SEPARATION VIOLATION", "TO MAKE ROOM FOR APPLICANT", "TO ALLOW COMMS TO CORRECT VIOLATIONS", "OTHER")
+    SLDLRFW.list = Array("TO CORRECT 12"" STREETLIGHT DRIP LOOP SEPARATION VIOLATION", "TO MAKE ROOM FOR APPLICANT", "TO ALLOW COMMS TO CORRECT VIOLATIONS", "OTHER")
     SLDLRFW.ListIndex = 0
 End Sub
 
