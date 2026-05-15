@@ -1760,10 +1760,10 @@ Private Sub generateReplacePoleSection()
     
     If RPR.Value Then
         If TRT.Value Or RPT.Value Then
-            replacePoleSection = replacePoleSection & "[X]/C-[XX] AL SERVICE [OR SECONDARY] RISER & EXTEND MOLDING TO 12"" BELOW BOTTOM OF TRANSFORMER" & vbLf
+            replacePoleSection = replacePoleSection & "[X]/C-[XX] AL SVC [OR SECONDARY] RISER & EXTEND MOLDING TO 12"" BELOW BOTTOM OF TRANSFORMER" & vbLf
             replacePoleSection = replacePoleSection & "FIGURE 63-20-1" & vbLf
         Else
-            replacePoleSection = replacePoleSection & "[X]/C-[XX]AL SERVICE [OR SECONDARY] RISER & EXTEND MOLDING TO 4"" BELOW [OR ABOVE?] SECONDARY ATTACH HEIGHT" & vbLf
+            replacePoleSection = replacePoleSection & "[X]/C-[XX]AL SVC [OR SECONDARY] RISER & EXTEND MOLDING TO 4"" BELOW [OR ABOVE?] SECONDARY ATTACH HEIGHT" & vbLf
             replacePoleSection = replacePoleSection & "FIGURE 63-20-1" & vbLf
         End If
     End If
@@ -1904,7 +1904,7 @@ Private Sub generateReplacePoleSection()
     End If
     If ohsCount > 0 Then
         If conductors <> "" Then conductors = conductors & ","
-        conductors = conductors & "SERVICE" & IIf(ohsCount > 1, "S", "")
+        conductors = conductors & "SVC"
         Dim serviceSizes As scripting.Dictionary: Set serviceSizes = New scripting.Dictionary
         For Each service In pole.services
             For Each midspan In service.midspans
@@ -1915,12 +1915,12 @@ Private Sub generateReplacePoleSection()
         
         For Each size In serviceSizes
             If serviceSizes(size) > 1 Then
-                replacePoleSection = replacePoleSection & "(" & serviceSizes(size) & ")" & Replace(size, " ", "") & " SERVICE DEADEND" & vbLf
+                replacePoleSection = replacePoleSection & "(" & serviceSizes(size) & ")" & Replace(size, " ", "") & " SVC DEADEND" & vbLf
             Else
-                replacePoleSection = replacePoleSection & Replace(size, " ", "") & " SERVICE DEADEND" & vbLf
+                replacePoleSection = replacePoleSection & Replace(size, " ", "") & " SVC DEADEND" & vbLf
             End If
         Next size
-        replacePoleSection = replacePoleSection & "FIGURE 23-302-1 DETAIL A" & vbLf
+        replacePoleSection = replacePoleSection & secondaryFigures("SECONDARY DEADEND")
     End If
     
     If conductors <> "" Then transferNotes = transferNotes & conductors & vbLf
@@ -2475,9 +2475,9 @@ Private Sub Initialize_ReplacePole()
         TRSL.Value = True
         STLTBTMBRKT.Value = Trim(Split(pds.Range("STLTBRKT").Value, vbLf)(0))
         If pds.Range("MBSM").offset(0, 1).Value = "YES" Then
-            SLM1.Value = True
-        ElseIf pds.Range("MBSM").offset(0, 1).Value = "NO" Then
             SLM2.Value = True
+        ElseIf pds.Range("MBSM").offset(0, 1).Value = "NO" Then
+            SLM1.Value = True
         End If
     End If
     
