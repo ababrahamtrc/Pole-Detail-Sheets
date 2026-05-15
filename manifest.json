@@ -1,9 +1,14 @@
 {
   "appName": "Excel Pole Detail Sheets",
-  "version": "2.1.6",
+  "version": "2.1.61",
   "updatedAt": "2026-05-15",
-  "versionChanges": "No longer need applicant for NJUNS automation.",
+  "versionChanges": "No longer need applicant on NJUNS automation.",
   "versions": [
+    {
+      "version": "2.1.61",
+      "updatedAt": "2026-05-15",
+      "versionChanges": "No longer need applicant on NJUNS automation."
+    },
     {
       "version": "2.1.6",
       "updatedAt": "2026-05-15",
