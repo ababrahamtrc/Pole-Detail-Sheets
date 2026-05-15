@@ -285,6 +285,8 @@ Private Sub fixCUErrors(cus As Collection, needAdditionalCUs As Collection, miss
         If transferServices Then
             If InStr(Replace(hardware, "DEADEND", "DE"), "SERVICEDE") = 1 Then Call missedLines.Remove(i)
             If InStr(Replace(Replace(Replace(hardware, " ", ""), "DEADEND", "DE"), "OPENWIRE", "OW"), "OWSERVICEDE") = 1 Then Call missedLines.Remove(i)
+            If InStr(Replace(hardware, "DEADEND", "DE"), "SVCDE") = 1 Then Call missedLines.Remove(i)
+            If InStr(Replace(Replace(Replace(hardware, " ", ""), "DEADEND", "DE"), "OPENWIRE", "OW"), "OWSVCDE") = 1 Then Call missedLines.Remove(i)
         End If
     Next i
     
@@ -793,9 +795,14 @@ Private Sub parseLineToCUs(needAdditionalCUs As Collection, missedLines As Colle
             For Each equipment In pole.equipments
                 If equipment.componentType = "XFMR" Then timeAdder = 3
             Next equipment
-        ElseIf InStr(line, "SERVICE RISER") > 0 And InStr(line, "|C") > 0 Then
-            line1 = Left(line, InStr(line, "SERVICE RISER") - 1) & "RISER"
-            line2 = Left(line, InStr(line, "SERVICE RISER") - 1) & "RISER"
+        ElseIf (InStr(line, "SERVICE RISER") > 0 Or InStr(line, "SVC RISER") > 0) And InStr(line, "|C") > 0 Then
+            If InStr(line, "SERVICE RISER") > 0 Then
+                line1 = Left(line, InStr(line, "SERVICE RISER") - 1) & "RISER"
+                line2 = Left(line, InStr(line, "SERVICE RISER") - 1) & "RISER"
+            ElseIf InStr(line, "SVC RISER") > 0 Then
+                line1 = Left(line, InStr(line, "SVC RISER") - 1) & "RISER"
+                line2 = Left(line, InStr(line, "SVC RISER") - 1) & "RISER"
+            End If
         ElseIf InStr(line, "SECONDARY RISER") > 0 And InStr(line, "|C") > 0 Then
             line1 = Left(line, InStr(line, "SECONDARY RISER") - 1) & "RISER"
             line2 = Left(line, InStr(line, "SECONDARY RISER") - 1) & "RISER"
@@ -813,6 +820,8 @@ Private Sub parseLineToCUs(needAdditionalCUs As Collection, missedLines As Colle
         
         If InStr(Replace(Replace(hardware, " ", ""), "DEADEND", "DE"), "SERVICEDE") = 1 Then serviceAmount = serviceAmount + amount
         If InStr(Replace(Replace(Replace(hardware, " ", ""), "DEADEND", "DE"), "OPENWIRE", "OW"), "OWSERVICEDE") = 1 Then serviceAmount = serviceAmount + amount
+        If InStr(Replace(Replace(hardware, " ", ""), "DEADEND", "DE"), "SVCDE") = 1 Then serviceAmount = serviceAmount + amount
+        If InStr(Replace(Replace(Replace(hardware, " ", ""), "DEADEND", "DE"), "OPENWIRE", "OW"), "OWSVCDE") = 1 Then serviceAmount = serviceAmount + amount
         
         If InStr(line, "11K") = 0 And InStr(line, "20K") = 0 Then guySection = False
         If (InStr(line, "11K") > 0 Or InStr(line, "20K") > 0) And InStr(line, "/") > 0 And InStr(line, "XP") = 0 And InStr(line, "XFG") = 0 Then guySection = True
@@ -951,7 +960,7 @@ Private Sub parseLineToCUs(needAdditionalCUs As Collection, missedLines As Colle
             If InStr(line, "TRIM") > 0 And InStr(line, "DRIP") Then Call generateCU(cus, pole.location, "101023", 1, "INSTALL")
             If InStr(line, "CO") > 0 And (InStr(line, " ON SA") > 0 Or InStr(line, " ON LCOM") > 0 Or InStr(line, " TO SA") > 0 Or InStr(line, " TO LCOM") > 0) Then Call generateTransferCOCU(cus, pole.location, amount, hardware)
             If InStr(line, "|LA ") > 0 Or InStr(hardware, "LA ") = 1 And InStr(line, "TRANSFORMER") = 0 Then Call generateCU(cus, pole.location, "200155", amount, "INSTALL")
-            If Replace(hardware, " ", "") = "SERVICE" Or hardware = "SERVICES" Or Replace(hardware, " ", "") = "OHSERVICE" Or Replace(hardware, " ", "") = "OHSERVICE" Then Call generateTransferServiceCU(cus, pole, amount)
+            If Replace(hardware, " ", "") = "SVC" Or Replace(hardware, " ", "") = "SVCS" Or Replace(hardware, " ", "") = "SERVICE" Or Replace(hardware, " ", "") = "SERVICES" Or Replace(hardware, " ", "") = "OHSERVICE" Or Replace(hardware, " ", "") = "OHSERVICE" Then Call generateTransferServiceCU(cus, pole, amount)
         End If
         
         'Note section handler
