@@ -91,6 +91,7 @@ Private Function cleanseKey(key As String) As String
     cleansedKey = Replace(cleansedKey, "NEUTRAL", "NEUT")
     cleansedKey = Replace(cleansedKey, "OPENWIRE", "OW")
     cleansedKey = Replace(cleansedKey, "SECONDARY", "SEC")
+    cleansedKey = Replace(cleansedKey, "SERVICE", "SVC")
     
     cleansedKey = ThisWorkbook.RemoveParentheses(cleansedKey)
     
@@ -294,23 +295,23 @@ Private Sub InitializeCUNameMapping()
     CUNameMapping("SEC3|0TXDE") = "101029"
     CUNameMapping("SEC3|0QXDE") = "101049"
     
-    CUNameMapping("6DXSERVICEDE") = "101031"
-    CUNameMapping("4TXSERVICEDE") = "101030"
-    CUNameMapping("4QXSERVICEDE") = "101050"
-    CUNameMapping("2TXSERVICEDE") = "101033"
-    CUNameMapping("1|0TXSERVICEDE") = "101026"
-    CUNameMapping("1|0QXSERVICEDE") = "101046"
-    CUNameMapping("3|0TXSERVICEDE") = "101029"
-    CUNameMapping("3|0QXSERVICEDE") = "101049"
+    CUNameMapping("6DXSVCDE") = "101031"
+    CUNameMapping("4TXSVCDE") = "101030"
+    CUNameMapping("4QXSVCDE") = "101050"
+    CUNameMapping("2TXSVCDE") = "101033"
+    CUNameMapping("1|0TXSVCDE") = "101026"
+    CUNameMapping("1|0QXSVCDE") = "101046"
+    CUNameMapping("3|0TXSVCDE") = "101029"
+    CUNameMapping("3|0QXSVCDE") = "101049"
     
-    CUNameMapping("SERVICE6DXDE") = "101031"
-    CUNameMapping("SERVICE4TXDE") = "101030"
-    CUNameMapping("SERVICE4QXDE") = "101050"
-    CUNameMapping("SERVICE2TXDE") = "101033"
-    CUNameMapping("SERVICE1|0TXDE") = "101026"
-    CUNameMapping("SERVICE1|0QXDE") = "101046"
-    CUNameMapping("SERVICE3|0TXDE") = "101029"
-    CUNameMapping("SERVICE3|0QXDE") = "101049"
+    CUNameMapping("SVC6DXDE") = "101031"
+    CUNameMapping("SVC4TXDE") = "101030"
+    CUNameMapping("SVC4QXDE") = "101050"
+    CUNameMapping("SVC2TXDE") = "101033"
+    CUNameMapping("SVC1|0TXDE") = "101026"
+    CUNameMapping("SVC1|0QXDE") = "101046"
+    CUNameMapping("SVC3|0TXDE") = "101029"
+    CUNameMapping("SVC3|0QXDE") = "101049"
     
     CUNameMapping("1|0TXAWACDE") = "101032"
     CUNameMapping("1|0QXAWACDE") = "101032"
