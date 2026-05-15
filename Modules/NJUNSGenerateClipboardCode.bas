@@ -1,5 +1,5 @@
 Attribute VB_Name = "NJUNSGenerateClipboardCode"
-Const save As Boolean = False
+Const save As Boolean = True
 Private previousSteps As Collection
 
 Public Sub ExportAllNJUNS()
