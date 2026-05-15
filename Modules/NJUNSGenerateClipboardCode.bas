@@ -1,5 +1,5 @@
 Attribute VB_Name = "NJUNSGenerateClipboardCode"
-Const save As Boolean = True
+Const save As Boolean = False
 Private previousSteps As Collection
 
 Public Sub ExportAllNJUNS()
@@ -264,11 +264,12 @@ Private Function checkCodes() As Boolean
     
     Dim cell As Range
     For Each cell In codeRange
-        If cell.Value = "" Then Exit For
-        If cell.offset(0, 1).Value = "" Then
-            MsgBox ("Missing values in the control page for NJUNS codes, these need to be all filled in first")
-            checkCodes = False
-            Exit Function
+        If cell.Value <> "" And InStr(cell.Value, "Applicant") = 0 Then
+            If cell.offset(0, 1).Value = "" Then
+                MsgBox ("Missing values in the control page for NJUNS codes, these need to be all filled in first")
+                checkCodes = False
+                Exit Function
+            End If
         End If
     Next cell
     checkCodes = True
