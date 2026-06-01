@@ -301,7 +301,7 @@ Public Sub extractFromSheet(sheet As Worksheet)
     
 End Sub
 
-Public Sub createSheet(Project As Project, Optional selectedTemplate As Integer)
+Public Sub createSheet(project As project, Optional selectedTemplate As Integer)
     Dim templateWs As Worksheet, fourSpanWs As Worksheet, eightSpanWs As Worksheet, twelveSpanWs As Worksheet
     Dim maxSpans As Integer
 
@@ -332,7 +332,7 @@ Public Sub createSheet(Project As Project, Optional selectedTemplate As Integer)
     End If
                 
     Dim insertSpot As Worksheet: Set insertSpot = Nothing
-    Set existingNames = New scripting.Dictionary
+    Set existingNames = New Scripting.Dictionary
     
     ' copy the template
     For Each sheet In ThisWorkbook.sheets
@@ -365,24 +365,24 @@ Public Sub createSheet(Project As Project, Optional selectedTemplate As Integer)
         End If
     Next sheet
     
-    Call Me.fillSheet(pdsWs, maxSpans, Project)
+    Call Me.fillSheet(pdsWs, maxSpans, project)
     sheet.Activate
     sheet.Range("A1").Select
 End Sub
 
-Public Sub fillSheet(sheet As Worksheet, maxSpans As Integer, Project As Project)
+Public Sub fillSheet(sheet As Worksheet, maxSpans As Integer, project As project)
     Dim comp As Variant
 
     'Header info
     sheet.Unprotect
-    sheet.Range("NOTIFICATION").Value = Project.Notification
-    sheet.Range("PERMIT").Value = Project.permit
-    sheet.Range("APPLICANT").Value = Project.applicant
-    sheet.Range("LOC").Value = Project.jobLocation
-    sheet.Range("INSPECTEDBY").Value = Project.fielder
-    sheet.Range("TWP").Value = Project.township
+    sheet.Range("NOTIFICATION").Value = project.Notification
+    sheet.Range("PERMIT").Value = project.permit
+    sheet.Range("APPLICANT").Value = project.applicant
+    sheet.Range("LOC").Value = project.jobLocation
+    sheet.Range("INSPECTEDBY").Value = project.fielder
+    sheet.Range("TWP").Value = project.township
     sheet.Range("DATE").Value = Me.collectedDate
-    sheet.Range("COUNTY").Value = Project.county
+    sheet.Range("COUNTY").Value = project.county
     sheet.Range("POLENUM").Value = Me.poleNumber
     sheet.Range("CLASS").Value = Me.Class
     sheet.Range("HEIGHT").Value = Me.height & IIf(Me.agl > 0, "(" & Utilities.inchesToFeetInches(Me.agl) & ")", "")
@@ -679,7 +679,7 @@ End Function
 
 Private Function Calculate156MSGCV(components As Collection) As String
     Dim result As String
-    Dim violators As scripting.Dictionary: Set violators = New scripting.Dictionary
+    Dim violators As Scripting.Dictionary: Set violators = New Scripting.Dictionary
     Dim Wire As Variant
     Dim midspan As Integer
     Dim direction As String
@@ -720,7 +720,7 @@ End Function
 
 Private Function Calculate30MSSV() As String
     Dim result As String
-    Dim violators As scripting.Dictionary: Set violators = New scripting.Dictionary
+    Dim violators As Scripting.Dictionary: Set violators = New Scripting.Dictionary
     Dim Wire As Variant
     Dim lowestMidspan As Integer
     Dim comMidspan As Integer
@@ -758,8 +758,8 @@ End Function
 
 Private Function CalculateCommViolations() As String()
     Dim results(0 To 1) As String
-    Dim separationViolators As scripting.Dictionary: Set separationViolators = New scripting.Dictionary
-    Dim midspanViolators As scripting.Dictionary: Set midspanViolators = New scripting.Dictionary
+    Dim separationViolators As Scripting.Dictionary: Set separationViolators = New Scripting.Dictionary
+    Dim midspanViolators As Scripting.Dictionary: Set midspanViolators = New Scripting.Dictionary
     Dim wire1 As Variant
     Dim wire2 As Variant
     Dim Midspan1 As Integer
@@ -865,8 +865,8 @@ End Sub
 
 Public Sub fillCMRF(sheet As Worksheet)
     Dim Wire As Wire
-    Dim comms As scripting.Dictionary
-    Set comms = New scripting.Dictionary
+    Dim comms As Scripting.Dictionary
+    Set comms = New Scripting.Dictionary
     
     Set Me.commWires = Utilities.sortComponents(Me.commWires)
     
@@ -990,7 +990,7 @@ End Function
 
 Public Sub condensePrimaries()
     Dim comp As Variant
-    Dim primaryBundles As scripting.Dictionary: Set primaryBundles = New scripting.Dictionary
+    Dim primaryBundles As Scripting.Dictionary: Set primaryBundles = New Scripting.Dictionary
     Dim i As Integer
     Dim Wire As Wire
     Dim bundleKey As Variant
