@@ -68,13 +68,14 @@ Private Function QACheck(pds As Worksheet) As String
         jobType = "SI"
     End If
     
+    Dim project As project: Set project = New project
     Dim pole As pole: Set pole = New pole
     Call pole.extractFromSheet(pds)
     
     ' Checking basic empty cells
     Call checkEmptyCell(pds, issues, "NOTIFICATION", "Notification")
     Call checkEmptyCell(pds, issues, "PERMIT", "Permit")
-    Call checkEmptyCell(pds, issues, "APPLICANT", "Applicant")
+    If project.mode <> "SYSTEM IMPROVEMENT" Then Call checkEmptyCell(pds, issues, "APPLICANT", "Applicant")
     Call checkEmptyCell(pds, issues, "INSPECTEDBY", "Inspected By")
     Call checkEmptyCell(pds, issues, "TWP", "Town")
     Call checkEmptyCell(pds, issues, "DATE", "Date")
@@ -94,167 +95,181 @@ Private Function QACheck(pds As Worksheet) As String
     If Not isEmpty(ThisWorkbook.sheets("Control").Range("QAFU")) Then
         If isEmpty(pds.Range("SECONLY")) And (isEmpty(pds.Range("TANGENT").offset(0, 1)) And isEmpty(pds.Range("ANGLE").offset(0, 1)) And isEmpty(pds.Range("CORNER").offset(0, 1)) And isEmpty(pds.Range("DEADEND").offset(0, 1)) And isEmpty(pds.Range("BUCK").offset(0, 1))) Then issues = issues & "• Framing unit not specified" & vbLf
     End If
-    'Applicant checks
-    Call checkEmptyCell(pds, issues, "PROPOSEDHEIGHT", "ProposedHeight")
-    If Not isEmpty(pds.Range("PROPOSEDHEIGHT")) And InStr(UCase(pds.Range("PROPOSEDHEIGHT")), "OL") = 0 And InStr(pds.Range("PROPOSEDHEIGHT"), "'") = 0 Then issues = issues & "• Missing foot symbol in proposed attach height" & vbLf
-    If Not isEmpty(pds.Range("EXISTINGDIAMETER")) And InStr(UCase(pds.Range("PROPOSEDHEIGHT")), "OL") = 0 Then issues = issues & "• if there's an existing diameter, OL should appear in the proposed attach height" & vbLf
+
+    If project.mode <> "SYSTEM IMPROVEMENT" Then
+        'Applicant checks
+        Call checkEmptyCell(pds, issues, "PROPOSEDHEIGHT", "ProposedHeight")
+        If Not isEmpty(pds.Range("PROPOSEDHEIGHT")) And InStr(UCase(pds.Range("PROPOSEDHEIGHT")), "OL") = 0 And InStr(pds.Range("PROPOSEDHEIGHT"), "'") = 0 Then issues = issues & "• Missing foot symbol in proposed attach height" & vbLf
+        If Not isEmpty(pds.Range("EXISTINGDIAMETER")) And InStr(UCase(pds.Range("PROPOSEDHEIGHT")), "OL") = 0 Then issues = issues & "• if there's an existing diameter, OL should appear in the proposed attach height" & vbLf
+    End If
     
     ' Back Sheet Checks
     If Not isEmpty(pds.Range("DL")) Then
         Call checkEmptyCell(pds, issues, "ALTONE", "Alt 1")
-    Else
+    ElseIf project.mode <> "SYSTEM IMPROVEMENT" Then
         If Not isEmpty(pds.Range("SUMSHEET3")) Or Not isEmpty(pds.Range("SUMSHEET6")) Then Call checkEmptyCell(pds, issues, "ALTONE", "Alt 1")
     End If
-    If Not isEmpty(pds.Range("SUMSHEET3")) Then Call checkEmptyCell(pds, issues, "ALTTWO", "Alt 2")
-    If Not isEmpty(pds.Range("SUMSHEET6")) Then Call checkEmptyCell(pds, issues, "ALTTHREE", "Alt 3")
-    If Not isEmpty(pds.Range("SUMSHEET4")) Then Call checkEmptyCell(pds, issues, "NJUNS", "NJUNS")
-    If Not isEmpty(pds.Range("NJUNSTICKET")) Then Call checkEmptyCell(pds, issues, "NJUNS", "NJUNS")
-    If Not isEmpty(pds.Range("SUMSHEET5")) Then Call checkEmptyCell(pds, issues, "MAINT", "CE Maintenance")
-    If pds.Range("SUMSHEET11").text = "1‚2" And Replace(pds.Range("ALTTWO").text, " ", "") <> "SAMEASALT1" Then issues = issues & "• Alt 2 should be labeled ""SAME AS ALT 1"" if there's only alt 1 and 2 work" & vbLf
-    If pds.Range("SUMSHEET11").text = "1‚3" And Replace(pds.Range("ALTTHREE").text, " ", "") <> "SAMEASALT1" Then issues = issues & "• Alt 3 should be labeled ""SAME AS ALT 1"" if there's only alt 1 and 3 work" & vbLf
-    If Not isEmpty(ThisWorkbook.sheets("Control").Range("QACMRW")) Then
-        If Not isEmpty(pds.Range("SUMSHEET7")) And Replace(pds.Range("NJUNS").text, " ", "") <> "COMMMAKEREADYWORK" Then issues = issues & "• NJUNS should be labeled ""COMM MAKE READY WORK"" if there's comm make ready work" & vbLf
-    End If
     
-    ' Pole Denied
-    If Not isEmpty(pds.Range("SUMSHEET8")) Then
-        Call checkEmptyCell(pds, issues, "SUMSHEET14", "Comments - Applicant")
-        If pds.Range("CMRF1").Value <> "DENIED" Or pds.Range("CMRF2").Value <> "DENIED" Or pds.Range("CMRF3").Value <> "DENIED" Then issues = issues & "• If pole is denied, put DENIED in applicant CMRF sections." & vbLf
-        If Not isEmpty(pds.Range("SUMSHEET1")) Then issues = issues & "• If pole is denied, ok to attach before work shouldn't be checked off" & vbLf
-        If Not isEmpty(pds.Range("SUMSHEET2")) Then issues = issues & "• If pole is denied, work required before attach shouldn't be checked off" & vbLf
-        If isEmpty(pds.Range("NEWAPP")) Then issues = issues & "• Even if pole is denied, there should be a new app percentage. Put DENIED if no percentage" & vbLf
-    ' Pole Not Denied
-    Else
-        If isEmpty(pds.Range("SUMSHEET9")) Then Call checkEmptyCell(pds, issues, "NEWAPP", "New App Loading %")
-        Call checkEmptyCell(pds, issues, "CMRF1", "New Attacher Height")
+    If project.mode <> "SYSTEM IMPROVEMENT" Then
+        If Not isEmpty(pds.Range("SUMSHEET3")) Then Call checkEmptyCell(pds, issues, "ALTTWO", "Alt 2")
+        If Not isEmpty(pds.Range("SUMSHEET6")) Then Call checkEmptyCell(pds, issues, "ALTTHREE", "Alt 3")
+        If Not isEmpty(pds.Range("SUMSHEET4")) Then Call checkEmptyCell(pds, issues, "NJUNS", "NJUNS")
+        If Not isEmpty(pds.Range("NJUNSTICKET")) Then Call checkEmptyCell(pds, issues, "NJUNS", "NJUNS")
+        If Not isEmpty(pds.Range("SUMSHEET5")) Then Call checkEmptyCell(pds, issues, "MAINT", "CE Maintenance")
+        If pds.Range("SUMSHEET11").text = "1‚2" And Replace(pds.Range("ALTTWO").text, " ", "") <> "SAMEASALT1" Then issues = issues & "• Alt 2 should be labeled ""SAME AS ALT 1"" if there's only alt 1 and 2 work" & vbLf
+        If pds.Range("SUMSHEET11").text = "1‚3" And Replace(pds.Range("ALTTHREE").text, " ", "") <> "SAMEASALT1" Then issues = issues & "• Alt 3 should be labeled ""SAME AS ALT 1"" if there's only alt 1 and 3 work" & vbLf
+        If Not isEmpty(ThisWorkbook.sheets("Control").Range("QACMRW")) Then
+            If Not isEmpty(pds.Range("SUMSHEET7")) And Replace(pds.Range("NJUNS").text, " ", "") <> "COMMMAKEREADYWORK" Then issues = issues & "• NJUNS should be labeled ""COMM MAKE READY WORK"" if there's comm make ready work" & vbLf
+        End If
+
+        ' Pole Denied
+        If Not isEmpty(pds.Range("SUMSHEET8")) Then
+            Call checkEmptyCell(pds, issues, "SUMSHEET14", "Comments - Applicant")
+            If pds.Range("CMRF1").Value <> "DENIED" Or pds.Range("CMRF2").Value <> "DENIED" Or pds.Range("CMRF3").Value <> "DENIED" Then issues = issues & "• If pole is denied, put DENIED in applicant CMRF sections." & vbLf
+            If Not isEmpty(pds.Range("SUMSHEET1")) Then issues = issues & "• If pole is denied, ok to attach before work shouldn't be checked off" & vbLf
+            If Not isEmpty(pds.Range("SUMSHEET2")) Then issues = issues & "• If pole is denied, work required before attach shouldn't be checked off" & vbLf
+            If isEmpty(pds.Range("NEWAPP")) Then issues = issues & "• Even if pole is denied, there should be a new app percentage. Put DENIED if no percentage" & vbLf
+        ' Pole Not Denied
+        Else
+            If isEmpty(pds.Range("SUMSHEET9")) Then Call checkEmptyCell(pds, issues, "NEWAPP", "New App Loading %")
+            Call checkEmptyCell(pds, issues, "CMRF1", "New Attacher Height")
+        End If
     End If
     
     ' Foreign Pole
     If Not isEmpty(pds.Range("SUMSHEET9")) Then
-        If pds.Range("CEID") <> "FOREIGN" Then issues = issues & "• CEID should be set to FOREIGN if it's a foreign pole" & vbLf
-        If isEmpty(pds.Range("SUMSHEET8")) And (InStr(1, pds.Range("CMRF1"), "APPLY TO", vbTextCompare) = 0 Or InStr(1, pds.Range("CMRF2"), "APPLY TO", vbTextCompare) = 0 Or InStr(1, pds.Range("CMRF3"), "APPLY TO", vbTextCompare) = 0) Then issues = issues & "• If foreign pole, need to say APPLY TO [OWNER] on cmrf new attacher sections" & vbLf
-        If isEmpty(pds.Range("SUMSHEET8")) And InStr(1, pds.Range("SUMSHEET14"), "APPLY TO", vbTextCompare) = 0 Then issues = issues & "• If foreign pole, need to say APPLY TO [OWNER] on comments section of summary sheet" & vbLf
-        If InStr(pds.Range("ASIS"), "FOREIGN") = 0 Then issues = issues & "• As-is percentage should be FOREIGN on foreign poles" & vbLf
-        If InStr(pds.Range("NEWAPP"), "FOREIGN") = 0 Then issues = issues & "• New App percentage should be FOREIGN on foreign poles" & vbLf
+        If project.mode <> "SYSTEM IMPROVEMENT" Then
+            If pds.Range("CEID") <> "FOREIGN" Then issues = issues & "• CEID should be set to FOREIGN if it's a foreign pole" & vbLf
+            If isEmpty(pds.Range("SUMSHEET8")) And (InStr(1, pds.Range("CMRF1"), "APPLY TO", vbTextCompare) = 0 Or InStr(1, pds.Range("CMRF2"), "APPLY TO", vbTextCompare) = 0 Or InStr(1, pds.Range("CMRF3"), "APPLY TO", vbTextCompare) = 0) Then issues = issues & "• If foreign pole, need to say APPLY TO [OWNER] on cmrf new attacher sections" & vbLf
+            If isEmpty(pds.Range("SUMSHEET8")) And InStr(1, pds.Range("SUMSHEET14"), "APPLY TO", vbTextCompare) = 0 Then issues = issues & "• If foreign pole, need to say APPLY TO [OWNER] on comments section of summary sheet" & vbLf
+            If InStr(pds.Range("ASIS"), "FOREIGN") = 0 Then issues = issues & "• As-is percentage should be FOREIGN on foreign poles" & vbLf
+            If InStr(pds.Range("NEWAPP"), "FOREIGN") = 0 Then issues = issues & "• New App percentage should be FOREIGN on foreign poles" & vbLf
+        End If
     Else
         Call checkEmptyCell(pds, issues, "ASIS", "As-is Percentage")
         Call checkEmptyCell(pds, issues, "ASISPF", "As-Is Pole Loading Pass/Fail")
-        If isEmpty(pds.Range("SUMSHEET8")) Then Call checkEmptyCell(pds, issues, "NEWAPPPF", "With-App Pole Loading Pass/Fail")
-        If Not isEmpty(pds.Range("NEWAPPLEAD")) Then
-            Call checkEmptyCell(pds, issues, "ROOMTOGUY", "Room to guy")
-            Call checkEmptyCell(pds, issues, "PGUY", "Top proposed guying ok")
-        End If
-        If Not isEmpty(pds.Range("NEWAPPLEAD").offset(1, 0)) Then Call checkEmptyCell(pds, issues, "PGUY2", "Bottom proposed guying ok")
-        If pds.Range("ROOMTOGUY") = "NO" Then Call checkEmptyCell(pds, issues, "GUYCOMMENT", "Guying Comment")
-        If Not isEmpty(pds.Range("SUMSHEET8")) And Not isEmpty(pds.Range("NEWAPPLEAD")) Then
-            If pds.Range("PGUY") = "YES" Then issues = issues & "• Top proposed guying shouldn't be YES if pole is denied." & vbLf
-            If Not isEmpty(pds.Range("NEWAPPLEAD").offset(1, 0)) Then
-                If pds.Range("PGUY2") = "YES" Then issues = issues & "• Bottom proposed guying shouldn't be YES if pole is denied." & vbLf
+        If project.mode <> "SYSTEM IMPROVEMENT" Then
+            If isEmpty(pds.Range("SUMSHEET8")) Then Call checkEmptyCell(pds, issues, "NEWAPPPF", "With-App Pole Loading Pass/Fail")
+            If Not isEmpty(pds.Range("NEWAPPLEAD")) Then
+                Call checkEmptyCell(pds, issues, "ROOMTOGUY", "Room to guy")
+                Call checkEmptyCell(pds, issues, "PGUY", "Top proposed guying ok")
             End If
-        End If
-        If Not isEmpty(pds.Range("NJUNS")) And isEmpty(pds.Range("SUMSHEET4")) And InStr(pds.Range("NJUNS"), "COMM MAKE READY WORK") = 0 Then Call checkEmptyCell(pds, issues, "SUMSHEET4", "Comm to correct violations")
-        If isEmpty(pds.Range("SUMSHEET8")) And (Not isEmpty(pds.Range("ALTONE")) Or Not isEmpty(pds.Range("ALTTWO")) Or Not isEmpty(pds.Range("ALTTHREE")) Or Not isEmpty(pds.Range("NJUNS")) Or Not isEmpty(pds.Range("MAINT"))) Then
-            Call checkEmptyCell(pds, issues, "SUMSHEET2", "Work Required Before Attach") '
-        ElseIf isEmpty(pds.Range("SUMSHEET8")) And (isEmpty(pds.Range("SUMSHEET2")) And (Not isEmpty(pds.Range("SUMSHEET3")) Or Not isEmpty(pds.Range("SUMSHEET4")) Or Not isEmpty(pds.Range("SUMSHEET5")) Or Not isEmpty(pds.Range("SUMSHEET6")) Or Not isEmpty(pds.Range("SUMSHEET7")))) Then
-            Call checkEmptyCell(pds, issues, "SUMSHEET2", "Work Required Before Attach")
-        End If
-        If Not isEmpty(pds.Range("STLTBRKT")) Then
-            Call checkEmptyCell(pds, issues, "BONDED", "Streetlight Bonded")
-            If isEmpty(pds.Range("MBSM").offset(0, 1)) Then issues = issues & "• Miss/Brkn Streetlight molding needs to be selected if there's a streetlight." & vbLf
+            If Not isEmpty(pds.Range("NEWAPPLEAD").offset(1, 0)) Then Call checkEmptyCell(pds, issues, "PGUY2", "Bottom proposed guying ok")
+            If pds.Range("ROOMTOGUY") = "NO" Then Call checkEmptyCell(pds, issues, "GUYCOMMENT", "Guying Comment")
+            If Not isEmpty(pds.Range("SUMSHEET8")) And Not isEmpty(pds.Range("NEWAPPLEAD")) Then
+                If pds.Range("PGUY") = "YES" Then issues = issues & "• Top proposed guying shouldn't be YES if pole is denied." & vbLf
+                If Not isEmpty(pds.Range("NEWAPPLEAD").offset(1, 0)) Then
+                    If pds.Range("PGUY2") = "YES" Then issues = issues & "• Bottom proposed guying shouldn't be YES if pole is denied." & vbLf
+                End If
+            End If
+            If Not isEmpty(pds.Range("NJUNS")) And isEmpty(pds.Range("SUMSHEET4")) And InStr(pds.Range("NJUNS"), "COMM MAKE READY WORK") = 0 Then Call checkEmptyCell(pds, issues, "SUMSHEET4", "Comm to correct violations")
+            If isEmpty(pds.Range("SUMSHEET8")) And (Not isEmpty(pds.Range("ALTONE")) Or Not isEmpty(pds.Range("ALTTWO")) Or Not isEmpty(pds.Range("ALTTHREE")) Or Not isEmpty(pds.Range("NJUNS")) Or Not isEmpty(pds.Range("MAINT"))) Then
+                Call checkEmptyCell(pds, issues, "SUMSHEET2", "Work Required Before Attach") '
+            ElseIf isEmpty(pds.Range("SUMSHEET8")) And (isEmpty(pds.Range("SUMSHEET2")) And (Not isEmpty(pds.Range("SUMSHEET3")) Or Not isEmpty(pds.Range("SUMSHEET4")) Or Not isEmpty(pds.Range("SUMSHEET5")) Or Not isEmpty(pds.Range("SUMSHEET6")) Or Not isEmpty(pds.Range("SUMSHEET7")))) Then
+                Call checkEmptyCell(pds, issues, "SUMSHEET2", "Work Required Before Attach")
+            End If
+            If Not isEmpty(pds.Range("STLTBRKT")) Then
+                Call checkEmptyCell(pds, issues, "BONDED", "Streetlight Bonded")
+                If isEmpty(pds.Range("MBSM").offset(0, 1)) Then issues = issues & "• Miss/Brkn Streetlight molding needs to be selected if there's a streetlight." & vbLf
+            End If
         End If
     End If
     
     ' CMRF Checks
     If Not isEmpty(pds.Range("NJUNS")) And InStr(pds.Range("NJUNS"), "COMM MAKE READY WORK") = 0 Then Call checkEmptyCell(pds, issues, "NJUNSTICKET", "NJUNS Ticket")
-    If Not isEmpty(pds.Range("CMRF1")) Then Call checkEmptyCell(pds, issues, "CMRF2", "New Attacher Midspans")
-    If Not isEmpty(pds.Range("NEWAPPLEAD")) And pds.Range("ROOMTOGUY").Value = "YES" Then Call checkEmptyCell(pds, issues, "CMRF3", "New Attacher Down Guy")
-    If InStr(pds.Range("NJUNS"), "COMM MAKE READY WORK") > 0 And Not isEmpty(pds.Range("NJUNSTICKET")) Then issues = issues & "• If it's comm make ready work, there shouldn't be an NJUNS ticket" & vbLf
+    If project.mode <> "SYSTEM IMPROVEMENT" Then
+        If Not isEmpty(pds.Range("CMRF1")) Then Call checkEmptyCell(pds, issues, "CMRF2", "New Attacher Midspans")
+        If Not isEmpty(pds.Range("NEWAPPLEAD")) And pds.Range("ROOMTOGUY").Value = "YES" Then Call checkEmptyCell(pds, issues, "CMRF3", "New Attacher Down Guy")
+        If InStr(pds.Range("NJUNS"), "COMM MAKE READY WORK") > 0 And Not isEmpty(pds.Range("NJUNSTICKET")) Then issues = issues & "• If it's comm make ready work, there shouldn't be an NJUNS ticket" & vbLf
     
-    ' Summary Sheet checks
-    If Not isEmpty(pds.Range("SUMSHEET1")) And Not isEmpty(pds.Range("SUMSHEET2")) Then issues = issues & "• Can't have Okay to attach and Work required both checked off" & vbLf
-    If Not isEmpty(pds.Range("SUMSHEET2")) And (isEmpty(pds.Range("SUMSHEET3")) And isEmpty(pds.Range("SUMSHEET4")) And isEmpty(pds.Range("SUMSHEET5")) And isEmpty(pds.Range("SUMSHEET6")) And isEmpty(pds.Range("SUMSHEET7"))) Then issues = issues & "• Work required is checked off, requires other checkbox to describe type of work" & vbLf
-    If isEmpty(pds.Range("SUMSHEET1")) And isEmpty(pds.Range("SUMSHEET2")) And isEmpty(pds.Range("SUMSHEET8")) And isEmpty(pds.Range("SUMSHEET9")) Then issues = issues & "• Missing ok to attach, work required, denied, or foreign from summary sheet" & vbLf
-
-    ' Summary sheet should be checked
-    If Not isEmpty(pds.Range("ALTTWO")) Then Call checkEmptyCell(pds, issues, "SUMSHEET3", "CE TO CORRECT VIOLATIONS")
+        ' Summary Sheet checks
+        If Not isEmpty(pds.Range("SUMSHEET1")) And Not isEmpty(pds.Range("SUMSHEET2")) Then issues = issues & "• Can't have Okay to attach and Work required both checked off" & vbLf
+        If Not isEmpty(pds.Range("SUMSHEET2")) And (isEmpty(pds.Range("SUMSHEET3")) And isEmpty(pds.Range("SUMSHEET4")) And isEmpty(pds.Range("SUMSHEET5")) And isEmpty(pds.Range("SUMSHEET6")) And isEmpty(pds.Range("SUMSHEET7"))) Then issues = issues & "• Work required is checked off, requires other checkbox to describe type of work" & vbLf
+        If isEmpty(pds.Range("SUMSHEET1")) And isEmpty(pds.Range("SUMSHEET2")) And isEmpty(pds.Range("SUMSHEET8")) And isEmpty(pds.Range("SUMSHEET9")) Then issues = issues & "• Missing ok to attach, work required, denied, or foreign from summary sheet" & vbLf
     
-    If Not isEmpty(pds.Range("ALTTHREE")) Then Call checkEmptyCell(pds, issues, "SUMSHEET6", "CE MAKE READY WORK REQUIRED")
-    If Not isEmpty(pds.Range("NJUNS")) And isEmpty(pds.Range("SUMSHEET7")) And InStr(pds.Range("NJUNS"), "COMM MAKE READY WORK") > 0 Then Call checkEmptyCell(pds, issues, "SUMSHEET8", "Comm make ready work")
-    If Not isEmpty(pds.Range("SUMSHEET4")) And Not isEmpty(pds.Range("SUMSHEET7")) Then issues = issues & "• Comm to correct violations and Comm make ready work shouldn't both be checked off" & vbLf
-    
-    If pds.Range("CMRF1") = "DENIED" Then Call checkEmptyCell(pds, issues, "SUMSHEET8", "ATTACHMENT DENIED")
-    If pds.Range("CEID") = "FOREIGN" Or Not isEmpty(pds.Range("OTHERPOLE")) Then Call checkEmptyCell(pds, issues, "SUMSHEET9", "FOREIGN POLE")
-    If Not isEmpty(pds.Range("NEWAPPLEAD").offset(1, 0)) Then Call checkEmptyCell(pds, issues, "CMRF3", "New Attacher Down Guy")
-    
-    If Not isEmpty(pds.Range("ALTONE")) And Not isEmpty(pds.Range("ALTTWO")) And Not isEmpty(pds.Range("ALTTHREE")) Then
-        If Replace(Trim(pds.Range("SUMSHEET11").Value), Chr(130), Chr(44)) <> "1" & Chr(44) & "2" & Chr(44) & "3" Then issues = issues & "• Alt work doesn't match alts done on summary sheet, should be 1,2,3" & vbLf
-    ElseIf Not isEmpty(pds.Range("ALTONE")) And Not isEmpty(pds.Range("ALTTWO")) Then
-        If Replace(Trim(pds.Range("SUMSHEET11").Value), Chr(130), Chr(44)) <> "1" & Chr(44) & "2" Then issues = issues & "• Alt work doesn't match alts done on summary sheet, should be 1,2" & vbLf
-    ElseIf Not isEmpty(pds.Range("ALTONE")) And Not isEmpty(pds.Range("ALTTHREE")) Then
-        If Replace(Trim(pds.Range("SUMSHEET11").Value), Chr(130), Chr(44)) <> "1" & Chr(44) & "3" Then issues = issues & "• Alt work doesn't match alts done on summary sheet, should be 1,3" & vbLf
-    ElseIf Not isEmpty(pds.Range("ALTONE")) Then
-        issues = issues & "• Alt work doesn't match alts done on summary sheet" & vbLf
-    Else
-        If Not isEmpty(pds.Range("SUMSHEET11")) Then issues = issues & "• Alt work doesn't match alts done on summary sheet, should be N/A" & vbLf
+        ' Summary sheet should be checked
+        If Not isEmpty(pds.Range("ALTTWO")) Then Call checkEmptyCell(pds, issues, "SUMSHEET3", "CE TO CORRECT VIOLATIONS")
+        
+        If Not isEmpty(pds.Range("ALTTHREE")) Then Call checkEmptyCell(pds, issues, "SUMSHEET6", "CE MAKE READY WORK REQUIRED")
+        If Not isEmpty(pds.Range("NJUNS")) And isEmpty(pds.Range("SUMSHEET7")) And InStr(pds.Range("NJUNS"), "COMM MAKE READY WORK") > 0 Then Call checkEmptyCell(pds, issues, "SUMSHEET8", "Comm make ready work")
+        If Not isEmpty(pds.Range("SUMSHEET4")) And Not isEmpty(pds.Range("SUMSHEET7")) Then issues = issues & "• Comm to correct violations and Comm make ready work shouldn't both be checked off" & vbLf
+        
+        If pds.Range("CMRF1") = "DENIED" Then Call checkEmptyCell(pds, issues, "SUMSHEET8", "ATTACHMENT DENIED")
+        If pds.Range("CEID") = "FOREIGN" Or Not isEmpty(pds.Range("OTHERPOLE")) Then Call checkEmptyCell(pds, issues, "SUMSHEET9", "FOREIGN POLE")
+        If Not isEmpty(pds.Range("NEWAPPLEAD").offset(1, 0)) Then Call checkEmptyCell(pds, issues, "CMRF3", "New Attacher Down Guy")
+        
+        If Not isEmpty(pds.Range("ALTONE")) And Not isEmpty(pds.Range("ALTTWO")) And Not isEmpty(pds.Range("ALTTHREE")) Then
+            If Replace(Trim(pds.Range("SUMSHEET11").Value), Chr(130), Chr(44)) <> "1" & Chr(44) & "2" & Chr(44) & "3" Then issues = issues & "• Alt work doesn't match alts done on summary sheet, should be 1,2,3" & vbLf
+        ElseIf Not isEmpty(pds.Range("ALTONE")) And Not isEmpty(pds.Range("ALTTWO")) Then
+            If Replace(Trim(pds.Range("SUMSHEET11").Value), Chr(130), Chr(44)) <> "1" & Chr(44) & "2" Then issues = issues & "• Alt work doesn't match alts done on summary sheet, should be 1,2" & vbLf
+        ElseIf Not isEmpty(pds.Range("ALTONE")) And Not isEmpty(pds.Range("ALTTHREE")) Then
+            If Replace(Trim(pds.Range("SUMSHEET11").Value), Chr(130), Chr(44)) <> "1" & Chr(44) & "3" Then issues = issues & "• Alt work doesn't match alts done on summary sheet, should be 1,3" & vbLf
+        ElseIf Not isEmpty(pds.Range("ALTONE")) Then
+            issues = issues & "• Alt work doesn't match alts done on summary sheet" & vbLf
+        Else
+            If Not isEmpty(pds.Range("SUMSHEET11")) Then issues = issues & "• Alt work doesn't match alts done on summary sheet, should be N/A" & vbLf
+        End If
+        If Not isEmpty(pds.Range("MAINT")) And isEmpty(pds.Range("SUMSHEET5")) Then issues = issues & "• CE Maintenance Work Required should be checked off if there's maintenance work." & vbLf
+        
+        
+        If pds.Range("SUMSHEET12") = "-" Then issues = issues & "• Pole loading done not selected" & vbLf
+        If Not isEmpty(pds.Range("INSTALLANCHOR")) Or Not isEmpty(pds.Range("INSTALLPOLE")) Then Call checkEmptyCell(pds, issues, "SUMSHEET13", "Pole Staking Done")
+        If isEmpty(pds.Range("SUMSHEET13")) And Not isEmpty(pds.Range("REPLACEANCHOR")) And isEmpty(pds.Range("INSTALLANCHOR")) And isEmpty(pds.Range("INSTALLPOLE")) Then warnings = warnings & "Warning: If replaced anchor is a new lead then pole staking complete needs to be checked off, ignore this warning if the anchor isn't moving." & vbLf
+        If InStr(pds.Range("NJUNSTICKET"), "PT") > 0 And InStr(pds.Range("ALTONE"), "TOP POLE") = 0 And Not isEmpty(pds.Range("ALTONE")) Then issues = issues & "• There needs to be a top pole note if it's a PT ticket" & vbLf
+        If InStr(pds.Range("NJUNSTICKET"), "PT") = 0 And InStr(pds.Range("ALTONE"), "TOP POLE") > 0 Then issues = issues & "• If there's a top pole note, it should be a PT ticket" & vbLf
+        
+        ' Summary sheet should not be checked
+        If Not isEmpty(pds.Range("SUMSHEET1")) And (Not isEmpty(pds.Range("ALTONE")) Or Not isEmpty(pds.Range("ALTTWO")) Or Not isEmpty(pds.Range("ALTTHREE")) Or Not isEmpty(pds.Range("NJUNS"))) Then issues = issues & "• Ok to attach shouldn't be checked off if there's work being done" & vbLf
+        If Not isEmpty(pds.Range("SUMSHEET3")) And isEmpty(pds.Range("ALTTWO")) Then issues = issues & "• CE to correct violations shouldn't be checked off if there's no alt 2 work" & vbLf
+        If Not isEmpty(pds.Range("SUMSHEET4")) And isEmpty(pds.Range("NJUNS")) Then issues = issues & "• Comm to correct violations shouldn't be checked off if there's no NJUNS" & vbLf
+        If Not isEmpty(pds.Range("SUMSHEET5")) And isEmpty(pds.Range("MAINT")) Then issues = issues & "• CE maintanence shouldn't be checked off if there's no maintanance work" & vbLf
+        If Not isEmpty(pds.Range("SUMSHEET6")) And isEmpty(pds.Range("ALTTHREE")) Then issues = issues & "• CE make ready work shouldn't be checked off if there's no alt 3 work" & vbLf
     End If
-    If Not isEmpty(pds.Range("MAINT")) And isEmpty(pds.Range("SUMSHEET5")) Then issues = issues & "• CE Maintenance Work Required should be checked off if there's maintenance work." & vbLf
-    
-    
-    If pds.Range("SUMSHEET12") = "-" Then issues = issues & "• Pole loading done not selected" & vbLf
-    If Not isEmpty(pds.Range("INSTALLANCHOR")) Or Not isEmpty(pds.Range("INSTALLPOLE")) Then Call checkEmptyCell(pds, issues, "SUMSHEET13", "Pole Staking Done")
-    If isEmpty(pds.Range("SUMSHEET13")) And Not isEmpty(pds.Range("REPLACEANCHOR")) And isEmpty(pds.Range("INSTALLANCHOR")) And isEmpty(pds.Range("INSTALLPOLE")) Then warnings = warnings & "Warning: If replaced anchor is a new lead then pole staking complete needs to be checked off, ignore this warning if the anchor isn't moving." & vbLf
-    If InStr(pds.Range("NJUNSTICKET"), "PT") > 0 And InStr(pds.Range("ALTONE"), "TOP POLE") = 0 And Not isEmpty(pds.Range("ALTONE")) Then issues = issues & "• There needs to be a top pole note if it's a PT ticket" & vbLf
-    If InStr(pds.Range("NJUNSTICKET"), "PT") = 0 And InStr(pds.Range("ALTONE"), "TOP POLE") > 0 Then issues = issues & "• If there's a top pole note, it should be a PT ticket" & vbLf
-    
-    ' Summary sheet should not be checked
-    If Not isEmpty(pds.Range("SUMSHEET1")) And (Not isEmpty(pds.Range("ALTONE")) Or Not isEmpty(pds.Range("ALTTWO")) Or Not isEmpty(pds.Range("ALTTHREE")) Or Not isEmpty(pds.Range("NJUNS"))) Then issues = issues & "• Ok to attach shouldn't be checked off if there's work being done" & vbLf
-    If Not isEmpty(pds.Range("SUMSHEET3")) And isEmpty(pds.Range("ALTTWO")) Then issues = issues & "• CE to correct violations shouldn't be checked off if there's no alt 2 work" & vbLf
-    If Not isEmpty(pds.Range("SUMSHEET4")) And isEmpty(pds.Range("NJUNS")) Then issues = issues & "• Comm to correct violations shouldn't be checked off if there's no NJUNS" & vbLf
-    If Not isEmpty(pds.Range("SUMSHEET5")) And isEmpty(pds.Range("MAINT")) Then issues = issues & "• CE maintanence shouldn't be checked off if there's no maintanance work" & vbLf
-    If Not isEmpty(pds.Range("SUMSHEET6")) And isEmpty(pds.Range("ALTTHREE")) Then issues = issues & "• CE make ready work shouldn't be checked off if there's no alt 3 work" & vbLf
 
     If isEmpty(pds.Range("REPLACEANCHOR")) And isEmpty(pds.Range("INSTALLANCHOR")) And isEmpty(pds.Range("INSTALLPOLE")) And Not isEmpty(pds.Range("SUMSHEET13")) Then issues = issues & "• Pole staking should not be checked off if there's no anchor work or new pole install." & vbLf
     
-    paapms = False
-    Dim foundOwner As Boolean: foundOwner = False
-    If pds.Range("PGUY") = "NO" Or pds.Range("PGUY2") = "NO" Then paapms = True
-    If InStr(pds.Range("PROPOSEDHEIGHT"), "OL") = 0 Then
-        If pds.Range("CMRF1") <> "" And pds.Range("PROPOSEDHEIGHT") <> "" And InStr(pds.Range("CMRF1"), pds.Range("PROPOSEDHEIGHT")) = 0 Then paapms = True
-    Else
-        If InStr(pds.Range("CMRF1"), "OL") = 0 And isEmpty(pds.Range("SUMSHEET8")) And isEmpty(pds.Range("SUMSHEET9")) Then issues = issues & "• New attacher height should say ""OL @ XX'XX"" if overlash job" & vbLf
-        For i = 0 To 100
-            If pds.Range("CMOWNER").offset(i, 0).Interior.color <> 16312794 Then Exit For
-            If UCase(pds.Range("CMOWNER").offset(i, 0)) = UCase(pds.Range("APPLICANT")) Then
-                foundOwner = True
-                If InStr(pds.Range("CMOWNER").offset(i, 0), "DG") = 0 Then
-                    If pds.Range("CMRF1") <> "" And InStr(pds.Range("CMRF1"), pds.Range("CMHEIGHT").offset(i, 0)) = 0 Then
+    If project.mode <> "SYSTEM IMPROVEMENT" Then
+        paapms = False
+        Dim foundOwner As Boolean: foundOwner = False
+        If pds.Range("PGUY") = "NO" Or pds.Range("PGUY2") = "NO" Then paapms = True
+        If InStr(pds.Range("PROPOSEDHEIGHT"), "OL") = 0 Then
+            If pds.Range("CMRF1") <> "" And pds.Range("PROPOSEDHEIGHT") <> "" And InStr(pds.Range("CMRF1"), pds.Range("PROPOSEDHEIGHT")) = 0 Then paapms = True
+        Else
+            If InStr(pds.Range("CMRF1"), "OL") = 0 And isEmpty(pds.Range("SUMSHEET8")) And isEmpty(pds.Range("SUMSHEET9")) Then issues = issues & "• New attacher height should say ""OL @ XX'XX"" if overlash job" & vbLf
+            For i = 0 To 100
+                If pds.Range("CMOWNER").offset(i, 0).Interior.color <> 16312794 Then Exit For
+                If UCase(pds.Range("CMOWNER").offset(i, 0)) = UCase(pds.Range("APPLICANT")) Then
+                    foundOwner = True
+                    If InStr(pds.Range("CMOWNER").offset(i, 0), "DG") = 0 Then
+                        If pds.Range("CMRF1") <> "" And InStr(pds.Range("CMRF1"), pds.Range("CMHEIGHT").offset(i, 0)) = 0 Then
+                            paapms = True
+                            Exit For
+                        End If
+                    End If
+                End If
+            Next i
+            If foundOwner = False Then issues = issues & "• Overlash job but applicant doesn't have their name on the owner section of any of the comms" & vbLf
+        End If
+        
+        If pole.applicant.modification > 0 And pole.applicant.height <> pole.applicant.modification Then paapms = True
+        
+        If Not paapms Then
+            For Each midspan In pole.applicant.midspans
+                displayMidspan = Utilities.inchesToFeetInches(pole.applicant.midspans(midspan))
+                otherPoleNumber = ThisWorkbook.RemoveParentheses(pds.Range("TOPOLE" & midspan))
+                lines = Split(pds.Range("CMRF2"), vbLf)
+                For Each line In lines
+                    If InStr(line, "@P" & otherPoleNumber) > 0 And InStr(Replace(line, " ", ""), displayMidspan) = 0 Then
                         paapms = True
                         Exit For
                     End If
-                End If
-            End If
-        Next i
-        If foundOwner = False Then issues = issues & "• Overlash job but applicant doesn't have their name on the owner section of any of the comms" & vbLf
-    End If
-    
-    If pole.applicant.modification > 0 And pole.applicant.height <> pole.applicant.modification Then paapms = True
-    
-    If Not paapms Then
-        For Each midspan In pole.applicant.midspans
-            displayMidspan = Utilities.inchesToFeetInches(pole.applicant.midspans(midspan))
-            otherPoleNumber = ThisWorkbook.RemoveParentheses(pds.Range("TOPOLE" & midspan))
-            lines = Split(pds.Range("CMRF2"), vbLf)
-            For Each line In lines
-                If InStr(line, "@P" & otherPoleNumber) > 0 And InStr(Replace(line, " ", ""), displayMidspan) = 0 Then
-                    paapms = True
-                    Exit For
-                End If
-                If InStr(line, "(" & otherPoleNumber & ")") > 0 And InStr(Replace(line, " ", ""), displayMidspan) = 0 Then
-                    paapms = True
-                    Exit For
-                End If
-            Next line
-        Next midspan
+                    If InStr(line, "(" & otherPoleNumber & ")") > 0 And InStr(Replace(line, " ", ""), displayMidspan) = 0 Then
+                        paapms = True
+                        Exit For
+                    End If
+                Next line
+            Next midspan
+        End If
     End If
     
     commaMidspan = False
