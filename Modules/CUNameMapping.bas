@@ -1,20 +1,20 @@
 Attribute VB_Name = "CUNameMapping"
-Private CUNameCorrecting As scripting.Dictionary
-Private CUNameMapping As scripting.Dictionary
-Private CUExtraCUsNeeded As scripting.Dictionary
-Private CUOpenWireNameMapping As scripting.Dictionary
-Private CUSecNameMapping As scripting.Dictionary
+Private CUNameCorrecting As Scripting.Dictionary
+Private CUNameMapping As Scripting.Dictionary
+Private CUExtraCUsNeeded As Scripting.Dictionary
+Private CUOpenWireNameMapping As Scripting.Dictionary
+Private CUSecNameMapping As Scripting.Dictionary
 
 Public Function getCUNameMapping(ByVal key As String) As String
     cleansedKey = cleanseKey(key)
     
     If CUNameCorrecting Is Nothing Then
-        Set CUNameCorrecting = New scripting.Dictionary
+        Set CUNameCorrecting = New Scripting.Dictionary
         Call InitializeCUNameCorrecting
     End If
     
     If CUNameMapping Is Nothing Then
-        Set CUNameMapping = New scripting.Dictionary
+        Set CUNameMapping = New Scripting.Dictionary
         Call InitializeCUNameMapping
     End If
     
@@ -34,12 +34,12 @@ Public Function CheckForAdditionalCUs(ByVal key As String) As Boolean
     key = cleanseKey(key)
     
     If CUNameCorrecting Is Nothing Then
-        Set CUNameCorrecting = New scripting.Dictionary
+        Set CUNameCorrecting = New Scripting.Dictionary
         Call InitializeCUNameCorrecting
     End If
     
     If CUExtraCUsNeeded Is Nothing Then
-        Set CUExtraCUsNeeded = New scripting.Dictionary
+        Set CUExtraCUsNeeded = New Scripting.Dictionary
         Call InitializeCUExtraCUsNeeded
     End If
     
@@ -51,7 +51,7 @@ Public Function getOWNameMapping(ByVal key As String) As String
     key = Replace(key, " ", "")
     
     If CUOpenWireNameMapping Is Nothing Then
-        Set CUOpenWireNameMapping = New scripting.Dictionary
+        Set CUOpenWireNameMapping = New Scripting.Dictionary
         Call InitializeCUOpenWireNameMapping
     End If
     
@@ -67,7 +67,7 @@ Public Function getSecNameMapping(ByVal key As String) As String
     key = Replace(key, "OF", "")
     
     If CUSecNameMapping Is Nothing Then
-        Set CUSecNameMapping = New scripting.Dictionary
+        Set CUSecNameMapping = New Scripting.Dictionary
         Call InitializeCUSecNameMapping
     End If
     
