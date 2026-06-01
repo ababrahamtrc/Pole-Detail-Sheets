@@ -1,22 +1,22 @@
 Attribute VB_Name = "NJUNSCodes"
-Public NJUNSCodes As scripting.Dictionary
+Public NJUNSCodes As Scripting.Dictionary
 
 Public Sub generateNJUNSCodes()
     Call clearNJUNSCodes
     
-    Dim companies As scripting.Dictionary: Set companies = New scripting.Dictionary
+    Dim companies As Scripting.Dictionary: Set companies = New Scripting.Dictionary
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
-    Dim Project As Project: Set Project = New Project
-    Call Project.extractFromSheets
+    Dim project As project: Set project = New project
+    Call project.extractFromSheets
     
     controlWs.Range("NJUNSCODES").offset(0, 0).Value = "Place(Check NJUNS)"
-    controlWs.Range("NJUNSCODES").offset(0, 1).Value = Project.township
+    controlWs.Range("NJUNSCODES").offset(0, 1).Value = project.township
     
-    controlWs.Range("NJUNSCODES").offset(1, 0).Value = "Applicant(" & Project.applicant & ")"
-    controlWs.Range("NJUNSCODES").offset(1, 1).Value = getNJUNSNameMapping(Project, Project.applicant)
+    controlWs.Range("NJUNSCODES").offset(1, 0).Value = "Applicant(" & project.applicant & ")"
+    controlWs.Range("NJUNSCODES").offset(1, 1).Value = getNJUNSNameMapping(project, project.applicant)
     
     Dim pole As pole
-    For Each pole In Project.poles
+    For Each pole In project.poles
         If pole.njunsTicket <> "" Then
             For Each step In pole.njunsSteps
                 company = Application.WorksheetFunction.Proper(Utilities.GetFirstWord(CStr(step)))
@@ -33,7 +33,7 @@ Public Sub generateNJUNSCodes()
     Dim i As Integer: i = 2
     For Each company In companies
         controlWs.Range("NJUNSCODES").offset(i, 0).Value = company & "(" & companies(company) & ")"
-        controlWs.Range("NJUNSCODES").offset(i, 1).Value = getNJUNSNameMapping(Project, company)
+        controlWs.Range("NJUNSCODES").offset(i, 1).Value = getNJUNSNameMapping(project, company)
         i = i + 1
     Next company
     
@@ -63,21 +63,21 @@ Public Sub clearNJUNSCodes()
         AllowDeletingRows:=False
 End Sub
 
-Private Function getNJUNSNameMapping(Project, ByVal key As String) As String
+Private Function getNJUNSNameMapping(project, ByVal key As String) As String
     key = UCase(Replace(key, " ", ""))
     key = Replace(key, ":", "")
     key = Replace(key, vbLf, "")
     
     If NJUNSCodes Is Nothing Then
-        Set NJUNSCodes = New scripting.Dictionary
+        Set NJUNSCodes = New Scripting.Dictionary
         Call InitializeNJUNSNameCorrecting
     End If
     
     If NJUNSCodes.Exists(key) Then
         getNJUNSNameMapping = NJUNSCodes(key)
     Else
-        If NJUNSCodes.Exists(key & UCase(Project.county)) Then
-            getNJUNSNameMapping = NJUNSCodes(key & UCase(Project.county))
+        If NJUNSCodes.Exists(key & UCase(project.county)) Then
+            getNJUNSNameMapping = NJUNSCodes(key & UCase(project.county))
         Else
             getNJUNSNameMapping = ""
         End If
@@ -115,6 +115,7 @@ Private Sub InitializeNJUNSNameCorrecting()
     NJUNSCodes("AT&TNEWAYGO") = "ATT162"
     NJUNSCodes("AT&TOTTAWA") = "ATT170"
     NJUNSCodes("AT&TSAGINAW") = "ATT173"
+    NJUNSCodes("AT&TWASHTENAW") = "ATT181"
     
     NJUNSCodes("FRONTIERCRAWFORD") = "FCALPN"
     
@@ -122,6 +123,7 @@ Private Sub InitializeNJUNSNameCorrecting()
     NJUNSCodes("CHARTERALCONA") = "CRTSAG"
     NJUNSCodes("CHARTERSAGINAW") = "CRTSAG"
     NJUNSCodes("CHARTERCRAWFORD") = "CRTTVC"
+    NJUNSCodes("CHARTEROTTAWA") = "CRTTVC"
     
     NJUNSCodes("WOW") = "MILLDG"
     NJUNSCodes("SFN") = "MASDCE"
