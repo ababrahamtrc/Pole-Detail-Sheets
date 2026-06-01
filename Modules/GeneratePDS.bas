@@ -2,9 +2,9 @@ Attribute VB_Name = "GeneratePDS"
 Public Sub GenerateAllPDS()
     Call LogMessage.SendLogMessage("GenerateAllPDS")
     
-    Dim Project As Project: Set Project = New Project
-    Call Project.extractImportDataFormat
-    Call Project.createAndFillSheets
+    Dim project As project: Set project = New project
+    Call project.extractImportDataFormat
+    Call project.createAndFillSheets
     Call NJUNSCodes.clearNJUNSCodes
 End Sub
     
