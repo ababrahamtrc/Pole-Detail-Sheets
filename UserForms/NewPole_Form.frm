@@ -32,16 +32,16 @@ Private Sub CommandButton1_Click()
         Exit Sub
     End If
     
-    Dim Project As Project: Set Project = New Project
+    Dim project As project: Set project = New project
     Dim pole As pole: Set pole = New pole
-    Project.extractFromSheets
+    project.extractFromSheets
     
     pole.poleNumber = TextBox1.Value
     pole.height = ComboBox1.Value
     pole.Class = ComboBox2.Value
     pole.species = TextBox2.Value
     
-    Call pole.createSheet(Project)
+    Call pole.createSheet(project)
     
     Me.Hide
 End Sub
