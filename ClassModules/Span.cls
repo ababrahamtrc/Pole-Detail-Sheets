@@ -30,7 +30,7 @@ Private Sub Class_Initialize()
     Set utilWires = New Collection
     Set commWires = New Collection
     
-    Set lowestPowerWires = New scripting.Dictionary
+    Set lowestPowerWires = New Scripting.Dictionary
     For i = 1 To 12
         lowestPowerWires.Add i, Nothing
     Next i
