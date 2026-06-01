@@ -20,7 +20,7 @@ Attribute VB_Exposed = False
 
 Dim colWs As Worksheet
 Dim colWsLastRow As Integer
-Dim colWsHeaders As scripting.Dictionary
+Dim colWsHeaders As Scripting.Dictionary
 Dim downloaded As Boolean
 
 Public Sub Initialize()
@@ -34,7 +34,7 @@ Public Sub Initialize()
     Set colWs = ThisWorkbook.sheets("Collection")
     colWsLastRow = colWs.Cells(colWs.Rows.count, "A").End(xlUp).row
     Dim colWsLastCol As Integer: colWsLastCol = colWs.Cells(1, colWs.Columns.count).End(xlToLeft).Column
-    Set colWsHeaders = New scripting.Dictionary
+    Set colWsHeaders = New Scripting.Dictionary
     For i = 1 To colWsLastCol
         header = Trim(colWs.Cells(1, i).Value)
         If header <> "" Then
@@ -45,7 +45,7 @@ Public Sub Initialize()
     Dim jobInfoWs As Worksheet: Set jobInfoWs = ThisWorkbook.sheets("Job Info")
     Dim jobInfoWsLastRow As Integer: jobInfoWsLastRow = jobInfoWs.Cells(jobInfoWs.Rows.count, "A").End(xlUp).row
     Dim jobInfoWsLastCol As Integer: jobInfoWsLastCol = jobInfoWs.Cells(1, jobInfoWs.Columns.count).End(xlToLeft).Column
-    Dim jobInfoWsHeaders As scripting.Dictionary: Set jobInfoWsHeaders = New scripting.Dictionary
+    Dim jobInfoWsHeaders As Scripting.Dictionary: Set jobInfoWsHeaders = New Scripting.Dictionary
     For i = 1 To jobInfoWsLastCol
         header = Trim(jobInfoWs.Cells(1, i).Value)
         If header <> "" Then
@@ -175,7 +175,7 @@ Private Sub CommandButton4_click()
     Dim colWs As Worksheet: Set colWs = ThisWorkbook.sheets("Collection")
     Dim colWsLastRow As Integer: colWsLastRow = colWs.Cells(colWs.Rows.count, "A").End(xlUp).row
     Dim colWsLastCol As Integer: colWsLastCol = colWs.Cells(1, colWs.Columns.count).End(xlToLeft).Column
-    Dim colWsHeaders As scripting.Dictionary: Set colWsHeaders = New scripting.Dictionary
+    Dim colWsHeaders As Scripting.Dictionary: Set colWsHeaders = New Scripting.Dictionary
     For i = 1 To colWsLastCol
         header = Trim(colWs.Cells(1, i).Value)
         If header <> "" Then
@@ -186,7 +186,7 @@ Private Sub CommandButton4_click()
     Dim imageWs As Worksheet: Set imageWs = ThisWorkbook.sheets("Images")
     Dim imageWsLastRow As Integer: imageWsLastRow = imageWs.Cells(imageWs.Rows.count, "A").End(xlUp).row
     Dim imageWsLastCol As Integer: imageWsLastCol = imageWs.Cells(1, imageWs.Columns.count).End(xlToLeft).Column
-    Dim imageWsHeaders As scripting.Dictionary: Set imageWsHeaders = New scripting.Dictionary
+    Dim imageWsHeaders As Scripting.Dictionary: Set imageWsHeaders = New Scripting.Dictionary
     For i = 1 To imageWsLastCol
         header = Trim(imageWs.Cells(1, i).Value)
         If header <> "" Then
