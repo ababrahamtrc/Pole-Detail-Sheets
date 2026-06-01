@@ -15,13 +15,16 @@ Public county As String
 Public township As String
 Public fielder As String
 Public poles As Collection
+Public mode As String
 
 Private Sub Class_Initialize()
     Set poles = New Collection
+    Me.mode = ThisWorkbook.sheets("Control").Range("MODE").text
 End Sub
 
 Public Sub extractFromSheets()
     Dim sheet As Worksheet
+    
     For Each sheet In ThisWorkbook.sheets
         If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" And sheet.Cells(2, 2).Value = "Notification:" Then
             Dim pole As pole: Set pole = New pole
@@ -52,7 +55,7 @@ Public Sub createAndFillSheets()
     Application.ScreenUpdating = False
     Application.DisplayAlerts = False
     
-    Dim sheetsCreated As scripting.Dictionary: Set sheetsCreated = New scripting.Dictionary
+    Dim sheetsCreated As Scripting.Dictionary: Set sheetsCreated = New Scripting.Dictionary
     
     For i = 1 To Me.poles.count
         Set pole = Me.poles(i)
@@ -203,7 +206,7 @@ Public Sub extractImportDataFormat()
         Next spanWsRow
         
         'Communication wire section
-        Dim wireDict As scripting.Dictionary: Set wireDict = New scripting.Dictionary
+        Dim wireDict As Scripting.Dictionary: Set wireDict = New Scripting.Dictionary
         For spanComWsRow = spanComWsRow To spanComWsLastRow
             If spanComWs.Cells(spanComWsRow, 1) <> pole.poleNumber Then Exit For
             
@@ -273,7 +276,7 @@ Public Sub extractImportDataFormat()
         Next key
         
         'Utility Wire Section
-        Set wireDict = New scripting.Dictionary
+        Set wireDict = New Scripting.Dictionary
         For spanPowWsRow = spanPowWsRow To spanPowWsLastRow
             If spanPowWs.Cells(spanPowWsRow, 1) <> pole.poleNumber Then Exit For
             
@@ -403,7 +406,7 @@ Public Sub fillImportDataFormat()
     Dim Anchor As Anchor
     Dim guy As guy
     Dim equipment As equipment
-    Dim primaryBundles As scripting.Dictionary
+    Dim primaryBundles As Scripting.Dictionary
     
     Set colWs = ThisWorkbook.sheets("Collection")
     colWs.Cells(1, 1).Value = "ID"
@@ -534,7 +537,7 @@ Public Sub fillImportDataFormat()
             spanWs.Cells(spanRow, 6).Value = Span.treeWork
             
             spanRow = spanRow + 1
-            Set primaryBundles = New scripting.Dictionary
+            Set primaryBundles = New Scripting.Dictionary
             For Each Wire In Span.utilWires
                 spanPowWs.Cells(spanPowRow, 1).Value = pole.poleNumber
                 spanPowWs.Cells(spanPowRow, 2).Value = Span.spanId
