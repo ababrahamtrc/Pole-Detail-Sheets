@@ -34,12 +34,12 @@ Sub ImportNJUNSTicketCSV()
     Loop
     ts.Close
 
-    Dim Project As Project: Set Project = New Project
-    Call Project.extractFromSheets
+    Dim project As project: Set project = New project
+    Call project.extractFromSheets
     
     Dim ticketsImported As Integer
     Dim pole As pole
-    For Each pole In Project.poles
+    For Each pole In project.poles
         If pole.NJUNS <> "" Then
             If tickets.Exists(pole.poleNumber) Then
                 If Utilities.OnlyNumbers(pole.njunsTicket) = -1 Then
