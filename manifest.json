@@ -1,9 +1,14 @@
 {
   "appName": "Excel Pole Detail Sheets",
-  "version": "2.1.61",
-  "updatedAt": "2026-05-15",
-  "versionChanges": "No longer need applicant on NJUNS automation.",
+  "version": "2.1.7",
+  "updatedAt": "2026-06-01",
+  "versionChanges": "New System Improvment Toggle\r\n* Photo name validator will name photos after loc numbers in SI mode.\r\n* Export PDS will name after loc numbers in SI mode\r\n*NJUNS will name after loc numbers in SI mode\r\n*Export CU ignores TTC and pulled pole size in SI mode",
   "versions": [
+    {
+      "version": "2.1.7",
+      "updatedAt": "2026-06-01",
+      "versionChanges": "New System Improvment Toggle\r\n* Photo name validator will name photos after loc numbers in SI mode.\r\n* Export PDS will name after loc numbers in SI mode\r\n*NJUNS will name after loc numbers in SI mode\r\n*Export CU ignores TTC and pulled pole size in SI mode"
+    },
     {
       "version": "2.1.61",
       "updatedAt": "2026-05-15",
