@@ -2,12 +2,12 @@
   "appName": "Excel Pole Detail Sheets",
   "version": "2.1.7",
   "updatedAt": "2026-06-01",
-  "versionChanges": "New System Improvment Toggle\r\n* Photo name validator will name photos after loc numbers in SI mode.\r\n* Export PDS will name after loc numbers in SI mode\r\n*NJUNS will name after loc numbers in SI mode\r\n*Export CU ignores TTC and pulled pole size in SI mode",
+  "versionChanges": "New System Improvment Toggle\r\n* Photo name validator will name photos after loc numbers in SI mode.\r\n* Export PDS will name after loc numbers in SI mode\r\n*NJUNS will name after loc numbers in SI mode\r\n*Export CU ignores TTC and pulled pole size in SI mode\r\n*QC Check ignores a lot of make ready related checks in SI mode",
   "versions": [
     {
       "version": "2.1.7",
       "updatedAt": "2026-06-01",
-      "versionChanges": "New System Improvment Toggle\r\n* Photo name validator will name photos after loc numbers in SI mode.\r\n* Export PDS will name after loc numbers in SI mode\r\n*NJUNS will name after loc numbers in SI mode\r\n*Export CU ignores TTC and pulled pole size in SI mode\r\n*QC Check ignores a lot of make ready related checks in SI mode."
+      "versionChanges": "New System Improvment Toggle\r\n* Photo name validator will name photos after loc numbers in SI mode.\r\n* Export PDS will name after loc numbers in SI mode\r\n*NJUNS will name after loc numbers in SI mode\r\n*Export CU ignores TTC and pulled pole size in SI mode\r\n*QC Check ignores a lot of make ready related checks in SI mode"
     },
     {
       "version": "2.1.61",
