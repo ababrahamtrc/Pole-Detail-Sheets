@@ -25,6 +25,8 @@ Sub ExportAllPDS()
 
     Application.ScreenUpdating = True
     
+    Dim project As project: Set project = New project
+    
     Dim sheetTotal As Integer: sheetTotal = 0
     For Each sheet In ThisWorkbook.sheets
         If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" Then
@@ -47,7 +49,11 @@ Sub ExportAllPDS()
     For Each sheet In ThisWorkbook.sheets
         If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" And sheet.Cells(2, 2).Value = "Notification:" Then
             fullPath = "": fileName = ""
-            fileName = "M1P" & fixIllegalCharacters(sheet.Range("POLENUM").text) & "_" & fixIllegalCharacters(sheet.Range("CEID").text) & "_" & fixIllegalCharacters(sheet.Range("PERMIT").text)
+            If project.mode = "SYSTEM IMPROVEMENT" Then
+                fileName = "PDS LOC " & fixIllegalCharacters(sheet.Range("DL"))
+            Else
+                fileName = "M1P" & fixIllegalCharacters(sheet.Range("POLENUM").text) & "_" & fixIllegalCharacters(sheet.Range("CEID").text) & "_" & fixIllegalCharacters(sheet.Range("PERMIT").text)
+            End If
             fullPath = outputPath & fileName & ".xlsx"
             Call Figures.clearSheetFigures(sheet)
             sheet.Copy
@@ -123,16 +129,20 @@ Sub ExportSinglePDS()
     ProgressBar_Form.Repaint
 
     Application.ScreenUpdating = True
-
     sheet.Range("A1").Select
-    
     Application.ScreenUpdating = False
+
+    Dim project As project: Set project = New project
 
     Dim tempWb As Workbook
     Dim fileName As String
     Dim fullPath As String
     If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" And sheet.Cells(2, 2).Value = "Notification:" Then
-        fileName = "M1P" & fixIllegalCharacters(sheet.Range("POLENUM").text) & "_" & fixIllegalCharacters(sheet.Range("CEID").text) & "_" & fixIllegalCharacters(sheet.Range("PERMIT").text)
+        If project.mode = "SYSTEM IMPROVEMENT" Then
+            fileName = "PDS LOC " & fixIllegalCharacters(sheet.Range("DL"))
+        Else
+            fileName = "M1P" & fixIllegalCharacters(sheet.Range("POLENUM").text) & "_" & fixIllegalCharacters(sheet.Range("CEID").text) & "_" & fixIllegalCharacters(sheet.Range("PERMIT").text)
+        End If
         fullPath = outputPath & fileName & ".xlsx"
         
         For Each wb In Application.Workbooks
