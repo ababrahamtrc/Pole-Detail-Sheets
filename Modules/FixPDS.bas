@@ -26,11 +26,11 @@ Public Sub fixAttachmentHeights()
     Next i
     
     Dim comp As Component
-    Dim utilityComponentsDict As scripting.Dictionary: Set utilityComponentsDict = New scripting.Dictionary
+    Dim utilityComponentsDict As Scripting.Dictionary: Set utilityComponentsDict = New Scripting.Dictionary
     Dim utilityComponents As Collection: Set utilityComponents = New Collection
-    Dim commComponentsDict As scripting.Dictionary: Set commComponentsDict = New scripting.Dictionary
+    Dim commComponentsDict As Scripting.Dictionary: Set commComponentsDict = New Scripting.Dictionary
     Dim commComponents As Collection: Set commComponents = New Collection
-    Dim midspans As scripting.Dictionary
+    Dim midspans As Scripting.Dictionary
     
     For i = 1 To 100
         If sheet.Range("UTTYPE").offset(i - 1, 0).Interior.color <> 16312794 Then Exit For
