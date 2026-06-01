@@ -1,21 +1,21 @@
 Attribute VB_Name = "UtilitiesSpidaCalc"
-Public Function InitProjectFromSpidaJson(ByVal json As Object) As Project
-    Dim Project As Project: Set Project = New Project
+Public Function InitProjectFromSpidaJson(ByVal json As Object) As project
+    Dim project As project: Set project = New project
     
-    Project.Notification = Trim(json("forms")(1)("fields")("Notification Number"))
-    Project.permit = Trim(json("forms")(1)("fields")("Permit Number"))
-    Project.applicant = Trim(json("forms")(1)("fields")("Applicant"))
-    Project.county = Trim(json("address")("county"))
-    Project.township = Trim(json("address")("city"))
-    Project.jobLocation = Project.township & ", " & Trim(json("address")("state")) & " " & Trim(json("address")("zip_code"))
-    Project.fielder = json("engineer")
+    project.Notification = Trim(json("forms")(1)("fields")("Notification Number"))
+    project.permit = Trim(json("forms")(1)("fields")("Permit Number"))
+    project.applicant = Trim(json("forms")(1)("fields")("Applicant"))
+    project.county = Trim(json("address")("county"))
+    project.township = Trim(json("address")("city"))
+    project.jobLocation = project.township & ", " & Trim(json("address")("state")) & " " & Trim(json("address")("zip_code"))
+    project.fielder = json("engineer")
     
     Dim missingCounter As Integer: missingCounter = 1
     Dim Wire As Wire
     Dim pole As pole
     Dim lead As Variant
     Dim keys() As Variant
-    Dim poleDetails As scripting.Dictionary
+    Dim poleDetails As Scripting.Dictionary
     For Each lead In json("leads")
         Dim jsonPole As Variant
         Set poleDetails = Nothing
@@ -62,7 +62,7 @@ Public Function InitProjectFromSpidaJson(ByVal json As Object) As Project
                 End If
             Next design
             
-            Set wiresToSpansDict = New scripting.Dictionary
+            Set wiresToSpansDict = New Scripting.Dictionary
             
             If Not existing Is Nothing Then
                 industry = existing("pole")("owner")("industry")
@@ -179,24 +179,32 @@ Public Function InitProjectFromSpidaJson(ByVal json As Object) As Project
         For Each Span In pole.spans
             Call updateOpenwireMidspans(Span)
         Next Span
-        Project.poles.Add pole
+        project.poles.Add pole
         Next jsonPole
     Next lead
     
-    If Project.county = "" Then
-        Project.county = InputBox("Enter the county and please be exact with no typos, future scripts will care about this:", "User Input")
+    If project.Notification = "" Then
+        project.Notification = InputBox("Enter the Notification:", "User Input")
     End If
     
-    If Project.fielder = "" Then
-        Project.fielder = InputBox("Enter the fielder:", "User Input")
+    If project.permit = "" Then
+        project.permit = InputBox("Enter the Permit:", "User Input")
     End If
     
-    Set InitProjectFromSpidaJson = Project
+    If project.county = "" Then
+        project.county = InputBox("Enter the county and please be exact with no typos, future scripts will care about this:", "User Input")
+    End If
+    
+    If project.fielder = "" Then
+        project.fielder = InputBox("Enter the fielder:", "User Input")
+    End If
+    
+    Set InitProjectFromSpidaJson = project
 End Function
 
 Private Sub updateOpenwireMidspans(Span As Span)
     Dim openWires As Collection: Set openWires = New Collection
-    Dim midspans As scripting.Dictionary: Set midspans = New scripting.Dictionary
+    Dim midspans As Scripting.Dictionary: Set midspans = New Scripting.Dictionary
     Dim midspan As Integer, lowest As Integer
     
     On Error GoTo 0
