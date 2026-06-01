@@ -48,8 +48,8 @@ End Sub
 Public Sub ExportAllSheetCUs()
     Call LogMessage.SendLogMessage("ExportAllCUs")
     
-    Dim Project As Project: Set Project = New Project
-    Call Project.extractFromSheets
+    Dim project As project: Set project = New project
+    Call project.extractFromSheets
 
     Dim CU As Variant
     Dim cus As Collection: Set cus = New Collection
@@ -61,7 +61,7 @@ Public Sub ExportAllSheetCUs()
     
     For Each sheet In ThisWorkbook.sheets
         If Utilities.IsPDS(sheet) Then
-            Set inputCol = ExportSheetCUs(Project, sheet)
+            Set inputCol = ExportSheetCUs(project, sheet)
             If Not inputCol Is Nothing Then
                 Set cusTemp = inputCol(1)
                 Set missedLinesTemp = inputCol(2)
@@ -78,7 +78,7 @@ Public Sub ExportAllSheetCUs()
     ThisWorkbook.sheets("Control").Activate
     
     If cus.count > 0 Then
-        Call generateCSV(Project, cus)
+        Call generateCSV(project, cus)
         If missedLines.count > 0 Then
             Call generateMissedLinesTXT(missedLines)
         Else
@@ -92,8 +92,8 @@ End Sub
 Public Sub ExportSingleSheetCUs()
     Call LogMessage.SendLogMessage("ExportSingleCUs")
 
-    Dim Project As Project: Set Project = New Project
-    Call Project.extractFromSheets
+    Dim project As project: Set project = New project
+    Call project.extractFromSheets
     
     Dim sheet As Worksheet: Set sheet = ThisWorkbook.ActiveSheet()
     If Not Utilities.IsPDS(sheet) Then
@@ -105,7 +105,7 @@ Public Sub ExportSingleSheetCUs()
     Dim missedLines As Collection
     
     Dim inputCol As Collection: Set inputCol = New Collection
-    Set inputCol = ExportSheetCUs(Project, sheet)
+    Set inputCol = ExportSheetCUs(project, sheet)
     If Not inputCol Is Nothing Then
         Set cus = inputCol(1)
         Set missedLines = inputCol(2)
@@ -113,7 +113,7 @@ Public Sub ExportSingleSheetCUs()
     
     If Not cus Is Nothing Then
         If cus.count > 0 Then
-            Call generateCSV(Project, cus)
+            Call generateCSV(project, cus)
             If missedLines.count > 0 Then
                 MsgBox "Lines unable to turn into CUS." & vbLf & Utilities.JoinCollection(missedLines, vbLf)
             Else
@@ -127,7 +127,7 @@ Public Sub ExportSingleSheetCUs()
     End If
 End Sub
 
-Private Function ExportSheetCUs(Project As Project, sheet As Worksheet) As Collection
+Private Function ExportSheetCUs(project As project, sheet As Worksheet) As Collection
     Dim installSection As Boolean, replaceSection As Boolean, removeSection As Boolean, transferSection As Boolean
     Dim line As Variant
     Dim lines() As String
@@ -156,9 +156,17 @@ Private Function ExportSheetCUs(Project As Project, sheet As Worksheet) As Colle
     End If
     
     If pole.commComponents.count > 0 Then
-        cus.Add Array(properLocation(pole.location), 1.45)
+        If project.mode = "SYSTEM IMPROVEMENT" Then
+            cus.Add Array(properLocation(pole.location), 1.15)
+        Else
+            cus.Add Array(properLocation(pole.location), 1.45)
+        End If
     Else
-        cus.Add Array(properLocation(pole.location), 1.3)
+        If project.mode = "SYSTEM IMPROVEMENT" Then
+            cus.Add Array(properLocation(pole.location), 1)
+        Else
+            cus.Add Array(properLocation(pole.location), 1.3)
+        End If
     End If
     
     For i = 0 To UBound(lines)
@@ -200,23 +208,25 @@ Private Function ExportSheetCUs(Project As Project, sheet As Worksheet) As Colle
             transferSection = True
         Else
             If installSection Then
-                If line <> "" Then Call parseLineToCUs(needAdditionalCUs, missedLines, cus, pole, line, "Install")
+                If line <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, pole, line, "Install")
             ElseIf replaceSection Then
-                If line <> "" Then Call parseLineToCUs(needAdditionalCUs, missedLines, cus, pole, line, "Replace")
+                If line <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, pole, line, "Replace")
             ElseIf removeSection Then
-                If line <> "" Then Call parseLineToCUs(needAdditionalCUs, missedLines, cus, pole, line, "Remove")
+                If line <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, pole, line, "Remove")
             ElseIf transferSection Then
-                If line <> "" Then Call parseLineToCUs(needAdditionalCUs, missedLines, cus, pole, line, "Transfer")
+                If line <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, pole, line, "Transfer")
             Else
-                If line <> "" Then Call parseLineToCUs(needAdditionalCUs, missedLines, cus, pole, line, "Note")
+                If line <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, pole, line, "Note")
             End If
         End If
     Next i
     
-    If IsNumeric(pole.ttc) Then
-        Call generateTTCCU(cus, pole.location, CInt(Utilities.OnlyNumbers(pole.ttc)))
-    Else
-        missedLines.Add "Missing TTC in pole detail sheet, can't generate TTC CU"
+    If project.mode <> "SYSTEM IMPROVEMENT" Then
+        If IsNumeric(pole.ttc) Then
+            Call generateTTCCU(cus, pole.location, CInt(Utilities.OnlyNumbers(pole.ttc)))
+        Else
+            missedLines.Add "Missing TTC in pole detail sheet, can't generate TTC CU"
+        End If
     End If
  
     Call generateCU(cus, pole.location, "100417", timeAdder, "INSTALL")
@@ -230,7 +240,7 @@ Private Function ExportSheetCUs(Project As Project, sheet As Worksheet) As Colle
         Call findAdditonalCUs(cus, pole, needAdditionalCUs, missedLines)
     End If
     
-    If Not reconductored Then Call checkForAdjacentPoleRecondcutoring(cus, Project, pole, missedLines)
+    If Not reconductored Then Call checkForAdjacentPoleRecondcutoring(cus, project, pole, missedLines)
     
     Dim outputCol As Collection: Set outputCol = New Collection
     outputCol.Add cus
@@ -248,15 +258,14 @@ Private Sub fixCUErrors(cus As Collection, needAdditionalCUs As Collection, miss
     Dim hardware As String
     Dim regex As Object: Set regex = CreateObject("VBScript.RegExp")
     
+    
     For i = 1 To cus.count
         If TypeOf cus(i) Is CU Then
             Set CU = cus(i)
-            If TypeOf CU Is CU Then
-                If CU.code = "106121" Then transferSpg = i
-                If CU.code = "505040" And CU.action = "RET REM" Then removeSpg = True
-                If CU.code = "106115" Then transferServices = True
-                If vpoPole And CU.code = "100052" Then CU.qty = CU.qty - 1
-            End If
+            If CU.code = "106121" Then transferSpg = i
+            If CU.code = "505040" And CU.action = "RET REM" Then removeSpg = True
+            If CU.code = "106115" Then transferServices = True
+            If vpoPole And CU.code = "100052" Then CU.qty = CU.qty - 1
         End If
     Next i
     
@@ -308,10 +317,10 @@ Private Sub findAdditonalCUs(cus As Collection, pole As pole, needAdditionalCUs 
     Dim neutCount As Integer
     Dim secCount As Integer
     Dim owCount As Integer
-    Dim priSizes As scripting.Dictionary: Set priSizes = New scripting.Dictionary
-    Dim neutSizes As scripting.Dictionary: Set neutSizes = New scripting.Dictionary
-    Dim secSizes As scripting.Dictionary: Set secSizes = New scripting.Dictionary
-    Dim owSizes As scripting.Dictionary: Set owSizes = New scripting.Dictionary
+    Dim priSizes As Scripting.Dictionary: Set priSizes = New Scripting.Dictionary
+    Dim neutSizes As Scripting.Dictionary: Set neutSizes = New Scripting.Dictionary
+    Dim secSizes As Scripting.Dictionary: Set secSizes = New Scripting.Dictionary
+    Dim owSizes As Scripting.Dictionary: Set owSizes = New Scripting.Dictionary
     
     Call SortCollectionByAction(needAdditionalCUs)
     
@@ -378,7 +387,7 @@ Private Sub findAdditonalCUs(cus As Collection, pole As pole, needAdditionalCUs 
     Next i
 
     'Find all the lines that would require a spool tie
-    Dim neededSpoolCUs As scripting.Dictionary: Set neededSpoolCUs = New scripting.Dictionary
+    Dim neededSpoolCUs As Scripting.Dictionary: Set neededSpoolCUs = New Scripting.Dictionary
     neededSpoolCUs("INSTALL") = 0
     neededSpoolCUs("RET REM") = 0
     For i = needAdditionalCUs.count To 1 Step -1
@@ -402,7 +411,7 @@ Private Sub findAdditonalCUs(cus As Collection, pole As pole, needAdditionalCUs 
     
     'Prompt user for top/side ties if size can be found
     Dim topSideTie As String
-    Dim uniqueTopSideTieSizes As scripting.Dictionary: Set uniqueTopSideTieSizes = New scripting.Dictionary
+    Dim uniqueTopSideTieSizes As Scripting.Dictionary: Set uniqueTopSideTieSizes = New Scripting.Dictionary
     
     For Each priSize In priSizes
         If Not uniqueTopSideTieSizes.Exists(Utilities.OnlyNumbers(CStr(priSize))) Then uniqueTopSideTieSizes.Add Utilities.OnlyNumbers(CStr(priSize)), Nothing
@@ -516,8 +525,8 @@ Public Sub SortCollectionByAction(col As Collection)
     Next i
 End Sub
 
-Private Sub getSpoolTies(cus As Collection, pole As pole, needAdditionalCUs As Collection, neutSizes As scripting.Dictionary, neutCount As Integer, secSizes As scripting.Dictionary, secCount As Integer, owSizes As scripting.Dictionary, owCount As Integer, amount As Integer, action As String)
-    Dim uniqueSizes As scripting.Dictionary: Set uniqueSizes = New scripting.Dictionary
+Private Sub getSpoolTies(cus As Collection, pole As pole, needAdditionalCUs As Collection, neutSizes As Scripting.Dictionary, neutCount As Integer, secSizes As Scripting.Dictionary, secCount As Integer, owSizes As Scripting.Dictionary, owCount As Integer, amount As Integer, action As String)
+    Dim uniqueSizes As Scripting.Dictionary: Set uniqueSizes = New Scripting.Dictionary
     Dim totalWires As Integer
     Dim failed As Boolean
     
@@ -622,7 +631,7 @@ Private Sub getSpoolTies(cus As Collection, pole As pole, needAdditionalCUs As C
     End If
 End Sub
 
-Private Sub getExtraDECU(cus As Collection, pole As pole, needAdditionalCUs As Collection, index As Integer, sizes As scripting.Dictionary, sizeCount As Integer, neededCU() As Variant, Optional componentType As String)
+Private Sub getExtraDECU(cus As Collection, pole As pole, needAdditionalCUs As Collection, index As Integer, sizes As Scripting.Dictionary, sizeCount As Integer, neededCU() As Variant, Optional componentType As String)
     Dim hardware As String: hardware = neededCU(0)
     Dim amount As Integer: amount = neededCU(1)
     Dim action As String: action = neededCU(2)
@@ -672,12 +681,12 @@ Private Sub getExtraDECU(cus As Collection, pole As pole, needAdditionalCUs As C
     End If
 End Sub
 
-Private Sub generateCSV(Project As Project, cus As Collection)
+Private Sub generateCSV(project As project, cus As Collection)
     Dim CU As Variant
     Dim filePath As String
     
-    filePath = ThisWorkbook.path & "\" & Project.Notification & " - " & "cus.csv"
-    If InStr(filePath, "sharepoint") > 0 Then filePath = Environ("USERPROFILE") & "\Downloads\" & Project.Notification & " - " & "cus.csv"
+    filePath = ThisWorkbook.path & "\" & project.Notification & " - " & "cus.csv"
+    If InStr(filePath, "sharepoint") > 0 Then filePath = Environ("USERPROFILE") & "\Downloads\" & project.Notification & " - " & "cus.csv"
     
     Call CheckAndCloseWorkbook(filePath)
     
@@ -736,12 +745,12 @@ End Sub
 
 Private Sub generateMissedLinesTXT(missedLines As Collection)
     Dim issues As String
-    Dim Project As Project: Set Project = New Project
-    Call Project.extractFromSheets
+    Dim project As project: Set project = New project
+    Call project.extractFromSheets
     
     issues = "Lines unable to turn into CUS." & vbLf & Utilities.JoinCollection(missedLines, vbLf)
-    filePath = ThisWorkbook.path & "\" & Project.Notification & " - " & "MissedLineCUs.txt"
-    If InStr(filePath, "sharepoint") > 0 Then filePath = Environ("USERPROFILE") & "\" & Project.Notification & " - " & "MissedLineCUs.txt"
+    filePath = ThisWorkbook.path & "\" & project.Notification & " - " & "MissedLineCUs.txt"
+    If InStr(filePath, "sharepoint") > 0 Then filePath = Environ("USERPROFILE") & "\" & project.Notification & " - " & "MissedLineCUs.txt"
     
     fNum = FreeFile
     Open filePath For Output As #fNum
@@ -751,7 +760,7 @@ Private Sub generateMissedLinesTXT(missedLines As Collection)
     Shell "notepad.exe """ & filePath & """", vbNormalFocus
 End Sub
 
-Private Sub parseLineToCUs(needAdditionalCUs As Collection, missedLines As Collection, cus As Collection, pole As pole, ByVal line As String, mode As String)
+Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, missedLines As Collection, cus As Collection, pole As pole, ByVal line As String, mode As String)
     Dim regex As Object: Set regex = CreateObject("VBScript.RegExp")
     Dim regex2 As Object: Set regex2 = CreateObject("VBScript.RegExp")
     Dim amount As Integer: amount = 1
@@ -868,8 +877,8 @@ Private Sub parseLineToCUs(needAdditionalCUs As Collection, missedLines As Colle
             line1 = ""
             line2 = ""
         Else
-            If line1 <> "" Then Call parseLineToCUs(needAdditionalCUs, missedLines, cus, pole, line1, "Remove")
-            If line2 <> "" Then Call parseLineToCUs(needAdditionalCUs, missedLines, cus, pole, line2, "Install")
+            If line1 <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, pole, line1, "Remove")
+            If line2 <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, pole, line2, "Install")
         End If
         
     Else
@@ -878,7 +887,7 @@ Private Sub parseLineToCUs(needAdditionalCUs As Collection, missedLines As Colle
         If InStr(line, "+") > 0 Then
             parts = Split(line, "+")
             For i = 0 To UBound(parts)
-                Call parseLineToCUs(needAdditionalCUs, missedLines, cus, pole, parts(i), mode)
+                Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, pole, parts(i), mode)
             Next i
             Exit Sub
         End If
@@ -965,7 +974,33 @@ Private Sub parseLineToCUs(needAdditionalCUs As Collection, missedLines As Colle
         
         'Note section handler
         If mode = "Note" Then
-            If InStr(line, "TOP") > 0 And InStr(line, "POLE") > 0 And InStr(line, "ABOVE") > 0 Then Call generateCU(cus, pole.location, "100910", 1, "INSTALL")
+            If InStr(line, "TOP") > 0 And InStr(line, "POLE") > 0 And InStr(line, "ABOVE") > 0 Then
+                Call generateCU(cus, pole.location, "100910", 1, "INSTALL")
+                If project.mode = "SYSTEM IMPROVEMENT" Then
+                
+                    Set polesDict = New Scripting.Dictionary
+                    Set cuSortWs = ThisWorkbook.sheets("CUSortOrder")
+                    
+                    lastRow = cuSortWs.Cells(cuSortWs.Rows.count, "A").End(xlUp).row
+                    
+                    For i = 1 To lastRow
+                        If cuSortWs.Cells(i, "B").Value = "5" Then
+                            polesDict(cuSortWs.Cells(i, "A").Value) = True
+                        End If
+                    Next i
+                
+                    For i = cus.count To 1 Step -1
+                        If TypeOf cus(i) Is CU Then
+                            Set CU = cus(i)
+                            
+                            If polesDict.Exists(CU.code) And CU.action = "RET REM" And CU.location = properLocation(pole.location) Then
+                                cus.Remove (i)
+                                Exit For
+                            End If
+                        End If
+                    Next i
+                End If
+            End If
             If InStr(line, "DEEPSET") > 0 And InStr(line, "'") > 0 Then
                 temp = Utilities.OnlyNumbers(Mid(InStr(line, "'") - 1, 1))
                 If IsNumeric(temp) Then Call generateCU(cus, pole.location, "100041", CInt(temp), "INSTALL")
@@ -1023,7 +1058,7 @@ End Sub
 Private Sub generateTransferServiceCU(cus As Collection, pole As pole, amount As Integer)
     Dim cuCode As String
     Dim totalServices As Integer
-    Dim serviceDict As scripting.Dictionary: Set serviceDict = New scripting.Dictionary
+    Dim serviceDict As Scripting.Dictionary: Set serviceDict = New Scripting.Dictionary
     
     For Each service In pole.services
         For Each midspan In service.midspans
@@ -1099,7 +1134,7 @@ Private Sub generateReconductorCUs(cus As Collection, pole As pole, line1 As Str
     End If
 End Sub
 
-Private Sub checkForAdjacentPoleRecondcutoring(cus As Collection, Project As Project, pole As pole, missedLines As Collection)
+Private Sub checkForAdjacentPoleRecondcutoring(cus As Collection, project As project, pole As pole, missedLines As Collection)
     Dim Span As Span
     Dim otherPole As pole
     Dim otherSpan As Span
@@ -1107,7 +1142,7 @@ Private Sub checkForAdjacentPoleRecondcutoring(cus As Collection, Project As Pro
     Dim lines() As String
     For Each Span In pole.spans
         If Span.otherPole <> "" Then
-            Set otherPole = Project.findPole(Span.otherPole)
+            Set otherPole = project.findPole(Span.otherPole)
             If InStr(otherPole.Alt1, "'") > 0 And InStr(line, "OPEN WIRE") > 0 And InStr(line, "SECONDARY") > 0 Then
                 If InStr(otherPole.Alt1, vbLf) > 0 Then
                     lines = Split(otherPole.Alt1, vbLf)
@@ -1141,6 +1176,7 @@ Private Function MissedLineIgnorable(pole As pole, ByVal line As String) As Bool
     If InStr(line, "(") > 0 Then line = Left(line, InStr(line, "(") - 1)
     If InStr(line, ")") > 0 Then line = Left(line, InStr(line, ")") - 1)
     If InStr(line, "FIGURE") = 1 Then MissedLineIgnorable = True: Exit Function
+    If InStr(line, "TOREPLACEOPENWIRE") = 1 Then MissedLineIgnorable = True: Exit Function
     If InStr(line, "D=") = 1 Then MissedLineIgnorable = True: Exit Function
     If InStr(line, "P=") = 1 Then MissedLineIgnorable = True: Exit Function
     If InStr(line, "TOCORRECT") = 1 Then MissedLineIgnorable = True: Exit Function
@@ -1355,7 +1391,13 @@ Private Sub generateSecondaryRiserCU(cus As Collection, pole As pole, hardware A
 End Sub
 
 Private Function properLocation(location As String) As String
-    properLocation = "L" & Format(location, "000") & " ALT1"
+    Dim project As project: Set project = New project
+    
+    If project.mode = "SYSTEM IMPROVEMENT" Then
+        properLocation = "LOC " & location
+    Else
+        properLocation = "L" & Format(location, "000") & " ALT1"
+    End If
 End Function
 
 Private Function properAction(mode As String) As String
