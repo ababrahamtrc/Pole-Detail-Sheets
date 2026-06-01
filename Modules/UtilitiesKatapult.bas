@@ -1,8 +1,8 @@
 Attribute VB_Name = "UtilitiesKatapult"
 Option Explicit
 
-Public Function InitProjectFromKatapultJson(ByVal json As Object) As Project
-    Dim Project As Project: Set Project = New Project
+Public Function InitProjectFromKatapultJson(ByVal json As Object) As project
+    Dim project As project: Set project = New project
     Dim pole As pole
     Dim jsonNode As Object, jsonPhotoData As Object, jsonWire As Object, jsonArm As Object, jsonInsulator As Object, jsonPoleTag As Object, jsonConnection As Object, jsonGuy As Object
     
@@ -16,19 +16,19 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As Project
     Dim nodeType As String
     
     If json.Exists("metadata") Then
-        If json("metadata").Exists("TRC_tracking_ID") Then Project.Notification = Trim(json("metadata")("TRC_tracking_ID"))
-        If json("metadata").Exists("communication_tracking_ID") Then Project.permit = Trim(json("metadata")("communication_tracking_ID"))
+        If json("metadata").Exists("TRC_tracking_ID") Then project.Notification = Trim(json("metadata")("TRC_tracking_ID"))
+        If json("metadata").Exists("communication_tracking_ID") Then project.permit = Trim(json("metadata")("communication_tracking_ID"))
         If json("metadata").Exists("communication_tracking_ID") Then
-            Project.township = Trim(json("metadata")("job_city"))
-            Project.jobLocation = Project.township & ", MI"
+            project.township = Trim(json("metadata")("job_city"))
+            project.jobLocation = project.township & ", MI"
         End If
-        If json("metadata").Exists("communication_company") Then Project.applicant = Trim(json("metadata")("communication_company"))
-        If json("metadata").Exists("CE_MKR_fielder") Then Project.fielder = Trim(json("metadata")("CE_MKR_fielder"))
+        If json("metadata").Exists("communication_company") Then project.applicant = Trim(json("metadata")("communication_company"))
+        If json("metadata").Exists("CE_MKR_fielder") Then project.fielder = Trim(json("metadata")("CE_MKR_fielder"))
     End If
 
-    Dim nodeKeys As scripting.Dictionary: Set nodeKeys = New scripting.Dictionary
-    Dim insulators As scripting.Dictionary: Set insulators = New scripting.Dictionary
-    Dim wires As scripting.Dictionary: Set wires = New scripting.Dictionary
+    Dim nodeKeys As Scripting.Dictionary: Set nodeKeys = New Scripting.Dictionary
+    Dim insulators As Scripting.Dictionary: Set insulators = New Scripting.Dictionary
+    Dim wires As Scripting.Dictionary: Set wires = New Scripting.Dictionary
     
     If json.Exists("nodes") Then
         For Each nodeKey In json("nodes").keys
@@ -61,7 +61,7 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As Project
                             Next key
                         End If
                         
-                        If jsonNode("attributes").Exists("county") And Project.county = "" Then Project.county = Replace(getFirstValueJson(jsonNode("attributes")("county")), " County", "")
+                        If jsonNode("attributes").Exists("county") And project.county = "" Then project.county = Replace(getFirstValueJson(jsonNode("attributes")("county")), " County", "")
                         If jsonNode("attributes").Exists("address") Then pole.address = getFirstValueJson(jsonNode("attributes")("address"))
                         
                         If jsonNode.Exists("photos") Then
@@ -199,7 +199,7 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As Project
                             Next poleTagKey
                         End If
                         
-                        Project.poles.Add pole
+                        project.poles.Add pole
                         nodeKeys.Add nodeKey, pole
                     End If
                 End If
@@ -222,22 +222,30 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As Project
         Call addConnections(json, CStr(connectionKey), jsonConnection, nodeKeys, nodeType1, nodeId2, nodeId1)
     Next connectionKey
 
-    For Each pole In Project.poles
+    For Each pole In project.poles
         Call pole.setLineStructureTypes
     Next pole
 
-    If Project.county = "" Then
-        Project.county = InputBox("Enter the county and please be exact with no typos, future scripts will care about this:", "User Input")
+    If project.Notification = "" Then
+        project.Notification = InputBox("Enter the Notification:", "User Input")
     End If
     
-    If Project.fielder = "" Then
-        Project.fielder = InputBox("Enter the fielder:", "User Input")
+    If project.permit = "" Then
+        project.permit = InputBox("Enter the Permit:", "User Input")
+    End If
+
+    If project.county = "" Then
+        project.county = InputBox("Enter the county and please be exact with no typos, future scripts will care about this:", "User Input")
     End If
     
-    Set InitProjectFromKatapultJson = Project
+    If project.fielder = "" Then
+        project.fielder = InputBox("Enter the fielder:", "User Input")
+    End If
+    
+    Set InitProjectFromKatapultJson = project
 End Function
 
-Private Sub addConnections(ByVal json As Object, connectionKey As String, ByVal jsonConnection As Object, nodeKeys As scripting.Dictionary, nodeType As String, nodeId1 As String, nodeId2 As String)
+Private Sub addConnections(ByVal json As Object, connectionKey As String, ByVal jsonConnection As Object, nodeKeys As Scripting.Dictionary, nodeType As String, nodeId1 As String, nodeId2 As String)
     Dim pole As pole
     Dim otherPole As pole
     Dim latitude As Double
