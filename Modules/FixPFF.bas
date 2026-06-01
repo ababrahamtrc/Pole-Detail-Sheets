@@ -20,11 +20,11 @@ Public Sub FixPoleForemanJSON()
     Set fso = Nothing
     
     Dim pole As pole
-    Dim Project As Project
+    Dim project As project
     
     counter = 0
     
-    Dim PFNameMapping As scripting.Dictionary: Set PFNameMapping = New scripting.Dictionary
+    Dim PFNameMapping As Scripting.Dictionary: Set PFNameMapping = New Scripting.Dictionary
     Call InitializePFNameMapping(PFNameMapping)
     
     For Each jsonPole In json
@@ -32,33 +32,33 @@ Public Sub FixPoleForemanJSON()
         poleID = jsonPole("Structure")("Pole")("PoleNumber")
         If poleID <> "" Then
             found = False
-            Set Project = New Project
-            Project.extractFromSheets
-            For Each pole In Project.poles
+            Set project = New project
+            project.extractFromSheets
+            For Each pole In project.poles
                 If pole.existingCEID = poleID Then
-                    jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(Project.permit) & "_"
+                    jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(project.permit) & "_"
                     found = True
                     Exit For
                 End If
             Next pole
             
             If Not found Then
-                Set Project = New Project
-                Project.extractImportDataFormat
-                For Each pole In Project.poles
+                Set project = New project
+                project.extractImportDataFormat
+                For Each pole In project.poles
                 If pole.existingCEID = poleID Then
-                    jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(Project.permit) & "_"
+                    jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(project.permit) & "_"
                     Exit For
                 End If
                 If pole.gisCEID = poleID Then
                     Dim Pole2 As pole: Set Pole2 = New pole
-                    Dim project2 As Project: Set project2 = New Project
+                    Dim project2 As project: Set project2 = New project
                     Call project2.extractFromSheets
                     Set Pole2 = project2.findPole(pole.poleNumber)
                     If Pole2 Is Nothing Then
-                        If Utilities.isCEID(pole.existingCEID) Or pole.existingCEID = "FOREIGN" Then jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(Project.permit) & "_"
+                        If Utilities.isCEID(pole.existingCEID) Or pole.existingCEID = "FOREIGN" Then jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(project.permit) & "_"
                     Else
-                        If Utilities.isCEID(Pole2.existingCEID) Or Pole2.existingCEID = "FOREIGN" Then jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & Pole2.existingCEID & "_" & correctFileName(Project.permit) & "_"
+                        If Utilities.isCEID(Pole2.existingCEID) Or Pole2.existingCEID = "FOREIGN" Then jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & Pole2.existingCEID & "_" & correctFileName(project.permit) & "_"
                     End If
                     Exit For
                 End If
@@ -108,7 +108,7 @@ Public Sub FixPoleForemanJSON()
                 End If
             Next jsonCircuit
             
-            Dim oppositeBearings As scripting.Dictionary: Set oppositeBearings = New scripting.Dictionary
+            Dim oppositeBearings As Scripting.Dictionary: Set oppositeBearings = New Scripting.Dictionary
             Dim oppositeSpan As Object: Set oppositeSpan = Nothing
             Dim oppositeBearing As Double
             Dim bearingDifference As Double
@@ -197,7 +197,7 @@ Public Sub FixPoleForemanJSON()
     MsgBox "Done"
 End Sub
 
-Private Sub InitializePFNameMapping(PFNameMapping As scripting.Dictionary)
+Private Sub InitializePFNameMapping(PFNameMapping As Scripting.Dictionary)
     'Primary/Neutral sizes
     PFNameMapping("4 ACSR (7/1)") = 380
     PFNameMapping("2 ACSR (7/1)") = "440"
