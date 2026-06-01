@@ -67,14 +67,14 @@ Public Sub ImportJSONData()
         Call ClearData
         
         Dim Wire As Wire
-        Dim Project As Project:
+        Dim project As project:
         
         If (jsonType = "Spida") Then
-            Set Project = UtilitiesSpidaCalc.InitProjectFromSpidaJson(json)
-            Call Project.fillImportDataFormat
+            Set project = UtilitiesSpidaCalc.InitProjectFromSpidaJson(json)
+            Call project.fillImportDataFormat
         ElseIf jsonType = "Katapult" Then
-            Set Project = UtilitiesKatapult.InitProjectFromKatapultJson(json)
-            Call Project.fillImportDataFormat
+            Set project = UtilitiesKatapult.InitProjectFromKatapultJson(json)
+            Call project.fillImportDataFormat
         End If
     End If
     
