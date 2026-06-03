@@ -27,16 +27,22 @@ Public Sub FixPoleForemanJSON()
     Dim PFNameMapping As Scripting.Dictionary: Set PFNameMapping = New Scripting.Dictionary
     Call InitializePFNameMapping(PFNameMapping)
     
+    
     For Each jsonPole In json
         Dim poleID As String
         poleID = jsonPole("Structure")("Pole")("PoleNumber")
+        If jsonPole("Structure")("Pole")("NESCConstructionGrade") = "Grade C (Elsewhere)" Then jsonPole("Structure")("Pole")("NESCConstructionGrade") = "Grade C (Crossing)"
         If poleID <> "" Then
             found = False
             Set project = New project
             project.extractFromSheets
             For Each pole In project.poles
                 If pole.existingCEID = poleID Then
-                    jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(project.permit) & "_"
+                    If project.mode = "SYSTEM IMPROVEMENT" And pole.location <> "" Then
+                        jsonPole("Structure")("Pole")("PoleNumber") = "PFF LOC " & pole.location
+                    Else
+                        jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(project.permit) & "_"
+                    End If
                     found = True
                     Exit For
                 End If
@@ -67,10 +73,12 @@ Public Sub FixPoleForemanJSON()
         End If
         
         Dim estimatedAGL As Double
-        If jsonPole("Structure")("Pole")("Length") < 40 Then
-            estimatedAGL = jsonPole("Structure")("Pole")("Length") - 6
-        Else
-            estimatedAGL = (jsonPole("Structure")("Pole")("Length") * 0.9) - 2
+        If jsonPole("Structure")("Pole").Exists("Length") Then
+            If jsonPole("Structure")("Pole")("Length") < 40 Then
+                estimatedAGL = jsonPole("Structure")("Pole")("Length") - 6
+            ElseIf jsonPole("Structure")("Pole")("Length") <> "" Then
+                estimatedAGL = (jsonPole("Structure")("Pole")("Length") * 0.9) - 2
+            End If
         End If
         
         If jsonPole("Structure")("Pole")("AGL") > estimatedAGL And jsonPole("Structure")("Pole")("AGL") - estimatedAGL < 1.5 Then
@@ -118,7 +126,7 @@ Public Sub FixPoleForemanJSON()
             If jsonSpan.Exists("Communication") And Not IsNull(jsonSpan("Communication")) Then
                 For Each jsonCommunication In jsonSpan("Communication")
                     For Each jsonOtherSpan In jsonPole("Structure")("Spans")
-                        If jsonOtherSpan.Exists("Communication") And Not IsNull(jsonOtherSpan("Communication")) Then
+                        If jsonOtherSpan.Exists("Communication") And jsonOtherSpan("Communication").count > 0 Then
                             If jsonSpan("Length") <> jsonOtherSpan("Length") And jsonSpan("Bearing") <> jsonOtherSpan("Bearing") Then
                                 If jsonSpan("Bearing") >= 3.141592 Then
                                     oppositeBearing = jsonSpan("Bearing") - 3.141592
@@ -128,7 +136,7 @@ Public Sub FixPoleForemanJSON()
                                 
                                 bearing = jsonOtherSpan("Bearing")
                                 bearingDifference = Abs(bearing - oppositeBearing)
-                                If bearingDifference > (3.141592 / 3) Then bearingDifference = Abs(bearing - (oppositeBearing + (2 * 3.141592)))
+                                If bearingDifference > (3.141592 / 3) Then bearingDifference = Abs(bearingDifference - (2 * 3.141592))
                                 If bearingDifference <= (3.141592 / 3) Then
                                     For Each jsonOtherCommunication In jsonOtherSpan("Communication")
                                         If jsonCommunication("Owner") = jsonOtherCommunication("Owner") And Abs(jsonCommunication("Height") - jsonOtherCommunication("Height")) < 2 Then
@@ -156,7 +164,7 @@ Public Sub FixPoleForemanJSON()
                             
                             bearing = jsonOtherSpan("Bearing")
                             bearingDifference = Abs(bearing - oppositeBearing)
-                            If bearingDifference > (3.141592 / 3) Then bearingDifference = Abs(bearing - (oppositeBearing + (2 * 3.141592)))
+                            If bearingDifference > (3.141592 / 3) Then bearingDifference = Abs(bearingDifference - (2 * 3.141592))
                             If bearingDifference <= (3.141592 / 3) Then
                                 For Each jsonOtherCommunication In jsonSpan("Communication")
                                     If jsonCommunication("Owner") = jsonOtherCommunication("Owner") And Abs(jsonCommunication("Height") - jsonOtherCommunication("Height")) < 2 Then
@@ -174,8 +182,10 @@ Public Sub FixPoleForemanJSON()
                     
                     If Not oppositeSpan Is Nothing And (Not oppositeBearings.Exists(otherbearingKey) Or (oppositeBearings.Exists(otherbearingKey) And oppositeBearings(otherbearingKey) = closestBearingDifference)) Then
                         jsonCommunication("RulingSpan") = Application.WorksheetFunction.Ceiling(CDbl((jsonSpan("Length")) + CDbl(oppositeSpan("Length"))) / 2, 50)
+                        Debug.Print jsonPole("Structure")("Pole")("PoleNumber"), jsonCommunication("RulingSpan")
                     Else
                         jsonCommunication("RulingSpan") = Application.WorksheetFunction.Ceiling(CDbl(jsonSpan("Length")), 50)
+                        Debug.Print jsonPole("Structure")("Pole")("PoleNumber"), jsonCommunication("RulingSpan"), "singleSpan", oppositeSpan Is Nothing
                     End If
                     
                 Next jsonCommunication
