@@ -299,7 +299,13 @@ Public Sub OpenPolePhoto(Optional getDir As Boolean = True)
         End If
     End If
     
-    photoName = "M1P" & pole.poleNumber & "-1_" & pole.existingCEID & "_" & Utilities.correctFileName(pole.permit) & ".jpg"
+    Dim project As project: Set project = New project
+    
+    If project.mode = "SYSTEM IMPROVEMENT" And pole.location <> "" Then
+        photoName = "LOC " & pole.location & " PIC 1.jpg"
+    Else
+        photoName = "M1P" & pole.poleNumber & "-1_" & pole.existingCEID & "_" & Utilities.correctFileName(pole.permit) & ".jpg"
+    End If
     filePath = path & photoName
     
     Dim wsh As Object
