@@ -648,14 +648,18 @@ Public Sub calculateViolations()
     Me.violation40SZV = Calculate40SZV()
     Me.violationUtil156MSGCV = Calculate156MSGCV(Me.utilWires)
     Me.violationCom156MSGCV = Calculate156MSGCV(Me.commComponents)
-    Me.violation30MSSV = Calculate30MSSV()
-    results = CalculateCommViolations()
-    violation12CSV = results(0)
-    violation6MSSV = results(1)
-    results = Calculate40SLSV()
-    violation40SLSV = results(0)
-    violation12SLDLSV = results(1)
-
+    
+    Dim project As project: Set project = New project
+    
+    If project.mode <> "SYSTEM IMPROVEMENT" Then
+        Me.violation30MSSV = Calculate30MSSV()
+        results = CalculateCommViolations()
+        violation12CSV = results(0)
+        violation6MSSV = results(1)
+        results = Calculate40SLSV()
+        violation40SLSV = results(0)
+        violation12SLDLSV = results(1)
+    End If
 End Sub
 
 Private Function Calculate40SZV() As String
