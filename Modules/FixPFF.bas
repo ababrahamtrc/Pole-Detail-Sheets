@@ -37,7 +37,7 @@ Public Sub FixPoleForemanJSON()
             Set project = New project
             project.extractFromSheets
             For Each pole In project.poles
-                If pole.existingCEID = poleID Then
+                If pole.existingCEID = poleID Or poleID = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(project.permit) & "_" Then
                     If project.mode = "SYSTEM IMPROVEMENT" And pole.location <> "" Then
                         jsonPole("Structure")("Pole")("PoleNumber") = "PFF LOC " & pole.location
                     Else
