@@ -565,8 +565,22 @@ Public Sub fillImportDataFormat()
                 
                 spanComRow = spanComRow + 1
             Next Wire
-
         Next Span
+        
+        For Each Wire In pole.commWires
+                If Wire.midspans.count = 0 Then
+                    equipmentWs.Cells(equipmentRow, 1).Value = pole.poleNumber
+                    If Wire.componentType = "DROP" Then
+                        equipmentWs.Cells(equipmentRow, 2).Value = Wire.componentType & " > " & Wire.componentType
+                    Else
+                        equipmentWs.Cells(equipmentRow, 2).Value = Wire.componentType & " > " & Wire.size
+                    End If
+                    equipmentWs.Cells(equipmentRow, 3).Value = Wire.height
+                    equipmentWs.Cells(equipmentRow, 5).Value = IIf(Wire.owner = "", "Consumers Energy", Wire.owner)
+                    
+                    equipmentRow = equipmentRow + 1
+                End If
+            Next Wire
         
         For Each Anchor In pole.anchors
             anchorWs.Cells(anchorRow, 1).Value = pole.poleNumber
