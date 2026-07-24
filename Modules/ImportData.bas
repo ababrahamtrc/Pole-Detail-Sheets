@@ -52,9 +52,9 @@ Public Sub ImportJSONData()
         
         Dim jsonType As String: jsonType = ""
         
-        If json.Exists("date") Then
+        If json.exists("date") Then
             jsonType = "Spida"
-        ElseIf json.Exists("connections") Then
+        ElseIf json.exists("connections") Then
             jsonType = "Katapult"
         Else
             MsgBox "Please select a spidacalc project json, you can find this by going to ""Project>Export>Project Json..."" on your spidacalc file."
@@ -66,7 +66,7 @@ Public Sub ImportJSONData()
     
         Call ClearData
         
-        Dim Wire As Wire
+        Dim wire As wire
         Dim project As project:
         
         If (jsonType = "Spida") Then
