@@ -23,7 +23,7 @@ Public Sub generateNJUNSCodes()
                 company = Replace(company, ":", "")
                 If company = "Ce" Then company = "Consumers"
                 If company <> "Consumers" Then
-                    If Not companies.Exists(company) Then companies.Add company, 0
+                    If Not companies.exists(company) Then companies.Add company, 0
                     companies(company) = companies(company) + 1
                 End If
             Next step
@@ -73,10 +73,10 @@ Private Function getNJUNSNameMapping(project, ByVal key As String) As String
         Call InitializeNJUNSNameCorrecting
     End If
     
-    If NJUNSCodes.Exists(key) Then
+    If NJUNSCodes.exists(key) Then
         getNJUNSNameMapping = NJUNSCodes(key)
     Else
-        If NJUNSCodes.Exists(key & UCase(project.county)) Then
+        If NJUNSCodes.exists(key & UCase(project.county)) Then
             getNJUNSNameMapping = NJUNSCodes(key & UCase(project.county))
         Else
             getNJUNSNameMapping = ""
