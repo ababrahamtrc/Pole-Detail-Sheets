@@ -170,7 +170,7 @@ Private Function QACheck(pds As Worksheet) As String
             End If
             If Not isEmpty(pds.Range("STLTBRKT")) Then
                 Call checkEmptyCell(pds, issues, "BONDED", "Streetlight Bonded")
-                If isEmpty(pds.Range("MBSM").offset(0, 1)) Then issues = issues & "• Miss/Brkn Streetlight molding needs to be selected if there's a streetlight." & vbLf
+                If pole.location <> "" Then If isEmpty(pds.Range("MBSM").offset(0, 1)) Then issues = issues & "• Miss/Brkn Streetlight molding needs to be selected if there's a streetlight." & vbLf
             End If
         End If
     End If
@@ -294,7 +294,7 @@ Private Function QACheck(pds As Worksheet) As String
                         If InStr(pds.Range("TOPOLE" & i).offset(1, 0), "'") = 0 Or InStr(pds.Range("TOPOLE" & i).offset(1, 0), """") = 0 And pds.Range("TOPOLE" & i).offset(1, 0) <> "N/A" Then missingInchOrFoot = True
                         If UCase(pds.Range("TOPOLE" & i).offset(1, 0)) = "N/A" Or UCase(pds.Range("TOPOLE" & i).offset(1, 0)) = "NA" Then namidSpan = True
                     End If
-                    If regex.test(pds.Range("TOPOLE" & i)) Then
+                    If regex.Test(pds.Range("TOPOLE" & i)) Then
                         Set matches = regex.Execute(pds.Range("TOPOLE" & i))
                         otherSheetName = matches(0)
                         If SheetExists(otherSheetName) Then
@@ -308,7 +308,7 @@ Private Function QACheck(pds As Worksheet) As String
                             For j = 1 To 12
                                 For Each otherName In otherSheet.names
                                     If otherName.name = "'" & otherSheet.name & "'" & "!TOPOLE" & j Then
-                                        If regex.test(otherSheet.Range("TOPOLE" & j)) Then
+                                        If regex.Test(otherSheet.Range("TOPOLE" & j)) Then
                                             Set matches = regex.Execute(otherSheet.Range("TOPOLE" & j))
                                             If matches(0) = pds.Range("POLENUM") Then
                                                 angle = Trim(Replace(pds.Range("TOPOLE" & i), "-", ""))
@@ -322,14 +322,14 @@ Private Function QACheck(pds As Worksheet) As String
                                                     comparingMidspan = Trim(Replace(pds.Range("UTMIDSPAN" & i).offset(k, 0), "-", ""))
                                                     If comparingMidspan <> "" Then
                                                         found = False
-                                                        For L = 0 To 100
-                                                            If otherSheet.Range("UTTYPE").offset(L, 0).Interior.color <> 16312794 Then Exit For
-                                                            comparedMidspan = Trim(Replace(otherSheet.Range("UTMIDSPAN" & j).offset(L, 0), "-", ""))
+                                                        For l = 0 To 100
+                                                            If otherSheet.Range("UTTYPE").offset(l, 0).Interior.color <> 16312794 Then Exit For
+                                                            comparedMidspan = Trim(Replace(otherSheet.Range("UTMIDSPAN" & j).offset(l, 0), "-", ""))
                                                             If comparingMidspan = comparedMidspan Then
                                                                 found = True
                                                                 Exit For
                                                             End If
-                                                        Next L
+                                                        Next l
                                                         If Not found Then issues = issues & "• Couldn't find matching midspan (" & comparingMidspan & ") towards pole " & otherSheetName & " on sheet " & otherSheetName & vbLf
                                                     End If
                                                 Next k
@@ -338,14 +338,14 @@ Private Function QACheck(pds As Worksheet) As String
                                                     comparingMidspan = Trim(Replace(pds.Range("CMMIDSPAN" & i).offset(k, 0), "-", ""))
                                                     If comparingMidspan <> "" Then
                                                         found = False
-                                                        For L = 0 To 100
-                                                            If otherSheet.Range("CMOWNER").offset(L, 0).Interior.color <> 16312794 Then Exit For
-                                                            comparedMidspan = Trim(Replace(otherSheet.Range("CMMIDSPAN" & j).offset(L, 0), "-", ""))
+                                                        For l = 0 To 100
+                                                            If otherSheet.Range("CMOWNER").offset(l, 0).Interior.color <> 16312794 Then Exit For
+                                                            comparedMidspan = Trim(Replace(otherSheet.Range("CMMIDSPAN" & j).offset(l, 0), "-", ""))
                                                             If comparingMidspan = comparedMidspan Then
                                                                 found = True
                                                                 Exit For
                                                             End If
-                                                        Next L
+                                                        Next l
                                                         If Not found Then issues = issues & "• Couldn't find matching midspan (" & comparingMidspan & ") towards pole " & otherSheetName & " on sheet " & otherSheetName & vbLf
                                                     End If
                                                 Next k
@@ -484,7 +484,7 @@ Private Function QACheck(pds As Worksheet) As String
     
     ' Safe attach section
     If pole.location = "" Then
-        If (pole.lowestPower > 0 And pole.applicant.modification > pole.lowestPower - 40) Or (pole.streeLightBB > 0 And pole.Bonded <> "YES" And Abs(pole.applicant.modification - pole.streeLightBB) < 40) Then
+        If (pole.lowestPower > 0 And pole.applicant.modification > pole.lowestPower - 40) Or (pole.slBottomBracketHeight > 0 And pole.Bonded <> "YES" And Abs(pole.applicant.modification - pole.slBottomBracketHeight) < 40) Then
             issues = issues & "• Attaching in 40"" safety zone violation or within 40"" of unbonded streetlight with no CE work." & vbLf
         End If
     End If
