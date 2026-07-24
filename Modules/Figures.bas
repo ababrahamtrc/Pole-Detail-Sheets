@@ -50,7 +50,7 @@ Public Sub getSheetFigures(sheet As Worksheet)
             regex.IgnoreCase = True
             regex.Global = False
             
-            If regex.test(line) Then
+            If regex.Test(line) Then
                 Set match = regex.Execute(line)(0)
                 
                 Set cell = sheet.Cells(linkCount + 2, col)
@@ -59,7 +59,7 @@ Public Sub getSheetFigures(sheet As Worksheet)
                 cell.Value = "FIGURE " & match.SubMatches(0)
                 cell.EntireColumn.AutoFit
                 cell.Hyperlinks.Add _
-                    Anchor:=cell, _
+                    anchor:=cell, _
                     address:=IIf(match.SubMatches(0) = "22-405", edmPath, edemPath) & match.SubMatches(0) & ".html", _
                     TextToDisplay:=cell.Value
                 
