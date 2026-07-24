@@ -1,4 +1,46 @@
 Attribute VB_Name = "Utilities"
+Sub applyStandardAbbreviations(ByRef str As String)
+    str = UCase(str)
+    
+    str = Replace(str, "NEUTRAL", "NEUT")
+    str = Replace(str, "OVERHEAD", "OH")
+    str = Replace(str, "PRIMARY", "PRI")
+    str = Replace(str, "SECONDARY", "SEC")
+    str = Replace(str, "SERVICE", "SVC")
+    str = Replace(str, "SVCS", "SVC")
+    str = Replace(str, "STREETLIGHT", "STLT")
+    str = Replace(str, "STREET LIGHT", "STLT")
+    str = Replace(str, "TRANSFORMER", "XFMR")
+    
+    str = Replace(str, "SPINS", "SPIN")
+    str = Replace(str, "SCORS", "SCOR")
+    str = Replace(str, "DPINS", "DPIN")
+    str = Replace(str, "DCORS", "DCOR")
+    str = Replace(str, "SVCS", "SVC")
+    
+    str = Replace(str, "TANG", "TAN")
+    
+    str = Replace(str, "BRACKET", "BRKT")
+    str = Replace(str, "CAPACITOR", "CAP")
+    str = Replace(str, "CONDUCTOR", "COND")
+    str = Replace(str, "COPPER", "C")
+    str = Replace(str, "DISCONNECT", "DISC")
+    str = Replace(str, "DEADEND", "DE")
+    str = Replace(str, "DEAD END", "DE")
+    str = Replace(str, "DEBRACKET", "DEBKT")
+    str = Replace(str, "DE BRACKET", "DEBKT")
+    str = Replace(str, "EXTENSION", "EXT")
+    str = Replace(str, "FIBERGLASS", "FG")
+    str = Replace(str, "FG STANDOFF BRKT", "FGSB")
+    str = Replace(str, "FGSOB", "FGSB")
+    str = Replace(str, "FEET", "FT")
+    str = Replace(str, "GROUND", "GRD")
+    str = Replace(str, "INSULATOR", "INS")
+    str = Replace(str, "PHASE", "PH")
+    str = Replace(str, "TANGENT", "TAN")
+    str = Replace(str, "STEEL", "ST")
+End Sub
+
 Public Function SheetExists(ByVal sheetName As String, Optional wb As Workbook) As Boolean
     Dim sheet As Worksheet
     If wb Is Nothing Then Set wb = ThisWorkbook
@@ -39,9 +81,9 @@ Public Function OnlyNumbers(text As String, Optional slashes As Boolean = False)
     Dim i As Long
     For i = 1 To Len(text)
         If slashes Then
-            If Mid(text, i, 1) Like "[0-9/]" Then result = result & Mid(text, i, 1)
+            If Mid(text, i, 1) Like "[0-9/.]" Then result = result & Mid(text, i, 1)
         Else
-            If Mid(text, i, 1) Like "[0-9]" Then result = result & Mid(text, i, 1)
+            If Mid(text, i, 1) Like "[0-9.]" Then result = result & Mid(text, i, 1)
         End If
     Next i
     
@@ -92,6 +134,11 @@ Public Function convertToInches(ByVal txt As String) As Double
     Dim num As String
     Dim feet As Long: feet = 0
     Dim inches As Long: inches = 0
+    
+    If txt = "" Then
+        convertToInches = -1
+        Exit Function
+    End If
     
     If InStr(txt, "'") = 0 And InStr(txt, """") = 0 Then
         convertToInches = -1
@@ -252,7 +299,7 @@ Function ShareAKey(dict1 As Scripting.Dictionary, dict2 As Scripting.Dictionary)
     ShareAKey = False
     
     For Each key In dict1.keys
-        If dict2.Exists(key) Then
+        If dict2.exists(key) Then
             ShareAKey = True
             Exit Function
         End If
@@ -278,6 +325,19 @@ Public Function GetPDS(name As String) As Worksheet
     End If
     
     Set GetPDS = Nothing
+End Function
+
+Public Function getPole(name As String) As pole
+    Dim pole As pole
+    Dim sheet As Worksheet
+    Set sheet = GetPDS(name)
+    If Not sheet Is Nothing Then
+        Set pole = New pole
+        Call pole.extractFromSheet(sheet)
+        Set getPole = pole
+    Else
+        Set getPole = Nothing
+    End If
 End Function
 
 Public Function SplitByBlankLine(ByVal text As String) As Collection
