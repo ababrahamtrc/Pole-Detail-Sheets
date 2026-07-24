@@ -59,38 +59,38 @@ Sub ImportApplication()
         If SheetExists(sheetName) Then
             Set sheet = Utilities.GetPDS(sheetName)
         
-            If applicationWsHeaders.Exists("PROPOSED ATT. HEIGHT") Then
+            If applicationWsHeaders.exists("PROPOSED ATT. HEIGHT") Then
                 sheet.Range("PROPOSEDHEIGHT").Value = CleanFeetInches(applicationWs.Cells(i, applicationWsHeaders("PROPOSED ATT. HEIGHT")))
             End If
-            If (applicationWsHeaders.Exists("OL ATT. HEIGHT")) Then
+            If (applicationWsHeaders.exists("OL ATT. HEIGHT")) Then
                 If UCase(applicationWs.Cells(i, applicationWsHeaders("OL ATT. HEIGHT")).Value) <> "NA" And UCase(applicationWs.Cells(i, applicationWsHeaders("OL ATT. HEIGHT")).Value) <> "N/A" And Trim(applicationWs.Cells(i, applicationWsHeaders("OL ATT. HEIGHT")).Value) <> "" Then
                     sheet.Range("PROPOSEDHEIGHT").Value = sheet.Range("PROPOSEDHEIGHT").Value & " OL"
                 End If
             End If
-            If (applicationWsHeaders.Exists("GUY SIZE")) Then
+            If (applicationWsHeaders.exists("GUY SIZE")) Then
                 If (UCase(applicationWs.Cells(i, applicationWsHeaders("GUY SIZE"))) <> "NA" And UCase(applicationWs.Cells(i, applicationWsHeaders("GUY SIZE"))) <> "N/A") Then
                     sheet.Range("NEWAPPSIZE").Value = applicationWs.Cells(i, applicationWsHeaders("GUY SIZE"))
                 End If
             End If
-            If (applicationWsHeaders.Exists("GUY LEAD")) Then
+            If (applicationWsHeaders.exists("GUY LEAD")) Then
                 If (UCase(applicationWs.Cells(i, applicationWsHeaders("GUY LEAD"))) <> "NA" And UCase(applicationWs.Cells(i, applicationWsHeaders("GUY LEAD"))) <> "N/A") Then
                     sheet.Range("NEWAPPLEAD").Value = applicationWs.Cells(i, applicationWsHeaders("GUY LEAD"))
                 End If
             End If
-            If (applicationWsHeaders.Exists("GUY DIRECTION")) Then
+            If (applicationWsHeaders.exists("GUY DIRECTION")) Then
                 If (UCase(applicationWs.Cells(i, applicationWsHeaders("GUY DIRECTION"))) <> "NA" And UCase(applicationWs.Cells(i, applicationWsHeaders("GUY DIRECTION"))) <> "N/A") Then
                     sheet.Range("NEWAPPDIR").Value = applicationWs.Cells(i, applicationWsHeaders("GUY DIRECTION"))
                 End If
             End If
             
-            If applicationWsHeaders.Exists("EXISTING DIAMETER") Then
+            If applicationWsHeaders.exists("EXISTING DIAMETER") Then
                 sheet.Range("EXISTINGDIAMETER").Value = applicationWs.Cells(i, applicationWsHeaders("EXISTING DIAMETER"))
             End If
-            If applicationWsHeaders.Exists("DIAMETER") Then
+            If applicationWsHeaders.exists("DIAMETER") Then
                 sheet.Range("PROPOSEDDIAMETER").Value = applicationWs.Cells(i, applicationWsHeaders("DIAMETER"))
             End If
             
-            If applicationWsHeaders.Exists("ADDITIONAL SPANS") Then
+            If applicationWsHeaders.exists("ADDITIONAL SPANS") Then
                 If applicationWs.Cells(i, applicationWsHeaders("ADDITIONAL SPANS")).Value <> "" Then
                     If InStr(sheet.Range("NOTES").Value, "ADDITIONAL SPANS: " & applicationWs.Cells(i, applicationWsHeaders("ADDITIONAL SPANS"))) = 0 Then
                         If sheet.Range("NOTES").Value <> "" Then
@@ -101,7 +101,7 @@ Sub ImportApplication()
                 End If
             End If
             
-            If applicationWsHeaders.Exists("COMMENTS") Then
+            If applicationWsHeaders.exists("COMMENTS") Then
                 If applicationWs.Cells(i, applicationWsHeaders("COMMENTS")).Value <> "" Then
                     If InStr(sheet.Range("NOTES").Value, applicationWs.Cells(i, applicationWsHeaders("COMMENTS"))) = 0 Then
                         If sheet.Range("NOTES").Value <> "" Then
@@ -207,7 +207,7 @@ Private Function CleanFeetInches(inputStr As String) As String
         ' Match optional space + foot symbol + optional space + optional dash + optional space + inch digits + optional inch symbol
         .Pattern = "(\d+)\s*['’`]\s*[-]?\s*(\d+)\s*(?:[""”]|''){0,1}"
     End With
-    If regex.test(inputStr) Then
+    If regex.Test(inputStr) Then
         CleanFeetInches = regex.Replace(inputStr, "$1'$2""")
     Else
         CleanFeetInches = inputStr
