@@ -48,7 +48,7 @@ Public Sub fixAttachmentHeights()
             Next j
             Do
                 sharingSpan = False
-                If utilityComponentsDict.Exists(key) Then
+                If utilityComponentsDict.exists(key) Then
                     For Each midspanSlot In comp.midspans
                         If Replace(comp.midspans(midspanSlot), "-", "") <> "" And Replace(utilityComponentsDict(key).midspans(midspanSlot), "-", "") <> "" Then
                             sharingSpan = True
@@ -66,8 +66,8 @@ Public Sub fixAttachmentHeights()
                         Exit Do
                     End If
                 End If
-            Loop While utilityComponentsDict.Exists(key)
-            If Not utilityComponentsDict.Exists(key) Then utilityComponentsDict.Add key, comp
+            Loop While utilityComponentsDict.exists(key)
+            If Not utilityComponentsDict.exists(key) Then utilityComponentsDict.Add key, comp
         End If
     Next i
     
@@ -87,7 +87,7 @@ Public Sub fixAttachmentHeights()
             Next j
             Do
                 sharingSpan = False
-                If commComponentsDict.Exists(key) Then
+                If commComponentsDict.exists(key) Then
                     For Each midspanSlot In comp.midspans
                         If Replace(comp.midspans(midspanSlot), "-", "") <> "" And Replace(commComponentsDict(key).midspans(midspanSlot), "-", "") <> "" Then
                             sharingSpan = True
@@ -105,8 +105,8 @@ Public Sub fixAttachmentHeights()
                         Exit Do
                     End If
                 End If
-            Loop While commComponentsDict.Exists(key)
-            If Not commComponentsDict.Exists(key) Then commComponentsDict.Add key, comp
+            Loop While commComponentsDict.exists(key)
+            If Not commComponentsDict.exists(key) Then commComponentsDict.Add key, comp
         End If
     Next i
    
