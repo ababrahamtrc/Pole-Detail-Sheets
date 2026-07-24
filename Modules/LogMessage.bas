@@ -17,7 +17,7 @@ Sub SendLogMessage(script As String)
     
        Set httpAsync = CreateObject("MSXML2.XMLHTTP.6.0")
        httpAsync.Open "Get", url, True
-       httpAsync.Send
+       httpAsync.send
     End If
 End Sub
 
