@@ -8,4 +8,4 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Public insulatorSpec As String
-Public Wire As Wire
+Public wire As wire
