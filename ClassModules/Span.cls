@@ -7,7 +7,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-Public distance As Integer
+Public distance As Double
 Public angle As Integer
 Public direction As String
 Public spanId As String
@@ -21,7 +21,7 @@ Public commWires  As Collection
 Public utilComponents As Collection
 Public commComponents  As Collection
 Public spanGuys As Collection
-Public lowestPowerWire As Wire
+Public lowestPowerWire As wire
 
 Private Sub Class_Initialize()
     Set wires = New Collection
@@ -37,16 +37,16 @@ Private Sub Class_Initialize()
 End Sub
 
 Public Sub setLowestPowerWire()
-    Dim Wire As Wire
-    For Each Wire In Me.utilWires
-        If Wire.componentType <> "SPG" And Wire.componentType <> "PRI" Then
+    Dim wire As wire
+    For Each wire In Me.utilWires
+        If wire.componentType <> "SPG" And wire.componentType <> "PRI" Then
             If lowestPowerWire Is Nothing Then
-                If IsNumeric(Wire.midspans(Me.spanSlot)) And Wire.midspans(Me.spanSlot) > 0 Then Set lowestPowerWire = Wire
+                If IsNumeric(wire.midspans(Me.spanSlot)) And wire.midspans(Me.spanSlot) > 0 Then Set lowestPowerWire = wire
             Else
-                If lowestPowerWire.midspans(midspanSlot) < Wire.midspans(Me.spanSlot) And Wire.midspans(Me.spanSlot) > 0 Then Set lowestPowerWire = Wire
+                If lowestPowerWire.midspans(midspanSlot) < wire.midspans(Me.spanSlot) And wire.midspans(Me.spanSlot) > 0 Then Set lowestPowerWire = wire
             End If
         End If
-    Next Wire
+    Next wire
 End Sub
 
 Public Function getToSpan() As String
