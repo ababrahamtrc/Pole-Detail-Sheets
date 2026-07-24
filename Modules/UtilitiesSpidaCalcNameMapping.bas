@@ -9,7 +9,7 @@ Public Function getSpidaCalcNameMapping(ByVal key As String) As String
         Call InitializeSpidaCalcNameMapping
     End If
     
-    If SpidaCalcNameMapping.Exists(key) Then
+    If SpidaCalcNameMapping.exists(key) Then
         getSpidaCalcNameMapping = SpidaCalcNameMapping(key)
     Else
         getSpidaCalcNameMapping = key
