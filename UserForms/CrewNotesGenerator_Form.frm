@@ -13,6 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Dim pds As Worksheet
 Dim pole As pole
 Dim CrewNotes As String, installNotes As String, removeNotes As String, replaceNotes As String, transferNotes, notes As String
@@ -205,7 +206,7 @@ Public Sub Initialize(sheet As Worksheet)
         If pds.Range("CMOWNER").offset(i, 0).text = "Clearance Requirement" Then Exit For
         If InStr(pds.Range("CMSIZE").offset(i, 0).text, """") > 0 Then
             owner = Replace(pds.Range("CMOWNER").offset(i, 0).text, " SVC", "")
-            If Not comms.Exists(owner) Then comms.Add owner, Nothing
+            If Not comms.exists(owner) Then comms.Add owner, Nothing
         End If
     Next i
     
@@ -1551,7 +1552,6 @@ Private Sub TSDL_Click()
 End Sub
 
 Private Sub CommandButton1_Click()
-
     Set figuresUsed = New Scripting.Dictionary
 
     CrewNotes = ""
@@ -1589,6 +1589,8 @@ Private Sub CommandButton1_Click()
     
     If CrewNotes <> "" Then
         CrewNotes = Left(CrewNotes, Len(CrewNotes) - 1)
+        Dim project As project: Set project = New project
+        Call Utilities.applyStandardAbbreviations(CrewNotes)
 
         Dim DataObj As DataObject: Set DataObj = New DataObject
         DataObj.SetText CrewNotes
@@ -1908,7 +1910,7 @@ Private Sub generateReplacePoleSection()
         Dim serviceSizes As Scripting.Dictionary: Set serviceSizes = New Scripting.Dictionary
         For Each service In pole.services
             For Each midspan In service.midspans
-                If Not serviceSizes.Exists(service.size) Then serviceSizes(service.size) = 0
+                If Not serviceSizes.exists(service.size) Then serviceSizes(service.size) = 0
                 serviceSizes(service.size) = serviceSizes(service.size) + 1
             Next midspan
         Next service
@@ -1994,14 +1996,14 @@ End Sub
 
 Private Sub extractFromRPINRMDicts(ByRef replacePoleSection As String, rpDict As Scripting.Dictionary, inDict As Scripting.Dictionary, rmDict As Scripting.Dictionary)
     For Each key In inDict
-        If rmDict.Exists(key) Then
+        If rmDict.exists(key) Then
             If inDict(key) >= rmDict(key) Then
-                If Not rpDict.Exists(key) Then rpDict(key) = 0
+                If Not rpDict.exists(key) Then rpDict(key) = 0
                 rpDict(key) = rpDict(key) + rmDict(key)
                 inDict(key) = inDict(key) - rmDict(key)
                 rmDict(key) = rmDict(key) - rmDict(key)
             Else
-                If Not rpDict.Exists(key) Then rpDict(key) = 0
+                If Not rpDict.exists(key) Then rpDict(key) = 0
                 rpDict(key) = rpDict(key) + inDict(key)
                 rmDict(key) = rmDict(key) - inDict(key)
                 inDict(key) = inDict(key) - inDict(key)
@@ -2012,11 +2014,11 @@ Private Sub extractFromRPINRMDicts(ByRef replacePoleSection As String, rpDict As
     Next key
     
     For Each key In rpDict
-        If rmDict.Exists(key) And inDict.count = 0 Then
+        If rmDict.exists(key) And inDict.count = 0 Then
             replacePoleSection = replacePoleSection & "(" & rpDict(key) + rmDict(key) & ")" & key & "/" & IIf(rpDict(key) <> 1, "(" & rpDict(key) & ")", "") & key & vbLf
             replacePoleSection = replacePoleSection & secondaryFigures(key)
             Call rmDict.Remove(key)
-        ElseIf inDict.Exists(key) And rmDict.count = 0 Then
+        ElseIf inDict.exists(key) And rmDict.count = 0 Then
             eplacePoleSection = replacePoleSection & IIf(rpDict(key) <> 1, "(" & rpDict(key) & ")", "") & key & "/(" & rpDict(key) + inDict(key) & ")" & key & vbLf
             replacePoleSection = replacePoleSection & secondaryFigures(key)
             Call inDict.Remove(key)
@@ -2060,27 +2062,27 @@ Private Function secondaryFigures(hardware As Variant) As String
     hardware = CStr(hardware)
     
     If hardware = "WR" Then
-        If Not figuresUsed.Exists("[FIGURE 23-301-2 or FIGURE 23-303-1 DETAIL A (FOR OPEN WIRE)]") Then
+        If Not figuresUsed.exists("[FIGURE 23-301-2 or FIGURE 23-303-1 DETAIL A (FOR OPEN WIRE)]") Then
             figuresUsed.Add "[FIGURE 23-301-2 or FIGURE 23-303-1 DETAIL A (FOR OPEN WIRE)]", Nothing
             figure = "[FIGURE 23-301-2 or FIGURE 23-303-1 DETAIL A (FOR OPEN WIRE)]" & vbLf
         End If
     ElseIf hardware = "SECONDARY DEADEND" Then
-        If Not figuresUsed.Exists("FIGURE 23-302-1 DETAIL [A/B]") Then
+        If Not figuresUsed.exists("FIGURE 23-302-1 DETAIL [A/B]") Then
             figuresUsed.Add "FIGURE 23-302-1 DETAIL [A/B]", Nothing
             figure = "FIGURE 23-302-1 DETAIL [A/B]" & vbLf
         End If
     ElseIf hardware = "OPEN WIRE DEADEND" Then
-        If Not figuresUsed.Exists("FIGURE 23-303-1 DETAIL B") Then
+        If Not figuresUsed.exists("FIGURE 23-303-1 DETAIL B") Then
             figuresUsed.Add "FIGURE 23-303-1 DETAIL B", Nothing
             figure = "FIGURE 23-303-1 DETAIL B" & vbLf
         End If
     ElseIf hardware = "TANGENT CLAMP" Then
-        If Not figuresUsed.Exists("FIGURE 23-301-1") Then
+        If Not figuresUsed.exists("FIGURE 23-301-1") Then
             figuresUsed.Add "FIGURE 23-301-1", Nothing
             figure = "FIGURE 23-301-1" & vbLf
         End If
     ElseIf hardware = "SECONDARY AWAC DEADEND" Then
-        If Not figuresUsed.Exists("FIGURE 23-302-1 DETAIL B") Then
+        If Not figuresUsed.exists("FIGURE 23-302-1 DETAIL B") Then
             figuresUsed.Add "FIGURE 23-302-1 DETAIL B", Nothing
             figure = "FIGURE 23-302-1 DETAIL B" & vbLf
         End If
