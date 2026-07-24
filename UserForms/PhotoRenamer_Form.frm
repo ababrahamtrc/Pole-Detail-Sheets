@@ -18,6 +18,7 @@ Attribute VB_Exposed = False
 
 
 
+
 Dim colWs As Worksheet
 Dim colWsLastRow As Integer
 Dim colWsHeaders As Scripting.Dictionary
@@ -53,7 +54,7 @@ Public Sub Initialize()
         End If
     Next i
     
-    If jobInfoWsHeaders.Exists("Permit") Then TextBox2.Value = jobInfoWs.Cells(2, jobInfoWsHeaders("Permit"))
+    If jobInfoWsHeaders.exists("Permit") Then TextBox2.Value = jobInfoWs.Cells(2, jobInfoWsHeaders("Permit"))
 End Sub
 
 Private Sub CommandButton1_Click()
@@ -111,7 +112,7 @@ Private Sub CommandButton2_Click()
     For i = 2 To colWsLastRow
         poleNum = colWs.Cells(i, colWsHeaders("ID")).Value
         ceid = ""
-        If colWsHeaders.Exists("New CE ID Tag") Then ceid = colWs.Cells(i, colWsHeaders("New CE ID Tag"))
+        If colWsHeaders.exists("New CE ID Tag") Then ceid = colWs.Cells(i, colWsHeaders("New CE ID Tag"))
         If ceid = "" Then ceid = colWs.Cells(i, colWsHeaders("CE ID Tag"))
         If ceid = "" Then ceid = "FOREIGN"
         fileName = Dir(folderPath & poleNum & Application.PathSeparator & "*")
@@ -213,7 +214,7 @@ Private Sub CommandButton4_click()
             ceid = ""
             poleNum = imageWs.Cells(i, imageWsHeaders("ID"))
             Set cell = poleNumRange.find(what:=poleNum, LookIn:=xlValues, lookat:=xlWhole)
-            If colWsHeaders.Exists("New CE ID Tag") Then ceid = colWs.Cells(cell.row, colWsHeaders("New CE ID Tag"))
+            If colWsHeaders.exists("New CE ID Tag") Then ceid = colWs.Cells(cell.row, colWsHeaders("New CE ID Tag"))
             If ceid = "" Then ceid = colWs.Cells(cell.row, colWsHeaders("CE ID Tag"))
             If ceid = "" Then ceid = "FOREIGN"
             photoCounter = 1
@@ -224,7 +225,7 @@ Private Sub CommandButton4_click()
             photoCounter = photoCounter + 1
         Loop While Dir(savepath) <> ""
         http.Open "Get", imageUrl, False
-        http.Send
+        http.send
         If http.Status = 200 Then
             Set stream = CreateObject("ADODB.Stream")
             stream.Type = 1
