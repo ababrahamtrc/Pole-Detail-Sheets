@@ -73,7 +73,7 @@ Public Sub FixPoleForemanJSON()
         End If
         
         Dim estimatedAGL As Double
-        If jsonPole("Structure")("Pole").Exists("Length") Then
+        If jsonPole("Structure")("Pole").exists("Length") Then
             If jsonPole("Structure")("Pole")("Length") < 40 Then
                 estimatedAGL = jsonPole("Structure")("Pole")("Length") - 6
             ElseIf jsonPole("Structure")("Pole")("Length") <> "" Then
@@ -81,11 +81,11 @@ Public Sub FixPoleForemanJSON()
             End If
         End If
         
-        If jsonPole("Structure")("Pole")("AGL") > estimatedAGL And jsonPole("Structure")("Pole")("AGL") - estimatedAGL < 1.5 Then
+        If jsonPole("Structure")("Pole")("AGL") > estimatedAGL And jsonPole("Structure")("Pole")("AGL") - estimatedAGL <= 2 Then
             jsonPole("Structure")("Pole")("AGL") = estimatedAGL
         End If
         
-        If jsonPole("Structure").Exists("Services") And Not IsNull(jsonPole("Structure")("Services")) Then
+        If jsonPole("Structure").exists("Services") And Not IsNull(jsonPole("Structure")("Services")) Then
             For Each jsonService In jsonPole("Structure")("Services")
                 If Not IsNull(jsonService) Then
                     If jsonService("Length") < 10 Then
@@ -99,18 +99,18 @@ Public Sub FixPoleForemanJSON()
         
         For Each jsonSpan In jsonPole("Structure")("Spans")
             For Each jsonCircuit In jsonSpan("Power")("Circuit")
-                If jsonCircuit.Exists("Primary") Then
-                    If PFNameMapping.Exists((jsonCircuit("Primary")("ConductorDescription"))) Then
+                If jsonCircuit.exists("Primary") Then
+                    If PFNameMapping.exists((jsonCircuit("Primary")("ConductorDescription"))) Then
                         jsonCircuit("Primary")("RulingSpan") = PFNameMapping(jsonCircuit("Primary")("ConductorDescription"))
                     End If
                 End If
-                If jsonCircuit.Exists("Neutral") Then
-                    If PFNameMapping.Exists(jsonCircuit("Neutral")("ConductorDescription")) Then
+                If jsonCircuit.exists("Neutral") Then
+                    If PFNameMapping.exists(jsonCircuit("Neutral")("ConductorDescription")) Then
                         jsonCircuit("Neutral")("RulingSpan") = PFNameMapping(jsonCircuit("Neutral")("ConductorDescription"))
                     End If
                 End If
-                If jsonCircuit.Exists("Secondary") Then
-                    If PFNameMapping.Exists(jsonCircuit("Secondary")("ConductorDescription")) Then
+                If jsonCircuit.exists("Secondary") Then
+                    If PFNameMapping.exists(jsonCircuit("Secondary")("ConductorDescription")) Then
                         jsonCircuit("Secondary")("RulingSpan") = PFNameMapping(jsonCircuit("Secondary")("ConductorDescription"))
                     End If
                 End If
@@ -123,10 +123,10 @@ Public Sub FixPoleForemanJSON()
             Dim closestBearingDifference As Double: closestBearingDifference = 0
             Dim bearingKey As String: bearingKey = ""
             Dim otherbearingKey As String: otherbearingKey = ""
-            If jsonSpan.Exists("Communication") And Not IsNull(jsonSpan("Communication")) Then
+            If jsonSpan.exists("Communication") And Not IsNull(jsonSpan("Communication")) Then
                 For Each jsonCommunication In jsonSpan("Communication")
                     For Each jsonOtherSpan In jsonPole("Structure")("Spans")
-                        If jsonOtherSpan.Exists("Communication") And jsonOtherSpan("Communication").count > 0 Then
+                        If jsonOtherSpan.exists("Communication") And jsonOtherSpan("Communication").count > 0 Then
                             If jsonSpan("Length") <> jsonOtherSpan("Length") And jsonSpan("Bearing") <> jsonOtherSpan("Bearing") Then
                                 If jsonSpan("Bearing") >= 3.141592 Then
                                     oppositeBearing = jsonSpan("Bearing") - 3.141592
@@ -170,7 +170,7 @@ Public Sub FixPoleForemanJSON()
                                     If jsonCommunication("Owner") = jsonOtherCommunication("Owner") And Abs(jsonCommunication("Height") - jsonOtherCommunication("Height")) < 2 Then
                                         If closestBearingDifference <> bearingDifference Then
                                             bearingKey = JsonConverter.ConvertToJson(jsonSpan) & JsonConverter.ConvertToJson(jsonCommunication)
-                                            If oppositeBearings.Exists(bearingKey) And oppositeBearings(bearingKey) <> bearingDifference Then
+                                            If oppositeBearings.exists(bearingKey) And oppositeBearings(bearingKey) <> bearingDifference Then
                                                 jsonOtherCommunication("RulingSpan") = Application.WorksheetFunction.Ceiling(CDbl(jsonOtherSpan("Length")), 50)
                                             End If
                                         End If
@@ -180,7 +180,7 @@ Public Sub FixPoleForemanJSON()
                         End If
                     Next jsonOtherSpan
                     
-                    If Not oppositeSpan Is Nothing And (Not oppositeBearings.Exists(otherbearingKey) Or (oppositeBearings.Exists(otherbearingKey) And oppositeBearings(otherbearingKey) = closestBearingDifference)) Then
+                    If Not oppositeSpan Is Nothing And (Not oppositeBearings.exists(otherbearingKey) Or (oppositeBearings.exists(otherbearingKey) And oppositeBearings(otherbearingKey) = closestBearingDifference)) Then
                         jsonCommunication("RulingSpan") = Application.WorksheetFunction.Ceiling(CDbl((jsonSpan("Length")) + CDbl(oppositeSpan("Length"))) / 2, 50)
                         Debug.Print jsonPole("Structure")("Pole")("PoleNumber"), jsonCommunication("RulingSpan")
                     Else
