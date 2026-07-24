@@ -11,4 +11,5 @@ Public owner As String
 Public distance As Integer
 Public angle As Integer
 Public direction As String
+Public ceCount As Integer
 
