@@ -7,7 +7,7 @@
     {
       "version": "2.1.10",
       "updatedAt": "2026-07-24",
-      "versionChanges": "*Important Update*\r\n-Lots of bug fixes across basically every scrip.\r\n-CU exporter now has guy assemblies\r\n-New STD. Abbreviations button, also makes crew notes generator use abbreviations.\r\n-Fix PDS headers button for when headers are missing.\r\n"
+      "versionChanges": "*Important Update*\r\n-Lots of bug fixes across basically every script.\r\n-CU exporter now has guy assemblies\r\n-New standard abbreviations button, also makes crew notes generator use abbreviations.\r\n-Fix PDS headers button for when headers are missing.\r\n"
     },
     {
       "version": "2.1.9",
