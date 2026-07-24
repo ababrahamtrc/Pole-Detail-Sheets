@@ -49,7 +49,7 @@ Sub generateAHKJson()
         For Each sheet In ThisWorkbook.sheets
             If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" Then
                 If sheet.Cells(2, 2).Value = "Notification:" Then
-                    If Not generatedPoles.Exists(CStr(sheet.Range("POLENUM"))) Then
+                    If Not generatedPoles.exists(CStr(sheet.Range("POLENUM"))) Then
                         Set result = getConnectedPoles(sheet)
                         If result.count < 2 Then
                             Set startingSheet = sheet
@@ -60,7 +60,7 @@ Sub generateAHKJson()
             End If
         Next sheet
         If startingSheet Is Nothing Then Exit Do
-        Call generateJson(json, generatedPoles, startingSheet, starting:=True)
+        Call generateJSON(json, generatedPoles, startingSheet, starting:=True)
     Loop
     
     Dim jsonText As String
@@ -94,7 +94,7 @@ Private Function getServices(sheet As Worksheet) As Scripting.Dictionary
         For Each name In sheet.names
             If name.name = "'" & sheet.name & "'" & "!TOPOLE" & i Then
                 If Trim(Replace(sheet.Range("TOPOLE" & i), "-", "")) <> "" Then
-                    If regex.test(sheet.Range("TOPOLE" & i)) Then
+                    If regex.Test(sheet.Range("TOPOLE" & i)) Then
                         Set matches = regex.Execute(sheet.Range("TOPOLE" & i))
                         If Not SheetExists(matches(0)) Then
                             For j = 0 To 100
@@ -144,7 +144,7 @@ Private Function getConnectedOtherPoles(ByRef generatedPoles As Scripting.Dictio
         For Each name In sheet.names
             If name.name = "'" & sheet.name & "'" & "!TOPOLE" & i Then
                 If Trim(Replace(sheet.Range("TOPOLE" & i), "-", "")) <> "" Then
-                    If regex.test(sheet.Range("TOPOLE" & i)) Then
+                    If regex.Test(sheet.Range("TOPOLE" & i)) Then
                         Set matches = regex.Execute(sheet.Range("TOPOLE" & i))
                         If Not SheetExists(matches(0)) Then
                             If sheet.Range("DL") <> "" Then
@@ -183,7 +183,7 @@ Private Function getConnectedPoles(sheet As Worksheet) As Scripting.Dictionary
         For Each name In sheet.names
             If name.name = "'" & sheet.name & "'" & "!TOPOLE" & i Then
                 If Trim(Replace(sheet.Range("TOPOLE" & i), "-", "")) <> "" Then
-                    If regex.test(sheet.Range("TOPOLE" & i)) Then
+                    If regex.Test(sheet.Range("TOPOLE" & i)) Then
                         Set matches = regex.Execute(sheet.Range("TOPOLE" & i))
                         If SheetExists(matches(0)) Then
                             'For j = 0 To 100
@@ -205,7 +205,7 @@ Private Function getConnectedPoles(sheet As Worksheet) As Scripting.Dictionary
     Set getConnectedPoles = connectedPoles
 End Function
 
-Private Function getItems(sheet As Worksheet, ByVal i As String, uttype As String) As Collection
+Public Function getItems(sheet As Worksheet, ByVal i As String, uttype As String) As Collection
     Dim items As Collection: Set items = New Collection
     
     For j = 0 To 100
@@ -344,7 +344,7 @@ Private Function getClosestAngle(sheet As Worksheet, ByVal k As Integer, ByVal a
     Set getClosestAngle = closestAngle
 End Function
 
-Private Sub generateJson(ByRef json As Scripting.Dictionary, ByRef generatedPoles As Scripting.Dictionary, sheet As Worksheet, Optional starting As Boolean = False)
+Private Sub generateJSON(ByRef json As Scripting.Dictionary, ByRef generatedPoles As Scripting.Dictionary, sheet As Worksheet, Optional starting As Boolean = False)
     Dim pole As Scripting.Dictionary: Set pole = New Scripting.Dictionary
     
     locationAdjacent = False
@@ -361,7 +361,7 @@ Private Sub generateJson(ByRef json As Scripting.Dictionary, ByRef generatedPole
             nameExists = sheet.Evaluate("ISREF(" & "TOPOLE" & i & ")")
             If nameExists Then
                 If Trim(Replace(sheet.Range("TOPOLE" & i), "-", "")) <> "" Then
-                    If regex.test(sheet.Range("TOPOLE" & i)) Then
+                    If regex.Test(sheet.Range("TOPOLE" & i)) Then
                         Set matches = regex.Execute(sheet.Range("TOPOLE" & i))
                         If SheetExists(matches(0)) Then
                             Dim oSheet As Worksheet
@@ -478,7 +478,7 @@ Private Sub generateJson(ByRef json As Scripting.Dictionary, ByRef generatedPole
     End If
     
     For Each connectedPole In connectedPoles
-        If Not generatedPoles.Exists(CStr(connectedPole)) Then
+        If Not generatedPoles.exists(CStr(connectedPole)) Then
             If SheetExists(connectedPole) Then
                 For Each oSheet In ThisWorkbook.sheets
                     If ThisWorkbook.RemoveParentheses(oSheet.name) = connectedPole Then
@@ -506,13 +506,13 @@ Private Sub generateJson(ByRef json As Scripting.Dictionary, ByRef generatedPole
                             If primaryLevel <= connection("secondaries").count Then primaryLevel = connection("secondaries").count + 1
                         End If
                         jobConnections.Add connection
-                        Call generateJson(json, generatedPoles, oSheet)
+                        Call generateJSON(json, generatedPoles, oSheet)
                         Exit For
                     End If
                 Next oSheet
             End If
         Else
-            If finished.Exists(CStr(connectedPole)) Then
+            If finished.exists(CStr(connectedPole)) Then
                 Set connection = New Scripting.Dictionary
                 connection("poleNumber") = "skip"
                 Set distanceAngle = getDistanceAngle(sheet, connectedPoles(connectedPole))
