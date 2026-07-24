@@ -9,7 +9,7 @@ Public Function getKatapultNameMapping(ByVal key As String) As String
         Call InitializeKatapultNameMapping
     End If
     
-    If KatapultNameMapping.Exists(key) Then
+    If KatapultNameMapping.exists(key) Then
         getKatapultNameMapping = KatapultNameMapping(key)
     Else
         getKatapultNameMapping = key
