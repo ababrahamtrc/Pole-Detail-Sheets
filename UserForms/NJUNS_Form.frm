@@ -14,6 +14,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
+
 Private companies As Collection
 Private heights As Collection
 Private modifications As Collection
@@ -189,21 +190,22 @@ Sub Initialize()
     reasonForMovement.Add RFM7
     reasonForMovement.Add RFM8
     
-    Dim rfmArray(13) As String
+    Dim rfmArray(14) As String
     rfmArray(0) = "OTHER"
-    rfmArray(1) = "correct multiple separation violations. "
-    rfmArray(2) = "correct 15'6"" midspan ground clearance violation. "
-    rfmArray(3) = "correct 12"" comm at pole separation violation. "
-    rfmArray(4) = "correct 6"" comm midspan separation violation. "
-    rfmArray(5) = "allow comms below to correct 15'6"" midspan ground clearance violation. "
-    rfmArray(6) = "correct 40"" safety zone violation. "
-    rfmArray(7) = "allow comms above to correct 40"" safety zone violation. "
-    rfmArray(8) = "correct 30"" midspan separation violation. "
-    rfmArray(9) = "allow comms above to correct 30"" midspan separation violation. "
-    rfmArray(10) = "correct 40"" bottom streetlight bracket separation violation. "
-    rfmArray(11) = "allow comms above to correct 40"" bottom streetlight bracket separation violation. "
-    rfmArray(12) = "correct 12"" streetlight driploop separation violation. "
-    rfmArray(13) = "allow comms above to correct 12"" streetlight driploop separation violation. "
+    rfmArray(1) = "make room for additional comm. "
+    rfmArray(2) = "correct multiple separation violations. "
+    rfmArray(3) = "correct 15'6"" midspan ground clearance violation. "
+    rfmArray(4) = "correct 12"" comm at pole separation violation. "
+    rfmArray(5) = "correct 6"" comm midspan separation violation. "
+    rfmArray(6) = "allow comms below to correct 15'6"" midspan ground clearance violation. "
+    rfmArray(7) = "correct 40"" safety zone violation. "
+    rfmArray(8) = "allow comms above to correct 40"" safety zone violation. "
+    rfmArray(9) = "correct 30"" midspan separation violation. "
+    rfmArray(10) = "allow comms above to correct 30"" midspan separation violation. "
+    rfmArray(11) = "correct 40"" bottom streetlight bracket separation violation. "
+    rfmArray(12) = "allow comms above to correct 40"" bottom streetlight bracket separation violation. "
+    rfmArray(13) = "correct 12"" streetlight driploop separation violation. "
+    rfmArray(14) = "allow comms above to correct 12"" streetlight driploop separation violation. "
     
     For i = 1 To 8
         reasonForMovement(i).list = rfmArray
@@ -284,18 +286,18 @@ Private Sub InitComms()
                         companies(commCount).Value = sheet.Range("COMM" & i).Value
                         
                         Dim anchorDistance As String: anchorDistance = ""
-                        For Each Anchor In pole.anchors
-                            test1 = UCase(Anchor.owner)
+                        For Each anchor In pole.anchors
+                            test1 = UCase(anchor.owner)
                             test2 = UCase(companies(commCount).Value)
                             test3 = test1 = test2
-                            If Trim(UCase(Anchor.owner)) = Trim(UCase(companies(commCount).Value)) Then
+                            If Trim(UCase(anchor.owner)) = Trim(UCase(companies(commCount).Value)) Then
                                 If anchorDistance <> "" Then
                                     anchorDistance = ""
                                     Exit For
                                 End If
-                                anchorDistance = Anchor.distance & "'"
+                                anchorDistance = anchor.distance & "'"
                             End If
-                        Next Anchor
+                        Next anchor
                         If anchorDistance <> "" Then dgaprevious(i).text = anchorDistance
                         
                         heights(commCount).Value = Utilities.inchesToFeetInches(Utilities.convertToInches(sheet.Range("COMM" & i).offset(2 + (j * 2), 0)))
