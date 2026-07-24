@@ -17,7 +17,7 @@ Public Sub CopyCUImportCode()
     
     Set http = CreateObject("MSXML2.XMLHTTP")
     http.Open "GET", url, False
-    http.Send
+    http.send
  
     If http.Status <> 200 Then
         MsgBox "Failed to get cuimport.js from github: " & http.Status & vbLf & JsonConverter.ParseJson(http.responseText)("message")
@@ -51,10 +51,12 @@ Public Sub ExportAllSheetCUs()
     Dim project As project: Set project = New project
     Call project.extractFromSheets
 
-    Dim CU As Variant
+    Dim cu As Variant
     Dim cus As Collection: Set cus = New Collection
+    Dim demoCus As Collection: Set demoCus = New Collection
     Dim missedLines As Collection: Set missedLines = New Collection
     Dim cusTemp As Collection
+    Dim demoCusTemp As Collection
     Dim missedLinesTemp As Collection
     Dim inputCol As Collection
     Dim sheet As Worksheet
@@ -64,10 +66,14 @@ Public Sub ExportAllSheetCUs()
             Set inputCol = ExportSheetCUs(project, sheet)
             If Not inputCol Is Nothing Then
                 Set cusTemp = inputCol(1)
-                Set missedLinesTemp = inputCol(2)
-                For Each CU In cusTemp
-                    cus.Add CU
-                Next CU
+                Set demoCusTemp = inputCol(2)
+                Set missedLinesTemp = inputCol(3)
+                For Each cu In cusTemp
+                    cus.Add cu
+                Next cu
+                For Each cu In demoCusTemp
+                    demoCus.Add cu
+                Next cu
                 For Each line In missedLinesTemp
                     missedLines.Add "Location " & sheet.Range("DL") & ": " & line
                 Next line
@@ -102,18 +108,21 @@ Public Sub ExportSingleSheetCUs()
     End If
     
     Dim cus As Collection
+    Dim demoCus As Collection
     Dim missedLines As Collection
     
     Dim inputCol As Collection: Set inputCol = New Collection
     Set inputCol = ExportSheetCUs(project, sheet)
     If Not inputCol Is Nothing Then
         Set cus = inputCol(1)
-        Set missedLines = inputCol(2)
+        Set demoCus = inputCol(2)
+        Set missedLines = inputCol(3)
     End If
     
     If Not cus Is Nothing Then
         If cus.count > 0 Then
             Call generateCSV(project, cus)
+            Call generateCSV(project, demoCus, True)
             If missedLines.count > 0 Then
                 MsgBox "Lines unable to turn into CUS." & vbLf & Utilities.JoinCollection(missedLines, vbLf)
             Else
@@ -133,6 +142,7 @@ Private Function ExportSheetCUs(project As project, sheet As Worksheet) As Colle
     Dim lines() As String
     Dim installNotes As String, replaceNotes As String, removeNotes As String, transferNotes As String, notes As String
     Dim cus As Collection: Set cus = New Collection
+    Dim demoCus As Collection: Set demoCus = New Collection
     Dim missedLines As Collection: Set missedLines = New Collection
     Dim needAdditionalCUs As Collection: Set needAdditionalCUs = New Collection
     Dim pole As pole: Set pole = New pole
@@ -145,12 +155,12 @@ Private Function ExportSheetCUs(project As project, sheet As Worksheet) As Colle
     serviceAmount = 0
     streetlightMolding = ""
     
-    lines = Split(pole.Alt1, vbLf)
+    lines = Split(pole.alt1, vbLf)
     
     If pole.location = "" Or UBound(lines) < 1 Then Exit Function
     timeAdder = 1
     
-    If Replace(Replace(pole.Alt1, "/", ""), "NA", "") = "" Then
+    If Replace(Replace(pole.alt1, "/", ""), "NA", "") = "" Then
         Set ExportSheetCUs = Nothing
         Exit Function
     End If
@@ -208,15 +218,15 @@ Private Function ExportSheetCUs(project As project, sheet As Worksheet) As Colle
             transferSection = True
         Else
             If installSection Then
-                If line <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, pole, line, "Install")
+                If line <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, demoCus, pole, line, "Install")
             ElseIf replaceSection Then
-                If line <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, pole, line, "Replace")
+                If line <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, demoCus, pole, line, "Replace")
             ElseIf removeSection Then
-                If line <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, pole, line, "Remove")
+                If line <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, demoCus, pole, line, "Remove")
             ElseIf transferSection Then
-                If line <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, pole, line, "Transfer")
+                If line <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, demoCus, pole, line, "Transfer")
             Else
-                If line <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, pole, line, "Note")
+                If line <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, demoCus, pole, line, "Note")
             End If
         End If
     Next i
@@ -244,6 +254,7 @@ Private Function ExportSheetCUs(project As project, sheet As Worksheet) As Colle
     
     Dim outputCol As Collection: Set outputCol = New Collection
     outputCol.Add cus
+    outputCol.Add demoCus
     outputCol.Add missedLines
     
     Set ExportSheetCUs = outputCol
@@ -252,20 +263,19 @@ End Function
 Private Sub fixCUErrors(cus As Collection, needAdditionalCUs As Collection, missedLines As Collection)
     Dim transferSpg As Integer
     Dim removeSpg As Boolean
-    Dim CU As Variant
+    Dim cu As Variant
     Dim transferServices As Boolean
     Dim missedLine As String
     Dim hardware As String
     Dim regex As Object: Set regex = CreateObject("VBScript.RegExp")
     
-    
     For i = 1 To cus.count
-        If TypeOf cus(i) Is CU Then
-            Set CU = cus(i)
-            If CU.code = "106121" Then transferSpg = i
-            If CU.code = "505040" And CU.action = "RET REM" Then removeSpg = True
-            If CU.code = "106115" Then transferServices = True
-            If vpoPole And CU.code = "100052" Then CU.qty = CU.qty - 1
+        If TypeOf cus(i) Is cu Then
+            Set cu = cus(i)
+            If cu.code = "106121" Then transferSpg = i
+            If cu.code = "505040" And cu.action = "RET REM" Then removeSpg = True
+            If cu.code = "106115" Then transferServices = True
+            If vpoPole And cu.code = "100052" Then cu.qty = cu.qty - 1
         End If
     Next i
     
@@ -286,20 +296,107 @@ Private Sub fixCUErrors(cus As Collection, needAdditionalCUs As Collection, miss
         missedLine = Replace(missedLine, "Install", "")
         missedLine = Replace(missedLine, "Remove", "")
         hardware = missedLine
-        If regex.test(missedLine) Then
+        If regex.Test(missedLine) Then
             Set matches = regex.Execute(missedLine)
             hardware = Trim(matches(0).SubMatches(1))
         End If
         
         If transferServices Then
-            If InStr(Replace(hardware, "DEADEND", "DE"), "SERVICEDE") = 1 Then Call missedLines.Remove(i)
-            If InStr(Replace(Replace(Replace(hardware, " ", ""), "DEADEND", "DE"), "OPENWIRE", "OW"), "OWSERVICEDE") = 1 Then Call missedLines.Remove(i)
-            If InStr(Replace(hardware, "DEADEND", "DE"), "SVCDE") = 1 Then Call missedLines.Remove(i)
-            If InStr(Replace(Replace(Replace(hardware, " ", ""), "DEADEND", "DE"), "OPENWIRE", "OW"), "OWSVCDE") = 1 Then Call missedLines.Remove(i)
+            If InStr(hardware, "SVCDE") = 1 Then Call missedLines.Remove(i)
+            If InStr(hardware, "OWSVCDE") = 1 Then Call missedLines.Remove(i)
         End If
     Next i
     
     If transferSpg > 0 And Not removeSpg Then Call cus.Remove(transferSpg)
+    
+    Call condenseAssemblies(cus)
+End Sub
+
+Sub condenseAssemblies(cus As Collection)
+    Dim CUAssemblyMapping As Scripting.Dictionary
+    Dim cuCode As String
+    Dim cuQty As Integer
+    Dim location As String
+    Dim locationAssemblyMap As Scripting.Dictionary
+    Dim isAssembly As Boolean
+    Dim cu As Variant
+    Dim childCu As cu
+    Dim minqty As Integer
+    Dim action As String
+    
+    Set CUAssemblyMapping = CUNameMapping.getCUAssemblyMapping
+
+    For Each CUAssemblyCode In CUAssemblyMapping
+        assembly = CUAssemblyMapping(CUAssemblyCode)
+        Set locationAssemblyMap = New Scripting.Dictionary
+        For i = 0 To UBound(assembly)
+            cuCode = assembly(i)
+            Dim locationActionAssemblyCus() As Long
+            ReDim locationActionAssemblyCus(0 To UBound(assembly)) As Long
+            For Each cu In cus
+                If TypeOf cu Is cu Then
+                    If Not locationAssemblyMap.exists(cu.location & "|" & cu.action) Then locationAssemblyMap(cu.location & "|" & cu.action) = locationActionAssemblyCus
+                    If cu.code = cuCode Then
+                        Dim temp() As Long
+                        temp = locationAssemblyMap(cu.location & "|" & cu.action)
+                        temp(i) = temp(i) + cu.qty
+                        locationAssemblyMap(cu.location & "|" & cu.action) = temp
+                    End If
+                End If
+            Next cu
+        Next i
+        
+        For Each locationAction In locationAssemblyMap
+            results = Split(locationAction, "|")
+            location = results(0)
+            action = results(1)
+            
+            locationActionAssemblyCus = locationAssemblyMap(locationAction)
+            
+            isAssembly = True
+            minqty = -1
+            For i = 0 To UBound(locationActionAssemblyCus)
+                cuQty = locationActionAssemblyCus(i)
+                If cuQty < 1 Then isAssembly = False: Exit For
+                If minqty = -1 Or cuQty < minqty Then minqty = cuQty
+            Next i
+            
+            If isAssembly Then
+                For i = cus.count To 1 Step -1
+                    If TypeOf cus(i) Is cu Then
+                        Set cu = cus(i)
+                        For j = 0 To UBound(assembly)
+                            cuCode = assembly(j)
+                            If cu.code = cuCode Then
+                                If minqty > 1 Then cu.qty = cu.qty - minqty
+                                If minqty = 1 Or cu.qty < 1 Then Call cus.Remove(i)
+                            End If
+                        Next j
+                    End If
+                Next i
+                
+                If minqty = 1 Then
+                    For i = 0 To UBound(assembly)
+                        Set childCu = New cu
+                        childCu.location = location
+                        childCu.parentCU = CUAssemblyCode
+                        childCu.childCode = assembly(i)
+                        childCu.childQty = locationActionAssemblyCus(i)
+                        childCu.parentInstance = 1
+
+                        For Each cu In cus
+                            If TypeOf cu Is cu Then
+                                If cu.action = action And cu.location = location And cu.code = CUAssemblyCode Then childCu.parentInstance = childCu.parentInstance + 1
+                            End If
+                        Next cu
+                        
+                        cus.Add childCu
+                    Next i
+                End If
+                Call generateCU(cus, location, CStr(CUAssemblyCode), minqty, action)
+            End If
+        Next locationAction
+    Next CUAssemblyCode
 End Sub
 
 Private Sub generateTTCCU(cus As Collection, location As String, ttc As Integer)
@@ -311,7 +408,7 @@ Private Sub generateTTCCU(cus As Collection, location As String, ttc As Integer)
 End Sub
 
 Private Sub findAdditonalCUs(cus As Collection, pole As pole, needAdditionalCUs As Collection, missedLines As Collection)
-    Dim Wire As Wire
+    Dim wire As wire
     Dim cuCode As String
     Dim priCount As Integer
     Dim neutCount As Integer
@@ -325,44 +422,44 @@ Private Sub findAdditonalCUs(cus As Collection, pole As pole, needAdditionalCUs 
     Call SortCollectionByAction(needAdditionalCUs)
     
     'Running total of sizes, these go down as they're matched to a CU
-    For Each Wire In pole.primaries
-        If Not priSizes.Exists(Wire.size) Then priSizes(Wire.size) = 0
-        For Each midspan In Wire.midspans
-            priCount = priCount + Wire.phase
-            priSizes(Wire.size) = priSizes(Wire.size) + Wire.phase
+    For Each wire In pole.primaries
+        If Not priSizes.exists(wire.size) Then priSizes(wire.size) = 0
+        For Each midspan In wire.midspans
+            priCount = priCount + wire.phase
+            priSizes(wire.size) = priSizes(wire.size) + wire.phase
         Next midspan
-    Next Wire
-    For Each Wire In pole.neutrals
-        If Not neutSizes.Exists(Wire.size) Then neutSizes(Wire.size) = 0
-        For Each midspan In Wire.midspans
+    Next wire
+    For Each wire In pole.neutrals
+        If Not neutSizes.exists(wire.size) Then neutSizes(wire.size) = 0
+        For Each midspan In wire.midspans
             neutCount = neutCount + 1
-            neutSizes(Wire.size) = neutSizes(Wire.size) + 1
+            neutSizes(wire.size) = neutSizes(wire.size) + 1
         Next midspan
-    Next Wire
-    For Each Wire In pole.secondaries
-        If Not secSizes.Exists(Wire.size) Then secSizes(Wire.size) = 0
-        For Each midspan In Wire.midspans
+    Next wire
+    For Each wire In pole.secondaries
+        If Not secSizes.exists(wire.size) Then secSizes(wire.size) = 0
+        For Each midspan In wire.midspans
             secCount = secCount + 1
-            secSizes(Wire.size) = secSizes(Wire.size) + 1
+            secSizes(wire.size) = secSizes(wire.size) + 1
         Next midspan
-    Next Wire
-    For Each Wire In pole.openWires
-        If Not owSizes.Exists(Wire.size) Then owSizes(Wire.size) = 0
-        For Each midspan In Wire.midspans
+    Next wire
+    For Each wire In pole.openWires
+        If Not owSizes.exists(wire.size) Then owSizes(wire.size) = 0
+        For Each midspan In wire.midspans
             owCount = owCount + 1
-            owSizes(Wire.size) = owSizes(Wire.size) + 1
+            owSizes(wire.size) = owSizes(wire.size) + 1
         Next midspan
-    Next Wire
+    Next wire
     
-    Dim CU As Variant
-    For Each CU In cus
-        If TypeOf CU Is CU Then
-            If CU.location = properLocation(pole.location) And CU.code = "101036" And CU.action = "RET REM" Then
-                owCount = owCount - CU.qty
+    Dim cu As Variant
+    For Each cu In cus
+        If TypeOf cu Is cu Then
+            If cu.location = properLocation(pole.location) And cu.code = "101036" And cu.action = "RET REM" Then
+                owCount = owCount - cu.qty
                 Exit For
             End If
         End If
-    Next CU
+    Next cu
     
     Dim neededCU() As Variant
     Dim hardware As String
@@ -414,21 +511,21 @@ Private Sub findAdditonalCUs(cus As Collection, pole As pole, needAdditionalCUs 
     Dim uniqueTopSideTieSizes As Scripting.Dictionary: Set uniqueTopSideTieSizes = New Scripting.Dictionary
     
     For Each priSize In priSizes
-        If Not uniqueTopSideTieSizes.Exists(Utilities.OnlyNumbers(CStr(priSize))) Then uniqueTopSideTieSizes.Add Utilities.OnlyNumbers(CStr(priSize)), Nothing
+        If Not uniqueTopSideTieSizes.exists(Utilities.OnlyNumbers(CStr(priSize))) Then uniqueTopSideTieSizes.Add Utilities.OnlyNumbers(CStr(priSize)), Nothing
     Next priSize
     For Each neutSize In neutSizes
-        If Not uniqueTopSideTieSizes.Exists(Utilities.OnlyNumbers(CStr(neutSize))) Then uniqueTopSideTieSizes.Add Utilities.OnlyNumbers(CStr(neutSize)), Nothing
+        If Not uniqueTopSideTieSizes.exists(Utilities.OnlyNumbers(CStr(neutSize))) Then uniqueTopSideTieSizes.Add Utilities.OnlyNumbers(CStr(neutSize)), Nothing
     Next neutSize
     If owCount > 0 Then
         For Each owSize In owSizes
-            If Not uniqueTopSideTieSizes.Exists(Utilities.OnlyNumbers(CStr(owSize))) Then uniqueTopSideTieSizes.Add Utilities.OnlyNumbers(CStr(owSize)), Nothing
+            If Not uniqueTopSideTieSizes.exists(Utilities.OnlyNumbers(CStr(owSize))) Then uniqueTopSideTieSizes.Add Utilities.OnlyNumbers(CStr(owSize)), Nothing
         Next owSize
     End If
     
     If uniqueTopSideTieSizes.count = 0 Then
-        For Each Wire In pole.primaries
-            If Not uniqueTopSideTieSizes.Exists(Utilities.OnlyNumbers(CStr(Wire.size))) Then uniqueTopSideTieSizes.Add Utilities.OnlyNumbers(CStr(Wire.size)), Nothing
-        Next Wire
+        For Each wire In pole.primaries
+            If Not uniqueTopSideTieSizes.exists(Utilities.OnlyNumbers(CStr(wire.size))) Then uniqueTopSideTieSizes.Add Utilities.OnlyNumbers(CStr(wire.size)), Nothing
+        Next wire
     End If
     
     Dim size As String
@@ -534,7 +631,7 @@ Private Sub getSpoolTies(cus As Collection, pole As pole, needAdditionalCUs As C
     
     For Each size In neutSizes
         sizeNumber = Utilities.OnlyNumbers(CStr(size))
-        If Not uniqueSizes.Exists(sizeNumber) Then
+        If Not uniqueSizes.exists(sizeNumber) Then
             uniqueSizes(sizeNumber) = 0
         End If
         uniqueSizes(sizeNumber) = uniqueSizes(sizeNumber) + 1
@@ -542,7 +639,7 @@ Private Sub getSpoolTies(cus As Collection, pole As pole, needAdditionalCUs As C
     
     For Each size In secSizes
         sizeNumber = Utilities.OnlyNumbers(CStr(size))
-        If Not uniqueSizes.Exists(sizeNumber) Then
+        If Not uniqueSizes.exists(sizeNumber) Then
             uniqueSizes(sizeNumber) = 0
         End If
         uniqueSizes(sizeNumber) = uniqueSizes(sizeNumber) + 1
@@ -550,7 +647,7 @@ Private Sub getSpoolTies(cus As Collection, pole As pole, needAdditionalCUs As C
     
     For Each size In owSizes
         sizeNumber = Utilities.OnlyNumbers(CStr(size))
-        If Not uniqueSizes.Exists(sizeNumber) Then
+        If Not uniqueSizes.exists(sizeNumber) Then
             uniqueSizes(sizeNumber) = 0
         End If
         uniqueSizes(sizeNumber) = uniqueSizes(sizeNumber) + 1
@@ -574,7 +671,7 @@ Private Sub getSpoolTies(cus As Collection, pole As pole, needAdditionalCUs As C
                 ElseIf neutCount = 0 And secCount = amount * 2 And owCount = 0 Then
                     Call secSizes.RemoveAll
                     secCount = 0
-                ElseIf neutCount = 0 And secCount = 0 And owCount = amount Then
+                ElseIf neutCount = 0 And secCount = 0 And owCount = amount * 2 Then
                     Call owSizes.RemoveAll
                     owCount = 0
                 ElseIf neutCount + secCount + owCount = amount * 2 Then
@@ -587,7 +684,7 @@ Private Sub getSpoolTies(cus As Collection, pole As pole, needAdditionalCUs As C
                 End If
             End If
         End If
-    ElseIf totalWires = amount Then
+    ElseIf totalWires = amount * 2 Then
         For Each size In neutSizes
             sizeNumber = Utilities.OnlyNumbers(CStr(size))
             cuCode = CUNameMapping.getCUNameMapping(sizeNumber & " SPOOL TIE")
@@ -615,6 +712,13 @@ Private Sub getSpoolTies(cus As Collection, pole As pole, needAdditionalCUs As C
                 failed = True
             End If
         Next size
+        If Not failed Then
+            For i = needAdditionalCUs.count To 1 Step -1
+                neededCU = needAdditionalCUs(i)
+                hardware = Replace(neededCU(0), " ", "")
+                If action = neededCU(2) And (InStr(hardware, "WR") > 0 Or InStr(hardware, "1VPO") > 0 Or InStr(hardware, "2VPO") > 0 Or InStr(hardware, "3VPO") > 0) Then Call needAdditionalCUs.Remove(i)
+            Next i
+        End If
         If action = "RET REM" And Not failed Then
             Call neutSizes.RemoveAll
             Call secSizes.RemoveAll
@@ -622,11 +726,6 @@ Private Sub getSpoolTies(cus As Collection, pole As pole, needAdditionalCUs As C
             neutCount = 0
             secCount = 0
             owCount = 0
-            For i = needAdditionalCUs.count To 1 Step -1
-                neededCU = needAdditionalCUs(i)
-                hardware = Replace(neededCU(0), " ", "")
-                If action = neededCU(2) And (InStr(hardware, "WR") > 0 Or InStr(hardware, "1VPO") > 0 Or InStr(hardware, "2VPO") > 0 Or InStr(hardware, "3VPO") > 0) Then Call needAdditionalCUs.Remove(i)
-            Next i
         End If
     End If
 End Sub
@@ -681,11 +780,15 @@ Private Sub getExtraDECU(cus As Collection, pole As pole, needAdditionalCUs As C
     End If
 End Sub
 
-Private Sub generateCSV(project As project, cus As Collection)
-    Dim CU As Variant
+Private Sub generateCSV(project As project, cus As Collection, Optional demo As Boolean)
+    Dim cu As Variant
     Dim filePath As String
     
-    filePath = ThisWorkbook.path & "\" & project.Notification & " - " & "cus.csv"
+    If demo Then
+        filePath = ThisWorkbook.path & "\" & project.Notification & " - " & "CU - Demo.csv"
+    Else
+        filePath = ThisWorkbook.path & "\" & project.Notification & " - " & "CU.csv"
+    End If
     If InStr(filePath, "sharepoint") > 0 Then filePath = Environ("USERPROFILE") & "\Downloads\" & project.Notification & " - " & "cus.csv"
     
     Call CheckAndCloseWorkbook(filePath)
@@ -693,14 +796,15 @@ Private Sub generateCSV(project As project, cus As Collection)
     FileNumber = FreeFile
     Open filePath For Output As #FileNumber
 
-    Print #FileNumber, "Location, CU, QTY, ACTION, CMPLX"
-    For Each CU In cus
-        If TypeOf CU Is CU Then
-            Print #FileNumber, CU.location & "," & CU.code & "," & CU.qty & "," & CU.action & ", "
+    Print #FileNumber, "Location, CU, QTY, ACTION, CMPLX, PARENT CU, PARENT INSTANCE, CHILD CU, CHILD QTY"
+    
+    For Each cu In cus
+        If TypeOf cu Is cu Then
+            Print #FileNumber, cu.location & "," & cu.code & "," & IIf(cu.childQty > 0, " ", cu.qty) & "," & cu.action & ", ," & cu.parentCU & "," & IIf(cu.parentInstance > 0, cu.parentInstance, " ") & "," & cu.childCode & "," & IIf(cu.childQty > 0, cu.childQty, " ")
         Else
-            Print #FileNumber, CU(0) & ", , , ," & CU(1)
+            Print #FileNumber, cu(0) & ", , , ," & cu(1) & ", , , , "
         End If
-    Next CU
+    Next cu
 
     Close #FileNumber
     
@@ -717,25 +821,28 @@ Private Sub generateCSV(project As project, cus As Collection)
     For Each cell In csvWs.UsedRange.Columns(2).Cells
         If Trim(cell.Value) <> "CU" Then
             If Trim(cell.offset(0, 3).Value) <> "" Then
-                cell.offset(0, 4).Value = 0.1
+                cell.offset(0, 8).Value = 0.1
             Else
                 Set foundCell = cuSortWs.UsedRange.find(what:=cell.Value, LookIn:=xlValues, lookat:=xlWhole)
-                If Not foundCell Is Nothing Then cell.offset(0, 4).Value = foundCell.offset(0, 1)
+                If Not foundCell Is Nothing Then cell.offset(0, 8).Value = foundCell.offset(0, 1)
             End If
         End If
+        
+        cell.offset(0, 9).Value = Utilities.OnlyNumbers(cell.offset(0, -1))
     Next cell
     
     With csvWs.Sort
         .SortFields.Clear
-        .SortFields.Add key:=csvWs.Range("A1"), Order:=xlAscending
-        .SortFields.Add key:=csvWs.Range("F1"), Order:=xlAscending
+        .SortFields.Add key:=csvWs.Range("K1"), Order:=xlAscending
+        .SortFields.Add key:=csvWs.Range("J1"), Order:=xlAscending
         .SortFields.Add key:=csvWs.Range("D1"), Order:=xlDescending
+        '.SortFields.Add key:=csvWs.Range("C1"), Order:=xlDescending
         .SetRange csvWs.UsedRange
         .header = xlYes
         .Apply
     End With
     
-    'csvWs.Columns(6).Delete
+    csvWs.Columns(11).Delete
     
     csvWb.save
     csvWb.Close
@@ -760,12 +867,11 @@ Private Sub generateMissedLinesTXT(missedLines As Collection)
     Shell "notepad.exe """ & filePath & """", vbNormalFocus
 End Sub
 
-Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, missedLines As Collection, cus As Collection, pole As pole, ByVal line As String, mode As String)
+Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, missedLines As Collection, cus As Collection, demoCus As Collection, pole As pole, ByVal line As String, mode As String)
     Dim regex As Object: Set regex = CreateObject("VBScript.RegExp")
     Dim regex2 As Object: Set regex2 = CreateObject("VBScript.RegExp")
     Dim amount As Integer: amount = 1
-    Dim hardware As String: hardware = Trim(line)
-    Dim CU As CU, otherCu As CU
+    Dim cu As cu, otherCu As cu
     Dim cuCode As String
     
     addedCU = False
@@ -774,7 +880,13 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
     regex.Pattern = "\((\d+)\)(.+)"
     regex.Global = True
     regex.IgnoreCase = True
-    If regex.test(line) Then
+    
+    Call applyStandardAbbreviations(line)
+    line = Replace(line, "OPEN WIRE", "OW")
+    line = Replace(line, "OPENWIRE", "OW")
+    
+    Dim hardware As String: hardware = Trim(line)
+    If regex.Test(line) Then
         Set matches = regex.Execute(line)
         amount = matches(0).SubMatches(0)
         hardware = Trim(ThisWorkbook.RemoveParentheses(matches(0).SubMatches(1)))
@@ -794,7 +906,7 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
         regex2.Global = True
         regex2.IgnoreCase = True
         
-        If regex.test(line) Then
+        If regex.Test(line) Then
             Set matches = regex.Execute(line)
             line1 = Trim(matches(0).SubMatches(0))
             line2 = Trim(matches(0).SubMatches(1))
@@ -804,22 +916,17 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
             For Each equipment In pole.equipments
                 If equipment.componentType = "XFMR" Then timeAdder = 3
             Next equipment
-        ElseIf (InStr(line, "SERVICE RISER") > 0 Or InStr(line, "SVC RISER") > 0) And InStr(line, "|C") > 0 Then
-            If InStr(line, "SERVICE RISER") > 0 Then
-                line1 = Left(line, InStr(line, "SERVICE RISER") - 1) & "RISER"
-                line2 = Left(line, InStr(line, "SERVICE RISER") - 1) & "RISER"
-            ElseIf InStr(line, "SVC RISER") > 0 Then
-                line1 = Left(line, InStr(line, "SVC RISER") - 1) & "RISER"
-                line2 = Left(line, InStr(line, "SVC RISER") - 1) & "RISER"
-            End If
-        ElseIf InStr(line, "SECONDARY RISER") > 0 And InStr(line, "|C") > 0 Then
-            line1 = Left(line, InStr(line, "SECONDARY RISER") - 1) & "RISER"
-            line2 = Left(line, InStr(line, "SECONDARY RISER") - 1) & "RISER"
+        ElseIf InStr(line, "SVC RISER") > 0 And InStr(line, "|C") > 0 Then
+            line1 = Left(line, InStr(line, "SVC RISER") - 1) & "RISER"
+            line2 = Left(line, InStr(line, "SVC RISER") - 1) & "RISER"
+        ElseIf InStr(line, "SEC RISER") > 0 And InStr(line, "|C") > 0 Then
+            line1 = Left(line, InStr(line, "SEC RISER") - 1) & "RISER"
+            line2 = Left(line, InStr(line, "SEC RISER") - 1) & "RISER"
         ElseIf InStr(line, "/") > 0 Then
             parts = Split(line, "/")
             line1 = Trim(parts(0))
             line2 = Trim(parts(1))
-        ElseIf regex2.test(line) And InStr(line, "FIGURE") = 0 Then
+        ElseIf regex2.Test(line) And InStr(line, "FIGURE") = 0 Then
             Set matches = regex2.Execute(line)
             If matches.count = 1 Then
                 line1 = Trim(matches(0).SubMatches(0))
@@ -827,10 +934,8 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
             End If
         End If
         
-        If InStr(Replace(Replace(hardware, " ", ""), "DEADEND", "DE"), "SERVICEDE") = 1 Then serviceAmount = serviceAmount + amount
-        If InStr(Replace(Replace(Replace(hardware, " ", ""), "DEADEND", "DE"), "OPENWIRE", "OW"), "OWSERVICEDE") = 1 Then serviceAmount = serviceAmount + amount
-        If InStr(Replace(Replace(hardware, " ", ""), "DEADEND", "DE"), "SVCDE") = 1 Then serviceAmount = serviceAmount + amount
-        If InStr(Replace(Replace(Replace(hardware, " ", ""), "DEADEND", "DE"), "OPENWIRE", "OW"), "OWSVCDE") = 1 Then serviceAmount = serviceAmount + amount
+        If InStr(hardware, "OWSERVICEDE") = 1 Then serviceAmount = serviceAmount + amount
+        If InStr(hardware, "SVCDE") = 1 Then serviceAmount = serviceAmount + amount
         
         If InStr(line, "11K") = 0 And InStr(line, "20K") = 0 Then guySection = False
         If (InStr(line, "11K") > 0 Or InStr(line, "20K") > 0) And InStr(line, "/") > 0 And InStr(line, "XP") = 0 And InStr(line, "XFG") = 0 Then guySection = True
@@ -864,7 +969,7 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
             line2 = ""
         End If
     
-        If InStr(line1, "'") > 0 And (InStr(line1, "OPEN WIRE") > 0 Or InStr(line1, "SECONDARY") > 0) And InStr(line2, "SECONDARY") > 0 Then
+        If InStr(line1, "'") > 0 And (InStr(line1, "OW") > 0 Or InStr(line1, "SEC") > 0) And InStr(line2, "SEC") > 0 Then
             Call generateReconductorCUs(cus, pole, line1, line2)
             line1 = ""
             line2 = ""
@@ -872,13 +977,13 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
             Call generateTransferCOCU(cus, pole.location, amount, hardware)
             line1 = ""
             line2 = ""
-        ElseIf InStr(line, "|LA ") > 0 Or InStr(hardware, "LA ") = 1 And (InStr(line, "TRANSFORMER") = 0 Or InStr(line, "TO TRANSFORMER") > 0) Then
+        ElseIf InStr(line, "|LA ") > 0 Or InStr(hardware, "LA ") = 1 And (InStr(line, "XFMR") = 0 Or InStr(line, "TO XFMR") > 0) Then
             Call generateCU(cus, pole.location, "200155", amount, "INSTALL")
             line1 = ""
             line2 = ""
         Else
-            If line1 <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, pole, line1, "Remove")
-            If line2 <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, pole, line2, "Install")
+            If line1 <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, demoCus, pole, line1, "Remove")
+            If line2 <> "" Then Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, demoCus, pole, line2, "Install")
         End If
         
     Else
@@ -887,7 +992,7 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
         If InStr(line, "+") > 0 Then
             parts = Split(line, "+")
             For i = 0 To UBound(parts)
-                Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, pole, parts(i), mode)
+                Call parseLineToCUs(project, needAdditionalCUs, missedLines, cus, demoCus, pole, parts(i), mode)
             Next i
             Exit Sub
         End If
@@ -901,22 +1006,22 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
         
         'Riser Install/Remove
         If mode <> "Transfer" Then
-            If InStr(line, "PRIMARY RISER") > 0 And InStr(line, "|C") > 0 Then
+            If InStr(line, "PRIRISER") > 0 And InStr(line, "|C") > 0 Then
                 Call generatePrimaryRiserCU(cus, pole, hardware, properAction(mode))
-            ElseIf InStr(line, "RISER") > 0 And InStr(line, "|C") > 0 And InStr(line, "PRIMARY") = 0 Then
+            ElseIf InStr(line, "RISER") > 0 And InStr(line, "|C") > 0 And InStr(line, "PRI") = 0 Then
                 Call generateSecondaryRiserCU(cus, pole, hardware, properAction(mode))
             End If
             regex2.Pattern = "(\d[0:5]\s*-\s*\d)\s*"
             regex2.Global = True
             regex2.IgnoreCase = True
-            If regex2.test(hardware) And InStr(hardware, "FIGURE") = 0 Then
+            If regex2.Test(hardware) And InStr(hardware, "FIGURE") = 0 Then
                 Set matches = regex2.Execute(line)
                 If matches.count = 1 Then
                     hardware = Trim(matches(0).SubMatches(0))
                 End If
             End If
              
-            If (InStr(hardware, "STREET") > 0 Or InStr(hardware, "FLOOD") > 0) And InStr(hardware, "LIGHT") > 0 And InStr(hardware, "MOLDING") > 0 Then
+            If (InStr(hardware, "STLT") > 0 Or (InStr(hardware, "FLOOD") > 0 And InStr(hardware, "LIGHT") > 0)) And InStr(hardware, "MOLDING") > 0 Then
                 If pole.replacePole Then
                     streetlightMolding = streetlightMolding & mode
                     addedCU = True
@@ -954,7 +1059,7 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
         
         'Install section handler
         If mode = "Install" Then
-            If InStr(line, "BOND STREETLIGHT") > 0 Then Call generateCU(cus, pole.location, "100144", amount, "INSTALL")
+            If InStr(line, "BOND STLT") > 0 Then Call generateCU(cus, pole.location, "100144", amount, "INSTALL")
         End If
         
         'Remove section handler
@@ -964,12 +1069,12 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
         
         'Transfer section handler
         If mode = "Transfer" Then
-            If InStr(line, "TRANSFORMER") > 0 And InStr(UCase(line), "KVA") > 0 Then Call generateTransferTransformerCU(cus, pole.location, amount)
-            If (InStr(line, "STREET") > 0 Or InStr(hardware, "FLOOD") > 0) And InStr(line, "LIGHT") > 0 And InStr(line, "@") > 0 Then Call generateTransferStreetlightCU(line, cus, pole, missedLines)
+            If InStr(line, "XFMR") > 0 And InStr(UCase(line), "KVA") > 0 Then Call generateTransferTransformerCU(cus, pole.location, amount)
+            If InStr(line, "STLT") > 0 Or (InStr(hardware, "FLOOD") > 0 And InStr(line, "LIGHT") > 0) And InStr(line, "@") > 0 Then Call generateTransferStreetlightCU(line, cus, pole, missedLines)
             If InStr(line, "TRIM") > 0 And InStr(line, "DRIP") Then Call generateCU(cus, pole.location, "101023", 1, "INSTALL")
             If InStr(line, "CO") > 0 And (InStr(line, " ON SA") > 0 Or InStr(line, " ON LCOM") > 0 Or InStr(line, " TO SA") > 0 Or InStr(line, " TO LCOM") > 0) Then Call generateTransferCOCU(cus, pole.location, amount, hardware)
-            If InStr(line, "|LA ") > 0 Or InStr(hardware, "LA ") = 1 And InStr(line, "TRANSFORMER") = 0 Then Call generateCU(cus, pole.location, "200155", amount, "INSTALL")
-            If Replace(hardware, " ", "") = "SVC" Or Replace(hardware, " ", "") = "SVCS" Or Replace(hardware, " ", "") = "SERVICE" Or Replace(hardware, " ", "") = "SERVICES" Or Replace(hardware, " ", "") = "OHSERVICE" Or Replace(hardware, " ", "") = "OHSERVICE" Then Call generateTransferServiceCU(cus, pole, amount)
+            If InStr(line, "|LA ") > 0 Or InStr(hardware, "LA ") = 1 And InStr(line, "XFMR") = 0 Then Call generateCU(cus, pole.location, "200155", amount, "INSTALL")
+            If Replace(hardware, " ", "") = "SVC" Or Replace(hardware, " ", "") = "OHSVC" Then Call generateTransferServiceCU(cus, pole, amount)
         End If
         
         'Note section handler
@@ -985,15 +1090,18 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
                     
                     For i = 1 To lastRow
                         If cuSortWs.Cells(i, "B").Value = "5" Then
-                            polesDict(cuSortWs.Cells(i, "A").Value) = True
+                            polesDict(CStr(cuSortWs.Cells(i, "A").Value)) = True
                         End If
                     Next i
                 
                     For i = cus.count To 1 Step -1
-                        If TypeOf cus(i) Is CU Then
-                            Set CU = cus(i)
+                        If TypeOf cus(i) Is cu Then
+                            Set cu = cus(i)
                             
-                            If polesDict.Exists(CU.code) And CU.action = "RET REM" And CU.location = properLocation(pole.location) Then
+                            If polesDict.exists(cu.code) And cu.action = "RET REM" And cu.location = properLocation(pole.location) Then
+                                Call generateCU(demoCus, pole.location, "100417", 1, "INSTALL")
+                                demoCus.Add cus(i)
+                                Call generateCU(demoCus, pole.location, "100066", 1, "INSTALL")
                                 cus.Remove (i)
                                 Exit For
                             End If
@@ -1046,11 +1154,11 @@ Private Sub generateReplaceStreetlightMoldingCU(cus As Collection, pole As pole,
         Call generateCU(cus, pole.location, "100598", Application.WorksheetFunction.RoundUp(distance / 8, 0), mode)
     Else
         closestDistance = 0
-        For Each Wire In pole.utilWires
-            If Wire.componentType = "OW" Or Wire.componentType = "SEC" Or Wire.componentType = "TRAFFIC" Then
-                If Abs(Wire.height - streetlightBottomBracketHeight) < closestDistance Or closestDistance = 0 Then closestDistance = Abs(Wire.height - streetlightBottomBracketHeight)
+        For Each wire In pole.utilWires
+            If wire.componentType = "OW" Or wire.componentType = "SEC" Or wire.componentType = "TRAFFIC" Then
+                If Abs(wire.height - streetlightBottomBracketHeight) < closestDistance Or closestDistance = 0 Then closestDistance = Abs(wire.height - streetlightBottomBracketHeight)
             End If
-        Next Wire
+        Next wire
         Call generateCU(cus, pole.location, "100598", WorksheetFunction.RoundUp((closestDistance / 12) / 8, 0), mode)
     End If
 End Sub
@@ -1062,7 +1170,7 @@ Private Sub generateTransferServiceCU(cus As Collection, pole As pole, amount As
     
     For Each service In pole.services
         For Each midspan In service.midspans
-            If Not serviceDict.Exists(midspan) Then serviceDict.Add midspan, Nothing
+            If Not serviceDict.exists(midspan) Then serviceDict.Add midspan, Nothing
             totalServices = totalServices + 1
         Next midspan
     Next service
@@ -1094,36 +1202,43 @@ Private Sub generateReconductorCUs(cus As Collection, pole As pole, line1 As Str
     If InStr(line1, "'") > 0 Then distance = Utilities.OnlyNumbers(Left(line1, InStr(line1, "'") + 1))
     If distance = -1 Then distance = 0
     
-    If InStr(line1, "OPEN WIRE") > 0 Then
-        owSizes = Mid(line1, InStr(line1, "'") + 1, InStr(line1, "OPEN WIRE") - InStr(line1, "'") - 1)
+    If InStr(line1, "OW") > 0 Then
+        owSizes = Mid(line1, InStr(line1, "'") + 1, InStr(line1, "OW") - InStr(line1, "'") - 1)
         
         parts = Split(owSizes, "-")
+        
+        Set cuCodeDistanceMap = New Scripting.Dictionary
         For i = 0 To UBound(parts)
             owSize = Left(Trim(parts(i)), 1)
             cuCode = CUNameMapping.getOWNameMapping(owSize)
             If cuCode <> "" Then
+                If Not cuCodeDistanceMap.exists(cuCode) Then cuCodeDistanceMap(cuCode) = 0
                 Call generateCU(cus, pole.location, "290048", 1, "INSTALL")
-                Call generateCU(cus, pole.location, cuCode, distance, "RET REM")
+                cuCodeDistanceMap(cuCode) = cuCodeDistanceMap(cuCode) + distance
                 reconductored = True
             End If
         Next i
-    ElseIf InStr(line1, "SECONDARY") > 0 Then
-        secSize = Left(line1, InStr(line1, "SECONDARY") - 1)
+        For Each cuCodeKey In cuCodeDistanceMap
+            Call generateCU(cus, pole.location, CStr(cuCodeKey), CInt(cuCodeDistanceMap(cuCodeKey)), "RET REM", True)
+        Next cuCodeKey
+        
+    ElseIf InStr(line1, "SEC") > 0 Then
+        secSize = Left(line1, InStr(line1, "SEC") - 1)
         If InStr(secSize, "'") > 0 Then secSize = Mid(secSize, InStr(secSize, "'") + 1, Len(secSize) - InStr(secSize, "'") - 1)
         cuCode = CUNameMapping.getSecNameMapping(secSize)
         If cuCode <> "" Then
             Call generateCU(cus, pole.location, "290048", 1, "INSTALL")
-            Call generateCU(cus, pole.location, cuCode, distance, "RET REM")
+            Call generateCU(cus, pole.location, cuCode, distance, "RET REM", True)
             reconductored = True
         End If
     End If
     
-    secSize = Left(line2, InStr(line2, "SECONDARY") - 1)
+    secSize = Left(line2, InStr(line2, "SEC") - 1)
     If InStr(secSize, "'") > 0 Then secSize = Mid(secSize, InStr(secSize, "'") + 1, Len(secSize) - InStr(secSize, "'") - 1)
     cuCode = CUNameMapping.getSecNameMapping(secSize)
     If cuCode <> "" Then
         Call generateCU(cus, pole.location, "290048", 1, "INSTALL")
-        Call generateCU(cus, pole.location, cuCode, distance, "INSTALL")
+        Call generateCU(cus, pole.location, cuCode, distance, "INSTALL", True)
         reconductored = True
     Else
         addedCU = False
@@ -1143,11 +1258,11 @@ Private Sub checkForAdjacentPoleRecondcutoring(cus As Collection, project As pro
     For Each Span In pole.spans
         If Span.otherPole <> "" Then
             Set otherPole = project.findPole(Span.otherPole)
-            If InStr(otherPole.Alt1, "'") > 0 And InStr(line, "OPEN WIRE") > 0 And InStr(line, "SECONDARY") > 0 Then
-                If InStr(otherPole.Alt1, vbLf) > 0 Then
-                    lines = Split(otherPole.Alt1, vbLf)
+            If InStr(otherPole.alt1, "'") > 0 Then
+                If InStr(otherPole.alt1, vbLf) > 0 Then
+                    lines = Split(otherPole.alt1, vbLf)
                     For Each line In lines
-                        If InStr(line, "'") > 0 And InStr(line, "OPEN WIRE") > 0 And InStr(line, "SECONDARY") > 0 Then
+                        If InStr(line, "'") > 0 And (InStr(line, "OPEN WIRE") > 0 Or InStr(line, "SECONDARY") > 0 Or InStr(line, "SEC") > 0) And (InStr(line, "SECONDARY") > 0 Or InStr(line, "SEC") > 0) Then
                             distance = Utilities.OnlyNumbers(Left(line, InStr(line, "'")))
                             If IsNumeric(distance) Then
                                 If CInt(distance) = Span.distance Then
@@ -1176,37 +1291,58 @@ Private Function MissedLineIgnorable(pole As pole, ByVal line As String) As Bool
     If InStr(line, "(") > 0 Then line = Left(line, InStr(line, "(") - 1)
     If InStr(line, ")") > 0 Then line = Left(line, InStr(line, ")") - 1)
     If InStr(line, "FIGURE") = 1 Then MissedLineIgnorable = True: Exit Function
-    If InStr(line, "TOREPLACEOPENWIRE") = 1 Then MissedLineIgnorable = True: Exit Function
+    If InStr(line, "TOREPLACEOW") = 1 Then MissedLineIgnorable = True: Exit Function
     If InStr(line, "D=") = 1 Then MissedLineIgnorable = True: Exit Function
     If InStr(line, "P=") = 1 Then MissedLineIgnorable = True: Exit Function
     If InStr(line, "TOCORRECT") = 1 Then MissedLineIgnorable = True: Exit Function
     If InStr(line, "TOMAKE") = 1 Then MissedLineIgnorable = True: Exit Function
     If InStr(line, "TOALLOW") = 1 Then MissedLineIgnorable = True: Exit Function
     If InStr(line, "@11""FROM") = 1 Then MissedLineIgnorable = True: Exit Function
-    If InStr(Replace(line, "DEADEND", "DE"), "SECONDARYDE") = 1 Then MissedLineIgnorable = True: Exit Function
+    If InStr(line, "SECDE") = 1 Then MissedLineIgnorable = True: Exit Function
     If InStr(line, "AS-IS") > 0 Then MissedLineIgnorable = True: Exit Function
     If InStr(line, "ASIS") > 0 Then MissedLineIgnorable = True: Exit Function
     If Replace(line, vbLf, "") = "" Then MissedLineIgnorable = True: Exit Function
+    If InStr(line, "TO") = 1 Then MissedLineIgnorable = True: Exit Function
     If line = "PRIMARY" Then MissedLineIgnorable = True: Exit Function
+    If line = "PRI" Then MissedLineIgnorable = True: Exit Function
     If line = "NEUTRAL" Then MissedLineIgnorable = True: Exit Function
+    If line = "NEUT" Then MissedLineIgnorable = True: Exit Function
     If line = "SECONDARY" Then MissedLineIgnorable = True: Exit Function
+    If line = "SEC" Then MissedLineIgnorable = True: Exit Function
     If line = "EXTENDTONEWHEIGHT" Then MissedLineIgnorable = True: Exit Function
     If line = "OPENWIRE" Then MissedLineIgnorable = True: Exit Function
     If line = "OW" Then MissedLineIgnorable = True: Exit Function
-    If line = "LAONTRANSFORMER" Then MissedLineIgnorable = True: Exit Function
+    If line = "LAONXFMR" Then MissedLineIgnorable = True: Exit Function
     Dim comp As Variant
     For Each comp In pole.commComponents
         If InStr(line, Replace(Replace(comp.owner, " ", ""), "&", "")) = 1 Then MissedLineIgnorable = True: Exit Function
     Next comp
 End Function
 
-Private Sub generateCU(cus As Collection, location As String, code As String, qty As Integer, action As String)
-    Dim CU As CU: Set CU = New CU
-    CU.location = properLocation(location)
-    CU.code = code
-    CU.qty = qty
-    CU.action = action
-    Call AddCu(cus, CU)
+Private Sub generateCU(cus As Collection, location As String, code As String, qty As Integer, action As String, Optional duplicate As Boolean)
+    Dim cu As cu: Set cu = New cu
+    If InStr(location, "ALT") = 0 And InStr(location, "LOC") = 0 Then
+        cu.location = properLocation(location)
+    Else
+        cu.location = location
+    End If
+    cu.code = code
+    cu.qty = qty
+    cu.action = action
+    
+    While cu.qty > 999
+        Dim cu2 As cu: Set cu2 = New cu
+        cu2.location = cu.location
+        cu2.code = cu.code
+        cu2.qty = cu.qty
+        cu2.action = cu.action
+        cu2.qty = cu.qty - 999
+        If cu2.qty > 999 Then cu2.qty = 999
+        cu.qty = cu.qty - cu2.qty
+        Call AddCu(cus, cu2, duplicate)
+    Wend
+    
+    Call AddCu(cus, cu, duplicate)
 End Sub
 
 Private Sub generateGuyCU(cus As Collection, location As String, hardware As String, qty As Integer, action As String)
@@ -1300,11 +1436,11 @@ Private Sub generateTransferStreetlightCU(line As String, cus As Collection, pol
     If InStr(streetlightMolding, "Install") > 0 Then Call generateCU(cus, pole.location, "100598", Application.WorksheetFunction.RoundUp(amount / 8, 0), "INSTALL")
 
     closestDistance = 0
-    For Each Wire In pole.utilWires
-        If Wire.componentType = "OW" Or Wire.componentType = "SEC" Or Wire.componentType = "TRAFFIC" Then
-            If Abs(Wire.height - streetlightBottomBracketHeight) < closestDistance Or closestDistance = 0 Then closestDistance = Abs(Wire.height - streetlightBottomBracketHeight)
+    For Each wire In pole.utilWires
+        If wire.componentType = "OW" Or wire.componentType = "SEC" Or wire.componentType = "TRAFFIC" Then
+            If Abs(wire.height - streetlightBottomBracketHeight) < closestDistance Or closestDistance = 0 Then closestDistance = Abs(wire.height - streetlightBottomBracketHeight)
         End If
-    Next Wire
+    Next wire
     amount = WorksheetFunction.RoundUp(closestDistance / 12, 0)
 
     Call generateCU(cus, pole.location, "718146", amount, "RET REM")
@@ -1409,20 +1545,27 @@ Private Function properAction(mode As String) As String
      End Select
 End Function
 
-Private Sub AddCu(cus As Collection, CU As CU)
+Private Sub AddCu(cus As Collection, cu As cu, Optional duplicate As Boolean)
     Dim alreadyExists As Boolean
-    Dim otherCu As CU
-    For i = 1 To cus.count
-        If TypeOf cus(i) Is CU Then
-            Set otherCu = cus(i)
-            If CU.Equals(otherCu) Then
-                If CU.code <> "290048" And CU.code <> "200548" Then otherCu.qty = otherCu.qty + CU.qty
-                alreadyExists = True
-                Exit For
+    Dim otherCu As cu
+    
+    If Not duplicate Then
+        For i = 1 To cus.count
+            If TypeOf cus(i) Is cu Then
+                Set otherCu = cus(i)
+                If cu.Equals(otherCu) Then
+                    If cu.code <> "290048" And cu.code <> "200548" And otherCu.qty + cu.qty > 999 Then
+                        alreadyExists = False
+                    Else
+                        If cu.code <> "290048" And cu.code <> "200548" Then otherCu.qty = otherCu.qty + cu.qty
+                        alreadyExists = True
+                        Exit For
+                    End If
+                End If
             End If
-        End If
-    Next i
+        Next i
+    End If
     
     addedCU = True
-    If Not alreadyExists Then cus.Add CU
+    If Not alreadyExists Then cus.Add cu
 End Sub
