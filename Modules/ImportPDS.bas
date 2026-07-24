@@ -40,10 +40,10 @@ Sub ImportAllPDS()
         Set sourceWb = Workbooks.Open(path & fileName)
         If sourceWb.sheets(1).Cells(2, 2).Value = "Notification:" Then
             rpSourceName = ThisWorkbook.RemoveParentheses(sourceWb.sheets(1).name)
-            If Not poleNumbers.Exists(rpSourceName) Then
+            If Not poleNumbers.exists(rpSourceName) Then
                 poleNumbers.Add rpSourceName, Nothing
             Else
-                If Not duplicateNumbers.Exists(rpSourceName) Then
+                If Not duplicateNumbers.exists(rpSourceName) Then
                     duplicateNumbers.Add rpSourceName, Nothing
                     If duplicateNumbersString <> "" Then duplicateNumbersString = duplicateNumbersString & vbLf
                     duplicateNumbersString = duplicateNumbersString & "Pole: " & rpSourceName
@@ -204,10 +204,10 @@ Sub ImportLocationPDS()
         If sourceWb.sheets(1).Cells(2, 2).Value = "Notification:" Then
             If Trim(sourceWb.sheets(1).Range("DL").Value) <> "" Then
                 rpSourceName = ThisWorkbook.RemoveParentheses(sourceWb.sheets(1).name)
-                If Not poleNumbers.Exists(rpSourceName) Then
+                If Not poleNumbers.exists(rpSourceName) Then
                     poleNumbers.Add rpSourceName, Nothing
                 Else
-                    If Not duplicateNumbers.Exists(rpSourceName) Then
+                    If Not duplicateNumbers.exists(rpSourceName) Then
                         duplicateNumbers.Add rpSourceName, Nothing
                         If duplicateNumbersString <> "" Then duplicateNumbersString = duplicateNumbersString & vbLf
                         duplicateNumbersString = duplicateNumbersString & "Pole: " & rpSourceName
@@ -302,10 +302,10 @@ Sub ImportNjunsPDS()
             If (Trim(sourceWb.sheets(1).Range("NJUNS").Value) <> "" And LCase(Trim(sourceWb.sheets(1).Range("NJUNS").Value)) <> "n/a" And LCase(Trim(sourceWb.sheets(1).Range("NJUNS").Value)) <> "comm make ready work") Or _
                 (Trim(sourceWb.sheets(1).Range("NJUNSTICKET").Value) <> "" And LCase(Trim(sourceWb.sheets(1).Range("NJUNSTICKET").Value)) <> "n/a") Then
                 rpSourceName = ThisWorkbook.RemoveParentheses(sourceWb.sheets(1).name)
-                If Not poleNumbers.Exists(rpSourceName) Then
+                If Not poleNumbers.exists(rpSourceName) Then
                     poleNumbers.Add rpSourceName, Nothing
                 Else
-                    If Not duplicateNumbers.Exists(rpSourceName) Then
+                    If Not duplicateNumbers.exists(rpSourceName) Then
                         duplicateNumbers.Add rpSourceName, Nothing
                         If duplicateNumbersString <> "" Then duplicateNumbersString = duplicateNumbersString & vbLf
                         duplicateNumbersString = duplicateNumbersString & "Pole: " & rpSourceName
