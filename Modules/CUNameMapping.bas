@@ -4,6 +4,28 @@ Private CUNameMapping As Scripting.Dictionary
 Private CUExtraCUsNeeded As Scripting.Dictionary
 Private CUOpenWireNameMapping As Scripting.Dictionary
 Private CUSecNameMapping As Scripting.Dictionary
+Private CUAssemblyMapping As Scripting.Dictionary
+
+Public Function getCUAssemblyMapping() As Scripting.Dictionary
+    Call InitializeCUAssemblyMapping
+    
+    Set getCUAssemblyMapping = CUAssemblyMapping
+End Function
+
+Sub InitializeCUAssemblyMapping()
+    If CUAssemblyMapping Is Nothing Then
+        Set CUAssemblyMapping = New Scripting.Dictionary
+    Else
+        Exit Sub
+    End If
+    
+    CUAssemblyMapping("505002") = Array("100131", "100194", "100421") 'DOWN GUY 11K 1P W/RS ASSEMBLY
+    CUAssemblyMapping("505004") = Array("100133", "100194", "100421") 'DOWN GUY 11K 1P W/RT
+    CUAssemblyMapping("505006") = Array("100136", "100194", "100421") 'DOWN GUY 11K 1P W/STE
+    CUAssemblyMapping("505013") = Array("100133", "100195", "100422") 'DOWN GUY 20K 1P W/RT
+    CUAssemblyMapping("504995") = Array("100133", "100425")  'DOWN GUY 20K FG W/RT
+    CUAssemblyMapping("504997") = Array("100136", "100425")  'DOWN GUY 20K FG W/STE
+End Sub
 
 Public Function getCUNameMapping(ByVal key As String) As String
     cleansedKey = cleanseKey(key)
@@ -18,12 +40,12 @@ Public Function getCUNameMapping(ByVal key As String) As String
         Call InitializeCUNameMapping
     End If
     
-    If CUNameCorrecting.Exists(cleansedKey) Then cleansedKey = CUNameCorrecting(cleansedKey)
-    If CUNameCorrecting.Exists(key) Then key = CUNameCorrecting(key)
+    If CUNameCorrecting.exists(cleansedKey) Then cleansedKey = CUNameCorrecting(cleansedKey)
+    If CUNameCorrecting.exists(key) Then key = CUNameCorrecting(key)
     
-    If CUNameMapping.Exists(cleansedKey) Then
+    If CUNameMapping.exists(cleansedKey) Then
         getCUNameMapping = CUNameMapping(cleansedKey)
-    ElseIf CUNameMapping.Exists(key) Then
+    ElseIf CUNameMapping.exists(key) Then
         getCUNameMapping = CUNameMapping(key)
     Else
         getCUNameMapping = ""
@@ -43,8 +65,8 @@ Public Function CheckForAdditionalCUs(ByVal key As String) As Boolean
         Call InitializeCUExtraCUsNeeded
     End If
     
-    If CUNameCorrecting.Exists(key) Then key = CUNameCorrecting(key)
-    CheckForAdditionalCUs = CUExtraCUsNeeded.Exists(key)
+    If CUNameCorrecting.exists(key) Then key = CUNameCorrecting(key)
+    CheckForAdditionalCUs = CUExtraCUsNeeded.exists(key)
 End Function
 
 Public Function getOWNameMapping(ByVal key As String) As String
@@ -55,7 +77,7 @@ Public Function getOWNameMapping(ByVal key As String) As String
         Call InitializeCUOpenWireNameMapping
     End If
     
-    If CUOpenWireNameMapping.Exists(key) Then
+    If CUOpenWireNameMapping.exists(key) Then
         getOWNameMapping = CUOpenWireNameMapping(key)
     Else
         getOWNameMapping = ""
@@ -71,7 +93,7 @@ Public Function getSecNameMapping(ByVal key As String) As String
         Call InitializeCUSecNameMapping
     End If
     
-    If CUSecNameMapping.Exists(key) Then
+    If CUSecNameMapping.exists(key) Then
         getSecNameMapping = CUSecNameMapping(key)
     Else
         getSecNameMapping = ""
@@ -113,9 +135,7 @@ End Sub
 
 Private Sub InitializeCUNameCorrecting()
     CUNameCorrecting("DEVICEARM") = "S8S"
-    CUNameCorrecting("SPIN") = "SPINS"
     CUNameCorrecting("JUMPERSPIN") = "JUMPERSPINS"
-    CUNameCorrecting("SCOR") = "SCORS"
     CUNameCorrecting("LCPTAGS") = "LCPTAG"
     CUNameCorrecting("VDE") = "PRIDE"
     CUNameCorrecting("CLUSTERMOUNTBRACKET") = "CLUSTERMOUNT"
@@ -134,15 +154,15 @@ Private Sub InitializeCUNameMapping()
     CUNameMapping("S8FGDE") = "107000"
     CUNameMapping("SSA") = "100027"
     CUNameMapping("DSA") = "100007"
-    CUNameMapping("SPINS") = "100022"
+    CUNameMapping("SPIN") = "100022"
     CUNameMapping("JUMPERSPINS") = "100022"
-    CUNameMapping("SCORS") = "100105"
+    CUNameMapping("SCOR") = "100105"
     CUNameMapping("WR") = "100052"
-    CUNameMapping("TANGENTCLAMP") = "100056"
-    CUNameMapping("SECTANGENTCLAMP") = "100056"
-    CUNameMapping("AWACTANGENTCLAMP") = "100036"
-    CUNameMapping("TANGENTCLAMPAWAC") = "100036"
-    CUNameMapping("SECAWACTANGENTCLAMP") = "100036"
+    CUNameMapping("TANCLAMP") = "100056"
+    CUNameMapping("SECTANCLAMP") = "100056"
+    CUNameMapping("AWACTANCLAMP") = "100036"
+    CUNameMapping("TANCLAMPAWAC") = "100036"
+    CUNameMapping("SECAWACTANCLAMP") = "100036"
     CUNameMapping("1VPO") = "290019"
     CUNameMapping("2VPO") = "290029"
     CUNameMapping("3VPO") = "290030"
@@ -152,14 +172,20 @@ Private Sub InitializeCUNameMapping()
     CUNameMapping("18""FGARM") = "100068"
     CUNameMapping("FGSTANDOFF") = "100029"
     CUNameMapping("FGSTANDOFFBRACKET") = "100029"
+    CUNameMapping("FGSTANDOFFBRKT") = "100029"
+    CUNameMapping("FGSB") = "100029"
+    
+    CUNameMapping("11KGRIP") = "100159"
+    CUNameMapping("SPANGUYGRIP") = "100159"
+    CUNameMapping("SPGGRIP") = "100159"
     
     CUNameMapping("TEMPORARYJUMPERTOCOMMPOWERSUPPLY") = "106277"
     CUNameMapping("TEMPORARYJUMPER") = "106277"
     CUNameMapping("TEMPJUMPER") = "106277"
     
-    CUNameMapping("FGINSULATOR") = "100191"
-    CUNameMapping("FG") = "100191"
-    CUNameMapping("FGLINK") = "100191"
+    CUNameMapping("FGINSULATOR") = "100192"
+    CUNameMapping("FG") = "100192"
+    CUNameMapping("FGLINK") = "100192"
     
     CUNameMapping("CLUSTERMOUNT") = "200548"
     CUNameMapping("SIDEWALKBRACE") = "100432"
@@ -277,6 +303,24 @@ Private Sub InitializeCUNameMapping()
     CUNameMapping("3|0TXDE") = "101029"
     CUNameMapping("3|0QXDE") = "101049"
 
+    CUNameMapping("2TXAWACDE") = "101032"
+    CUNameMapping("2QXAWACDE") = "101032"
+    CUNameMapping("4TXAWACDE") = "101032"
+    CUNameMapping("4QXAWACDE") = "101032"
+    CUNameMapping("1|0TXAWACDE") = "101032"
+    CUNameMapping("1|0QXAWACDE") = "101032"
+    CUNameMapping("3|0TXAWACDE") = "101032"
+    CUNameMapping("3|0QXAWACDE") = "101032"
+    
+    CUNameMapping("2TXSECAWACDE") = "101032"
+    CUNameMapping("2QXSECAWACDE") = "101032"
+    CUNameMapping("4TXSECAWACDE") = "101032"
+    CUNameMapping("4QXSECAWACDE") = "101032"
+    CUNameMapping("1|0TXSECAWACDE") = "101032"
+    CUNameMapping("1|0QXSECAWACDE") = "101032"
+    CUNameMapping("3|0TXSECAWACDE") = "101032"
+    CUNameMapping("3|0QXSECAWACDE") = "101032"
+
     CUNameMapping("6DXSECDE") = "101031"
     CUNameMapping("4TXSECDE") = "101030"
     CUNameMapping("4QXSECDE") = "101050"
@@ -285,6 +329,15 @@ Private Sub InitializeCUNameMapping()
     CUNameMapping("1|0QXSECDE") = "101046"
     CUNameMapping("3|0TXSECDE") = "101029"
     CUNameMapping("3|0QXSECDE") = "101049"
+    
+    CUNameMapping("2TXAWACSECDE") = "101032"
+    CUNameMapping("2QXAWACSECDE") = "101032"
+    CUNameMapping("4TXAWACSECDE") = "101032"
+    CUNameMapping("4QXAWACSECDE") = "101032"
+    CUNameMapping("1|0TXAWACSECDE") = "101032"
+    CUNameMapping("1|0QXAWACSECDE") = "101032"
+    CUNameMapping("3|0TXAWACSECDE") = "101032"
+    CUNameMapping("3|0QXAWACSECDE") = "101032"
     
     CUNameMapping("SEC6DXDE") = "101031"
     CUNameMapping("SEC4TXDE") = "101030"
@@ -335,23 +388,23 @@ Private Sub InitializeCUNameMapping()
     CUNameMapping("SEC3|0AWACDE") = "101032"
     
     'Tanget Clamps
-    CUNameMapping("6DXTANGENTCLAMP") = "100056"
-    CUNameMapping("4TXTANGENTCLAMP") = "100056"
-    CUNameMapping("4QXTANGENTCLAMP") = "100056"
-    CUNameMapping("2TXTANGENTCLAMP") = "100056"
-    CUNameMapping("1|0TXTANGENTCLAMP") = "100056"
-    CUNameMapping("1|0QXTANGENTCLAMP") = "100056"
-    CUNameMapping("3|0TXTANGENTCLAMP") = "100056"
-    CUNameMapping("3|0QXTANGENTCLAMP") = "100056"
+    CUNameMapping("6DXTANCLAMP") = "100056"
+    CUNameMapping("4TXTANCLAMP") = "100056"
+    CUNameMapping("4QXTANCLAMP") = "100056"
+    CUNameMapping("2TXTANCLAMP") = "100056"
+    CUNameMapping("1|0TXTANTCLAMP") = "100056"
+    CUNameMapping("1|0QXTANCLAMP") = "100056"
+    CUNameMapping("3|0TXTANCLAMP") = "100056"
+    CUNameMapping("3|0QXTANCLAMP") = "100056"
     
-    CUNameMapping("6DXSECTANGENTCLAMP") = "100056"
-    CUNameMapping("4TXSECTANGENTCLAMP") = "100056"
-    CUNameMapping("4QXSECTANGENTCLAMP") = "100056"
-    CUNameMapping("2TXSECTANGENTCLAMP") = "100056"
-    CUNameMapping("1|0TXSECTANGENTCLAMP") = "100056"
-    CUNameMapping("1|0QXSECTANGENTCLAMP") = "100056"
-    CUNameMapping("3|0TXSECTANGENTCLAMP") = "100056"
-    CUNameMapping("3|0QXSECTANGENTCLAMP") = "100056"
+    CUNameMapping("6DXSECTANCLAMP") = "100056"
+    CUNameMapping("4TXSECTANCLAMP") = "100056"
+    CUNameMapping("4QXSECTANCLAMP") = "100056"
+    CUNameMapping("2TXSECTANCLAMP") = "100056"
+    CUNameMapping("1|0TXSECTANCLAMP") = "100056"
+    CUNameMapping("1|0QXSECTANCLAMP") = "100056"
+    CUNameMapping("3|0TXSECTANCLAMP") = "100056"
+    CUNameMapping("3|0QXSECTANCLAMP") = "100056"
     
     'Top/Side/Spool ties
     CUNameMapping("6TOPTIE") = "100183"
