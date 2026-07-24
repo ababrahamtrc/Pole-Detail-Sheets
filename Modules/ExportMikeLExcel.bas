@@ -104,7 +104,7 @@ Sub MikeLExcel()
     
     Dim transferWorkLocations As Collection: Set transferWorkLocations = New Collection
     For Each pole In project.poles
-        If InStr(Replace(UCase(pole.Alt1), " ", ""), "TRANSFERAGREEMENT") > 0 Then transferWorkLocations.Add pole.location
+        If InStr(Replace(UCase(pole.alt1), " ", ""), "TRANSFERAGREEMENT") > 0 Then transferWorkLocations.Add pole.location
     Next pole
     
     Call generateMikeLExcelRow(MikeLExcel, row, "TREE WORK LOCATIONS", combineList(treeWorkLocations))
