@@ -50,10 +50,10 @@ Sub RemedyGenerator()
         If Not found Then Exit For
     Next i
     
-    Dim applicant As Wire: Set applicant = Nothing
+    Dim applicant As wire: Set applicant = Nothing
     Set adjacentHeights = New Scripting.Dictionary
     Set midspans = New Scripting.Dictionary
-    Set applicant = New Wire
+    Set applicant = New wire
     applicant.owner = Trim(UCase(sheet.Range("APPLICANT")))
     applicant.height = Utilities.convertToInches(sheet.Range("PROPOSEDHEIGHT"))
     If Utilities.convertToInches(sheet.Range("CMRF1")) > 0 Then
@@ -65,22 +65,22 @@ Sub RemedyGenerator()
         If Trim(Replace(sheet.Range("TOPOLE" & i).offset(1, 0).text, "-", "")) <> "" Then
             Dim midspan As Integer: midspan = Utilities.convertToInches(sheet.Range("TOPOLE" & i).offset(1, 0).text)
             midspans.Add i, midspan
-            If Not weps.Exists(i) Then weps.Add i, sheet.Range("TOPOLE" & i).text
-            If regex.test(weps(i)) Then
+            If Not weps.exists(i) Then weps.Add i, sheet.Range("TOPOLE" & i).text
+            If regex.Test(weps(i)) Then
                 Set matches = regex.Execute(weps(i))
                 Dim otherSheetName As String: otherSheetName = matches(0)
                 If SheetExists(otherSheetName) Then
                     Dim otherSheet As Worksheet: Set otherSheet = Utilities.GetPDS(otherSheetName)
                     Dim adjacentHeight As Integer: adjacentHeight = Utilities.convertToInches(otherSheet.Range("PROPOSEDHEIGHT"))
                     Dim adjacentModification As Integer: adjacentModification = Utilities.convertToInches(otherSheet.Range("CMRF1"))
-                    If InStr(adjacentHeight, "OL") = 0 And adjacentHeight <> adjacentModification And Utilities.convertToInches(adjacentHeight) > 0 And Utilities.convertToInches(adjacentModification) > 0 Then
+                    If InStr(adjacentHeight, "OL") = 0 And adjacentHeight <> adjacentModification And adjacentHeight > 0 And adjacentModification > 0 Then
                         adjacentHeights.Add i, New Collection
-                        adjacentHeights(i).Add Utilities.convertToInches(adjacentHeight)
-                        adjacentHeights(i).Add Utilities.convertToInches(adjacentModification)
-                    ElseIf InStr(adjacentHeight, "OL") > 0 And Utilities.convertToInches(adjacentModification) > 0 Then
+                        adjacentHeights(i).Add adjacentHeight
+                        adjacentHeights(i).Add adjacentModification
+                    ElseIf InStr(adjacentHeight, "OL") > 0 And adjacentModification > 0 Then
                         adjacentHeights.Add i, New Collection
-                        adjacentHeights(i).Add Utilities.convertToInches(adjacentHeight)
-                        adjacentHeights(i).AddUtilities.convertToInches (adjacentModification)
+                        adjacentHeights(i).Add adjacentHeight
+                        adjacentHeights(i).Add adjacentModification
                     End If
                 End If
             End If
@@ -119,13 +119,13 @@ Sub RemedyGenerator()
                 midspan = Utilities.convertToInches(sheet.Range("CMMIDSPAN" & j).offset(i, 0).text)
                 If midspan > 0 Then
                     midspans.Add j, midspan
-                    If Not weps.Exists(j) Then weps.Add j, sheet.Range("TOPOLE" & j).Value
-                    If regex.test(weps(j)) Then
+                    If Not weps.exists(j) Then weps.Add j, sheet.Range("TOPOLE" & j).Value
+                    If regex.Test(weps(j)) Then
                         Set matches = regex.Execute(weps(j))
                         otherSheetName = matches(0)
                         If SheetExists(otherSheetName) Then
                             Set otherSheet = Utilities.GetPDS(otherSheetName)
-                            If Not otherModificationCells.Exists(otherSheet.name) Then otherModificationCells.Add otherSheet.name, New Collection
+                            If Not otherModificationCells.exists(otherSheet.name) Then otherModificationCells.Add otherSheet.name, New Collection
                             adjacentHeight = getHeight(otherSheet, owner, midspan, sheet.Range("POLENUM").text)
                             Set modCell = findModCell(otherSheet, adjacentHeight, owner, False, otherModificationCells(otherSheet.name))
                             adjacentModification = Utilities.convertToInches(modCell.Value)
@@ -153,16 +153,16 @@ Sub RemedyGenerator()
                 End If
                 
                 For Each key In midspans.keys
-                    If adjacentHeights.Exists(key) Then
+                    If adjacentHeights.exists(key) Then
                         Set applicant.adjacentHeights.item(key) = adjacentHeights.item(key)
                         adjacentHeights.Remove key
                     End If
-                    If applicant.midspans.Exists(key) Then
+                    If applicant.midspans.exists(key) Then
                         If applicant.midspans(key) > midspans.item(key) Then applicant.midspans.item(key) = midspans.item(key)
                     Else
                         applicant.midspans.Add key, midspans.item(key)
-                        If Not adjacentHeights.Exists(key) Then
-                            If regex.test(weps(key)) Then
+                        If Not adjacentHeights.exists(key) Then
+                            If regex.Test(weps(key)) Then
                                 Set matches = regex.Execute(weps(key))
                                 otherSheetName = matches(0)
                                 If SheetExists(otherSheetName) Then
@@ -191,26 +191,26 @@ Sub RemedyGenerator()
             
             
             If midspans.count > 0 Then
-                Dim Wire As Wire: Set Wire = New Wire
+                Dim wire As wire: Set wire = New wire
                 
                 overlash = False
-                If Wire.owner = applicant.owner Then overlash = True
+                If wire.owner = applicant.owner Then overlash = True
                 
-                Wire.owner = owner
-                Wire.height = height
+                wire.owner = owner
+                wire.height = height
                 Dim modification As String
-                Set modCell = findModCell(sheet, Wire.height, Wire.owner, False, modificationCells)
-                Wire.modification = Utilities.convertToInches(modCell.Value)
-                If Wire.modification < 1 Then Wire.modification = Wire.height
+                Set modCell = findModCell(sheet, wire.height, wire.owner, False, modificationCells)
+                wire.modification = Utilities.convertToInches(modCell.Value)
+                If wire.modification < 1 Then wire.modification = wire.height
                 
-                Duplicate = False
+                duplicate = False
                 For Each otherWire In wires
-                    If Wire.owner = otherWire.owner And Wire.height = otherWire.height Then
-                        Duplicate = True
+                    If wire.owner = otherWire.owner And wire.height = otherWire.height Then
+                        duplicate = True
                         For Each key In otherWire.midspans
-                            If midspans.Exists(key) Then Duplicate = False
+                            If midspans.exists(key) Then duplicate = False
                         Next key
-                        If Duplicate Then
+                        If duplicate Then
                             For Each key In midspans
                                 otherWire.midspans.Add key, midspans(key)
                             Next key
@@ -222,10 +222,10 @@ Sub RemedyGenerator()
                     End If
                 Next otherWire
                 
-                If Not Duplicate Then
-                    Set Wire.midspans = midspans
-                    Set Wire.adjacentHeights = adjacentHeights
-                    wires.Add Wire
+                If Not duplicate Then
+                    Set wire.midspans = midspans
+                    Set wire.adjacentHeights = adjacentHeights
+                    wires.Add wire
                 End If
             End If
         End If
@@ -357,7 +357,7 @@ Private Function getHeight(sheet As Worksheet, owner As String, midspan As Integ
     Dim Span As Integer: Span = 0
     For i = 1 To 12
         If Utilities.RangeExists(sheet, "TOPOLE" & i) Then
-            If regex.test(sheet.Range("TOPOLE" & i)) Then
+            If regex.Test(sheet.Range("TOPOLE" & i)) Then
                 Set matches = regex.Execute(sheet.Range("TOPOLE" & i))
                 If matches(0) = poleNumber Then
                     Span = i
