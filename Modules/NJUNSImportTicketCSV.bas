@@ -41,7 +41,7 @@ Sub ImportNJUNSTicketCSV()
     Dim pole As pole
     For Each pole In project.poles
         If pole.NJUNS <> "" Then
-            If tickets.Exists(pole.poleNumber) Then
+            If tickets.exists(pole.poleNumber) Then
                 If Utilities.OnlyNumbers(pole.njunsTicket) = -1 Then
                     If InStr(pole.njunsTicket, "NOTIFY") > 0 Then
                         pole.njunsTicket = "NOTIFY-" & tickets(pole.poleNumber)
