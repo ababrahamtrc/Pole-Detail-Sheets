@@ -18,7 +18,7 @@ Sub applyStandardAbbreviations(ByRef str As String)
     str = Replace(str, "DCORS", "DCOR")
     str = Replace(str, "SVCS", "SVC")
     
-    str = Replace(str, "TANG", "TAN")
+    
     
     str = Replace(str, "BRACKET", "BRKT")
     str = Replace(str, "CAPACITOR", "CAP")
@@ -38,6 +38,7 @@ Sub applyStandardAbbreviations(ByRef str As String)
     str = Replace(str, "INSULATOR", "INS")
     str = Replace(str, "PHASE", "PH")
     str = Replace(str, "TANGENT", "TAN")
+    str = Replace(str, "TANG", "TAN")
     str = Replace(str, "STEEL", "ST")
 End Sub
 
