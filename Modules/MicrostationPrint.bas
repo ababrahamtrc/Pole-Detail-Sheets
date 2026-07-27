@@ -445,19 +445,25 @@ Function generateJSON() As Boolean
     lowSideVoltages(70) = "600"
     
     Set json("transformers") = New Collection
+    
     Set json("fuses") = New Collection
     Set json("reclosers") = New Collection
+    Set json("sectionalizers") = New Collection
     Set json("switches") = New Collection
     Set json("capacitors") = New Collection
     Set json("regulators") = New Collection
+    
+    Set json("risers") = New Collection
     For Each poleCollection In poleCollections
         Set jsonPoles = getElectricJson(poleCollection, 3, token)
         Set jsonTransformerConnections = getElectricJson(poleCollection, 30, token)
         Set jsonTransformers = getElectricJson(poleCollection, 27, token)
         Set jsonFuses = getElectricJson(poleCollection, 60, token)
         Set jsonReclosers = getElectricJson(poleCollection, 70, token)
+        Set jsonSectionalizers = getElectricJson(poleCollection, 71, token)
         Set jsonSwitches = getElectricJson(poleCollection, 65, token)
-        
+        Set jsonPriRisers = getElectricJson(poleCollection, 4, token)
+        Set jsonSecRisers = getElectricJson(poleCollection, 5, token)
         For Each jsonFeature In jsonFuses("features")
             x = jsonFeature("geometry")("x")
             y = jsonFeature("geometry")("y")
@@ -468,7 +474,7 @@ Function generateJSON() As Boolean
                 jsonFuse("y") = y
                 jsonFuse("lcp") = jsonFeature("attributes")("LCP")
                 jsonFuse("size") = jsonFeature("attributes")("RATEDCURRENT")
-                jsonFuse("status") = jsonFeature("attributes")("SWITCHSTATUS")
+                jsonFuse("open") = jsonFeature("attributes")("SWITCHSTATUS") = 0
                 jsonFuse("rotation") = jsonFeature("attributes")("SYMBOLROTATION")
                 json("fuses").Add jsonFuse
             End If
@@ -484,9 +490,25 @@ Function generateJSON() As Boolean
                 jsonRecloser("y") = y
                 jsonRecloser("lcp") = jsonFeature("attributes")("LCP")
                 jsonRecloser("size") = jsonFeature("attributes")("RATEDCURRENT")
-                jsonRecloser("status") = jsonFeature("attributes")("SWITCHSTATUS")
+                jsonRecloser("open") = jsonFeature("attributes")("SWITCHSTATUS") = 0
                 jsonRecloser("rotation") = jsonFeature("attributes")("SYMBOLROTATION")
                 json("reclosers").Add jsonRecloser
+            End If
+        Next jsonFeature
+    
+        For Each jsonFeature In jsonSectionalizers("features")
+            x = jsonFeature("geometry")("x")
+            y = jsonFeature("geometry")("y")
+            
+            If isClosestPoleOnJob(jsonPoles, poleCollection, x, y) Then
+                Set jsonSectionalizer = New Scripting.Dictionary
+                jsonSectionalizer("x") = x
+                jsonSectionalizer("y") = y
+                jsonSectionalizer("lcp") = jsonFeature("attributes")("LCP")
+                jsonSectionalizer("size") = jsonFeature("attributes")("RATEDCURRENT")
+                jsonSectionalizer("open") = jsonFeature("attributes")("SWITCHSTATUS") = 0
+                jsonSectionalizer("rotation") = jsonFeature("attributes")("SYMBOLROTATION")
+                json("sectionalizers").Add jsonSectionalizer
             End If
         Next jsonFeature
         
@@ -500,9 +522,47 @@ Function generateJSON() As Boolean
                 jsonSwitch("y") = y
                 jsonSwitch("lcp") = jsonFeature("attributes")("LCP")
                 jsonSwitch("size") = jsonFeature("attributes")("RATEDCURRENT")
-                jsonSwitch("status") = jsonFeature("attributes")("SWITCHSTATUS")
+                jsonSwitch("open") = jsonFeature("attributes")("SWITCHSTATUS") = 0
                 jsonSwitch("rotation") = jsonFeature("attributes")("SYMBOLROTATION")
-                json("switches").Add jsonSwitch
+                
+                equipmentId = jsonFeature("attributes")("EQUIPMENTID")
+                If equipmentId = "S_BLADE" Or equipmentId = "S_LINK" Or equipmentId = "SB_300A_BLADE" Or equipmentId = "SL_LINK_100A" Or equipmentId = "SL_LINK_200A" Then
+                    json("fuses").Add jsonSwitch
+                Else
+                    json("switches").Add jsonSwitch
+                End If
+            End If
+        Next jsonFeature
+        
+        For Each jsonFeature In jsonPriRisers("features")
+            x = jsonFeature("geometry")("x")
+            y = jsonFeature("geometry")("y")
+            
+            If isClosestPoleOnJob(jsonPoles, poleCollection, x, y) Then
+                Set jsonRiser = New Scripting.Dictionary
+                jsonRiser("x") = x
+                jsonRiser("y") = y
+                jsonRiser("lcp") = jsonFeature("attributes")("LCP")
+                jsonRiser("rotation") = jsonFeature("attributes")("SYMBOLROTATION")
+                jsonRiser("type") = "Primary"
+                
+                json("risers").Add jsonRiser
+            End If
+        Next jsonFeature
+        
+        For Each jsonFeature In jsonSecRisers("features")
+            x = jsonFeature("geometry")("x")
+            y = jsonFeature("geometry")("y")
+            
+            If isClosestPoleOnJob(jsonPoles, poleCollection, x, y) Then
+                Set jsonRiser = New Scripting.Dictionary
+                jsonRiser("x") = x
+                jsonRiser("y") = y
+                jsonRiser("lcp") = jsonFeature("attributes")("LCP")
+                jsonRiser("rotation") = jsonFeature("attributes")("SYMBOLROTATION")
+                jsonRiser("type") = "Secondary"
+                
+                json("risers").Add jsonRiser
             End If
         Next jsonFeature
         
