@@ -32,7 +32,7 @@ Public Sub Initialize(size As String)
     Me.Label1.caption = "Size " & size & " Primary"
     Me.StartUpPosition = 0
     Me.Left = Application.Left + (0.5 * Application.Width) - (0.5 * Me.Width)
-    Me.Top = Application.Top + (0.5 * Application.height) - (0.5 * Me.height)
+    Me.top = Application.top + (0.5 * Application.height) - (0.5 * Me.height)
 End Sub
 
 Private Sub CommandButton1_Click()
