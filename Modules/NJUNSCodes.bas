@@ -9,11 +9,11 @@ Public Sub generateNJUNSCodes()
     Dim project As project: Set project = New project
     Call project.extractFromSheets
     
-    controlWs.Range("NJUNSCODES").offset(0, 0).Value = "Place(Check NJUNS)"
-    controlWs.Range("NJUNSCODES").offset(0, 1).Value = project.township
+    controlWs.Range("NJUNSCODES").OFFSET(0, 0).Value = "Place(Check NJUNS)"
+    controlWs.Range("NJUNSCODES").OFFSET(0, 1).Value = project.township
     
-    controlWs.Range("NJUNSCODES").offset(1, 0).Value = "Applicant(" & project.applicant & ")"
-    controlWs.Range("NJUNSCODES").offset(1, 1).Value = getNJUNSNameMapping(project, project.applicant)
+    controlWs.Range("NJUNSCODES").OFFSET(1, 0).Value = "Applicant(" & project.applicant & ")"
+    controlWs.Range("NJUNSCODES").OFFSET(1, 1).Value = getNJUNSNameMapping(project, project.applicant)
     
     Dim pole As pole
     For Each pole In project.poles
@@ -32,8 +32,8 @@ Public Sub generateNJUNSCodes()
     
     Dim i As Integer: i = 2
     For Each company In companies
-        controlWs.Range("NJUNSCODES").offset(i, 0).Value = company & "(" & companies(company) & ")"
-        controlWs.Range("NJUNSCODES").offset(i, 1).Value = getNJUNSNameMapping(project, company)
+        controlWs.Range("NJUNSCODES").OFFSET(i, 0).Value = company & "(" & companies(company) & ")"
+        controlWs.Range("NJUNSCODES").OFFSET(i, 1).Value = getNJUNSNameMapping(project, company)
         i = i + 1
     Next company
     
@@ -47,7 +47,7 @@ Public Sub clearNJUNSCodes()
     
     Dim startCell As Range: Set startCell = controlWs.Range("NJUNSCODES")
     
-    controlWs.Range(startCell, startCell.offset(26, 1)).ClearContents
+    controlWs.Range(startCell, startCell.OFFSET(26, 1)).ClearContents
     
     controlWs.Protect _
         Password:="", _
