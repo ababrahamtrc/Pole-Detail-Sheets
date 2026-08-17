@@ -50,7 +50,7 @@ Public Sub getSheetFigures(sheet As Worksheet)
             regex.IgnoreCase = True
             regex.Global = False
             
-            If regex.Test(line) Then
+            If regex.test(line) Then
                 Set match = regex.Execute(line)(0)
                 
                 Set cell = sheet.Cells(linkCount + 2, col)
