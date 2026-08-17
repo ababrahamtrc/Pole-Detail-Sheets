@@ -16,14 +16,22 @@ Public Sub ExportAllNJUNS()
     Call project.extractFromSheets
     
     If project.mode = "SYSTEM IMPROVEMENT" Then
-        contactName = "document.querySelector('.v-label.v-widget.c-user-select-label.v-label-c-user-select-label.v-label-undef-w').textContent.split(' [')[0]"
+        If ThisWorkbook.sheets("Control").Range("NAME") <> "" Then
+            contactName = """" & ThisWorkbook.sheets("Control").Range("NAME").Value & """"
+        Else
+            contactName = "document.querySelector('.v-label.v-widget.c-user-select-label.v-label-c-user-select-label.v-label-undef-w').textContent.split(' [')[0]"
+        End If
         If ThisWorkbook.sheets("Control").Range("PHONE") <> "" Then
             contactNumber = """" & ThisWorkbook.sheets("Control").Range("PHONE").Value & """"
         Else
             contactNumber = InputBox("Enter your phone number:", "User Input")
             ThisWorkbook.sheets("Control").Range("PHONE").Value = contactNumber
         End If
-        contactEmail = "document.querySelector('.v-label.v-widget.c-user-select-label.v-label-c-user-select-label.v-label-undef-w').textContent.split(' [')[1].slice(0,-1)"
+        If ThisWorkbook.sheets("Control").Range("EMAIL") <> "" Then
+            contactEmail = """" & ThisWorkbook.sheets("Control").Range("EMAIL").Value & """"
+        Else
+            contactEmail = "document.querySelector('.v-label.v-widget.c-user-select-label.v-label-c-user-select-label.v-label-undef-w').textContent.split(' [')[1].slice(0,-1)"
+        End If
     Else
         contactName = """Holly Webb"""
         contactNumber = """517-788-1690"""
@@ -293,13 +301,13 @@ Private Function checkCodes() As Boolean
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
     If controlWs.Range("NJUNSCODES").Value = "" Then Call NJUNSCodes.generateNJUNSCodes
     Dim codeRange As Range: Set codeRange = controlWs.Range("NJUNSCODES").EntireColumn
-    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).row
+    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).ROW
     Set codeRange = controlWs.Range(controlWs.Cells(3, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
     
     Dim cell As Range
     For Each cell In codeRange
         If cell.Value <> "" And InStr(cell.Value, "Applicant") = 0 Then
-            If cell.offset(0, 1).Value = "" Then
+            If cell.OFFSET(0, 1).Value = "" Then
                 MsgBox ("Missing values in the control page for NJUNS codes, these need to be all filled in first")
                 checkCodes = False
                 Exit Function
@@ -315,7 +323,7 @@ Private Function getSheetNJUNSCode(project As project, pole As pole, Optional pr
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
     If controlWs.Range("NJUNSCODES").Value = "" Then Call NJUNSCodes.generateNJUNSCodes
     Dim codeRange As Range: Set codeRange = controlWs.Range("NJUNSCODES").EntireColumn
-    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).row
+    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).ROW
     Set codeRange = controlWs.Range(controlWs.Cells(3, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
     
     If pole.njunsSteps.count = 0 Then
@@ -504,7 +512,7 @@ Private Function getDuplicateSheetNJUNSCode(project As project, pole As pole) As
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
     If controlWs.Range("NJUNSCODES").Value = "" Then Call NJUNSCodes.generateNJUNSCodes
     Dim codeRange As Range: Set codeRange = controlWs.Range("NJUNSCODES").EntireColumn
-    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).row
+    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).ROW
     Set codeRange = controlWs.Range(controlWs.Cells(3, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
     
     If pole.njunsSteps.count = 0 Then
@@ -605,7 +613,7 @@ Private Function getAlmostDuplicateSheetNJUNSCode(project As project, pole As po
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
     If controlWs.Range("NJUNSCODES").Value = "" Then Call NJUNSCodes.generateNJUNSCodes
     Dim codeRange As Range: Set codeRange = controlWs.Range("NJUNSCODES").EntireColumn
-    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).row
+    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).ROW
     Set codeRange = controlWs.Range(controlWs.Cells(3, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
     
     If pole.njunsSteps.count = 0 Then
@@ -647,7 +655,7 @@ Private Function getAlmostDuplicateSheetNJUNSCode(project As project, pole As po
     copiedCode = copiedCode & vbLf & "if(cancelled) break;"
     
     copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelector("".v-textarea.v-widget.v-has-width""), """ & njunsRemarks & """);"
-    Dim offset As Integer
+    Dim OFFSET As Integer
     Dim steps As Collection: Set steps = New Collection
     For i = 0 To pole.njunsSteps.count - 1
         step = pole.njunsSteps(i + 1)
@@ -661,15 +669,15 @@ Private Function getAlmostDuplicateSheetNJUNSCode(project As project, pole As po
                         copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelectorAll('.v-textarea.v-widget.v-has-width')[1], 'Consumers to complete required work.');"
                         copiedCode = copiedCode & vbLf & "await clickButton('.v-button.v-widget.primary', 'Create');"
                     End If
-                    offset = 1
+                    OFFSET = 1
                     steps.Add "Consumers to complete required work."
                 End If
             End If
         End If
         step = Replace(step, vbLf, "\n")
         step = Replace(step, """", "\""")
-        If previousSteps(i + 1 + offset) <> step Then
-            copiedCode = copiedCode & vbLf & "await realClick(document.querySelectorAll('.v-grid-row.v-grid-row-has-data')[" & i + offset & "]);"
+        If previousSteps(i + 1 + OFFSET) <> step Then
+            copiedCode = copiedCode & vbLf & "await realClick(document.querySelectorAll('.v-grid-row.v-grid-row-has-data')[" & i + OFFSET & "]);"
             copiedCode = copiedCode & vbLf & "await clickButton('.v-button.v-widget.icon', 'Edit');"
             copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelectorAll('.v-textarea.v-widget.v-has-width')[1], """ & step & """);"
             copiedCode = copiedCode & vbLf & "await clickButton('.v-button.v-widget.primary', 'Create');"
@@ -678,8 +686,8 @@ Private Function getAlmostDuplicateSheetNJUNSCode(project As project, pole As po
         If NJUNSType = "PT" Then
             If i = pole.njunsSteps.count - 1 Then
                 If company <> "CE" And company <> "CONSUMERS" Then
-                    If previousSteps(i + 1 + offset) <> "Consumers after comms transfer to new pole, pull topped pole." Then
-                        copiedCode = copiedCode & vbLf & "await realClick(document.querySelectorAll('.v-grid-row.v-grid-row-has-data')[" & i + offset & "]);"
+                    If previousSteps(i + 1 + OFFSET) <> "Consumers after comms transfer to new pole, pull topped pole." Then
+                        copiedCode = copiedCode & vbLf & "await realClick(document.querySelectorAll('.v-grid-row.v-grid-row-has-data')[" & i + OFFSET & "]);"
                         copiedCode = copiedCode & vbLf & "await clickButton('.v-button.v-widget.icon', 'Edit');"
                         copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelectorAll('.v-textarea.v-widget.v-has-width')[1], 'Consumers after comms transfer to new pole, pull topped pole.');"
                         copiedCode = copiedCode & vbLf & "await clickButton('.v-button.v-widget.primary', 'Create');"
@@ -742,8 +750,8 @@ End Function
 Private Function findNJUNSCode(ByVal company As String) As String
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
     Dim codeRange As Range: Set codeRange = controlWs.Range("NJUNSCODES").EntireColumn
-    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).row
-    Set codeRange = controlWs.Range(controlWs.Cells(controlWs.Range("NJUNSCODES").row, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
+    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).ROW
+    Set codeRange = controlWs.Range(controlWs.Cells(controlWs.Range("NJUNSCODES").ROW, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
 
     company = UCase(Replace(company, " ", ""))
     company = Replace(company, ":", "")
@@ -753,7 +761,7 @@ Private Function findNJUNSCode(ByVal company As String) As String
     For Each cell In codeRange
         If isEmpty(cell.Value) Then Exit For
         If InStr(1, CStr(cell.Value), company, vbTextCompare) = 1 Then
-            findNJUNSCode = UCase(cell.offset(0, 1).Value)
+            findNJUNSCode = UCase(cell.OFFSET(0, 1).Value)
             Exit Function
         End If
     Next cell
@@ -829,7 +837,7 @@ Private Function getUpdateSheetNJUNSCode(project As project, pole As pole) As St
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
     If controlWs.Range("NJUNSCODES").Value = "" Then Call NJUNSCodes.generateNJUNSCodes
     Dim codeRange As Range: Set codeRange = controlWs.Range("NJUNSCODES").EntireColumn
-    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).row
+    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).ROW
     Set codeRange = controlWs.Range(controlWs.Cells(3, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
     
     If pole.njunsSteps.count = 0 Then
