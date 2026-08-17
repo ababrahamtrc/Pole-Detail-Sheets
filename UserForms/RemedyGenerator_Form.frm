@@ -60,7 +60,7 @@ Public Sub Initialize(sheet_ As Worksheet, powers_ As Collection, OGPowers_ As C
     
     Me.StartUpPosition = 0
     Me.Left = Application.Left + (0.5 * Application.Width) - (0.5 * Me.Width)
-    Me.Top = Application.Top + (0.5 * Application.height) - (0.5 * Me.height)
+    Me.top = Application.top + (0.5 * Application.height) - (0.5 * Me.height)
     
     Set sheet = sheet_
     Set objects = New Collection
@@ -328,7 +328,7 @@ Private Sub createLabel(ByVal height As String, ByVal name As String, ByVal colo
         .BorderColor = RGB(0, 0, 0)
     End With
     
-    lbl.Move Pole1.Left + Pole1.Width, Pole1.Top + Pole1.height - inches
+    lbl.Move Pole1.Left + Pole1.Width, Pole1.top + Pole1.height - inches
     
     If Not exclude Then objects.Add lbl
 End Sub
@@ -351,8 +351,8 @@ Private Sub updateLabel(ByVal height As String, ByVal name As String, ByVal mids
         Next wire
     
         If lbl.caption <> midspan Then lbl.caption = midspan
-        If Pole1.Top <> Pole1.Top + Pole1.height - inches Then
-            lbl.Top = Pole1.Top + Pole1.height - inches
+        If Pole1.top <> Pole1.top + Pole1.height - inches Then
+            lbl.top = Pole1.top + Pole1.height - inches
         End If
     End If
 End Sub
@@ -380,7 +380,7 @@ Private Sub createBoundryLabel(ByVal height As String, ByVal name As String, ByV
         .BorderColor = RGB(0, 0, 0)
     End With
     
-    lbl.Move Pole1.Left, Pole1.Top + Pole1.height - inches
+    lbl.Move Pole1.Left, Pole1.top + Pole1.height - inches
     If Not boltHoles Is Nothing Then boltHoles.Add lbl
     
     
@@ -397,7 +397,7 @@ Private Sub updateBoundryLabel(ByVal height As String, ByVal name As String, Opt
     
     If inches > 0 Then
         If Not blank And lbl.caption <> height Then lbl.caption = height
-        lbl.Move Pole1.Left, Pole1.Top + Pole1.height - inches
+        lbl.Move Pole1.Left, Pole1.top + Pole1.height - inches
     End If
 End Sub
 
@@ -1510,7 +1510,7 @@ Private Sub UpdateMods_Click()
         End With
         polesChanged = ""
         For Each midspanSlot In applicant.midspans
-            If regex.Test(weps(midspanSlot)) Then
+            If regex.test(weps(midspanSlot)) Then
                 Set matches = regex.Execute(weps(midspanSlot))
                 Dim direction As String: direction = ThisWorkbook.RemoveParentheses(Trim(matches(0)))
                 If SheetExists(direction) Then
@@ -1536,7 +1536,7 @@ Private Sub UpdateMods_Click()
                     End If
                 Else
                     If direction <> "N" And direction <> "E" And direction <> "S" And direction <> "W" And direction <> "NE" And direction <> "SE" And direction <> "SW" And direction <> "NW" Then direction = "@P" & direction
-                    If Trim(Replace(sheet.Range("TOPOLE" & midspanSlot).offset(1, 0), "-", "")) <> "" Then
+                    If Trim(Replace(sheet.Range("TOPOLE" & midspanSlot).OFFSET(1, 0), "-", "")) <> "" Then
                         If midspanText <> "" Then midspanText = midspanText & vbLf
                         midspanText = midspanText & Utilities.inchesToFeetInches(moddedMidspans(midspanSlot)) & " " & direction
                     End If
@@ -1587,12 +1587,12 @@ Private Sub UpdateMods_Click()
         For Each clearanceMidspan In weps
             If clearanceMidspan > 0 Then
                 If clearanceMidspans.exists(clearanceMidspan) Then
-                    If sheet.Range("CMMIDSPAN" & clearanceMidspan).offset(-2, 0).Value <> "" Then
-                        If Split(sheet.Range("CMMIDSPAN" & clearanceMidspan).offset(-2, 0).Value, vbLf)(0) <> Utilities.inchesToFeetInches(clearanceMidspans(clearanceMidspan) - 30) Then
+                    If sheet.Range("CMMIDSPAN" & clearanceMidspan).OFFSET(-2, 0).Value <> "" Then
+                        If Split(sheet.Range("CMMIDSPAN" & clearanceMidspan).OFFSET(-2, 0).Value, vbLf)(0) <> Utilities.inchesToFeetInches(clearanceMidspans(clearanceMidspan) - 30) Then
                             newPower = ""
-                            newPower = Split(sheet.Range("CMMIDSPAN" & clearanceMidspan).offset(-2, 0).Value, vbLf)(0)
+                            newPower = Split(sheet.Range("CMMIDSPAN" & clearanceMidspan).OFFSET(-2, 0).Value, vbLf)(0)
                             If newPower <> "" Then newPower = newPower & vbLf
-                            sheet.Range("CMMIDSPAN" & clearanceMidspan).offset(-2, 0).Value = newPower & Utilities.inchesToFeetInches(clearanceMidspans(clearanceMidspan) - 30)
+                            sheet.Range("CMMIDSPAN" & clearanceMidspan).OFFSET(-2, 0).Value = newPower & Utilities.inchesToFeetInches(clearanceMidspans(clearanceMidspan) - 30)
                         End If
                     End If
                 End If
