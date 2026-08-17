@@ -36,32 +36,32 @@ End Sub
 Public Sub decideTabColor(sh As Worksheet)
     On Error Resume Next
 
-    If Trim(sh.Range("DL")) <> "" And ThisWorkbook.sheets("Control").Range("COLOR1").offset(0, 1).Interior.ColorIndex <> xlNone Then
-        If sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR1").offset(0, 1).Interior.color Then sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR1").offset(0, 1).Interior.color
+    If Trim(sh.Range("DL")) <> "" And ThisWorkbook.sheets("Control").Range("COLOR1").OFFSET(0, 1).Interior.ColorIndex <> xlNone Then
+        If sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR1").OFFSET(0, 1).Interior.color Then sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR1").OFFSET(0, 1).Interior.color
         If sh.name <> Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")" Then sh.name = Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")"
-    ElseIf sh.Range("SUMSHEET9") = True And ThisWorkbook.sheets("Control").Range("COLOR2").offset(0, 1).Interior.ColorIndex <> xlNone Then
-        If sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR2").offset(0, 1).Interior.color Then sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR2").offset(0, 1).Interior.color
+    ElseIf sh.Range("SUMSHEET9") = True And ThisWorkbook.sheets("Control").Range("COLOR2").OFFSET(0, 1).Interior.ColorIndex <> xlNone Then
+        If sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR2").OFFSET(0, 1).Interior.color Then sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR2").OFFSET(0, 1).Interior.color
         If Trim(sh.Range("DL")) <> "" Then
             If sh.name <> Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")" Then sh.name = Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")"
         Else
             If sh.name <> Trim(sh.Range("POLENUM")) Then sh.name = Trim(sh.Range("POLENUM"))
         End If
-    ElseIf sh.Range("SUMSHEET8") = True And ThisWorkbook.sheets("Control").Range("COLOR3").offset(0, 1).Interior.ColorIndex <> xlNone Then
-        If sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR3").offset(0, 1).Interior.color Then sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR3").offset(0, 1).Interior.color
+    ElseIf sh.Range("SUMSHEET8") = True And ThisWorkbook.sheets("Control").Range("COLOR3").OFFSET(0, 1).Interior.ColorIndex <> xlNone Then
+        If sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR3").OFFSET(0, 1).Interior.color Then sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR3").OFFSET(0, 1).Interior.color
         If Trim(sh.Range("DL")) <> "" Then
             If sh.name <> Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")" Then sh.name = Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")"
         Else
             If sh.name <> Trim(sh.Range("POLENUM")) Then sh.name = Trim(sh.Range("POLENUM"))
         End If
-    ElseIf sh.Range("SUMSHEET4") = True And ThisWorkbook.sheets("Control").Range("COLOR4").offset(0, 1).Interior.ColorIndex <> xlNone Then
-        If sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR4").offset(0, 1).Interior.color Then sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR4").offset(0, 1).Interior.color
+    ElseIf sh.Range("SUMSHEET4") = True And ThisWorkbook.sheets("Control").Range("COLOR4").OFFSET(0, 1).Interior.ColorIndex <> xlNone Then
+        If sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR4").OFFSET(0, 1).Interior.color Then sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR4").OFFSET(0, 1).Interior.color
         If Trim(sh.Range("DL")) <> "" Then
             If sh.name <> Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")" Then sh.name = Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")"
         Else
             If sh.name <> Trim(sh.Range("POLENUM")) Then sh.name = Trim(sh.Range("POLENUM"))
         End If
-    ElseIf (sh.Range("SUMSHEET1") = True Or sh.Range("SUMSHEET7") = True) And ThisWorkbook.sheets("Control").Range("COLOR5").offset(0, 1).Interior.ColorIndex <> xlNone Then
-        If sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR5").offset(0, 1).Interior.color Then sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR5").offset(0, 1).Interior.color
+    ElseIf (sh.Range("SUMSHEET1") = True Or sh.Range("SUMSHEET7") = True) And ThisWorkbook.sheets("Control").Range("COLOR5").OFFSET(0, 1).Interior.ColorIndex <> xlNone Then
+        If sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR5").OFFSET(0, 1).Interior.color Then sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR5").OFFSET(0, 1).Interior.color
         If Trim(sh.Range("DL")) <> "" Then
             If sh.name <> Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")" Then sh.name = Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")"
         Else
