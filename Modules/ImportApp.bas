@@ -36,7 +36,7 @@ Sub ImportApplication()
     Dim applicationWs As Worksheet: Set applicationWs = applicationWb.sheets(1)
     
     Dim i As Integer
-    Dim applicationWsLastRow As Integer: applicationWsLastRow = applicationWs.Cells(applicationWs.Rows.count, "A").End(xlUp).row
+    Dim applicationWsLastRow As Integer: applicationWsLastRow = applicationWs.Cells(applicationWs.Rows.count, "A").End(xlUp).ROW
     Dim applicationWsLastCol As Integer: applicationWsLastCol = applicationWs.Cells(1, applicationWs.Columns.count).End(xlToLeft).Column
     Dim applicationWsHeaders As Scripting.Dictionary: Set applicationWsHeaders = New Scripting.Dictionary
     For i = 1 To applicationWsLastCol
@@ -119,8 +119,8 @@ Sub ImportApplication()
                         If Utilities.RangeExists(sheet, "TOPOLE" & k) Then
                             fromPoleNumber = ThisWorkbook.RemoveParentheses(sheet.Range("TOPOLE" & k).Value)
                             If CStr(fromPoleNumber) = CStr(fromPoleSheetName) Then
-                                sheet.Range("TOPOLE" & k).offset(1, 0).Value = CleanFeetInches(applicationWs.Cells(j, applicationWsHeaders("MIDSPAN")))
-                                sheet.Range("TOPOLE" & k).offset(2, 0).Value = applicationWs.Cells(j, applicationWsHeaders("TENSION"))
+                                sheet.Range("TOPOLE" & k).OFFSET(1, 0).Value = CleanFeetInches(applicationWs.Cells(j, applicationWsHeaders("MIDSPAN")))
+                                sheet.Range("TOPOLE" & k).OFFSET(2, 0).Value = applicationWs.Cells(j, applicationWsHeaders("TENSION"))
                                 Exit For
                             End If
                         Else
@@ -135,8 +135,8 @@ Sub ImportApplication()
                 If Utilities.RangeExists(sheet, "TOPOLE" & j) Then
                     toPoleNumber = ThisWorkbook.RemoveParentheses(sheet.Range("TOPOLE" & j).Value)
                     If CStr(toPoleNumber) = CStr(toPoleSheetName) Then
-                        sheet.Range("TOPOLE" & j).offset(1, 0).Value = CleanFeetInches(applicationWs.Cells(i, applicationWsHeaders("MIDSPAN")))
-                        sheet.Range("TOPOLE" & j).offset(2, 0).Value = applicationWs.Cells(i, applicationWsHeaders("TENSION"))
+                        sheet.Range("TOPOLE" & j).OFFSET(1, 0).Value = CleanFeetInches(applicationWs.Cells(i, applicationWsHeaders("MIDSPAN")))
+                        sheet.Range("TOPOLE" & j).OFFSET(2, 0).Value = applicationWs.Cells(i, applicationWsHeaders("TENSION"))
                         added = True
                         Exit For
                     End If
@@ -149,10 +149,10 @@ Sub ImportApplication()
                 For j = 1 To 12
                     If Utilities.RangeExists(sheet, "TOPOLE" & j) Then
                         toPoleNumber = ThisWorkbook.RemoveParentheses(sheet.Range("TOPOLE" & j).Value)
-                        If sheet.Range("TOPOLE" & j).offset(1, 0).Value = "" Then
+                        If sheet.Range("TOPOLE" & j).OFFSET(1, 0).Value = "" Then
                             If Not Utilities.SheetExists(CStr(toPoleNumber)) Or Not Utilities.RangeExists(sheet, "TOPOLE" & j + 1) Then
-                                sheet.Range("TOPOLE" & j).offset(1, 0).Value = CleanFeetInches(applicationWs.Cells(i, applicationWsHeaders("MIDSPAN"))) & " (GUESS)"
-                                sheet.Range("TOPOLE" & j).offset(2, 0).Value = applicationWs.Cells(i, applicationWsHeaders("TENSION"))
+                                sheet.Range("TOPOLE" & j).OFFSET(1, 0).Value = CleanFeetInches(applicationWs.Cells(i, applicationWsHeaders("MIDSPAN"))) & " (GUESS)"
+                                sheet.Range("TOPOLE" & j).OFFSET(2, 0).Value = applicationWs.Cells(i, applicationWsHeaders("TENSION"))
                                 Exit For
                             End If
                         End If
@@ -179,18 +179,18 @@ Private Sub clearApp()
         If Utilities.IsPDS(sheet) Then
             For i = 1 To 12
                 If Utilities.RangeExists(sheet, "TOPOLE" & i) Then
-                    sheet.Range("TOPOLE" & i).offset(1, 0).Value = ""
-                    sheet.Range("TOPOLE" & i).offset(2, 0).Value = ""
+                    sheet.Range("TOPOLE" & i).OFFSET(1, 0).Value = ""
+                    sheet.Range("TOPOLE" & i).OFFSET(2, 0).Value = ""
                 Else
                     Exit For
                 End If
             Next i
             sheet.Range("NEWAPPSIZE").Value = ""
-            sheet.Range("NEWAPPSIZE").offset(1, 0).Value = ""
+            sheet.Range("NEWAPPSIZE").OFFSET(1, 0).Value = ""
             sheet.Range("NEWAPPLEAD").Value = ""
-            sheet.Range("NEWAPPLEAD").offset(1, 0).Value = ""
+            sheet.Range("NEWAPPLEAD").OFFSET(1, 0).Value = ""
             sheet.Range("NEWAPPDIR").Value = ""
-            sheet.Range("NEWAPPDIR").offset(1, 0).Value = ""
+            sheet.Range("NEWAPPDIR").OFFSET(1, 0).Value = ""
             sheet.Range("PROPOSEDHEIGHT").Value = ""
             sheet.Range("PROPOSEDDIAMETER").Value = ""
             sheet.Range("EXISTINGDIAMETER").Value = ""
@@ -207,7 +207,7 @@ Private Function CleanFeetInches(inputStr As String) As String
         ' Match optional space + foot symbol + optional space + optional dash + optional space + inch digits + optional inch symbol
         .Pattern = "(\d+)\s*['’`]\s*[-]?\s*(\d+)\s*(?:[""”]|''){0,1}"
     End With
-    If regex.Test(inputStr) Then
+    If regex.test(inputStr) Then
         CleanFeetInches = regex.Replace(inputStr, "$1'$2""")
     Else
         CleanFeetInches = inputStr
