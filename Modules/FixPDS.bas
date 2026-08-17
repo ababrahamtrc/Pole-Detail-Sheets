@@ -33,16 +33,16 @@ Public Sub fixAttachmentHeights()
     Dim midspans As Scripting.Dictionary
     
     For i = 1 To 100
-        If sheet.Range("UTTYPE").offset(i - 1, 0).Interior.color <> 16312794 Then Exit For
-        If Trim(sheet.Range("UTHEIGHT").offset(i - 1, 0).Value) <> "" Then
+        If sheet.Range("UTTYPE").OFFSET(i - 1, 0).Interior.color <> 16312794 Then Exit For
+        If Trim(sheet.Range("UTHEIGHT").OFFSET(i - 1, 0).Value) <> "" Then
             Set comp = New Component
-            comp.height = Utilities.convertToInches(ThisWorkbook.RemoveParentheses(sheet.Range("UTHEIGHT").offset(i - 1, 0).text))
-            comp.bottomHeight = Utilities.convertToInches(ThisWorkbook.InsideParentheses(sheet.Range("UTHEIGHT").offset(i - 1, 0).text))
-            comp.componentType = sheet.Range("UTTYPE").offset(i - 1, 0).text
-            comp.size = sheet.Range("UTSIZE").offset(i - 1, 0).text
+            comp.height = Utilities.convertToInches(ThisWorkbook.RemoveParentheses(sheet.Range("UTHEIGHT").OFFSET(i - 1, 0).text))
+            comp.bottomHeight = Utilities.convertToInches(ThisWorkbook.InsideParentheses(sheet.Range("UTHEIGHT").OFFSET(i - 1, 0).text))
+            comp.componentType = sheet.Range("UTTYPE").OFFSET(i - 1, 0).text
+            comp.size = sheet.Range("UTSIZE").OFFSET(i - 1, 0).text
             key = comp.height & comp.componentType & comp.size
             For j = 1 To spans
-                midspan = sheet.Range("UTMIDSPAN" & j).offset(i - 1, 0).text
+                midspan = sheet.Range("UTMIDSPAN" & j).OFFSET(i - 1, 0).text
                 If midspan = "" Then midspan = "-"
                 comp.midspans.Add j, midspan
             Next j
@@ -72,16 +72,16 @@ Public Sub fixAttachmentHeights()
     Next i
     
     For i = 1 To 100
-        If sheet.Range("CMOWNER").offset(i - 1, 0).Interior.color <> 16312794 Then Exit For
-        If Trim(sheet.Range("CMHEIGHT").offset(i - 1, 0).Value) <> "" Then
+        If sheet.Range("CMOWNER").OFFSET(i - 1, 0).Interior.color <> 16312794 Then Exit For
+        If Trim(sheet.Range("CMHEIGHT").OFFSET(i - 1, 0).Value) <> "" Then
             Set comp = New Component
-            comp.height = Utilities.convertToInches(ThisWorkbook.RemoveParentheses(sheet.Range("CMHEIGHT").offset(i - 1, 0).text))
-            comp.bottomHeight = Utilities.convertToInches(ThisWorkbook.InsideParentheses(sheet.Range("CMHEIGHT").offset(i - 1, 0).text))
-            comp.owner = sheet.Range("CMOWNER").offset(i - 1, 0).text
-            comp.size = sheet.Range("CMSIZE").offset(i - 1, 0).text
+            comp.height = Utilities.convertToInches(ThisWorkbook.RemoveParentheses(sheet.Range("CMHEIGHT").OFFSET(i - 1, 0).text))
+            comp.bottomHeight = Utilities.convertToInches(ThisWorkbook.InsideParentheses(sheet.Range("CMHEIGHT").OFFSET(i - 1, 0).text))
+            comp.owner = sheet.Range("CMOWNER").OFFSET(i - 1, 0).text
+            comp.size = sheet.Range("CMSIZE").OFFSET(i - 1, 0).text
             key = comp.height & comp.owner & comp.size
             For j = 1 To spans
-                midspan = sheet.Range("CMMIDSPAN" & j).offset(i - 1, 0).text
+                midspan = sheet.Range("CMMIDSPAN" & j).OFFSET(i - 1, 0).text
                 If midspan = "" Then midspan = "-"
                 comp.midspans.Add j, midspan
             Next j
@@ -114,60 +114,60 @@ Public Sub fixAttachmentHeights()
     Set commComponents = Utilities.sortComponents(commComponentsDict)
    
     For i = 1 To 100
-        If sheet.Range("UTTYPE").offset(i - 1, 0).Interior.color <> 16312794 Then Exit For
+        If sheet.Range("UTTYPE").OFFSET(i - 1, 0).Interior.color <> 16312794 Then Exit For
         If i <= utilityComponents.count Then
             Set comp = utilityComponents(i)
             displayHeight = Utilities.inchesToFeetInches(comp.height)
             If comp.bottomHeight > 0 Then displayHeight = displayHeight & "(" & Utilities.inchesToFeetInches(comp.bottomHeight) & ")"
             
-            If sheet.Range("UTHEIGHT").offset(i - 1, 0).text <> displayHeight Then sheet.Range("UTHEIGHT").offset(i - 1, 0) = displayHeight
-            If sheet.Range("UTTYPE").offset(i - 1, 0).text <> comp.componentType Then sheet.Range("UTTYPE").offset(i - 1, 0) = comp.componentType
-            If sheet.Range("UTSIZE").offset(i - 1, 0).text <> comp.size Then sheet.Range("UTSIZE").offset(i - 1, 0) = comp.size
+            If sheet.Range("UTHEIGHT").OFFSET(i - 1, 0).text <> displayHeight Then sheet.Range("UTHEIGHT").OFFSET(i - 1, 0) = displayHeight
+            If sheet.Range("UTTYPE").OFFSET(i - 1, 0).text <> comp.componentType Then sheet.Range("UTTYPE").OFFSET(i - 1, 0) = comp.componentType
+            If sheet.Range("UTSIZE").OFFSET(i - 1, 0).text <> comp.size Then sheet.Range("UTSIZE").OFFSET(i - 1, 0) = comp.size
             For j = 1 To comp.midspans.count
-                If sheet.Range("UTMIDSPAN" & j).offset(i - 1, 0).text <> comp.midspans(j) Then sheet.Range("UTMIDSPAN" & j).offset(i - 1, 0) = comp.midspans(j)
+                If sheet.Range("UTMIDSPAN" & j).OFFSET(i - 1, 0).text <> comp.midspans(j) Then sheet.Range("UTMIDSPAN" & j).OFFSET(i - 1, 0) = comp.midspans(j)
                 If comp.midspans(j) <> "-" Then
-                    If sheet.Range("UTMIDSPAN" & j).offset(i - 1, 0).HorizontalAlignment <> xlLeft Then sheet.Range("UTMIDSPAN" & j).offset(i - 1, 0).HorizontalAlignment = xlLeft
+                    If sheet.Range("UTMIDSPAN" & j).OFFSET(i - 1, 0).HorizontalAlignment <> xlLeft Then sheet.Range("UTMIDSPAN" & j).OFFSET(i - 1, 0).HorizontalAlignment = xlLeft
                 Else
-                    If sheet.Range("UTMIDSPAN" & j).offset(i - 1, 0).HorizontalAlignment <> xlCenter Then sheet.Range("UTMIDSPAN" & j).offset(i - 1, 0).HorizontalAlignment = xlCenter
+                    If sheet.Range("UTMIDSPAN" & j).OFFSET(i - 1, 0).HorizontalAlignment <> xlCenter Then sheet.Range("UTMIDSPAN" & j).OFFSET(i - 1, 0).HorizontalAlignment = xlCenter
                 End If
             Next j
         Else
-            If sheet.Range("UTHEIGHT").offset(i - 1, 0).text <> "" Then sheet.Range("UTHEIGHT").offset(i - 1, 0) = ""
-            If sheet.Range("UTTYPE").offset(i - 1, 0).text <> "" Then sheet.Range("UTTYPE").offset(i - 1, 0) = ""
-            If sheet.Range("UTSIZE").offset(i - 1, 0).text <> "" Then sheet.Range("UTSIZE").offset(i - 1, 0) = ""
+            If sheet.Range("UTHEIGHT").OFFSET(i - 1, 0).text <> "" Then sheet.Range("UTHEIGHT").OFFSET(i - 1, 0) = ""
+            If sheet.Range("UTTYPE").OFFSET(i - 1, 0).text <> "" Then sheet.Range("UTTYPE").OFFSET(i - 1, 0) = ""
+            If sheet.Range("UTSIZE").OFFSET(i - 1, 0).text <> "" Then sheet.Range("UTSIZE").OFFSET(i - 1, 0) = ""
             For j = 1 To comp.midspans.count
-                If sheet.Range("UTMIDSPAN" & j).offset(i - 1, 0).text <> "" Then sheet.Range("UTMIDSPAN" & j).offset(i - 1, 0) = ""
-                If sheet.Range("UTMIDSPAN" & j).offset(i - 1, 0).HorizontalAlignment <> xlCenter Then sheet.Range("UTMIDSPAN" & j).offset(i - 1, 0).HorizontalAlignment = xlCenter
+                If sheet.Range("UTMIDSPAN" & j).OFFSET(i - 1, 0).text <> "" Then sheet.Range("UTMIDSPAN" & j).OFFSET(i - 1, 0) = ""
+                If sheet.Range("UTMIDSPAN" & j).OFFSET(i - 1, 0).HorizontalAlignment <> xlCenter Then sheet.Range("UTMIDSPAN" & j).OFFSET(i - 1, 0).HorizontalAlignment = xlCenter
             Next j
         End If
     Next i
     
     For i = 1 To 100
-        If sheet.Range("CMOWNER").offset(i - 1, 0).Interior.color <> 16312794 Then Exit For
-        If sheet.Range("CMOWNER").offset(i - 1, -1).Value <> CStr(i) Then sheet.Range("CMOWNER").offset(i - 1, -1).Value = i
+        If sheet.Range("CMOWNER").OFFSET(i - 1, 0).Interior.color <> 16312794 Then Exit For
+        If sheet.Range("CMOWNER").OFFSET(i - 1, -1).Value <> CStr(i) Then sheet.Range("CMOWNER").OFFSET(i - 1, -1).Value = i
         If i <= commComponents.count Then
             Set comp = commComponents(i)
             displayHeight = Utilities.inchesToFeetInches(comp.height)
             If comp.bottomHeight > 0 Then displayHeight = displayHeight & "(" & Utilities.inchesToFeetInches(comp.bottomHeight) & ")"
             
-            If sheet.Range("CMHEIGHT").offset(i - 1, 0).Value <> displayHeight Then sheet.Range("CMHEIGHT").offset(i - 1, 0).Value = displayHeight
-            If sheet.Range("CMOWNER").offset(i - 1, 0).Value <> comp.owner Then sheet.Range("CMOWNER").offset(i - 1, 0).Value = comp.owner
-            If sheet.Range("CMSIZE").offset(i - 1, 0).Value <> comp.size Then sheet.Range("CMSIZE").offset(i - 1, 0) = comp.size
+            If sheet.Range("CMHEIGHT").OFFSET(i - 1, 0).Value <> displayHeight Then sheet.Range("CMHEIGHT").OFFSET(i - 1, 0).Value = displayHeight
+            If sheet.Range("CMOWNER").OFFSET(i - 1, 0).Value <> comp.owner Then sheet.Range("CMOWNER").OFFSET(i - 1, 0).Value = comp.owner
+            If sheet.Range("CMSIZE").OFFSET(i - 1, 0).Value <> comp.size Then sheet.Range("CMSIZE").OFFSET(i - 1, 0) = comp.size
             For j = 1 To comp.midspans.count
-                If sheet.Range("CMMIDSPAN" & j).offset(i - 1, 0).text <> comp.midspans(j) Then sheet.Range("CMMIDSPAN" & j).offset(i - 1, 0) = comp.midspans(j)
+                If sheet.Range("CMMIDSPAN" & j).OFFSET(i - 1, 0).text <> comp.midspans(j) Then sheet.Range("CMMIDSPAN" & j).OFFSET(i - 1, 0) = comp.midspans(j)
                 If comp.midspans(j) <> "-" Then
-                    If sheet.Range("CMMIDSPAN" & j).offset(i - 1, 0).HorizontalAlignment <> xlLeft Then sheet.Range("CMMIDSPAN" & j).offset(i - 1, 0).HorizontalAlignment = xlLeft
+                    If sheet.Range("CMMIDSPAN" & j).OFFSET(i - 1, 0).HorizontalAlignment <> xlLeft Then sheet.Range("CMMIDSPAN" & j).OFFSET(i - 1, 0).HorizontalAlignment = xlLeft
                 Else
-                    If sheet.Range("CMMIDSPAN" & j).offset(i - 1, 0).HorizontalAlignment <> xlCenter Then sheet.Range("CMMIDSPAN" & j).offset(i - 1, 0).HorizontalAlignment = xlCenter
+                    If sheet.Range("CMMIDSPAN" & j).OFFSET(i - 1, 0).HorizontalAlignment <> xlCenter Then sheet.Range("CMMIDSPAN" & j).OFFSET(i - 1, 0).HorizontalAlignment = xlCenter
                 End If
             Next j
         Else
-            If sheet.Range("CMHEIGHT").offset(i - 1, 0).text <> "" Then sheet.Range("CMHEIGHT").offset(i - 1, 0) = ""
-            If sheet.Range("CMOWNER").offset(i - 1, 0).text <> "" Then sheet.Range("CMOWNER").offset(i - 1, 0) = ""
-            If sheet.Range("CMSIZE").offset(i - 1, 0).text <> "" Then sheet.Range("CMSIZE").offset(i - 1, 0) = ""
+            If sheet.Range("CMHEIGHT").OFFSET(i - 1, 0).text <> "" Then sheet.Range("CMHEIGHT").OFFSET(i - 1, 0) = ""
+            If sheet.Range("CMOWNER").OFFSET(i - 1, 0).text <> "" Then sheet.Range("CMOWNER").OFFSET(i - 1, 0) = ""
+            If sheet.Range("CMSIZE").OFFSET(i - 1, 0).text <> "" Then sheet.Range("CMSIZE").OFFSET(i - 1, 0) = ""
             For j = 1 To comp.midspans.count
-                If sheet.Range("CMMIDSPAN" & j).offset(i - 1, 0).text <> "" Then sheet.Range("CMMIDSPAN" & j).offset(i - 1, 0) = ""
-                If sheet.Range("CMMIDSPAN" & j).offset(i - 1, 0).HorizontalAlignment <> xlCenter Then sheet.Range("CMMIDSPAN" & j).offset(i - 1, 0).HorizontalAlignment = xlCenter
+                If sheet.Range("CMMIDSPAN" & j).OFFSET(i - 1, 0).text <> "" Then sheet.Range("CMMIDSPAN" & j).OFFSET(i - 1, 0) = ""
+                If sheet.Range("CMMIDSPAN" & j).OFFSET(i - 1, 0).HorizontalAlignment <> xlCenter Then sheet.Range("CMMIDSPAN" & j).OFFSET(i - 1, 0).HorizontalAlignment = xlCenter
             Next j
         End If
     Next i
