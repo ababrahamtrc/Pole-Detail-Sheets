@@ -25,7 +25,7 @@ End Sub
 Public Sub extractFromSheets()
     Dim sheet As Worksheet
     Dim pole As pole
-    
+
     For Each sheet In ThisWorkbook.sheets
         If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" And sheet.Cells(2, 2).Value = "Notification:" Then
             Set pole = New pole
@@ -41,10 +41,41 @@ Public Sub extractFromSheets()
     Next sheet
     
     Dim Span As Span
+    Dim otherPole As pole
     Dim otherSpan As Span
+    For Each pole In Me.poles
+        If pole.latitude = 0 Or pole.longitude = 0 Then
+            For Each Span In pole.spans
+                Set otherPole = Me.findPole(Span.otherPole)
+                If Not otherPole Is Nothing Then
+                    For Each otherSpan In otherPole.spans
+                        If otherSpan.otherPole = pole.poleNumber Then
+                            If otherPole.latitude <> 0 And otherPole.longitude <> 0 Then
+                                R = 20902231#
+                                PI = 4# * Atn(1#)
+                                
+                                radLat = otherPole.latitude * PI / 180#
+                                radLon = otherPole.longitude * PI / 180#
+                                radAngle = otherSpan.angle * PI / 180#
+                                
+                                dLat = (otherSpan.distance * Cos(radAngle)) / R
+                                dLon = (otherSpan.distance * Sin(radAngle)) / (R * Cos(radLat))
+                                
+                                pole.latitude = otherPole.latitude + (dLat * 180# / PI)
+                                pole.longitude = otherPole.longitude + (dLon * 180# / PI)
+                                results = LatLonToMI2253(pole.latitude, pole.longitude)
+                                pole.x = results(0)
+                                pole.y = results(1)
+                            End If
+                        End If
+                    Next otherSpan
+                End If
+            Next Span
+        End If
+    Next pole
+    
     Dim otherSpan2 As Span
     Dim otherSpan3 As Span
-    Dim otherPole As pole
     Dim otherPole2 As pole
     Dim otherPole3 As pole
     Dim wire As wire
@@ -216,33 +247,33 @@ End Function
 
 Public Sub extractImportDataFormat()
     Set jobWs = ThisWorkbook.sheets("Job Info")
-    jobWsLastRow = jobWs.Cells(jobWs.Rows.count, "A").End(xlUp).row
+    jobWsLastRow = jobWs.Cells(jobWs.Rows.count, "A").End(xlUp).ROW
 
     Set colWs = ThisWorkbook.sheets("Collection")
-    colWsLastRow = colWs.Cells(colWs.Rows.count, "A").End(xlUp).row
+    colWsLastRow = colWs.Cells(colWs.Rows.count, "A").End(xlUp).ROW
     
     Set spanWs = ThisWorkbook.sheets("Span")
-    spanWsLastRow = spanWs.Cells(spanWs.Rows.count, "A").End(xlUp).row
+    spanWsLastRow = spanWs.Cells(spanWs.Rows.count, "A").End(xlUp).ROW
     spanWsRow = 2
     
     Set spanComWs = ThisWorkbook.sheets("Span.Communication")
-    spanComWsLastRow = spanComWs.Cells(spanComWs.Rows.count, "A").End(xlUp).row
+    spanComWsLastRow = spanComWs.Cells(spanComWs.Rows.count, "A").End(xlUp).ROW
     spanComWsRow = 2
     
     Set spanPowWs = ThisWorkbook.sheets("Span.Power Circuit")
-    spanPowWsLastRow = spanPowWs.Cells(spanPowWs.Rows.count, "A").End(xlUp).row
+    spanPowWsLastRow = spanPowWs.Cells(spanPowWs.Rows.count, "A").End(xlUp).ROW
     spanPowWsRow = 2
     
     Set anchorWs = ThisWorkbook.sheets("Anchor")
-    anchorWsLastRow = anchorWs.Cells(anchorWs.Rows.count, "A").End(xlUp).row
+    anchorWsLastRow = anchorWs.Cells(anchorWs.Rows.count, "A").End(xlUp).ROW
     anchorWsRow = 2
     
     Set guyWs = ThisWorkbook.sheets("Anchor.Guys")
-    guyWsLastRow = guyWs.Cells(guyWs.Rows.count, "A").End(xlUp).row
+    guyWsLastRow = guyWs.Cells(guyWs.Rows.count, "A").End(xlUp).ROW
     guyWsRow = 2
     
     Set equipmentWs = ThisWorkbook.sheets("Equipment")
-    equipmentWsLastRow = equipmentWs.Cells(equipmentWs.Rows.count, "A").End(xlUp).row
+    equipmentWsLastRow = equipmentWs.Cells(equipmentWs.Rows.count, "A").End(xlUp).ROW
     equipmentWsRow = 2
     
     Me.jobLocation = jobWs.Cells(2, 2)
@@ -489,20 +520,20 @@ Public Sub extractImportDataFormat()
         For equipmentWsRow = equipmentWsRow To equipmentWsLastRow
             If equipmentWs.Cells(equipmentWsRow, 1) <> pole.poleNumber Then Exit For
             
-            Dim equipment As equipment: Set equipment = New equipment
+            Dim Equipment As Equipment: Set Equipment = New Equipment
             
             parts = Split(equipmentWs.Cells(equipmentWsRow, 2), " > ")
-            equipment.componentType = parts(0)
-            equipment.size = parts(1)
-            equipment.height = equipmentWs.Cells(equipmentWsRow, 3)
-            equipment.bottomHeight = equipmentWs.Cells(equipmentWsRow, 4)
-            equipment.owner = equipmentWs.Cells(equipmentWsRow, 5)
+            Equipment.componentType = parts(0)
+            Equipment.size = parts(1)
+            Equipment.height = equipmentWs.Cells(equipmentWsRow, 3)
+            Equipment.bottomHeight = equipmentWs.Cells(equipmentWsRow, 4)
+            Equipment.owner = equipmentWs.Cells(equipmentWsRow, 5)
             
-            pole.equipments.Add equipment
-            If equipment.owner = "" Or UCase(equipment.owner) = "CONSUMERS ENERGY" Then
-                pole.utilComponents.Add equipment
+            pole.equipments.Add Equipment
+            If Equipment.owner = "" Or UCase(Equipment.owner) = "CONSUMERS ENERGY" Then
+                pole.utilComponents.Add Equipment
             Else
-                pole.commComponents.Add equipment
+                pole.commComponents.Add Equipment
             End If
         Next equipmentWsRow
         
@@ -516,7 +547,7 @@ Public Sub fillImportDataFormat()
     Dim wire As wire
     Dim anchor As anchor
     Dim guy As guy
-    Dim equipment As equipment
+    Dim Equipment As Equipment
     Dim primaryBundles As Scripting.Dictionary
     
     Set colWs = ThisWorkbook.sheets("Collection")
@@ -741,15 +772,15 @@ Public Sub fillImportDataFormat()
             guysRow = guysRow + 1
         Next guy
         
-        For Each equipment In pole.equipments
+        For Each Equipment In pole.equipments
             equipmentWs.Cells(equipmentRow, 1).Value = pole.poleNumber
-            equipmentWs.Cells(equipmentRow, 2).Value = equipment.componentType & " > " & equipment.size
-            equipmentWs.Cells(equipmentRow, 3).Value = equipment.height
-            equipmentWs.Cells(equipmentRow, 4).Value = equipment.bottomHeight
-            equipmentWs.Cells(equipmentRow, 5).Value = IIf(equipment.owner = "", "Consumers Energy", equipment.owner)
+            equipmentWs.Cells(equipmentRow, 2).Value = Equipment.componentType & " > " & Equipment.size
+            equipmentWs.Cells(equipmentRow, 3).Value = Equipment.height
+            equipmentWs.Cells(equipmentRow, 4).Value = Equipment.bottomHeight
+            equipmentWs.Cells(equipmentRow, 5).Value = IIf(Equipment.owner = "", "Consumers Energy", Equipment.owner)
             
             equipmentRow = equipmentRow + 1
-        Next equipment
+        Next Equipment
     
         colRow = colRow + 1
     Next pole
