@@ -30,7 +30,7 @@ Sub DownloadOutageLists()
                         For Each tlm In locationTLMs(pole.location)
                             If serviceTLM = tlm Then
                                 count = count + 1
-                                Dim row As Collection: Set row = New Collection
+                                Dim ROW As Collection: Set ROW = New Collection
                                  
                                 accountNumber = jsonFeature("attributes")("geoAIM_ElecDist.ELECDIST.ServiceAddress.ACCOUNTNUMBER")
                                 accountType = jsonFeature("attributes")("geoAIM_ElecDist.ELECDIST.ServiceAddress.ACCOUNTTYPE")
@@ -50,32 +50,32 @@ Sub DownloadOutageLists()
                                     meter = parts(UBound(parts))
                                 End If
                                 phase = jsonFeature("attributes")("geoAIM_ElecDist.ELECDIST.ServicePoint.PHASEDESIGNATION")
-                                Group = "Other"
+                                group = "Other"
                                  
                                 If accountNumber <> "" Then
                                  
-                                   row.Add accountNumber
-                                   row.Add accountType
-                                   row.Add lastName
-                                   row.Add firstName
-                                   row.Add street
-                                   row.Add city
-                                   row.Add "MI"
-                                   row.Add postalCode
-                                   row.Add telephone1
-                                   row.Add telephone2
-                                   row.Add telephone3
-                                   row.Add telephone4
-                                   row.Add ""
-                                   row.Add ""
-                                   row.Add connectStatus
-                                   row.Add meter
-                                   row.Add ""
-                                   row.Add serviceTLM
-                                   row.Add phase
-                                   row.Add Group
+                                   ROW.Add accountNumber
+                                   ROW.Add accountType
+                                   ROW.Add lastName
+                                   ROW.Add firstName
+                                   ROW.Add street
+                                   ROW.Add city
+                                   ROW.Add "MI"
+                                   ROW.Add postalCode
+                                   ROW.Add telephone1
+                                   ROW.Add telephone2
+                                   ROW.Add telephone3
+                                   ROW.Add telephone4
+                                   ROW.Add ""
+                                   ROW.Add ""
+                                   ROW.Add connectStatus
+                                   ROW.Add meter
+                                   ROW.Add ""
+                                   ROW.Add serviceTLM
+                                   ROW.Add phase
+                                   ROW.Add group
                                     
-                                   outageList.Add row
+                                   outageList.Add ROW
                                 End If
                             End If
                         Next tlm
