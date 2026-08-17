@@ -28,7 +28,7 @@ Sub MikeLExcel()
     colors.Add RGB(202, 237, 251)
     
     Dim Notification As String: Notification = ""
-    Dim row As Integer: row = 2
+    Dim ROW As Integer: ROW = 2
     
     Dim locations As Collection: Set locations = New Collection
     Dim treeWorkLocations As Collection: Set treeWorkLocations = New Collection
@@ -90,8 +90,8 @@ Sub MikeLExcel()
             Exit Sub
         End If
     
-        Call generateMikeLExcelRow(MikeLExcel, row, "P" & sheet.Range("POLENUM").Value & "-L" & sheet.Range("DL").Value, sheet.Range("ALTONE").Value)
-        row = row + 1
+        Call generateMikeLExcelRow(MikeLExcel, ROW, "P" & sheet.Range("POLENUM").Value & "-L" & sheet.Range("DL").Value, sheet.Range("ALTONE").Value)
+        ROW = ROW + 1
     Next location
     
     Dim project As project: Set project = New project
@@ -107,11 +107,11 @@ Sub MikeLExcel()
         If InStr(Replace(UCase(pole.alt1), " ", ""), "TRANSFERAGREEMENT") > 0 Then transferWorkLocations.Add pole.location
     Next pole
     
-    Call generateMikeLExcelRow(MikeLExcel, row, "TREE WORK LOCATIONS", combineList(treeWorkLocations))
-    Call generateMikeLExcelRow(MikeLExcel, row + 1, "TOP POLE LOCATIONS", combineList(topPoleWorkLocations))
-    Call generateMikeLExcelRow(MikeLExcel, row + 2, "CE COMM TRANSFER LOCATIONS", combineList(transferWorkLocations))
-    Call generateMikeLExcelRow(MikeLExcel, row + 3, "POLE REPLACEMENT LOCATIONS", combineList(poleReplacements))
-    Call generateMikeLExcelRow(MikeLExcel, row + 4, "OUTAGE LOCATIONS", combineList(outageWorkLocations))
+    Call generateMikeLExcelRow(MikeLExcel, ROW, "TREE WORK LOCATIONS", combineList(treeWorkLocations))
+    Call generateMikeLExcelRow(MikeLExcel, ROW + 1, "TOP POLE LOCATIONS", combineList(topPoleWorkLocations))
+    Call generateMikeLExcelRow(MikeLExcel, ROW + 2, "CE COMM TRANSFER LOCATIONS", combineList(transferWorkLocations))
+    Call generateMikeLExcelRow(MikeLExcel, ROW + 3, "POLE REPLACEMENT LOCATIONS", combineList(poleReplacements))
+    Call generateMikeLExcelRow(MikeLExcel, ROW + 4, "OUTAGE LOCATIONS", combineList(outageWorkLocations))
     
     
     MikeLExcel.sheets(1).Columns(2).ColumnWidth = 200
@@ -128,23 +128,23 @@ Sub MikeLExcel()
     
 End Sub
 
-Private Sub generateMikeLExcelRow(MikeLExcel As Workbook, row As Integer, value1 As String, value2 As String)
-    With MikeLExcel.sheets(1).Cells(row, 1)
+Private Sub generateMikeLExcelRow(MikeLExcel As Workbook, ROW As Integer, value1 As String, value2 As String)
+    With MikeLExcel.sheets(1).Cells(ROW, 1)
             .Value = value1
             .Font.name = "Calibri"
             .Font.size = 11
-            .Interior.color = colors((row Mod 2) + 1)
+            .Interior.color = colors((ROW Mod 2) + 1)
             .Borders.LineStyle = xlContinuous
             .Borders.Weight = xlThin
             .Borders.ColorIndex = 1
     End With
-    With MikeLExcel.sheets(1).Cells(row, 2)
+    With MikeLExcel.sheets(1).Cells(ROW, 2)
             .Value = value2
             .Font.name = "Arial"
             .Font.size = 9
             .VerticalAlignment = xlVAlignTop
             .HorizontalAlignment = xlHAlignLeft
-            .Interior.color = colors((row Mod 2) + 1)
+            .Interior.color = colors((ROW Mod 2) + 1)
             .Borders.LineStyle = xlContinuous
             .Borders.Weight = xlThin
             .Borders.ColorIndex = 1
