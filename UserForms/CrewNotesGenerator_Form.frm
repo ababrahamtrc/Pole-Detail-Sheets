@@ -16,7 +16,7 @@ Attribute VB_Exposed = False
 
 Dim pds As Worksheet
 Dim pole As pole
-Dim CrewNotes As String, installNotes As String, removeNotes As String, replaceNotes As String, transferNotes, notes As String
+Dim crewNotes As String, installNotes As String, removeNotes As String, replaceNotes As String, transferNotes, notes As String
 Dim ohsCount As Integer, dg11KCount As Integer, dg20KCount As Integer, spg11KCount As Integer, spg20KCount As Integer, replace11kCount As Integer, replace20kCount As Integer
 Dim priBool As Boolean, neutBool As Boolean, secBool As Boolean, owBool As Boolean, riserBool As Boolean
 Dim fuRP1 As Boolean, fuRP2 As Boolean, fuRP3 As Boolean, fuIN1 As Boolean, fuIN2 As Boolean, fuIN3 As Boolean, fuRM1 As Boolean, fuRM2 As Boolean, fuRM3 As Boolean
@@ -48,7 +48,7 @@ Public Sub Initialize(sheet As Worksheet)
     Me.MultiPage1.Value = 0
     Me.StartUpPosition = 0
     Me.Left = Application.Left + (0.5 * Application.Width) - (0.5 * Me.Width)
-    Me.Top = Application.Top + (0.5 * Application.height) - (0.5 * Me.height)
+    Me.top = Application.top + (0.5 * Application.height) - (0.5 * Me.height)
     
     Set figuresUsed = New Scripting.Dictionary
     
@@ -201,51 +201,51 @@ Public Sub Initialize(sheet As Worksheet)
     Dim name As Variant
     
     For i = 0 To 50
-        If pds.Range("CMOWNER").offset(i, 0).Interior.color = 16777215 Then Exit For
-        If pds.Range("CMOWNER").offset(i, 0) = "" Then Exit For
-        If pds.Range("CMOWNER").offset(i, 0).text = "Clearance Requirement" Then Exit For
-        If InStr(pds.Range("CMSIZE").offset(i, 0).text, """") > 0 Then
-            owner = Replace(pds.Range("CMOWNER").offset(i, 0).text, " SVC", "")
+        If pds.Range("CMOWNER").OFFSET(i, 0).Interior.color = 16777215 Then Exit For
+        If pds.Range("CMOWNER").OFFSET(i, 0) = "" Then Exit For
+        If pds.Range("CMOWNER").OFFSET(i, 0).text = "Clearance Requirement" Then Exit For
+        If InStr(pds.Range("CMSIZE").OFFSET(i, 0).text, """") > 0 Then
+            owner = Replace(pds.Range("CMOWNER").OFFSET(i, 0).text, " SVC", "")
             If Not comms.exists(owner) Then comms.Add owner, Nothing
         End If
     Next i
     
     For i = 0 To 50
-        If pds.Range("UTTYPE").offset(i, 0).Interior.color = 16777215 Then Exit For
-        If pds.Range("UTTYPE").offset(i, 0) = "" Then Exit For
-        If pds.Range("UTTYPE").offset(i, 0).text = "STLT. BOTTOM BRKT." Then Exit For
-        If InStr(pds.Range("UTTYPE").offset(i, 0).text, "NEUT") > 0 Then neutBool = True
-        If InStr(pds.Range("UTTYPE").offset(i, 0).text, "SEC") > 0 Then secBool = True
-        If InStr(pds.Range("UTTYPE").offset(i, 0).text, "OW") > 0 Then owBool = True
-        If InStr(pds.Range("UTTYPE").offset(i, 0).text, "RISER") > 0 Then riserBool = True
-        If InStr(pds.Range("UTTYPE").offset(i, 0).text, "DG") > 0 And InStr(pds.Range("UTSIZE").offset(i, 0).text, "11K") Then dg11KCount = dg11KCount + 1
-        If InStr(pds.Range("UTTYPE").offset(i, 0).text, "DG") > 0 And InStr(pds.Range("UTSIZE").offset(i, 0).text, "20K") Then dg20KCount = dg20KCount + 1
-        If InStr(pds.Range("UTTYPE").offset(i, 0).text, "SVC") > 0 Then
+        If pds.Range("UTTYPE").OFFSET(i, 0).Interior.color = 16777215 Then Exit For
+        If pds.Range("UTTYPE").OFFSET(i, 0) = "" Then Exit For
+        If pds.Range("UTTYPE").OFFSET(i, 0).text = "STLT. BOTTOM BRKT." Then Exit For
+        If InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "NEUT") > 0 Then neutBool = True
+        If InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "SEC") > 0 Then secBool = True
+        If InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "OW") > 0 Then owBool = True
+        If InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "RISER") > 0 Then riserBool = True
+        If InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "DG") > 0 And InStr(pds.Range("UTSIZE").OFFSET(i, 0).text, "11K") Then dg11KCount = dg11KCount + 1
+        If InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "DG") > 0 And InStr(pds.Range("UTSIZE").OFFSET(i, 0).text, "20K") Then dg20KCount = dg20KCount + 1
+        If InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "SVC") > 0 Then
             For j = 1 To 12
                 For Each name In pds.names
                     If name.name = "'" & pds.name & "'" & "!" & "TOPOLE" & j Then
-                        If Trim(Replace(pds.Range("UTMIDSPAN" & j).offset(i, 0), "-", "")) <> "" Then
+                        If Trim(Replace(pds.Range("UTMIDSPAN" & j).OFFSET(i, 0), "-", "")) <> "" Then
                             ohsCount = ohsCount + 1
                         End If
                     End If
                 Next name
             Next j
         End If
-        If InStr(pds.Range("UTTYPE").offset(i, 0).text, "SPG") > 0 Then
+        If InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "SPG") > 0 Then
             For j = 1 To 12
                 For Each name In pds.names
                     If name.name = "'" & pds.name & "'" & "!" & "TOPOLE" & j Then
-                        If Trim(Replace(pds.Range("UTMIDSPAN" & j).offset(i, 0), "-", "")) <> "" And InStr(pds.Range("UTSIZE").offset(i, 0).text, "11K") Then spg11KCount = spg11KCount + 1
-                        If Trim(Replace(pds.Range("UTMIDSPAN" & j).offset(i, 0), "-", "")) <> "" And InStr(pds.Range("UTSIZE").offset(i, 0).text, "20K") Then spg20KCount = spg20KCount + 1
+                        If Trim(Replace(pds.Range("UTMIDSPAN" & j).OFFSET(i, 0), "-", "")) <> "" And InStr(pds.Range("UTSIZE").OFFSET(i, 0).text, "11K") Then spg11KCount = spg11KCount + 1
+                        If Trim(Replace(pds.Range("UTMIDSPAN" & j).OFFSET(i, 0), "-", "")) <> "" And InStr(pds.Range("UTSIZE").OFFSET(i, 0).text, "20K") Then spg20KCount = spg20KCount + 1
                     End If
                 Next name
             Next j
         End If
-        If InStr(pds.Range("UTTYPE").offset(i, 0).text, "OW") > 0 Or InStr(pds.Range("UTTYPE").offset(i, 0).text, "SEC") > 0 Or InStr(pds.Range("UTTYPE").offset(i, 0).text, "NEUT") > 0 Then
+        If InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "OW") > 0 Or InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "SEC") > 0 Or InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "NEUT") > 0 Then
             For j = 1 To 12
                 For Each name In pds.names
                     If name.name = "'" & pds.name & "'" & "!" & "TOPOLE" & j Then
-                        If Trim(Replace(pds.Range("UTMIDSPAN" & j).offset(i, 0), "-", "")) <> "" Then snC = snC + 1
+                        If Trim(Replace(pds.Range("UTMIDSPAN" & j).OFFSET(i, 0), "-", "")) <> "" Then snC = snC + 1
                     End If
                 Next name
             Next j
@@ -253,9 +253,9 @@ Public Sub Initialize(sheet As Worksheet)
     Next i
     
     For i = 0 To 3
-        If InStr(pds.Range("DESC").offset(i, 0).Value, "3") > 0 Then priC = priC + (3 * (CountCharInString(pds.Range("DIRECTION").offset(i, 0), "/") + 1))
-        If InStr(pds.Range("DESC").offset(i, 0).Value, "2") > 0 Then priC = priC + (2 * (CountCharInString(pds.Range("DIRECTION").offset(i, 0), "/") + 1))
-        If InStr(pds.Range("DESC").offset(i, 0).Value, "1") > 0 Then priC = priC + (CountCharInString(pds.Range("DIRECTION").offset(i, 0), "/") + 1)
+        If InStr(pds.Range("DESC").OFFSET(i, 0).Value, "3") > 0 Then priC = priC + (3 * (CountCharInString(pds.Range("DIRECTION").OFFSET(i, 0), "/") + 1))
+        If InStr(pds.Range("DESC").OFFSET(i, 0).Value, "2") > 0 Then priC = priC + (2 * (CountCharInString(pds.Range("DIRECTION").OFFSET(i, 0), "/") + 1))
+        If InStr(pds.Range("DESC").OFFSET(i, 0).Value, "1") > 0 Then priC = priC + (CountCharInString(pds.Range("DIRECTION").OFFSET(i, 0), "/") + 1)
     Next i
     
     UAP.Value = priC
@@ -671,9 +671,9 @@ Private Sub OWSPAN1_Change()
     OW1L4.visible = OWSPAN1.Value <> ""
     If OWSPAN1.Value <> "" Then
         OWSIZE1.Value = getOpenWireSizeFromSpan(OWSPAN1.Value)
-        Set cell = pds.UsedRange.find(what:=OWSPAN1.Value, LookIn:=xlValues, lookat:=xlWhole, MatchCase:=True)
+        Set cell = pds.UsedRange.Find(what:=OWSPAN1.Value, LookIn:=xlValues, lookat:=xlWhole, MatchCase:=True)
         If Not cell Is Nothing Then
-            OWLENGTH1.Value = cell.offset(-1, 0).Value
+            OWLENGTH1.Value = Round(Utilities.OnlyNumbers(cell.OFFSET(-1, 0).Value), 0) & "'"
         End If
     End If
 End Sub
@@ -687,9 +687,9 @@ Private Sub OWSPAN2_Change()
     OW2L4.visible = OWSPAN2.Value <> ""
     If OWSPAN2.Value <> "" Then
         OWSIZE2.Value = getOpenWireSizeFromSpan(OWSPAN2.Value)
-        Set cell = pds.UsedRange.find(what:=OWSPAN2.Value, LookIn:=xlValues, lookat:=xlWhole, MatchCase:=True)
+        Set cell = pds.UsedRange.Find(what:=OWSPAN2.Value, LookIn:=xlValues, lookat:=xlWhole, MatchCase:=True)
         If Not cell Is Nothing Then
-            OWLENGTH2.Value = cell.offset(-1, 0).Value
+            OWLENGTH2.Value = Round(Utilities.OnlyNumbers(cell.OFFSET(-1, 0).Value), 0) & "'"
         End If
     End If
 End Sub
@@ -703,9 +703,9 @@ Private Sub OWSPAN3_Change()
     OW3L4.visible = OWSPAN3.Value <> ""
     If OWSPAN3.Value <> "" Then
         OWSIZE3.Value = getOpenWireSizeFromSpan(OWSPAN3.Value)
-        Set cell = pds.UsedRange.find(what:=OWSPAN3.Value, LookIn:=xlValues, lookat:=xlWhole, MatchCase:=True)
+        Set cell = pds.UsedRange.Find(what:=OWSPAN3.Value, LookIn:=xlValues, lookat:=xlWhole, MatchCase:=True)
         If Not cell Is Nothing Then
-            OWLENGTH3.Value = cell.offset(-1, 0).Value
+            OWLENGTH3.Value = Round(Utilities.OnlyNumbers(cell.OFFSET(-1, 0).Value), 0) & "'"
         End If
     End If
 End Sub
@@ -719,9 +719,9 @@ Private Sub OWSPAN4_Change()
     OW4L4.visible = OWSPAN4.Value <> ""
     If OWSPAN4.Value <> "" Then
         OWSIZE4.Value = getOpenWireSizeFromSpan(OWSPAN4.Value)
-        Set cell = pds.UsedRange.find(what:=OWSPAN4.Value, LookIn:=xlValues, lookat:=xlWhole, MatchCase:=True)
+        Set cell = pds.UsedRange.Find(what:=OWSPAN4.Value, LookIn:=xlValues, lookat:=xlWhole, MatchCase:=True)
         If Not cell Is Nothing Then
-            OWLENGTH4.Value = cell.offset(-1, 0).Value
+            OWLENGTH4.Value = Round(Utilities.OnlyNumbers(cell.OFFSET(-1, 0).Value), 0) & "'"
         End If
     End If
 End Sub
@@ -735,9 +735,9 @@ Private Sub OWSPAN5_Change()
     OW5L4.visible = OWSPAN5.Value <> ""
     If OWSPAN5.Value <> "" Then
         OWSIZE5.Value = getOpenWireSizeFromSpan(OWSPAN5.Value)
-        Set cell = pds.UsedRange.find(what:=OWSPAN5.Value, LookIn:=xlValues, lookat:=xlWhole, MatchCase:=True)
+        Set cell = pds.UsedRange.Find(what:=OWSPAN5.Value, LookIn:=xlValues, lookat:=xlWhole, MatchCase:=True)
         If Not cell Is Nothing Then
-            OWLENGTH5.Value = cell.offset(-1, 0).Value
+            OWLENGTH5.Value = Round(Utilities.OnlyNumbers(cell.OFFSET(-1, 0).Value), 0) & "'"
         End If
     End If
 End Sub
@@ -757,12 +757,12 @@ Private Function getOpenWireSizeFromSpan(Span As String) As String
     Next i
     
     For i = 0 To 50
-        If pds.Range("UTTYPE").offset(i, 0).Interior.color = 16777215 Then Exit For
-        If pds.Range("UTTYPE").offset(i, 0) = "" Then Exit For
-        If pds.Range("UTTYPE").offset(i, 0).text = "STLT. BOTTOM BRKT." Then Exit For
-        If InStr(pds.Range("UTTYPE").offset(i, 0).text, "OW") > 0 Then
-            If Trim(Replace(pds.Range("UTMIDSPAN" & found).offset(i, 0).Value, "-", "")) <> "" Then
-                openWireSizes = openWireSizes & ExtractNumbers(pds.Range("UTSIZE").offset(i, 0).Value) & "-"
+        If pds.Range("UTTYPE").OFFSET(i, 0).Interior.color = 16777215 Then Exit For
+        If pds.Range("UTTYPE").OFFSET(i, 0) = "" Then Exit For
+        If pds.Range("UTTYPE").OFFSET(i, 0).text = "STLT. BOTTOM BRKT." Then Exit For
+        If InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "OW") > 0 Then
+            If Trim(Replace(pds.Range("UTMIDSPAN" & found).OFFSET(i, 0).Value, "-", "")) <> "" Then
+                openWireSizes = openWireSizes & ExtractNumbers(pds.Range("UTSIZE").OFFSET(i, 0).Value) & "-"
             End If
         End If
     Next i
@@ -1554,7 +1554,7 @@ End Sub
 Private Sub CommandButton1_Click()
     Set figuresUsed = New Scripting.Dictionary
 
-    CrewNotes = ""
+    crewNotes = ""
     installNotes = ""
     removeNotes = ""
     replaceNotes = ""
@@ -1587,21 +1587,21 @@ Private Sub CommandButton1_Click()
         If answer = vbNo Or answer = vbCancel Then Exit Sub
     End If
     
-    If CrewNotes <> "" Then
-        CrewNotes = Left(CrewNotes, Len(CrewNotes) - 1)
+    If crewNotes <> "" Then
+        crewNotes = Left(crewNotes, Len(crewNotes) - 1)
         Dim project As project: Set project = New project
-        Call Utilities.applyStandardAbbreviations(CrewNotes)
+        Call Utilities.applyStandardAbbreviations(crewNotes)
 
         Dim DataObj As DataObject: Set DataObj = New DataObject
-        DataObj.SetText CrewNotes
+        DataObj.SetText crewNotes
         DataObj.PutInClipboard
     
         If Trim(pds.Range("ALTONE")) = "" Then
-            pds.Range("ALTONE").Value = CrewNotes
+            pds.Range("ALTONE").Value = crewNotes
             Call Figures.getSheetFigures(pds)
         End If
     
-        MsgBox CrewNotes
+        MsgBox crewNotes
     Else
         MsgBox "No work selected"
     End If
@@ -1908,12 +1908,12 @@ Private Sub generateReplacePoleSection()
         If conductors <> "" Then conductors = conductors & ","
         conductors = conductors & "SVC"
         Dim serviceSizes As Scripting.Dictionary: Set serviceSizes = New Scripting.Dictionary
-        For Each service In pole.services
-            For Each midspan In service.midspans
-                If Not serviceSizes.exists(service.size) Then serviceSizes(service.size) = 0
-                serviceSizes(service.size) = serviceSizes(service.size) + 1
+        For Each Service In pole.services
+            For Each midspan In Service.midspans
+                If Not serviceSizes.exists(Service.size) Then serviceSizes(Service.size) = 0
+                serviceSizes(Service.size) = serviceSizes(Service.size) + 1
             Next midspan
-        Next service
+        Next Service
         
         For Each size In serviceSizes
             If serviceSizes(size) > 1 Then
@@ -1933,10 +1933,10 @@ Private Sub generateReplacePoleSection()
         If i >= CInt(CETV.Value) Then Exit For
         For j = 1 To 8
             If UCase(Trim(pds.Range("COMM" & j).Value)) = UCase(Trim(key)) Then
-                If pds.Range("COMM" & j).offset(2, 0).offset(0, 1).Value <> "" Then
-                    transferNotes = transferNotes & key & " @" & pds.Range("COMM" & j).offset(2, 0).offset(0, 1).Value & vbLf
+                If pds.Range("COMM" & j).OFFSET(2, 0).OFFSET(0, 1).Value <> "" Then
+                    transferNotes = transferNotes & key & " @" & pds.Range("COMM" & j).OFFSET(2, 0).OFFSET(0, 1).Value & vbLf
                 Else
-                    transferNotes = transferNotes & key & " @" & pds.Range("COMM" & j).offset(2, 0).Value & vbLf
+                    transferNotes = transferNotes & key & " @" & pds.Range("COMM" & j).OFFSET(2, 0).Value & vbLf
                 End If
                 commTransfers.Add key
                 Exit For
@@ -2094,27 +2094,27 @@ End Function
 Private Sub generateReconductorSection()
     If OWSPAN1.Value <> "" And OWSPAN1.visible Then
         direction = getDirection(OWSPAN1)
-        replaceNotes = replaceNotes & OWLENGTH1.Value & " " & OWSIZE1.Value & " OPEN WIRE / " & OWNEWSIZE1.Value & " SECONDARY TO THE " & direction & vbLf
+        replaceNotes = replaceNotes & OWLENGTH1.Value & " " & OWSIZE1.Value & " OPEN WIRE / " & OWNEWSIZE1.Value & " SECONDARY " & direction & vbLf
     End If
     
     If OWSPAN2.Value <> "" And OWSPAN2.visible Then
         direction = getDirection(OWSPAN2)
-        replaceNotes = replaceNotes & OWLENGTH2.Value & " " & OWSIZE2.Value & " OPEN WIRE / " & OWNEWSIZE2.Value & " SECONDARY TO THE " & direction & vbLf
+        replaceNotes = replaceNotes & OWLENGTH2.Value & " " & OWSIZE2.Value & " OPEN WIRE / " & OWNEWSIZE2.Value & " SECONDARY " & direction & vbLf
     End If
     
     If OWSPAN3.Value <> "" And OWSPAN3.visible Then
         direction = getDirection(OWSPAN3)
-        replaceNotes = replaceNotes & OWLENGTH3.Value & " " & OWSIZE3.Value & " OPEN WIRE / " & OWNEWSIZE3.Value & " SECONDARY TO THE " & direction & vbLf
+        replaceNotes = replaceNotes & OWLENGTH3.Value & " " & OWSIZE3.Value & " OPEN WIRE / " & OWNEWSIZE3.Value & " SECONDARY " & direction & vbLf
     End If
     
     If OWSPAN4.Value <> "" And OWSPAN4.visible Then
         direction = getDirection(OWSPAN4)
-        replaceNotes = replaceNotes & OWLENGTH4.Value & " " & OWSIZE4.Value & " OPEN WIRE / " & OWNEWSIZE4.Value & " SECONDARY TO THE " & direction & vbLf
+        replaceNotes = replaceNotes & OWLENGTH4.Value & " " & OWSIZE4.Value & " OPEN WIRE / " & OWNEWSIZE4.Value & " SECONDARY " & direction & vbLf
     End If
     
     If OWSPAN5.Value <> "" And OWSPAN5.visible Then
         direction = getDirection(OWSPAN5)
-        replaceNotes = replaceNotes & OWLENGTH5.Value & " " & OWSIZE5.Value & " OPEN WIRE / " & OWNEWSIZE5.Value & " SECONDARY TO THE " & direction & vbLf
+        replaceNotes = replaceNotes & OWLENGTH5.Value & " " & OWSIZE5.Value & " OPEN WIRE / " & OWNEWSIZE5.Value & " SECONDARY " & direction & vbLf
     End If
     
     If REC1.Value Then
@@ -2135,7 +2135,7 @@ Private Sub generateReconductorSection()
             replaceNotes = replaceNotes & secondaryFigures("SECONDARY AWAC DEADEND")
         Else
             replaceNotes = replaceNotes & "SECONDARY DEADEND" & vbLf
-            replaceNotes = replaceNotes & "FIGURE 23-302-1 DETAIL A" & secondaryFigures("SECONDARY DEADEND")
+            replaceNotes = replaceNotes & secondaryFigures("SECONDARY DEADEND")
         End If
     End If
     
@@ -2408,19 +2408,19 @@ End Sub
 
 Private Sub compileCrewNotes()
     If installNotes <> "" Then
-        CrewNotes = CrewNotes & "INSTALL" & vbLf & installNotes & vbLf
+        crewNotes = crewNotes & "INSTALL" & vbLf & installNotes & vbLf
     End If
     If removeNotes <> "" Then
-        CrewNotes = CrewNotes & "REMOVE" & vbLf & removeNotes & vbLf
+        crewNotes = crewNotes & "REMOVE" & vbLf & removeNotes & vbLf
     End If
     If replaceNotes <> "" Then
-        CrewNotes = CrewNotes & "REPLACE" & vbLf & replaceNotes & vbLf
+        crewNotes = crewNotes & "REPLACE" & vbLf & replaceNotes & vbLf
     End If
     If transferNotes <> "" Then
-        CrewNotes = CrewNotes & "TRANSFER" & vbLf & transferNotes & vbLf
+        crewNotes = crewNotes & "TRANSFER" & vbLf & transferNotes & vbLf
     End If
     If notes <> "" Then
-        CrewNotes = CrewNotes & notes
+        crewNotes = crewNotes & notes
     End If
 End Sub
 
@@ -2446,7 +2446,7 @@ Private Sub Initialize_ReplacePole()
         RPPCLASS.Value = 4
         DSV.Value = "N/A"
         PSV.Value = "N/A"
-    ElseIf InStr(pds.Range("DESC"), "3") > 0 Or InStr(pds.Range("DESC").offset(1, 0), "3") > 0 Or InStr(pds.Range("DESC").offset(2, 0), "3") > 0 Or InStr(pds.Range("DESC").offset(3, 0), "3") > 0 Then
+    ElseIf InStr(pds.Range("DESC"), "3") > 0 Or InStr(pds.Range("DESC").OFFSET(1, 0), "3") > 0 Or InStr(pds.Range("DESC").OFFSET(2, 0), "3") > 0 Or InStr(pds.Range("DESC").OFFSET(3, 0), "3") > 0 Then
         RPPCLASS.Value = 2
     Else
         RPPCLASS.Value = 3
@@ -2476,9 +2476,9 @@ Private Sub Initialize_ReplacePole()
     If Trim(pds.Range("STLTBRKT").Value) <> "N/A" And Trim(pds.Range("STLTBRKT").Value) <> "" Then
         TRSL.Value = True
         STLTBTMBRKT.Value = Trim(Split(pds.Range("STLTBRKT").Value, vbLf)(0))
-        If pds.Range("MBSM").offset(0, 1).Value = "YES" Then
+        If pds.Range("MBSM").OFFSET(0, 1).Value = "YES" Then
             SLM2.Value = True
-        ElseIf pds.Range("MBSM").offset(0, 1).Value = "NO" Then
+        ElseIf pds.Range("MBSM").OFFSET(0, 1).Value = "NO" Then
             SLM1.Value = True
         End If
     End If
@@ -2585,11 +2585,11 @@ Private Sub Initialize_Reconductor()
             If name.name = "'" & pds.name & "'" & "!" & "TOPOLE" & i Then
                 If Trim(Replace(pds.Range("TOPOLE" & i).Value, "-", "")) <> "" Then
                     For j = 1 To 50
-                        If pds.Range("UTTYPE").offset(j, 0).Interior.color = 16777215 Then Exit For
-                        If pds.Range("UTTYPE").offset(j, 0) = "" Then Exit For
-                        If pds.Range("UTTYPE").offset(j, 0).text = "STLT. BOTTOM BRKT." Then Exit For
-                        If InStr(pds.Range("UTTYPE").offset(j, 0).text, "OW") > 0 Then
-                            If Trim(Replace(pds.Range("UTMIDSPAN" & i).offset(j, 0).Value, "-", "")) <> "" Then
+                        If pds.Range("UTTYPE").OFFSET(j, 0).Interior.color = 16777215 Then Exit For
+                        If pds.Range("UTTYPE").OFFSET(j, 0) = "" Then Exit For
+                        If pds.Range("UTTYPE").OFFSET(j, 0).text = "STLT. BOTTOM BRKT." Then Exit For
+                        If InStr(pds.Range("UTTYPE").OFFSET(j, 0).text, "OW") > 0 Then
+                            If Trim(Replace(pds.Range("UTMIDSPAN" & i).OFFSET(j, 0).Value, "-", "")) <> "" Then
                                 ReDim Preserve spanAray(UBound(spanAray) + 1)
                                 spanAray(UBound(spanAray)) = Trim(pds.Range("TOPOLE" & i).Value)
                                 Exit For
@@ -2649,11 +2649,11 @@ Private Sub Initialize_Downguys()
     
     anchorCount = 0
     For i = 0 To 10
-        If pds.Range("ANCHOROWNER").offset(i, 0).Value = "Consumers Energy" Then
+        If pds.Range("ANCHOROWNER").OFFSET(i, 0).Value = "Consumers Energy" Then
             anchorCount = anchorCount + 1
-            Me.Controls("EA" & anchorCount & 3).Value = pds.Range("ANCHOROWNER").offset(i, 0).offset(0, 1).Value
-            Me.Controls("RA" & anchorCount & 3).Value = pds.Range("ANCHOROWNER").offset(i, 0).offset(0, 1).Value
-            Me.Controls("EA" & anchorCount & 4).Value = getDirection(pds.Range("ANCHOROWNER").offset(i, 0).offset(0, 1).offset(0, 1).Value)
+            Me.Controls("EA" & anchorCount & 3).Value = pds.Range("ANCHOROWNER").OFFSET(i, 0).OFFSET(0, 1).Value
+            Me.Controls("RA" & anchorCount & 3).Value = pds.Range("ANCHOROWNER").OFFSET(i, 0).OFFSET(0, 1).Value
+            Me.Controls("EA" & anchorCount & 4).Value = getDirection(pds.Range("ANCHOROWNER").OFFSET(i, 0).OFFSET(0, 1).OFFSET(0, 1).Value)
             For j = 1 To 4
                 Me.Controls("DGFIG" & anchorCount).visible = True
                 Me.Controls("DGRFW" & anchorCount).visible = True
