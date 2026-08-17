@@ -19,8 +19,8 @@ Public Sub CopyCUImportCode()
     http.Open "GET", url, False
     http.send
  
-    If http.Status <> 200 Then
-        MsgBox "Failed to get cuimport.js from github: " & http.Status & vbLf & JsonConverter.ParseJson(http.responseText)("message")
+    If http.status <> 200 Then
+        MsgBox "Failed to get cuimport.js from github: " & http.status & vbLf & JsonConverter.ParseJson(http.responseText)("message")
         Exit Sub
     End If
  
@@ -296,7 +296,7 @@ Private Sub fixCUErrors(cus As Collection, needAdditionalCUs As Collection, miss
         missedLine = Replace(missedLine, "Install", "")
         missedLine = Replace(missedLine, "Remove", "")
         hardware = missedLine
-        If regex.Test(missedLine) Then
+        If regex.test(missedLine) Then
             Set matches = regex.Execute(missedLine)
             hardware = Trim(matches(0).SubMatches(1))
         End If
@@ -820,15 +820,15 @@ Private Sub generateCSV(project As project, cus As Collection, Optional demo As 
     
     For Each cell In csvWs.UsedRange.Columns(2).Cells
         If Trim(cell.Value) <> "CU" Then
-            If Trim(cell.offset(0, 3).Value) <> "" Then
-                cell.offset(0, 8).Value = 0.1
+            If Trim(cell.OFFSET(0, 3).Value) <> "" Then
+                cell.OFFSET(0, 8).Value = 0.1
             Else
-                Set foundCell = cuSortWs.UsedRange.find(what:=cell.Value, LookIn:=xlValues, lookat:=xlWhole)
-                If Not foundCell Is Nothing Then cell.offset(0, 8).Value = foundCell.offset(0, 1)
+                Set foundCell = cuSortWs.UsedRange.Find(what:=cell.Value, LookIn:=xlValues, lookat:=xlWhole)
+                If Not foundCell Is Nothing Then cell.OFFSET(0, 8).Value = foundCell.OFFSET(0, 1)
             End If
         End If
         
-        cell.offset(0, 9).Value = Utilities.OnlyNumbers(cell.offset(0, -1))
+        cell.OFFSET(0, 9).Value = Utilities.OnlyNumbers(cell.OFFSET(0, -1))
     Next cell
     
     With csvWs.Sort
@@ -886,7 +886,7 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
     line = Replace(line, "OPENWIRE", "OW")
     
     Dim hardware As String: hardware = Trim(line)
-    If regex.Test(line) Then
+    If regex.test(line) Then
         Set matches = regex.Execute(line)
         amount = matches(0).SubMatches(0)
         hardware = Trim(ThisWorkbook.RemoveParentheses(matches(0).SubMatches(1)))
@@ -906,16 +906,16 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
         regex2.Global = True
         regex2.IgnoreCase = True
         
-        If regex.Test(line) Then
+        If regex.test(line) Then
             Set matches = regex.Execute(line)
             line1 = Trim(matches(0).SubMatches(0))
             line2 = Trim(matches(0).SubMatches(1))
             If pole.primaries.count > 0 Then hotsite = True
             If timeAdder = 1 Then timeAdder = 2
             If pole.buck Then timeAdder = 3
-            For Each equipment In pole.equipments
-                If equipment.componentType = "XFMR" Then timeAdder = 3
-            Next equipment
+            For Each Equipment In pole.equipments
+                If Equipment.componentType = "XFMR" Then timeAdder = 3
+            Next Equipment
         ElseIf InStr(line, "SVC RISER") > 0 And InStr(line, "|C") > 0 Then
             line1 = Left(line, InStr(line, "SVC RISER") - 1) & "RISER"
             line2 = Left(line, InStr(line, "SVC RISER") - 1) & "RISER"
@@ -926,7 +926,7 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
             parts = Split(line, "/")
             line1 = Trim(parts(0))
             line2 = Trim(parts(1))
-        ElseIf regex2.Test(line) And InStr(line, "FIGURE") = 0 Then
+        ElseIf regex2.test(line) And InStr(line, "FIGURE") = 0 Then
             Set matches = regex2.Execute(line)
             If matches.count = 1 Then
                 line1 = Trim(matches(0).SubMatches(0))
@@ -1014,7 +1014,7 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
             regex2.Pattern = "(\d[0:5]\s*-\s*\d)\s*"
             regex2.Global = True
             regex2.IgnoreCase = True
-            If regex2.Test(hardware) And InStr(hardware, "FIGURE") = 0 Then
+            If regex2.test(hardware) And InStr(hardware, "FIGURE") = 0 Then
                 Set matches = regex2.Execute(line)
                 If matches.count = 1 Then
                     hardware = Trim(matches(0).SubMatches(0))
@@ -1086,7 +1086,7 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
                     Set polesDict = New Scripting.Dictionary
                     Set cuSortWs = ThisWorkbook.sheets("CUSortOrder")
                     
-                    lastRow = cuSortWs.Cells(cuSortWs.Rows.count, "A").End(xlUp).row
+                    lastRow = cuSortWs.Cells(cuSortWs.Rows.count, "A").End(xlUp).ROW
                     
                     For i = 1 To lastRow
                         If cuSortWs.Cells(i, "B").Value = "5" Then
@@ -1168,25 +1168,25 @@ Private Sub generateTransferServiceCU(cus As Collection, pole As pole, amount As
     Dim totalServices As Integer
     Dim serviceDict As Scripting.Dictionary: Set serviceDict = New Scripting.Dictionary
     
-    For Each service In pole.services
-        For Each midspan In service.midspans
+    For Each Service In pole.services
+        For Each midspan In Service.midspans
             If Not serviceDict.exists(midspan) Then serviceDict.Add midspan, Nothing
             totalServices = totalServices + 1
         Next midspan
-    Next service
+    Next Service
     
     Call generateCU(cus, pole.location, 106115, serviceDict.count, "INSTALL")
     
     If serviceAmount = totalServices Then
-        For Each service In pole.services
-            cuCode = CUNameMapping.getCUNameMapping(service.size & "DE")
+        For Each Service In pole.services
+            cuCode = CUNameMapping.getCUNameMapping(Service.size & "DE")
             If cuCode <> "" Then
-                For Each midspan In service.midspans
+                For Each midspan In Service.midspans
                     Call generateCU(cus, pole.location, cuCode, 1, "RET REM")
                     Call generateCU(cus, pole.location, cuCode, 1, "INSTALL")
                 Next midspan
             End If
-        Next service
+        Next Service
     End If
 End Sub
 
@@ -1405,12 +1405,12 @@ Private Sub generateTransferStreetlightCU(line As String, cus As Collection, pol
     
     If InStr(line, "@") > 0 Then streetlightBottomBracketHeight = Utilities.convertToInches(Mid(line, InStr(line, "@")))
     If streetlightBottomBracketHeight < 1 Then
-        For Each equipment In pole.equipments
-            If equipment.componentType = "SL" Then
-                streetlightBottomBracketHeight = equipment.bottomHeight
+        For Each Equipment In pole.equipments
+            If Equipment.componentType = "SL" Then
+                streetlightBottomBracketHeight = Equipment.bottomHeight
                 Exit For
             End If
-        Next equipment
+        Next Equipment
     End If
     
     
@@ -1506,11 +1506,11 @@ Private Sub generateSecondaryRiserCU(cus As Collection, pole As pole, hardware A
                 If amount = 0 Then amount = WorksheetFunction.RoundUp((pole.newHeight - 83) / 12, 0)
             End If
         ElseIf action = "RET REM" Then
-            For Each equipment In pole.equipments
-                If equipment.componentType = "RISER" Then
-                    If amount = 0 Then amount = WorksheetFunction.RoundUp(equipment.height / 12, 0)
+            For Each Equipment In pole.equipments
+                If Equipment.componentType = "RISER" Then
+                    If amount = 0 Then amount = WorksheetFunction.RoundUp(Equipment.height / 12, 0)
                 End If
-            Next equipment
+            Next Equipment
         End If
         
         Call generateCU(cus, pole.location, "101523", amount, action)
