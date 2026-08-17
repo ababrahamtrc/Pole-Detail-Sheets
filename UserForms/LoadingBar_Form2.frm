@@ -38,10 +38,10 @@ Sub InitProgress(Total As Long, Optional starting As Boolean, Optional Total2 As
         Me.top = Application.top + (0.5 * Application.height) - (0.5 * Me.height)
     End If
 
-    LoadingBar_Form.barFill.top = 0
-    LoadingBar_Form.barFill.height = LoadingBar_Form.frmBar.height
+    LoadingBar_Form2.barFill.top = 0
+    LoadingBar_Form2.barFill.height = LoadingBar_Form2.frmBar.height
 
-    With LoadingBar_Form
+    With LoadingBar_Form2
         .barFill.Width = 0
         .Show vbModeless
     End With
@@ -53,20 +53,20 @@ Sub UpdateProgress(fileName As String, progressType As String, Optional noFiles 
 
     gCurrent = gCurrent + 1
 
-    maxWidth = LoadingBar_Form.frmBar.Width
+    maxWidth = LoadingBar_Form2.frmBar.Width
     pct = gCurrent / gTotal
 
-    LoadingBar_Form.Label1.caption = progressType & IIf(noFiles, "", " files") & "..." & gCurrent & "/" & gTotal
-    LoadingBar_Form.Label2.caption = fileName
-    LoadingBar_Form.Label3.caption = gCurrent2 & "/" & gTotal2
+    LoadingBar_Form2.Label1.caption = progressType & IIf(noFiles, "", " files") & "..." & gCurrent & "/" & gTotal
+    LoadingBar_Form2.Label2.caption = fileName
+    LoadingBar_Form2.Label3.caption = gCurrent2 & "/" & gTotal2
     
     If pct > 1 Then pct = 1
-    LoadingBar_Form.barFill.Width = maxWidth * pct
+    LoadingBar_Form2.barFill.Width = maxWidth * pct
     DoEvents
 End Sub
  
 Sub FinishProgress()
-    Unload LoadingBar_Form
+    Unload LoadingBar_Form2
     gTotal = 0
     gTotal2 = 0
     gCurrent = 0
@@ -75,7 +75,7 @@ End Sub
 
 Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
     If CloseMode = vbFormControlMenu Then
-        Call LoadingBar_Form.FinishProgress
+        Call LoadingBar_Form2.FinishProgress
         MsgBox "Operation Canceled"
     End If
 End Sub
