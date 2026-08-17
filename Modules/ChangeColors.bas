@@ -21,12 +21,12 @@ Sub changeHighlightColor()
                     And Application.Intersect(fc.AppliesTo.Cells, sheet.Range("PGUY2").MergeArea) Is Nothing _
                     And Application.Intersect(fc.AppliesTo.Cells, sheet.Range("ROOMTOGUY").MergeArea) Is Nothing _
                     And Application.Intersect(fc.AppliesTo.Cells, sheet.Range("BONDED").MergeArea) Is Nothing _
-                    And Application.Intersect(fc.AppliesTo.Cells, sheet.Range("BONDED").offset(-1, 1).MergeArea) Is Nothing _
+                    And Application.Intersect(fc.AppliesTo.Cells, sheet.Range("BONDED").OFFSET(-1, 1).MergeArea) Is Nothing _
                     And Application.Intersect(fc.AppliesTo.Cells, sheet.Range("TREE2").MergeArea) Is Nothing _
-                    And Application.Intersect(fc.AppliesTo.Cells, sheet.Range("TREE2").offset(1, 0).MergeArea) Is Nothing _
-                    And Application.Intersect(fc.AppliesTo.Cells, sheet.Range("TREE2").offset(2, -2).MergeArea) Is Nothing Then
-                    fc.Interior.color = controlWs.Range("Default_Color").offset(0, 1).Interior.color
-                    fc.Font.color = controlWs.Range("Default_Color").offset(0, 1).Font.color
+                    And Application.Intersect(fc.AppliesTo.Cells, sheet.Range("TREE2").OFFSET(1, 0).MergeArea) Is Nothing _
+                    And Application.Intersect(fc.AppliesTo.Cells, sheet.Range("TREE2").OFFSET(2, -2).MergeArea) Is Nothing Then
+                    fc.Interior.color = controlWs.Range("Default_Color").OFFSET(0, 1).Interior.color
+                    fc.Font.color = controlWs.Range("Default_Color").OFFSET(0, 1).Font.color
                 End If
             Next i
         End If
