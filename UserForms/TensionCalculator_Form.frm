@@ -33,7 +33,7 @@ Private Sub CommandButton1_Click()
     
     Me.StartUpPosition = 0
     Me.Left = Application.Left + (0.5 * Application.Width) - (0.5 * Me.Width)
-    Me.Top = Application.Top + (0.5 * Application.height) - (0.5 * Me.height)
+    Me.top = Application.top + (0.5 * Application.height) - (0.5 * Me.height)
     
     Dim xOffset As Double: xOffset = 0
     Dim yIntercept As Double: yIntercept = 0
