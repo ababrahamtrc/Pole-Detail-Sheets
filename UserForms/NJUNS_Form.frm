@@ -39,7 +39,7 @@ Private ticketType As String
 Sub Initialize()
     Me.StartUpPosition = 0
     Me.Left = Application.Left + (0.5 * Application.Width) - (0.5 * Me.Width)
-    Me.Top = Application.Top + (0.5 * Application.height) - (0.5 * Me.height)
+    Me.top = Application.top + (0.5 * Application.height) - (0.5 * Me.height)
     Set companies = New Collection
     companies.Add CommCompany1
     companies.Add CommCompany2
@@ -269,7 +269,7 @@ Private Sub InitComms()
             If sheet.Range("COMM" & i).Value <> "COMM #" & i Then
                 For j = 0 To 7
                     If commCount > 8 Then Exit For
-                    modificationString = sheet.Range("COMM" & i).offset(2 + (j * 2), 0).offset(0, 1)
+                    modificationString = sheet.Range("COMM" & i).OFFSET(2 + (j * 2), 0).OFFSET(0, 1)
                     If Len(modificationString) > 0 Then
                         If Not IsNumeric(Left(modificationString, 1)) Then
                             modificationString = ""
@@ -300,7 +300,7 @@ Private Sub InitComms()
                         Next anchor
                         If anchorDistance <> "" Then dgaprevious(i).text = anchorDistance
                         
-                        heights(commCount).Value = Utilities.inchesToFeetInches(Utilities.convertToInches(sheet.Range("COMM" & i).offset(2 + (j * 2), 0)))
+                        heights(commCount).Value = Utilities.inchesToFeetInches(Utilities.convertToInches(sheet.Range("COMM" & i).OFFSET(2 + (j * 2), 0)))
                         
                         If modifications(commCount).Value = "" Then modifications(commCount).Value = heights(commCount).Value
                     End If
