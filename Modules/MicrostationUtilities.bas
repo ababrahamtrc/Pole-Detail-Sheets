@@ -1,5 +1,31 @@
 Attribute VB_Name = "MicrostationUtilities"
-Function getElectricJson(poles As Collection, layer As Integer, token As String) As Object
+Function testToken(token As String) As Boolean
+    On Error GoTo ErrorHandler
+    
+    Dim url As String: url = "https://gis.consumersenergy.com/mapping/rest/services/Landbase/Landbase_Grids_Boundaries_PUB/MapServer/1/query?where=1=1&outFields=*&returnGeometry=true&geometryType=esriGeometryEnvelope&geometry=&spatialRel=esriSpatialRelIntersects&inSR=2253&outSR=2253+&f=json&token=" & token
+    Set http = CreateObject("MSXML2.ServerXMLHTTP.6.0")
+    http.Open "POST", url, False
+    http.setRequestHeader "Authorization", "Bearer " & token
+    http.setRequestHeader "Content-Type", "application/json"
+    http.SetTimeouts 15000, 15000, 15000, 15000
+    http.send
+    If InStr(http.responseText, "Invalid Token") > 0 Then
+        testToken = False
+    Else
+        testToken = True
+    End If
+    
+    Exit Function
+    
+ErrorHandler:
+    MsgBox "HTTP Request Failed or Timed Out!" & vbCrLf & _
+           "Error Number: " & Err.Number & vbCrLf & _
+           "Description: " & Err.Description, vbCritical
+End Function
+
+Function getElectricJson(poles As Collection, layer As Integer, token As String, Optional query As String) As Object
+    On Error GoTo ErrorHandler
+    
     Dim lowestLatitude As Double
     Dim lowestLongitude As Double
     Dim highestLatitude As Double
@@ -13,7 +39,7 @@ Function getElectricJson(poles As Collection, layer As Integer, token As String)
         If highestLongitude = 0 Or pole.longitude > highestLongitude Then highestLongitude = pole.longitude
     Next pole
     
-    Dim radius As Integer: radius = 1000
+    Dim radius As Double: radius = 750
     
     results = LatLonToMI2253(lowestLatitude, lowestLongitude)
     x1 = results(0) - radius
@@ -27,23 +53,35 @@ Function getElectricJson(poles As Collection, layer As Integer, token As String)
     Dim bbox2 As String: bbox2 = x2 & "," & y2
     Dim bbox As String: bbox = bbox1 & "," & bbox2
     
-    Dim url As String: url = "https://gis.consumersenergy.com/mapping/rest/services/Electric/Electric_PUB/MapServer/" & layer & "/query?where=1=1&outFields=*&returnGeometry=true&geometryType=esriGeometryEnvelope&geometry=" & bbox & "&spatialRel=esriSpatialRelIntersects&inSR=2253&outSR=2253+&f=json&token=" & token
+    Dim url As String: url = "https://gis.consumersenergy.com/mapping/rest/services/Electric/Electric_PUB/MapServer/" & layer & "/query?where=" & IIf(query <> "", query, "1=1") & "&outFields=*&returnGeometry=true&geometryType=esriGeometryEnvelope&geometry=" & bbox & "&spatialRel=esriSpatialRelIntersects&inSR=2253&outSR=2253+&f=json&token=" & token
+    Debug.Print url
 
     Set http = CreateObject("MSXML2.ServerXMLHTTP.6.0")
     http.Open "POST", url, False
     http.setRequestHeader "Authorization", "Bearer " & token
     http.setRequestHeader "Content-Type", "application/json"
+    http.SetTimeouts 15000, 15000, 15000, 15000
     http.send
     
-    If http.Status = 200 Then
+    If http.status = 200 Then
         Set getElectricJson = JsonConverter.ParseJson(http.responseText)
     Else
         Set getElectricJson = Nothing
-        Debug.Print "Error: " & http.Status & " - " & http.statusText
+        Debug.Print "Error: " & http.status & " - " & http.statusText
     End If
+    
+    Exit Function
+    
+ErrorHandler:
+    MsgBox "HTTP Request Failed or Timed Out!" & vbCrLf & _
+           "Error Number: " & Err.Number & vbCrLf & _
+           "Description: " & Err.Description, vbCritical
+    
 End Function
 
 Function getOtherPole(x As Double, y As Double, radius As Integer, token) As Object
+    On Error GoTo ErrorHandler
+    
     x1 = x - radius
     y1 = y - radius
     
@@ -60,19 +98,28 @@ Function getOtherPole(x As Double, y As Double, radius As Integer, token) As Obj
     http.Open "POST", url, False
     http.setRequestHeader "Authorization", "Bearer " & token
     http.setRequestHeader "Content-Type", "application/json"
+    http.SetTimeouts 15000, 15000, 15000, 15000
     http.send
     
-    If http.Status = 200 Then
+    If http.status = 200 Then
         Set getOtherPole = JsonConverter.ParseJson(http.responseText)
     Else
         Set getOtherPole = Nothing
-        Debug.Print "Error: " & http.Status & " - " & http.statusText
+        Debug.Print "Error: " & http.status & " - " & http.statusText
     End If
     
     Set http = Nothing
+    Exit Function
+    
+ErrorHandler:
+    MsgBox "HTTP Request Failed or Timed Out!" & vbCrLf & _
+           "Error Number: " & Err.Number & vbCrLf & _
+           "Description: " & Err.Description, vbCritical
 End Function
 
 Function getROWJSON(poles As Collection, layer As Integer, token As String) As Object
+    On Error GoTo ErrorHandler
+    
     Dim lowestLatitude As Double
     Dim lowestLongitude As Double
     Dim highestLatitude As Double
@@ -106,127 +153,29 @@ Function getROWJSON(poles As Collection, layer As Integer, token As String) As O
     Dim bbox As String: bbox = bbox1 & "," & bbox2
     
     Dim url As String: url = "https://gis.consumersenergy.com/mapping/rest/services/Landbase/Landbase_Grids_Boundaries_PUB/MapServer/" & layer & "/query?where=1=1&outFields=*&returnGeometry=true&geometryType=esriGeometryEnvelope&geometry=" & bbox & "&spatialRel=esriSpatialRelIntersects&inSR=2253&outSR=2253+&f=json&token=" & token
-
+    Debug.Print url
+    
     Set http = CreateObject("MSXML2.ServerXMLHTTP.6.0")
     http.Open "POST", url, False
     http.setRequestHeader "Authorization", "Bearer " & token
     http.setRequestHeader "Content-Type", "application/json"
+    http.SetTimeouts 15000, 15000, 15000, 15000
     http.send
     
-    If http.Status = 200 Then
+    If http.status = 200 Then
         Set getROWJSON = JsonConverter.ParseJson(http.responseText)
     Else
         Set getROWJSON = Nothing
-        Debug.Print "Error: " & http.Status & " - " & http.statusText
+        Debug.Print "Error: " & http.status & " - " & http.statusText
     End If
     
     Set http = Nothing
-End Function
-
-Public Function getItems(pole As pole, ByVal i As String, uttype As String) As Collection
-    Dim items As Collection: Set items = New Collection
-    Dim sheet As Worksheet: Set sheet = Utilities.GetPDS(pole.poleNumber)
+    Exit Function
     
-    For j = 0 To 100
-        If sheet.Range("UTTYPE").offset(j, 0).Interior.color <> 16312794 Then Exit For
-        If InStr(sheet.Range("UTTYPE").offset(j, 0), uttype) > 0 Then
-            If Replace(sheet.Range("UTMIDSPAN" & i).offset(j, 0), "-", "") <> "" Then
-                Dim item As Scripting.Dictionary: Set item = New Scripting.Dictionary
-                item("size") = OnlyNumbers(sheet.Range("UTSIZE").offset(j, 0), True)
-                item("type") = uttype
-                If uttype = "PRI" Then
-                    If InStr(sheet.Range("UTSIZE").offset(j, 0), "Ø") > 1 Then
-                        item("phase") = Mid(sheet.Range("UTSIZE").offset(j, 0), InStr(sheet.Range("UTSIZE").offset(j, 0), "Ø") - 1, 1)
-                        If CInt(item("phase")) > 3 Then item("phase") = "3"
-                        item("size") = Left(item("size"), Len(item("size")) - 1)
-                        neutralSpanCount = 0
-                        Dim neutrals As Collection: Set neutrals = New Collection
-                        neutralSize = ""
-                        secondarySpanCount = 0
-                        Dim secondaries As Collection: Set secondaries = New Collection
-                        neutralShareHeight = False
-                        For k = 0 To 100
-                            If sheet.Range("UTTYPE").offset(k, 0).Interior.color <> 16312794 Then Exit For
-                            If InStr(sheet.Range("UTTYPE").offset(k, 0), "NEUT") > 0 Then
-                                neutrals.Add k
-                                If Replace(sheet.Range("UTMIDSPAN" & i).offset(k, 0), "-", "") <> "" Then
-                                    neutralSize = Utilities.OnlyNumbers(sheet.Range("UTSIZE").offset(k, 0), True)
-                                    neutralSpanCount = neutralSpanCount + 1
-                                    netrualHeight = Utilities.convertToInches(sheet.Range("UTHEIGHT").offset(k, 0))
-                                    primaryHeight = Utilities.convertToInches(sheet.Range("UTHEIGHT").offset(j, 0))
-                                    If (Abs(primaryHeight - netrualHeight) < 18) Then
-                                        neutralShareHeight = True
-                                    End If
-                                End If
-                            ElseIf InStr(sheet.Range("UTTYPE").offset(k, 0), "SEC") > 0 Or InStr(sheet.Range("UTTYPE").offset(k, 0), "OW") > 0 Then
-                                secondaries.Add k
-                                If Replace(sheet.Range("UTMIDSPAN" & i).offset(k, 0), "-", "") <> "" Then
-                                    secondarySpanCount = secondarySpanCount + 1
-                                End If
-                            End If
-                        Next k
-                        If (neutralShareHeight) Then
-                            item("config") = "N"
-                            item("neutralSize") = neutralSize
-                        ElseIf (secondarySpanCount > 0) Then
-                            item("config") = "SN"
-                        ElseIf (neutralSpanCount > 0) Then
-                            item("config") = "NB"
-                            item("neutralSize") = neutralSize
-                        ElseIf (neutrals.count > 0 And secondaries.count = 0) Then
-                            item("config") = "NB"
-                            item("neutralSize") = neutralSize
-                        ElseIf (secondaries.count > 0 And neutrals.count = 0) Then
-                            item("config") = "SN"
-                        ElseIf (secondaries.count = 0 And neutrals.count = 0) Then
-                            item("config") = "N"
-                            item("neutralSize") = item("size")
-                        Else
-                            closestSecAngleDif = 360
-                            closestNeutAngleDif = 360
-                            Set distanceAngle = getDistanceAngle(sheet, i)
-                            angle = distanceAngle(2)
-                            For Each secondary In secondaries
-                                Set results = getClosestAngle(sheet, secondary, angle)
-                                If closestSecAngleDif > results(1) Then closestSecAngleDif = results(1)
-                            Next secondary
-                            
-                            For Each neutral In neutrals
-                                Set results = getClosestAngle(sheet, neutral, angle)
-                                If closestNeutAngleDif > results(1) Then
-                                    closestNeutAngleDif = results(1)
-                                    neutralSize = results(2)
-                                End If
-                            Next neutral
-
-                            If closestSecAngleDif <= closestNeutAngleDif And closestSecAngleDif < 30 Then
-                                item("config") = "SN"
-                            ElseIf closestNeutAngleDif <= closestSecAngleDif And closestNeutAngleDif < 30 Then
-                                item("config") = "NB"
-                                item("neutralSize") = neutralSize
-                            Else
-                                item("config") = "N"
-                                item("neutralSize") = item("size")
-                            End If
-                        End If
-                    End If
-                ElseIf uttype = "SEC" Then
-                    size = sheet.Range("UTSIZE").offset(j, 0)
-                    If InStr(size, "TX") > 0 Then
-                        item("size") = item("size") & "TX"
-                    ElseIf InStr(size, "DX") > 0 Then
-                        item("size") = item("size") & "DX"
-                    ElseIf InStr(size, "QX") > 0 Then
-                        item("size") = item("size") & "QX"
-                    ElseIf InStr(size, "AWAC") > 0 Then
-                        item("size") = item("size") & "AWAC"
-                    End If
-                End If
-                items.Add item
-            End If
-        End If
-    Next j
-    Set getItems = items
+ErrorHandler:
+    MsgBox "HTTP Request Failed or Timed Out!" & vbCrLf & _
+           "Error Number: " & Err.Number & vbCrLf & _
+           "Description: " & Err.Description, vbCritical
 End Function
 
 Public Function getDistanceAngle(sheet As Worksheet, ByVal i As String) As Collection
@@ -250,12 +199,12 @@ Public Function getClosestAngle(sheet As Worksheet, ByVal k As Integer, ByVal an
         For Each name In sheet.names
             If name.name = "'" & sheet.name & "'" & "!TOPOLE" & i Then
                 If Trim(Replace(sheet.Range("TOPOLE" & i), "-", "")) <> "" Then
-                    If Replace(sheet.Range("UTMIDSPAN" & i).offset(k, 0), "-", "") <> "" Then
+                    If Replace(sheet.Range("UTMIDSPAN" & i).OFFSET(k, 0), "-", "") <> "" Then
                         Set results = getDistanceAngle(sheet, i)
                         angleDif = Abs(angle - results(2))
                         If smallestAngleDif > angleDif Then
                             smallestAngleDif = angleDif
-                            size = OnlyNumbers(sheet.Range("UTSIZE").offset(k, 0), True)
+                            size = OnlyNumbers(sheet.Range("UTSIZE").OFFSET(k, 0), True)
                         End If
                     End If
                 End If
@@ -268,10 +217,33 @@ Public Function getClosestAngle(sheet As Worksheet, ByVal k As Integer, ByVal an
     Set getClosestAngle = closestAngle
 End Function
 
+Public Function Atn2(dy As Double, dx As Double) As Double
+    Dim PI As Double
+    PI = 4 * Atn(1)
+    
+    If dx > 0 Then
+        Atn2 = Atn(dy / dx)
+    ElseIf dx < 0 Then
+        If dy >= 0 Then
+            Atn2 = Atn(dy / dx) + PI
+        Else
+            Atn2 = Atn(dy / dx) - PI
+        End If
+    Else
+        If dy > 0 Then
+            Atn2 = PI / 2
+        ElseIf dy < 0 Then
+            Atn2 = -PI / 2
+        Else
+            Atn2 = 0
+        End If
+    End If
+End Function
+
 Function LatLonToMI2253(latDeg As Double, lonDeg As Double) As Variant
     Const PI As Double = 3.14159265358979
  
-    Const a As Double = 6378137#
+    Const A As Double = 6378137#
     Const F As Double = 1# / 298.257222101
  
     Dim e As Double
@@ -321,8 +293,8 @@ Function LatLonToMI2253(latDeg As Double, lonDeg As Double) As Variant
     Dim rho As Double
     Dim rho0 As Double
  
-    rho = a * lccF * t ^ n
-    rho0 = a * lccF * t0 ^ n
+    rho = A * lccF * t ^ n
+    rho0 = A * lccF * t0 ^ n
  
     Dim xMeters As Double
     Dim yMeters As Double
