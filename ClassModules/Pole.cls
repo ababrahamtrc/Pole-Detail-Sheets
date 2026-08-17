@@ -20,6 +20,8 @@ Public Class As String
 Public owner As String
 Public latitude As Double
 Public longitude As Double
+Public x As Double
+Public y As Double
 Public agl As Double
 Public glc As String
 Public spans As Collection
@@ -134,8 +136,8 @@ Public Sub extractFromSheet(sheet As Worksheet)
     
     For i = 1 To 12
         If Not Utilities.RangeExists(sheet, "TOPOLE" & i) Then Exit For
-        If sheet.Range("TOPOLE" & i).offset(1, 0).Value <> "" Then
-            applicant.midspans.Add i, Utilities.convertToInches(sheet.Range("TOPOLE" & i).offset(1, 0).Value)
+        If sheet.Range("TOPOLE" & i).OFFSET(1, 0).Value <> "" Then
+            applicant.midspans.Add i, Utilities.convertToInches(sheet.Range("TOPOLE" & i).OFFSET(1, 0).Value)
         End If
     Next i
     
@@ -153,6 +155,9 @@ Public Sub extractFromSheet(sheet As Worksheet)
     Me.njunsTicket = sheet.Range("NJUNSTICKET")
     Me.latitude = sheet.Range("LATITUDE")
     Me.longitude = sheet.Range("LONGITUDE")
+    results = LatLonToMI2253(Me.latitude, Me.longitude)
+    Me.x = results(0)
+    Me.y = results(1)
     
     Me.treeWork = sheet.Range("TREE") Or sheet.Range("TREE2") = "YES"
     
@@ -172,7 +177,7 @@ Public Sub extractFromSheet(sheet As Worksheet)
         line = Replace(line, " ", "")
         If InStr(line, "D=") > 0 Then Me.dSpace = Utilities.convertToInches(Mid(line, 3, Len(line) - 2))
         If InStr(line, "P=") > 0 Then Me.pSpace = Utilities.convertToInches(Mid(line, 3, Len(line) - 2))
-        If regex.Test(line) Then
+        If regex.test(line) Then
             Me.newHeight = regex.Execute(line)(0).SubMatches(0) * 12
             Me.newClass = regex.Execute(line)(0).SubMatches(1)
             Me.replacePole = True
@@ -187,30 +192,35 @@ Public Sub extractFromSheet(sheet As Worksheet)
     Dim Span As Span
     For i = 1 To 12
         If Not Utilities.RangeExists(sheet, "TOPOLE" & i) Then Exit For
-        If sheet.Range("TOPOLE" & i) = "" Or InStr(sheet.Range("TOPOLE" & i), "(") = 0 Or InStr(sheet.Range("TOPOLE" & i), ")") = 0 Then Exit For
-        Set Span = New Span
-        Span.distance = Utilities.OnlyNumbers(sheet.Range("SPAN" & i))
-        Span.angle = CInt(ThisWorkbook.InsideParentheses(sheet.Range("TOPOLE" & i)))
-        If Utilities.SheetExists(ThisWorkbook.RemoveParentheses(sheet.Range("TOPOLE" & i))) Then
-            Span.otherPole = ThisWorkbook.RemoveParentheses(sheet.Range("TOPOLE" & i))
+        'If sheet.Range("TOPOLE" & i) = "" Or InStr(sheet.Range("TOPOLE" & i), "(") = 0 Or InStr(sheet.Range("TOPOLE" & i), ")") = 0 Then Exit For
+        If sheet.Range("TOPOLE" & i) <> "" Then
+            Set Span = New Span
+            Span.distance = Utilities.OnlyNumbers(sheet.Range("SPAN" & i))
+            Dim tempAngle As String: tempAngle = sheet.Range("TOPOLE" & i)
+            If InStr(tempAngle, "(") > 0 And InStr(tempAngle, "(") > 0 Then tempAngle = ThisWorkbook.InsideParentheses(tempAngle)
+            If InStr(tempAngle, "(") > 0 Then tempAngle = Right(tempAngle, Len(tempAngle) - InStr(tempAngle, "("))
+            Span.angle = CInt(tempAngle)
+            If Utilities.SheetExists(ThisWorkbook.RemoveParentheses(sheet.Range("TOPOLE" & i))) Then
+                Span.otherPole = ThisWorkbook.RemoveParentheses(sheet.Range("TOPOLE" & i))
+            End If
+            Span.direction = Utilities.degreesToDirection(Span.angle)
+            Span.spanSlot = i
+            Me.spans.Add Span
         End If
-        Span.direction = Utilities.degreesToDirection(Span.angle)
-        Span.spanSlot = i
-        Me.spans.Add Span
     Next i
     
     Dim comp As Component
     Dim wire As wire
-    Dim equipment As equipment
+    Dim Equipment As Equipment
     Dim guy As guy
     Dim modificationCells As Collection: Set modificationCells = New Collection
     For i = 0 To 100
-        If sheet.Range("CMOWNER").offset(i, 0).Interior.color <> 16312794 Then Exit For
-        If Utilities.convertToInches(sheet.Range("CMHEIGHT").offset(i, 0)) > 0 Then
+        If sheet.Range("CMOWNER").OFFSET(i, 0).Interior.color <> 16312794 Then Exit For
+        If Utilities.convertToInches(sheet.Range("CMHEIGHT").OFFSET(i, 0)) > 0 Then
             Set comp = New Component
-            comp.height = Utilities.convertToInches(sheet.Range("CMHEIGHT").offset(i, 0).text)
-            comp.owner = sheet.Range("CMOWNER").offset(i, 0).text
-            comp.size = sheet.Range("CMSIZE").offset(i, 0).text
+            comp.height = Utilities.convertToInches(sheet.Range("CMHEIGHT").OFFSET(i, 0).text)
+            comp.owner = sheet.Range("CMOWNER").OFFSET(i, 0).text
+            comp.size = sheet.Range("CMSIZE").OFFSET(i, 0).text
             If InStr(comp.owner, " DG") > 0 Then
                 comp.componentType = "DG"
                 comp.owner = Replace(comp.owner, " DG", "")
@@ -227,17 +237,17 @@ Public Sub extractFromSheet(sheet As Worksheet)
                 If overlash And wire.owner = applicant.owner Then applicant.height = wire.height
                 
                 For Each Span In Me.spans
-                    If Replace(sheet.Range("CMMIDSPAN" & Span.spanSlot).offset(i, 0).text, "-", "") <> "" Then
-                        wire.midspans.Add Span.spanSlot, Utilities.convertToInches(sheet.Range("CMMIDSPAN" & Span.spanSlot).offset(i, 0).text)
+                    If Replace(sheet.Range("CMMIDSPAN" & Span.spanSlot).OFFSET(i, 0).text, "-", "") <> "" Then
+                        wire.midspans.Add Span.spanSlot, Utilities.convertToInches(sheet.Range("CMMIDSPAN" & Span.spanSlot).OFFSET(i, 0).text)
                         If wire.componentType = "" Then wire.componentType = "COM"
                         Span.commComponents.Add wire
                         Span.commWires.Add wire
                         Span.wires.Add wire
                         If Span.houseNumber = "" Then
-                            If InStr(sheet.Range("CMMIDSPAN" & Span.spanSlot).offset(i, 0), "(") > 0 Then
-                                Span.houseNumber = ThisWorkbook.InsideParentheses(sheet.Range("CMMIDSPAN" & Span.spanSlot).offset(i, 0))
+                            If InStr(sheet.Range("CMMIDSPAN" & Span.spanSlot).OFFSET(i, 0), "(") > 0 Then
+                                Span.houseNumber = ThisWorkbook.InsideParentheses(sheet.Range("CMMIDSPAN" & Span.spanSlot).OFFSET(i, 0))
                             Else
-                                Span.houseNumber = sheet.Range("CMMIDSPAN" & Span.spanSlot).offset(i, 0)
+                                Span.houseNumber = sheet.Range("CMMIDSPAN" & Span.spanSlot).OFFSET(i, 0)
                             End If
                         End If
                     End If
@@ -251,9 +261,9 @@ Public Sub extractFromSheet(sheet As Worksheet)
                     Me.commWires.Add wire
                     Me.wires.Add wire
                 Else
-                    Set equipment = comp.getEquipment
-                    equipment.bottomHeight = Utilities.convertToInches(ThisWorkbook.InsideParentheses(sheet.Range("CMHEIGHT").offset(i, 0).text))
-                    Me.commComponents.Add equipment
+                    Set Equipment = comp.getEquipment
+                    Equipment.bottomHeight = Utilities.convertToInches(ThisWorkbook.InsideParentheses(sheet.Range("CMHEIGHT").OFFSET(i, 0).text))
+                    Me.commComponents.Add Equipment
                 End If
             Else
                 Set guy = comp.getDownGuy()
@@ -264,12 +274,14 @@ Public Sub extractFromSheet(sheet As Worksheet)
     Next i
     
     For i = 0 To 100
-        If sheet.Range("UTTYPE").offset(i, 0).Interior.color <> 16312794 Then Exit For
-        If Utilities.convertToInches(ThisWorkbook.RemoveParentheses(sheet.Range("UTHEIGHT").offset(i, 0))) > 0 Then
+        If sheet.Range("UTTYPE").OFFSET(i, 0).Interior.color <> 16312794 Then Exit For
+        If Utilities.convertToInches(ThisWorkbook.RemoveParentheses(sheet.Range("UTHEIGHT").OFFSET(i, 0))) > 0 Then
             Set comp = New Component
-            comp.height = Utilities.convertToInches(sheet.Range("UTHEIGHT").offset(i, 0).text)
-            comp.componentType = sheet.Range("UTTYPE").offset(i, 0).text
-            comp.size = sheet.Range("UTSIZE").offset(i, 0).text
+            comp.height = Utilities.convertToInches(sheet.Range("UTHEIGHT").OFFSET(i, 0).text)
+            comp.componentType = sheet.Range("UTTYPE").OFFSET(i, 0).text
+            If InStr(comp.componentType, ")") > 0 And InStr(comp.componentType, "(") > 0 Then comp.componentType = ThisWorkbook.InsideParentheses(comp.componentType)
+            comp.size = sheet.Range("UTSIZE").OFFSET(i, 0).text
+            If InStr(comp.size, ")") > 0 And InStr(comp.size, "(") > 0 Then comp.size = ThisWorkbook.RemoveParentheses(comp.size)
             
             If comp.componentType = "PRI" Or comp.componentType = "NEUT" Or comp.componentType = "SEC" Or comp.componentType = "SVC" Or comp.componentType = "OW" Or comp.componentType = "SPG" Then
                 Set wire = comp.getWire()
@@ -277,20 +289,27 @@ Public Sub extractFromSheet(sheet As Worksheet)
                 If wire.componentType = "PRI" And InStr(wire.size, "Ø") > 0 Then
                     wire.phase = Mid(comp.size, Len(wire.size) - 1, 1)
                     wire.size = Left(comp.size, Len(wire.size) - 3)
+                    If wire.phase > 3 Then wire.phase = 3
+                    If wire.phase <> 1 And wire.phase <> 2 And wire.phase <> 3 Then
+                        wire.phase = 1
+                    End If
+                ElseIf wire.componentType = "PRI" Then
+                    wire.size = comp.size
+                    wire.phase = 1
                 End If
-                If wire.componentType = "SPG" Or wire.componentType = "MSG" Then wire.wepHeight = Utilities.convertToInches(ThisWorkbook.InsideParentheses(sheet.Range("UTHEIGHT").offset(i, 0).text))
+                If wire.componentType = "SPG" Or wire.componentType = "MSG" Then wire.wepHeight = Utilities.convertToInches(ThisWorkbook.InsideParentheses(sheet.Range("UTHEIGHT").OFFSET(i, 0).text))
                 
                 For Each Span In Me.spans
-                    If Replace(sheet.Range("UTMIDSPAN" & Span.spanSlot).offset(i, 0).text, "-", "") <> "" Then
-                        wire.midspans.Add Span.spanSlot, Utilities.convertToInches(sheet.Range("UTMIDSPAN" & Span.spanSlot).offset(i, 0).text)
+                    If Replace(sheet.Range("UTMIDSPAN" & Span.spanSlot).OFFSET(i, 0).text, "-", "") <> "" Then
+                        wire.midspans.Add Span.spanSlot, Utilities.convertToInches(sheet.Range("UTMIDSPAN" & Span.spanSlot).OFFSET(i, 0).text)
                         Span.utilComponents.Add wire
                         Span.utilWires.Add wire
                         Span.wires.Add wire
                         If Span.houseNumber = "" Then
-                            If InStr(sheet.Range("UTMIDSPAN" & Span.spanSlot).offset(i, 0), "(") > 0 Then
-                                Span.houseNumber = ThisWorkbook.InsideParentheses(sheet.Range("UTMIDSPAN" & Span.spanSlot).offset(i, 0))
+                            If InStr(sheet.Range("UTMIDSPAN" & Span.spanSlot).OFFSET(i, 0), "(") > 0 Then
+                                Span.houseNumber = ThisWorkbook.InsideParentheses(sheet.Range("UTMIDSPAN" & Span.spanSlot).OFFSET(i, 0))
                             Else
-                                Span.houseNumber = sheet.Range("UTMIDSPAN" & Span.spanSlot).offset(i, 0)
+                                Span.houseNumber = sheet.Range("UTMIDSPAN" & Span.spanSlot).OFFSET(i, 0)
                             End If
                         End If
                     End If
@@ -310,11 +329,11 @@ Public Sub extractFromSheet(sheet As Worksheet)
                 Me.utilComponents.Add guy
                 Me.guys.Add guy
             Else
-                Set equipment = comp.getEquipment
-                equipment.bottomHeight = Utilities.convertToInches(ThisWorkbook.InsideParentheses(sheet.Range("UTHEIGHT").offset(i, 0).text))
-                Me.utilComponents.Add equipment
-                Me.equipments.Add equipment
-                If equipment.componentType = "XFMR" Then Me.transformerSizes = Me.transformerSizes + Utilities.OnlyNumbers(equipment.size)
+                Set Equipment = comp.getEquipment
+                Equipment.bottomHeight = Utilities.convertToInches(ThisWorkbook.InsideParentheses(sheet.Range("UTHEIGHT").OFFSET(i, 0).text))
+                Me.utilComponents.Add Equipment
+                Me.equipments.Add Equipment
+                If Equipment.componentType = "XFMR" Then Me.transformerSizes = Me.transformerSizes + Utilities.OnlyNumbers(Equipment.size)
             End If
         End If
     Next i
@@ -322,10 +341,10 @@ Public Sub extractFromSheet(sheet As Worksheet)
     Dim anchor As anchor
     For i = 0 To 100
         Set anchor = New anchor
-        If sheet.Range("ANCHOROWNER").offset(i, 0).Value = "" Or sheet.Range("ANCHOROWNER").offset(i, 0).Value = "New APP" Then Exit For
-        anchor.owner = sheet.Range("ANCHOROWNER").offset(i, 0).Value
-        anchor.distance = Utilities.OnlyNumbers(sheet.Range("ANCHORLEAD").offset(i, 0).Value)
-        anchor.angle = Utilities.OnlyNumbers(sheet.Range("ANCHORDIRECTION").offset(i, 0).Value)
+        If sheet.Range("ANCHOROWNER").OFFSET(i, 0).Value = "" Or sheet.Range("ANCHOROWNER").OFFSET(i, 0).Value = "New APP" Then Exit For
+        anchor.owner = sheet.Range("ANCHOROWNER").OFFSET(i, 0).Value
+        anchor.distance = Utilities.OnlyNumbers(sheet.Range("ANCHORLEAD").OFFSET(i, 0).Value)
+        anchor.angle = Utilities.OnlyNumbers(sheet.Range("ANCHORDIRECTION").OFFSET(i, 0).Value)
         anchor.direction = Utilities.degreesToDirection(anchor.angle)
         
         If InStr(anchor.owner, "(x") > 0 And InStr(anchor.owner, ")") > 0 And IsNumeric(Mid(anchor.owner, InStr(anchor.owner, "(x") + 2, 1)) Then
@@ -463,9 +482,9 @@ Public Sub fillSheet(sheet As Worksheet, maxSpans As Integer, project As project
     For i = 1 To 3
         If i > Me.applicantGuys.count Then Exit For
         Set guy = Me.applicantGuys(i)
-        sheet.Range("NEWAPPSIZE").offset(i - 1, 0) = guy.proposedSize
-        sheet.Range("NEWAPPLEAD").offset(i - 1, 0) = guy.proposedLead
-        sheet.Range("NEWAPPDIR").offset(i - 1, 0) = guy.proposedDirection
+        sheet.Range("NEWAPPSIZE").OFFSET(i - 1, 0) = guy.proposedSize
+        sheet.Range("NEWAPPLEAD").OFFSET(i - 1, 0) = guy.proposedLead
+        sheet.Range("NEWAPPDIR").OFFSET(i - 1, 0) = guy.proposedDirection
     Next i
     If Me.applicant.height > 0 Then sheet.Range("PROPOSEDHEIGHT").Value = Utilities.inchesToFeetInches(Me.applicant.height)
     If Me.applicant.modification <> Me.applicant.height And Me.applicant.modification > 0 Then sheet.Range("CMRF1").Value = Utilities.inchesToFeetInches(Me.applicant.modification)
@@ -480,15 +499,15 @@ Public Sub fillSheet(sheet As Worksheet, maxSpans As Integer, project As project
         sheet.Range("TOPOLE" & Span.spanSlot).HorizontalAlignment = xlLeft
         sheet.Range("CLEARANCE" & Span.spanSlot).Value = "15'6"""
         If Me.applicant.midspans.exists(Span.spanSlot) Then
-            sheet.Range("TOPOLE" & Span.spanSlot).offset(1, 0).Value = Utilities.inchesToFeetInches(Me.applicant.midspans(Span.spanSlot))
-            If Me.applicant.tensions.exists(Span.spanSlot) Then sheet.Range("TOPOLE" & Span.spanSlot).offset(2, 0).Value = Me.applicant.tensions(Span.spanSlot)
+            sheet.Range("TOPOLE" & Span.spanSlot).OFFSET(1, 0).Value = Utilities.inchesToFeetInches(Me.applicant.midspans(Span.spanSlot))
+            If Me.applicant.tensions.exists(Span.spanSlot) Then sheet.Range("TOPOLE" & Span.spanSlot).OFFSET(2, 0).Value = Me.applicant.tensions(Span.spanSlot)
         End If
         Call Span.setLowestPowerWire
         If Not Span.lowestPowerWire Is Nothing Then
             If Span.lowestPowerWire.componentType = "SVC" Then
-                sheet.Range("CMMIDSPAN" & Span.spanSlot).offset(-2, 0).Value = Utilities.inchesToFeetInches(Span.lowestPowerWire.midspans(Span.spanSlot) - 12)
+                sheet.Range("CMMIDSPAN" & Span.spanSlot).OFFSET(-2, 0).Value = Utilities.inchesToFeetInches(Span.lowestPowerWire.midspans(Span.spanSlot) - 12)
             Else
-                sheet.Range("CMMIDSPAN" & Span.spanSlot).offset(-2, 0).Value = Utilities.inchesToFeetInches(Span.lowestPowerWire.midspans(Span.spanSlot) - 30)
+                sheet.Range("CMMIDSPAN" & Span.spanSlot).OFFSET(-2, 0).Value = Utilities.inchesToFeetInches(Span.lowestPowerWire.midspans(Span.spanSlot) - 30)
             End If
         End If
     Next Span
@@ -507,24 +526,24 @@ Public Sub fillSheet(sheet As Worksheet, maxSpans As Integer, project As project
     Dim anchor As anchor
     Dim anchorCount As Integer
     For Each anchor In Me.anchors
-        sheet.Range("ANCHOROWNER").offset(anchorCount, 0).Value = WorksheetFunction.Proper(anchor.owner)
-        If anchor.ceCount > 1 Then sheet.Range("ANCHOROWNER").offset(anchorCount, 0).Value = "(x" & anchor.ceCount & ")" & sheet.Range("ANCHOROWNER").offset(anchorCount, 0).Value
-        sheet.Range("ANCHORLEAD").offset(anchorCount, 0).Value = anchor.distance & "'"
-        sheet.Range("ANCHORDIRECTION").offset(anchorCount, 0).Value = anchor.direction & "(" & anchor.angle & ")"
+        sheet.Range("ANCHOROWNER").OFFSET(anchorCount, 0).Value = WorksheetFunction.Proper(anchor.owner)
+        If anchor.ceCount > 1 Then sheet.Range("ANCHOROWNER").OFFSET(anchorCount, 0).Value = "(x" & anchor.ceCount & ")" & sheet.Range("ANCHOROWNER").OFFSET(anchorCount, 0).Value
+        sheet.Range("ANCHORLEAD").OFFSET(anchorCount, 0).Value = anchor.distance & "'"
+        sheet.Range("ANCHORDIRECTION").OFFSET(anchorCount, 0).Value = anchor.direction & "(" & anchor.angle & ")"
         anchorCount = anchorCount + 1
     Next anchor
     
     'Equipment Section
-    Dim equipment As equipment
-    For Each equipment In Me.equipments
-        If equipment.componentType = "XFMR" Or equipment.componentType = "CAPACITOR" Or equipment.componentType = "RECLOSER" Or equipment.componentType = "REGULATOR" Then
-            sheet.Range("EQUIPMENT") = equipment.componentType
-            sheet.Range("EQUIPMENTHEIGHT") = equipment.getDisplayHeight
-            sheet.Range("EQUIPMENTSIZE") = equipment.size
-            If equipment.componentType = "CO" Then sheet.Range("INVENTORY").Value = "CO"
+    Dim Equipment As Equipment
+    For Each Equipment In Me.equipments
+        If Equipment.componentType = "XFMR" Or Equipment.componentType = "CAPACITOR" Or Equipment.componentType = "RECLOSER" Or Equipment.componentType = "REGULATOR" Then
+            sheet.Range("EQUIPMENT") = Equipment.componentType
+            sheet.Range("EQUIPMENTHEIGHT") = Equipment.getDisplayHeight
+            sheet.Range("EQUIPMENTSIZE") = Equipment.size
+            If Equipment.componentType = "CO" Then sheet.Range("INVENTORY").Value = "CO"
             Exit For
         End If
-    Next equipment
+    Next Equipment
     
     'CMRF Section
     Call fillCMRF(sheet)
@@ -546,19 +565,19 @@ Public Sub fillSheet(sheet As Worksheet, maxSpans As Integer, project As project
         Dim category As String: category = ""
         If comp.componentType = "DROP" Then category = " SVC"
         If comp.componentType = "MSG" Then category = " MSG"
-        sheet.Range("CMOWNER").offset(i, 0).Value = comp.owner & category
+        sheet.Range("CMOWNER").OFFSET(i, 0).Value = comp.owner & category
         
-        sheet.Range("CMHEIGHT").offset(i, 0).Value = Utilities.inchesToFeetInches(comp.height)
-        sheet.Range("CMSIZE").offset(i, 0).Value = comp.size
+        sheet.Range("CMHEIGHT").OFFSET(i, 0).Value = Utilities.inchesToFeetInches(comp.height)
+        sheet.Range("CMSIZE").OFFSET(i, 0).Value = comp.size
         If TypeOf comp Is wire Then
-            If comp.wepHeight > 0 Then sheet.Range("CMHEIGHT").offset(i, 0).Value = sheet.Range("CMHEIGHT").offset(i, 0).Value & "(" & Utilities.inchesToFeetInches(comp.wepHeight) & ")"
+            If comp.wepHeight > 0 Then sheet.Range("CMHEIGHT").OFFSET(i, 0).Value = sheet.Range("CMHEIGHT").OFFSET(i, 0).Value & "(" & Utilities.inchesToFeetInches(comp.wepHeight) & ")"
             For j = 1 To maxSpans
                 If comp.midspans.exists(j) Then
                     Set Span = Me.findSpan(j)
-                    sheet.Range("CMMIDSPAN" & j).offset(i, 0).Value = comp.getDisplayMidspan(Me.findSpan(j))
-                    sheet.Range("CMMIDSPAN" & j).offset(i, 0).HorizontalAlignment = xlLeft
+                    sheet.Range("CMMIDSPAN" & j).OFFSET(i, 0).Value = comp.getDisplayMidspan(Me.findSpan(j))
+                    sheet.Range("CMMIDSPAN" & j).OFFSET(i, 0).HorizontalAlignment = xlLeft
                 Else
-                    sheet.Range("CMMIDSPAN" & j).offset(i, 0).Value = "-"
+                    sheet.Range("CMMIDSPAN" & j).OFFSET(i, 0).Value = "-"
                 End If
             Next j
             
@@ -571,10 +590,10 @@ Public Sub fillSheet(sheet As Worksheet, maxSpans As Integer, project As project
             
         Else
             For j = 1 To maxSpans
-                sheet.Range("CMMIDSPAN" & j).offset(i, 0).Value = "-"
+                sheet.Range("CMMIDSPAN" & j).OFFSET(i, 0).Value = "-"
             Next j
             If TypeOf comp Is guy Then
-                sheet.Range("CMOWNER").offset(i, 0).Value = comp.owner & " DG"
+                sheet.Range("CMOWNER").OFFSET(i, 0).Value = comp.owner & " DG"
             End If
         End If
     Next i
@@ -595,37 +614,37 @@ Public Sub fillSheet(sheet As Worksheet, maxSpans As Integer, project As project
     Dim descCount As Integer
     For i = 0 To Me.utilComponents.count - 1
         Set comp = Me.utilComponents(i + 1)
-        sheet.Range("UTTYPE").offset(i, 0).Value = comp.componentType
-        sheet.Range("UTHEIGHT").offset(i, 0).Value = Utilities.inchesToFeetInches(comp.height)
-        sheet.Range("UTSIZE").offset(i, 0).Value = comp.size
+        sheet.Range("UTTYPE").OFFSET(i, 0).Value = comp.componentType
+        sheet.Range("UTHEIGHT").OFFSET(i, 0).Value = Utilities.inchesToFeetInches(comp.height)
+        sheet.Range("UTSIZE").OFFSET(i, 0).Value = comp.size
         If TypeOf comp Is wire Then
-            If comp.wepHeight > 0 Then sheet.Range("UTHEIGHT").offset(i, 0).Value = sheet.Range("UTHEIGHT").offset(i, 0).Value & "(" & Utilities.inchesToFeetInches(comp.wepHeight) & ")"
+            If comp.wepHeight > 0 Then sheet.Range("UTHEIGHT").OFFSET(i, 0).Value = sheet.Range("UTHEIGHT").OFFSET(i, 0).Value & "(" & Utilities.inchesToFeetInches(comp.wepHeight) & ")"
             If comp.componentType = "PRI" And InStr(comp.size, "Ø") > 0 Then
-                sheet.Range("DESC").offset(descCount, 0).Value = Mid(comp.size, InStr(comp.size, "Ø") - 1, 2)
-                sheet.Range("DESC").offset(descCount, 0).HorizontalAlignment = xlLeft
-                sheet.Range("SIZE").offset(descCount, 0).Value = Left(comp.size, Len(comp.size) - 3)
-                sheet.Range("SIZE").offset(descCount, 0).HorizontalAlignment = xlLeft
+                sheet.Range("DESC").OFFSET(descCount, 0).Value = Mid(comp.size, InStr(comp.size, "Ø") - 1, 2)
+                sheet.Range("DESC").OFFSET(descCount, 0).HorizontalAlignment = xlLeft
+                sheet.Range("SIZE").OFFSET(descCount, 0).Value = Left(comp.size, Len(comp.size) - 3)
+                sheet.Range("SIZE").OFFSET(descCount, 0).HorizontalAlignment = xlLeft
                 primaryDirections = ""
                 For Each midspanSlot In comp.midspans
                     If primaryDirections <> "" Then primaryDirections = primaryDirections & "/"
                     primaryDirections = primaryDirections & Me.findSpan(midspanSlot).direction
                 Next midspanSlot
-                sheet.Range("DIRECTION").offset(descCount, 0).Value = primaryDirections
+                sheet.Range("DIRECTION").OFFSET(descCount, 0).Value = primaryDirections
                 descCount = descCount + 1
             End If
             For j = 1 To maxSpans
                 If comp.midspans.exists(j) Then
-                    sheet.Range("UTMIDSPAN" & j).offset(i, 0).Value = comp.getDisplayMidspan(Me.findSpan(j))
-                    sheet.Range("UTMIDSPAN" & j).offset(i, 0).HorizontalAlignment = xlLeft
+                    sheet.Range("UTMIDSPAN" & j).OFFSET(i, 0).Value = comp.getDisplayMidspan(Me.findSpan(j))
+                    sheet.Range("UTMIDSPAN" & j).OFFSET(i, 0).HorizontalAlignment = xlLeft
                 Else
-                    sheet.Range("UTMIDSPAN" & j).offset(i, 0).Value = "-"
+                    sheet.Range("UTMIDSPAN" & j).OFFSET(i, 0).Value = "-"
                 End If
             Next j
         Else
             For j = 1 To maxSpans
-                sheet.Range("UTMIDSPAN" & j).offset(i, 0).Value = "-"
+                sheet.Range("UTMIDSPAN" & j).OFFSET(i, 0).Value = "-"
             Next j
-            sheet.Range("UTHEIGHT").offset(i, 0).Value = comp.getDisplayHeight()
+            sheet.Range("UTHEIGHT").OFFSET(i, 0).Value = comp.getDisplayHeight()
         End If
         
         If comp.componentType = "SL" Then
@@ -659,22 +678,22 @@ Public Sub fillSheet(sheet As Worksheet, maxSpans As Integer, project As project
         End If
     Next Span
     If Me.hammerTestFailed Then
-        sheet.Range("DET").offset(0, 1).Value = "Hammer Test Failed"
+        sheet.Range("DET").OFFSET(0, 1).Value = "Hammer Test Failed"
         If Me.notes <> "" Then Me.notes = Me.notes & vbLf
         Me.notes = Me.notes & "Hammer test failed."
     End If
     If Me.visualCheckFailed Then
         If Me.notes <> "" Then Me.notes = Me.notes & vbLf
         Me.notes = Me.notes & "Fielder visual test failed."
-        If sheet.Range("DET").offset(0, 1).Value = "" Then sheet.Range("DET").offset(0, 1).Value = "Fielder Visual Test Failed"
+        If sheet.Range("DET").OFFSET(0, 1).Value = "" Then sheet.Range("DET").OFFSET(0, 1).Value = "Fielder Visual Test Failed"
     End If
     sheet.Range("NOTES") = Me.notes
     
     'Violations
     Call calculateViolations
-    sheet.Range("SEP").offset(0, 1).Value = Me.violation40SZV
-    sheet.Range("CLEARANCE").offset(0, 1).Value = Me.violationUtil156MSGCV
-    sheet.Range("CLEARANCE").offset(1, 0).Value = Me.violationCom156MSGCV
+    sheet.Range("SEP").OFFSET(0, 1).Value = Me.violation40SZV
+    sheet.Range("CLEARANCE").OFFSET(0, 1).Value = Me.violationUtil156MSGCV
+    sheet.Range("CLEARANCE").OFFSET(1, 0).Value = Me.violationCom156MSGCV
     
     Dim separationViolations As Collection: Set separationViolations = New Collection
     separationViolations.Add Me.violation30MSSV
@@ -683,7 +702,7 @@ Public Sub fillSheet(sheet As Worksheet, maxSpans As Integer, project As project
     separationViolations.Add Me.violation40SLSV
     separationViolations.Add Me.violation12SLDLSV
     
-    sheet.Range("SEP").offset(1, 0).Value = Utilities.JoinCollection(separationViolations, vbLf)
+    sheet.Range("SEP").OFFSET(1, 0).Value = Utilities.JoinCollection(separationViolations, vbLf)
     
     sheet.Protect _
         Password:="", _
@@ -869,18 +888,18 @@ End Function
 
 Public Function Calculate40SLSV() As String()
     Dim results(0 To 1) As String
-    Dim sLBracket As equipment
-    Dim SLDL As equipment
-    Dim equipment As equipment
+    Dim sLBracket As Equipment
+    Dim SLDL As Equipment
+    Dim Equipment As Equipment
     Dim wire As Variant
     
     Dim sLBracketViolators As Collection: Set sLBracketViolators = New Collection
     Dim sLDLViolators As Collection: Set sLDLViolators = New Collection
     
-    For Each equipment In Me.equipments
-        If equipment.componentType = "SL" Then Set sLBracket = equipment
-        If equipment.size = "SL" Then Set SLDL = equipment
-    Next equipment
+    For Each Equipment In Me.equipments
+        If Equipment.componentType = "SL" Then Set sLBracket = Equipment
+        If Equipment.size = "SL" Then Set SLDL = Equipment
+    Next Equipment
     
     If sLBracket Is Nothing And SLDL Is Nothing Then
         Calculate40SLSV = results
@@ -913,13 +932,13 @@ Public Sub clearCMRF(sheet As Worksheet)
     For i = 1 To 8
         sheet.Range("COMM" & i).Value = "COMM #" & i
         sheet.Range("COMM" & i).HorizontalAlignment = xlCenter
-        sheet.Range("COMM" & i).offset(2, 0).Value = ""
-        sheet.Range("COMM" & i).offset(2, 0).offset(0, 1).Value = ""
+        sheet.Range("COMM" & i).OFFSET(2, 0).Value = ""
+        sheet.Range("COMM" & i).OFFSET(2, 0).OFFSET(0, 1).Value = ""
     Next i
     
-    Dim row As Integer: row = sheet.Range("COMM1").row + 4
+    Dim ROW As Integer: ROW = sheet.Range("COMM1").ROW + 4
     For i = 0 To 50
-        sheet.Rows(row).Delete
+        sheet.Rows(ROW).Delete
     Next i
 End Sub
 
@@ -948,11 +967,11 @@ Public Sub fillCMRF(sheet As Worksheet)
             If wire.componentType <> "DROP" Then
                 commCount = commCount + 1
                 If commCount > 1 Then
-                    Set SourceRange = sheet.Range(sheet.Range("COMM" & commOwnerCount).offset(2, -1), sheet.Range("COMM" & commOwnerCount).offset(3, 1))
+                    Set SourceRange = sheet.Range(sheet.Range("COMM" & commOwnerCount).OFFSET(2, -1), sheet.Range("COMM" & commOwnerCount).OFFSET(3, 1))
                     SourceRange.Copy
-                    sheet.Range("COMM" & commOwnerCount).offset(2, -1).offset(((commCount - 1) * 2) - 1, 0).PasteSpecial Paste:=xlPasteAll
+                    sheet.Range("COMM" & commOwnerCount).OFFSET(2, -1).OFFSET(((commCount - 1) * 2) - 1, 0).PasteSpecial Paste:=xlPasteAll
                 End If
-                sheet.Range("COMM" & commOwnerCount).offset(3, 0).offset(((commCount - 1) * 2) - 1, 0).Value = wire.getDisplayHeight(True)
+                sheet.Range("COMM" & commOwnerCount).OFFSET(3, 0).OFFSET(((commCount - 1) * 2) - 1, 0).Value = wire.getDisplayHeight(True)
             End If
         Next i
         
@@ -962,11 +981,11 @@ Public Sub fillCMRF(sheet As Worksheet)
             If wire.componentType = "DROP" Then
                 commCount = commCount + 1
                 If commCount > 1 Then
-                    Set SourceRange = sheet.Range(sheet.Range("COMM" & commOwnerCount).offset(2, -1), sheet.Range("COMM" & commOwnerCount).offset(3, 1))
+                    Set SourceRange = sheet.Range(sheet.Range("COMM" & commOwnerCount).OFFSET(2, -1), sheet.Range("COMM" & commOwnerCount).OFFSET(3, 1))
                     SourceRange.Copy
-                    sheet.Range("COMM" & commOwnerCount).offset(2, -1).offset(((commCount - 1) * 2) - 1, 0).PasteSpecial Paste:=xlPasteAll
+                    sheet.Range("COMM" & commOwnerCount).OFFSET(2, -1).OFFSET(((commCount - 1) * 2) - 1, 0).PasteSpecial Paste:=xlPasteAll
                 End If
-                sheet.Range("COMM" & commOwnerCount).offset(3, 0).offset(((commCount - 1) * 2) - 1, 0).Value = wire.getDisplayHeight(True)
+                sheet.Range("COMM" & commOwnerCount).OFFSET(3, 0).OFFSET(((commCount - 1) * 2) - 1, 0).Value = wire.getDisplayHeight(True)
             End If
         Next i
     Next commOwner
