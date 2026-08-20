@@ -36,7 +36,7 @@ Sub ImportApplication()
     Dim applicationWs As Worksheet: Set applicationWs = applicationWb.sheets(1)
     
     Dim i As Integer
-    Dim applicationWsLastRow As Integer: applicationWsLastRow = applicationWs.Cells(applicationWs.Rows.count, "A").End(xlUp).ROW
+    Dim applicationWsLastRow As Integer: applicationWsLastRow = applicationWs.Cells(applicationWs.Rows.count, "A").End(xlUp).row
     Dim applicationWsLastCol As Integer: applicationWsLastCol = applicationWs.Cells(1, applicationWs.Columns.count).End(xlToLeft).Column
     Dim applicationWsHeaders As Scripting.Dictionary: Set applicationWsHeaders = New Scripting.Dictionary
     For i = 1 To applicationWsLastCol
@@ -164,7 +164,7 @@ Sub ImportApplication()
         End If
     Next i
     
-    applicationWb.Close SaveChanges:=False
+    applicationWb.Close savechanges:=False
     
     ProgressBar_Form.Hide
     
