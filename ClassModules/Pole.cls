@@ -44,7 +44,7 @@ Public buck As Boolean
 Public secOnly As Boolean
 Public treeWork As Boolean
 Public permit As String
-
+Public tlm As String
 Public locationAdjacent As Boolean
 
 Public primaries As Collection
@@ -60,6 +60,7 @@ Public applicantGuys As Collection
 Public overlash As Boolean
 
 Public topped As Boolean
+Public outage As Boolean
 
 Public location As String
 Public alt1 As String
@@ -161,6 +162,9 @@ Public Sub extractFromSheet(sheet As Worksheet)
     
     Me.treeWork = sheet.Range("TREE") Or sheet.Range("TREE2") = "YES"
     
+    If Utilities.RangeExists(sheet, "TLM") Then Me.tlm = sheet.Range("TLM")
+    Me.outage = sheet.Range("OUTAGE") Or InStr(Me.alt1, "OUTAGE REQUIRED") > 0
+    
     Me.buck = sheet.Range("BUCK")
     
     Me.newHeight = Me.height
@@ -211,7 +215,7 @@ Public Sub extractFromSheet(sheet As Worksheet)
     
     Dim comp As Component
     Dim wire As wire
-    Dim Equipment As Equipment
+    Dim equipment As equipment
     Dim guy As guy
     Dim modificationCells As Collection: Set modificationCells = New Collection
     For i = 0 To 100
@@ -261,9 +265,9 @@ Public Sub extractFromSheet(sheet As Worksheet)
                     Me.commWires.Add wire
                     Me.wires.Add wire
                 Else
-                    Set Equipment = comp.getEquipment
-                    Equipment.bottomHeight = Utilities.convertToInches(ThisWorkbook.InsideParentheses(sheet.Range("CMHEIGHT").OFFSET(i, 0).text))
-                    Me.commComponents.Add Equipment
+                    Set equipment = comp.getEquipment
+                    equipment.bottomHeight = Utilities.convertToInches(ThisWorkbook.InsideParentheses(sheet.Range("CMHEIGHT").OFFSET(i, 0).text))
+                    Me.commComponents.Add equipment
                 End If
             Else
                 Set guy = comp.getDownGuy()
@@ -329,11 +333,11 @@ Public Sub extractFromSheet(sheet As Worksheet)
                 Me.utilComponents.Add guy
                 Me.guys.Add guy
             Else
-                Set Equipment = comp.getEquipment
-                Equipment.bottomHeight = Utilities.convertToInches(ThisWorkbook.InsideParentheses(sheet.Range("UTHEIGHT").OFFSET(i, 0).text))
-                Me.utilComponents.Add Equipment
-                Me.equipments.Add Equipment
-                If Equipment.componentType = "XFMR" Then Me.transformerSizes = Me.transformerSizes + Utilities.OnlyNumbers(Equipment.size)
+                Set equipment = comp.getEquipment
+                equipment.bottomHeight = Utilities.convertToInches(ThisWorkbook.InsideParentheses(sheet.Range("UTHEIGHT").OFFSET(i, 0).text))
+                Me.utilComponents.Add equipment
+                Me.equipments.Add equipment
+                If equipment.componentType = "XFMR" Then Me.transformerSizes = Me.transformerSizes + Utilities.OnlyNumbers(equipment.size)
             End If
         End If
     Next i
@@ -411,7 +415,7 @@ Public Sub createSheet(project As project, Optional selectedTemplate As Integer)
         existingNames(rpName) = True
         If rpName <> "4 Spans" And rpName <> "8 Spans" And rpName <> "12 Spans" Then
             If sheet.Cells(2, 2).Value = "Notification:" Then
-                If val(rpName) > val(poleNumber) Or (val(rpName) = val(poleNumber) And rpName > poleNumber) Then
+                If Val(rpName) > Val(poleNumber) Or (Val(rpName) = Val(poleNumber) And rpName > poleNumber) Then
                     Set insertSpot = sheet
                     Exit For
                 End If
@@ -534,16 +538,16 @@ Public Sub fillSheet(sheet As Worksheet, maxSpans As Integer, project As project
     Next anchor
     
     'Equipment Section
-    Dim Equipment As Equipment
-    For Each Equipment In Me.equipments
-        If Equipment.componentType = "XFMR" Or Equipment.componentType = "CAPACITOR" Or Equipment.componentType = "RECLOSER" Or Equipment.componentType = "REGULATOR" Then
-            sheet.Range("EQUIPMENT") = Equipment.componentType
-            sheet.Range("EQUIPMENTHEIGHT") = Equipment.getDisplayHeight
-            sheet.Range("EQUIPMENTSIZE") = Equipment.size
-            If Equipment.componentType = "CO" Then sheet.Range("INVENTORY").Value = "CO"
+    Dim equipment As equipment
+    For Each equipment In Me.equipments
+        If equipment.componentType = "XFMR" Or equipment.componentType = "CAPACITOR" Or equipment.componentType = "RECLOSER" Or equipment.componentType = "REGULATOR" Then
+            sheet.Range("EQUIPMENT") = equipment.componentType
+            sheet.Range("EQUIPMENTHEIGHT") = equipment.getDisplayHeight
+            sheet.Range("EQUIPMENTSIZE") = equipment.size
+            If equipment.componentType = "CO" Then sheet.Range("INVENTORY").Value = "CO"
             Exit For
         End If
-    Next Equipment
+    Next equipment
     
     'CMRF Section
     Call fillCMRF(sheet)
@@ -888,18 +892,18 @@ End Function
 
 Public Function Calculate40SLSV() As String()
     Dim results(0 To 1) As String
-    Dim sLBracket As Equipment
-    Dim SLDL As Equipment
-    Dim Equipment As Equipment
+    Dim sLBracket As equipment
+    Dim SLDL As equipment
+    Dim equipment As equipment
     Dim wire As Variant
     
     Dim sLBracketViolators As Collection: Set sLBracketViolators = New Collection
     Dim sLDLViolators As Collection: Set sLDLViolators = New Collection
     
-    For Each Equipment In Me.equipments
-        If Equipment.componentType = "SL" Then Set sLBracket = Equipment
-        If Equipment.size = "SL" Then Set SLDL = Equipment
-    Next Equipment
+    For Each equipment In Me.equipments
+        If equipment.componentType = "SL" Then Set sLBracket = equipment
+        If equipment.size = "SL" Then Set SLDL = equipment
+    Next equipment
     
     If sLBracket Is Nothing And SLDL Is Nothing Then
         Calculate40SLSV = results
@@ -936,9 +940,9 @@ Public Sub clearCMRF(sheet As Worksheet)
         sheet.Range("COMM" & i).OFFSET(2, 0).OFFSET(0, 1).Value = ""
     Next i
     
-    Dim ROW As Integer: ROW = sheet.Range("COMM1").ROW + 4
+    Dim row As Integer: row = sheet.Range("COMM1").row + 4
     For i = 0 To 50
-        sheet.Rows(ROW).Delete
+        sheet.Rows(row).Delete
     Next i
 End Sub
 
