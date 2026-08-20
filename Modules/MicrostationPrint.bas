@@ -7,31 +7,55 @@ Sub GenerateMicrostationPrintFiles()
     If Environ$("USERNAME") <> "aabraham" Then
         restartMicrostationNeeded = injectHotkey()
         If Not ForceInjectModuleToBentley("PrintGenerator") Then Exit Sub
-        If Not ForceInjectModuleToBentley("JsonConverter") Then Exit Sub
         If Not ForceInjectUserFormToBentley("PrintOptions") Then Exit Sub
+        Call FixJsonConverter("Private Function json_ParseObject(json_String As String, ByRef json_Index As Long) As Dictionary", "Private Function json_ParseObject(json_String As String, ByRef json_Index As Long) As Object")
+        Call FixJsonConverter("Set json_ParseObject = New Dictionary", vbTab & "Set json_ParseObject = CreateObject(""Scripting.Dictionary"")")
+        If Not ForceInjectModuleToBentley("JsonConverter") Then Exit Sub
     End If
-    
-    If Not generateJSON Then Exit Sub
     
     If restartMicrostationNeeded Then
         MsgBox "Restart Open Map Utilities if open for changes to take effect."
     End If
     
+    If Not generateJSON Then Exit Sub
+    
     MsgBox "Press '9' to generate the print on open map utilities. Script will have to be rerun for future generations."
+End Sub
+
+Sub FixJsonConverter(searchStr As String, replaceStr As String)
+    Dim vbaProject As Object
+    Dim vbaModule As Object
+    Dim targetModuleName As String
+    Dim i As Long
+    Dim currentLine As String
+    
+    targetModuleName = "JsonConverter"
+
+    Set vbaProject = Application.VBE.ActiveVBProject
+    Set vbaModule = vbaProject.VBComponents(targetModuleName).CodeModule
+
+    For i = 1 To vbaModule.CountOfLines
+        currentLine = Trim(vbaModule.lines(i, 1))
+        
+        If currentLine = Trim(searchStr) Then
+            vbaModule.ReplaceLine i, replaceStr
+            Exit Sub
+        End If
+    Next i
 End Sub
 
 Sub ClipboardGISTokenURL()
     Dim url As String
-    
-    url = "javascript:(function(){if(window.__CE_TOKEN_SEARCHER__){alert('Token searcher already active.\n\nPan/zoom to trigger requests.');return;}window.__CE_TOKEN_SEARCHER__=true;window.__CE_LAST_TOKEN__=null;function emit(t,src){if(!t||t===window.__CE_LAST_TOKEN__)return;window.__CE_LAST_TOKEN__=t;var payload={token:t,captured_at:new Date().toISOString(),source:src};console.log('[CE TOKEN]',payload);try{navigator.clipboard.writeText(JSON.stringify(payload,null,2));}catch(e){}var" & _
-        "blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='arcgis_token.json';a.click();}var xsend=XMLHttpRequest.prototype.send;XMLHttpRequest.prototype.send=function(b){try{if(typeof b==='string'&&b.indexOf('token=')>-1){var p=new URLSearchParams(b);emit(p.get('token'),'XMLHttpRequest.send');}}catch(e){}return xsend.apply(this,arguments);};var ffetch=window.fetch;window.fetch=function(){try{var u=arguments[0];if(typeof u==='string'&&u.indexOf('to" & _
+
+    url = "javascript:(function(){if(window.__CE_TOKEN_SEARCHER__){alert('Token searcher already active.\n\nPan/zoom to trigger requests.');return;}window.__CE_TOKEN_SEARCHER__=true;window.__CE_LAST_TOKEN__=null;function emit(t,src){if(!t||t===window.__CE_LAST_TOKEN__)return;window.__CE_LAST_TOKEN__=t;var payload={token:t,captured_at:new Date().toISOString(),source:src};console.log('[CE TOKEN]',payload);try{navigator.clipboard.writeText(JSON.stringify(payload,null,2));}catch(e)" & _
+        "{}var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='arcgis_token.json';a.click();}var xsend=XMLHttpRequest.prototype.send;XMLHttpRequest.prototype.send=function(b){try{if(typeof b==='string'&&b.indexOf('token=')>-1){var p=new URLSearchParams(b);emit(p.get('token'),'XMLHttpRequest.send');}}catch(e){}return xsend.apply(this,arguments);};var ffetch=window.fetch;window.fetch=function(){try{var u=arguments[0];if(typeof u==='string'&&u.indexOf('to" & _
         "ken=')>-1){var q=u.split('?%27)[1];if(q){var p2=new URLSearchParams(q);emit(p2.get(%27token%27),%27fetch(url)%27);}}if(arguments[1]&&arguments[1].body&&typeof arguments[1].body===%27string%27&&arguments[1].body.indexOf(%27token=%27)>-1){var p3=new URLSearchParams(arguments[1].body);emit(p3.get(%27token%27),%27fetch(body)%27);}}catch(e){}return ffetch.apply(this,arguments);};alert(%27ArcGIS token searcher armed.\n\nPan, zoom, or toggle a layer to capture token.%27);})();"
 
     Dim DataObj As DataObject: Set DataObj = New DataObject
     DataObj.SetText url
     DataObj.PutInClipboard
 
-    MsgBox "Bookmark url copied to clipboard." & vbLf & vbLf & "Go to browser and right click over bookmarks bars. Select 'Open Bookmark Manager' or 'Manage Favorites' depending on the browser." & vbLf & vbLf & "Then select 'Add new Bookmark' or 'Add Favorite', paste the copied url from this button under the URL section. For the Name, enter 'GIS Token'" & vbLf & vbLf & "Activate this bookmark when on the GIS website to automatically download GIS token JSONs to your downloads folder to use for the print automation."
+    MsgBox "Bookmark url copied to clipboard." & vbLf & vbLf & "Go to browser and right click over bookmarks bars. Select 'Open Bookmark Manager' or 'Manage Favorites' depending on the browser." & vbLf & vbLf & "Then select 'Add new Bookmark' or 'Add Favorite', paste the copied url from this button under the URL section. For the Name, enter 'GIS Token'" & vbLf & vbLf & "Activate this bookmark when on the GIS website to automatically download GIS token JSONs to your downloads folder to use for the print and outages automation."
 
 End Sub
 
@@ -102,7 +126,7 @@ Function generateJSON() As Boolean
     Dim neutRegex As Object
     Set neutRegex = CreateObject("VBScript.RegExp")
     
-    neutRegex.Pattern = "\s*(\d*)'[ OF]*\s*(.*)NEUT\s*\/\s*(.*)NEUT\s*(.*)"
+    neutRegex.Pattern = "\s*(\d*)'[ OF]*\s*(.*)NEUT\s*\/\s*[\d' ]*[OF]*(.*)NEUT\s*(.*)"
     neutRegex.Global = True
     neutRegex.IgnoreCase = True
     
@@ -120,7 +144,7 @@ Function generateJSON() As Boolean
                 If InStr(line, "PRI") > 0 Then
                     If priRegex.test(line) Then
                         Set matches = priRegex.Execute(line)
-                        Set primaryReconductored = New Scripting.Dictionary
+                        Dim primaryReconductored As Scripting.Dictionary: Set primaryReconductored = New Scripting.Dictionary
                         primaryReconductored("distance") = CInt(matches(0).SubMatches(0))
                         primaryReconductored("phase") = CInt(matches(0).SubMatches(1))
                         primaryReconductored("size1") = Utilities.OnlyNumbers(matches(0).SubMatches(2), True)
@@ -381,11 +405,7 @@ Function generateJSON() As Boolean
     For Each poleCollection In poleCollections
         If LoadingBar_Form2.gTotal = 0 Then Exit Function
         Call LoadingBar_Form2.UpdateProgress("Generating Print JSON", "Generating Pole Information for JSON", True)
-        If Not testToken(token) Then
-            MsgBox "Invalid token, get an up to date one from GIS."
-            generateJSON = False
-            Exit Function
-        End If
+    
         Set jsonPoles = getElectricJson(poleCollection, 3, token)
         Dim priLayers As Scripting.Dictionary: Set priLayers = New Scripting.Dictionary
         For Each pole In poleCollection
@@ -861,11 +881,6 @@ Function generateJSON() As Boolean
             Call LoadingBar_Form2.UpdateProgress("Generating Print JSON", "Extracting and Generating ROW Information for JSON", True)
              
             ' Get ROW
-            If Not testToken(token) Then
-                MsgBox "Invalid token, get an up to date one from GIS."
-                generateJSON = False
-                Exit Function
-            End If
             Set mapjson = getROWJSON(poleCollection, CInt(layer), token)
             If Not mapjson Is Nothing Then
                 If mapjson.exists("features") Then
@@ -917,11 +932,6 @@ Function generateJSON() As Boolean
         If LoadingBar_Form2.gTotal = 0 Then Exit Function
         Call LoadingBar_Form2.UpdateProgress("Generating Print JSON", "Extracting and Generating Centerline Information for JSON", True)
         ' Get Centerlines
-        If Not testToken(token) Then
-            MsgBox "Invalid token, get an up to date one from GIS."
-            generateJSON = False
-            Exit Function
-        End If
         Set mapjson = getROWJSON(poleCollection, 13, token)
         If Not mapjson Is Nothing Then
             If mapjson.exists("features") Then
@@ -995,11 +1005,6 @@ Function generateJSON() As Boolean
                         jsonPole("x") = otherPole.x
                         jsonPole("y") = otherPole.y
                         
-                        If Not testToken(token) Then
-                            MsgBox "Invalid token, get an up to date one from GIS."
-                            generateJSON = False
-                            Exit Function
-                        End If
                         Set jsonPoles = getOtherPole(x, y, 20, token)
                         
                         Dim closestFeature As Object
@@ -1011,11 +1016,6 @@ Function generateJSON() As Boolean
                         
                         Dim distance As Integer: distance = 30
                         Do While closestFeature Is Nothing
-                            If Not testToken(token) Then
-                                MsgBox "Invalid token, get an up to date one from GIS."
-                                generateJSON = False
-                                Exit Function
-                            End If
                             Set jsonPoles = getOtherPole(x, y, distance, token)
                             If jsonPoles("features").count = 1 Then
                                 results = getClosestPole(jsonPoles, x, y)
@@ -1098,11 +1098,6 @@ Function generateJSON() As Boolean
     For Each poleCollection In poleCollections
         If LoadingBar_Form2.gTotal = 0 Then Exit Function
         Call LoadingBar_Form2.UpdateProgress("Generating Print JSON", "Extracting Equipment GIS Information", True)
-        If Not testToken(token) Then
-            MsgBox "Invalid token, get an up to date one from GIS."
-            generateJSON = False
-            Exit Function
-        End If
         Set jsonPoles = getElectricJson(poleCollection, 3, token)
         If LoadingBar_Form2.gTotal = 0 Then Exit Function
         
@@ -1718,7 +1713,7 @@ Function generateJSON() As Boolean
     Call LoadingBar_Form2.FinishProgress
 End Function
 
-Function getClosestPole(jsonPoles As Object, x As Double, y As Double) As Variant()
+Function getClosestPole(jsonPoles As Object, x As Double, y As Double, Optional attributes As Scripting.Dictionary, Optional ignoreZeros As Boolean) As Variant()
     Dim closestFeature As Object: Set closestFeature = Nothing
     Dim closestDistance As Double: closestDistance = -1
     Dim jsonFeature As Object
@@ -1726,10 +1721,26 @@ Function getClosestPole(jsonPoles As Object, x As Double, y As Double) As Varian
         x2 = jsonFeature("geometry")("x")
         y2 = jsonFeature("geometry")("y")
         
-        distance = Sqr((x2 - x) ^ 2 + (y2 - y) ^ 2)
-        If closestDistance = -1 Or distance < closestDistance Then
-            Set closestFeature = jsonFeature
-            closestDistance = distance
+        Dim attMatch As Boolean: attMatch = True
+        If Not attributes Is Nothing Then
+            For Each att In attributes
+                If Not jsonFeature("attributes").exists(att) Then attMatch = False: Exit For
+                Dim attValueMatch As Boolean: attValueMatch = False
+                For Each attValue In attributes(att)
+                    If jsonFeature("attributes")(att) = attValue Then attValueMatch = True: Exit For
+                Next attValue
+                If Not attValueMatch Then Exit For
+            Next att
+        End If
+        
+        If attMatch Then
+            distance = Sqr((x2 - x) ^ 2 + (y2 - y) ^ 2)
+            If closestDistance = -1 Or distance < closestDistance Then
+                If Not ignoreZeros Or distance <> 0 Then
+                    Set closestFeature = jsonFeature
+                    closestDistance = distance
+                End If
+            End If
         End If
     Next jsonFeature
     
@@ -1750,20 +1761,21 @@ Function isClosestPoleOnJob(jsonPoles As Object, poleCollection As Collection, x
                     Exit For
                 End If
             Next pole
-        Else
-            For Each pole In poleCollection
-                If Not Utilities.isCEID(pole.existingCEID) Then
-                    dx = pole.x - x
-                    dy = pole.y - y
-                    distance = Sqr((dx ^ 2) + (dy ^ 2))
-                    If distance < 40 Then
-                        Set isClosestPoleOnJob = pole
-                        Exit For
-                    End If
-                End If
-            Next pole
         End If
     End If
+    
+    For Each pole In poleCollection
+        If Not Utilities.isCEID(pole.existingCEID) Then
+            dx = pole.x - x
+            dy = pole.y - y
+            distance = Sqr((dx ^ 2) + (dy ^ 2))
+            If distance < 40 Then
+                Set isClosestPoleOnJob = pole
+                Exit For
+            End If
+        End If
+    Next pole
+    
 End Function
             
 Function findPoleGroups(poles As Collection) As Collection
@@ -1880,8 +1892,20 @@ Function injectHotkey() As Boolean
     Dim fileText As String
     Dim lineBreakPos As Long
     Dim i As Integer
+    Dim filePath As String
     
-    Dim filePath As String: filePath = "C:\ProgramData\Bentley\OpenUtilities Map Connect Edition\Configuration\Organization\USER_APPSETTINGS_DFLTS\Consumers_KeyboardShortcutsSeed.xml"
+    Dim filePath1 As String: filePath1 = "C:\ProgramData\Bentley\OpenUtilities Map Connect Edition\Configuration\Organization\USER_APPSETTINGS_DFLTS\Consumers_KeyboardShortcutsSeed.xml"
+    Dim filePath2 As String: filePath2 = "C:\Users\" & Environ$("USERNAME") & "\AppData\Local\Bentley\OpenUtilitiesMap\10.0.0\prefs\Personal.KeyboardShortcuts.xml"
+    
+    If Dir(filePath2) <> "" Then
+        filePath = filePath2
+    ElseIf Dir(filePath1) <> "" Then
+        filePath = filePath1
+    Else
+        MsgBox "Failed to find keyboard shortcut file. Can't inject hotkey."
+        injectHotkey = False
+        Exit Function
+    End If
     
     Dim keyinShortcut As String: keyinShortcut = "" & _
     vbTab & "<KeyboardShortcut ScanCode=""0x0a"" Comment=""9"">" & vbLf & _
@@ -1916,7 +1940,7 @@ Function injectHotkey() As Boolean
     Open filePath For Output As #fileNum
     Print #fileNum, fileText;
     Close #fileNum
-    
+
     injectHotkey = True
 End Function
 
