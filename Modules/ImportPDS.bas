@@ -55,7 +55,7 @@ Sub ImportAllPDS()
                     rpName = ThisWorkbook.RemoveParentheses(sheet.name)
                     If rpName <> "4 Spans" And rpName <> "8 Spans" And rpName <> "12 Spans" Then
                         If sheet.Cells(2, 2).Value = "Notification:" Then
-                            If val(rpName) > val(rpSourceName) Or (val(rpName) = val(rpSourceName) And rpName > rpSourceName) Then
+                            If Val(rpName) > Val(rpSourceName) Or (Val(rpName) = Val(rpSourceName) And rpName > rpSourceName) Then
                                 Set insertSpot = sheet
                                 Exit For
                             End If
@@ -73,7 +73,7 @@ Sub ImportAllPDS()
                 sheetCount = sheetCount + 1
             End If
         End If
-        sourceWb.Close SaveChanges:=False
+        sourceWb.Close savechanges:=False
         fileName = Dir
     Loop
     ThisWorkbook.sheets("Control").Activate
@@ -139,7 +139,7 @@ Sub ImportSinglePDS()
                 rpName = ThisWorkbook.RemoveParentheses(sheet.name)
                 If rpName <> "4 Spans" And rpName <> "8 Spans" And rpName <> "12 Spans" Then
                     If sheet.Cells(2, 2).Value = "Notification:" Then
-                        If val(rpName) > val(rpSourceName) Or (val(rpName) = val(rpSourceName) And rpName > rpSourceName) Then
+                        If Val(rpName) > Val(rpSourceName) Or (Val(rpName) = Val(rpSourceName) And rpName > rpSourceName) Then
                             Set insertSpot = sheet
                             Exit For
                         End If
@@ -158,7 +158,7 @@ Sub ImportSinglePDS()
         End If
     End If
     
-    sourceWb.Close SaveChanges:=False
+    sourceWb.Close savechanges:=False
     'ThisWorkBook.sheets("Control").Activate
     
     ProgressBar_Form.Hide
@@ -219,7 +219,7 @@ Sub ImportLocationPDS()
                         rpName = ThisWorkbook.RemoveParentheses(sheet.name)
                         If rpName <> "4 Spans" And rpName <> "8 Spans" And rpName <> "12 Spans" Then
                             If sheet.Cells(2, 2).Value = "Notification:" Then
-                                If val(rpName) > val(rpSourceName) Or (val(rpName) = val(rpSourceName) And rpName > rpSourceName) Then
+                                If Val(rpName) > Val(rpSourceName) Or (Val(rpName) = Val(rpSourceName) And rpName > rpSourceName) Then
                                     Set insertSpot = sheet
                                     Exit For
                                 End If
@@ -239,7 +239,7 @@ Sub ImportLocationPDS()
                 End If
             End If
         End If
-        sourceWb.Close SaveChanges:=False
+        sourceWb.Close savechanges:=False
         fileName = Dir
     Loop
     ThisWorkbook.sheets("Control").Activate
@@ -317,7 +317,7 @@ Sub ImportNjunsPDS()
                         rpName = ThisWorkbook.RemoveParentheses(sheet.name)
                         If rpName <> "4 Spans" And rpName <> "8 Spans" And rpName <> "12 Spans" Then
                             If sheet.Cells(2, 2).Value = "Notification:" Then
-                                If val(rpName) > val(rpSourceName) Or (val(rpName) = val(rpSourceName) And rpName > rpSourceName) Then
+                                If Val(rpName) > Val(rpSourceName) Or (Val(rpName) = Val(rpSourceName) And rpName > rpSourceName) Then
                                     Set insertSpot = sheet
                                     Exit For
                                 End If
@@ -336,7 +336,7 @@ Sub ImportNjunsPDS()
                 End If
             End If
         End If
-        sourceWb.Close SaveChanges:=False
+        sourceWb.Close savechanges:=False
         fileName = Dir
     Loop
     ThisWorkbook.sheets("Control").Activate
