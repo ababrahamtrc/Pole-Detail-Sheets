@@ -1,6 +1,6 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} ProgressBar_Form 
-   Caption         =   "Import Data"
+   Caption         =   "Progress Bar"
    ClientHeight    =   1290
    ClientLeft      =   195
    ClientTop       =   960
@@ -19,7 +19,7 @@ Attribute VB_Exposed = False
 
 
 
-Private Sub Initialize()
+Public Sub Initialize()
   Me.StartUpPosition = 0
   Me.Left = Application.Left + (0.5 * Application.Width) - (0.5 * Me.Width)
   Me.top = Application.top + (0.5 * Application.height) - (0.5 * Me.height)
