@@ -59,13 +59,13 @@ Sub ExportAllPDS()
             sheet.Copy
             
             For Each wb In Application.Workbooks
-                If wb.FullName = fullPath Then wb.Close SaveChanges:=True
+                If wb.FullName = fullPath Then wb.Close savechanges:=True
             Next wb
             
             Set tempWb = ActiveWorkbook
             
             tempWb.SaveAs fileName:=fullPath, FileFormat:=xlOpenXMLWorkbook
-            tempWb.Close SaveChanges:=True
+            tempWb.Close savechanges:=True
             
             sheetCount = sheetCount + 1
             ProgressBar_Form.Label1.caption = "Exporting Pole Detail Sheets... " & sheetCount & " sheets exported.."
@@ -146,7 +146,7 @@ Sub ExportSinglePDS()
         fullPath = outputPath & fileName & ".xlsx"
         
         For Each wb In Application.Workbooks
-            If wb.FullName = fullPath Then wb.Close SaveChanges:=True
+            If wb.FullName = fullPath Then wb.Close savechanges:=True
         Next wb
         
         Call Figures.clearSheetFigures(sheet)
@@ -154,7 +154,7 @@ Sub ExportSinglePDS()
         Set tempWb = ActiveWorkbook
         
         tempWb.SaveAs fileName:=fullPath, FileFormat:=xlOpenXMLWorkbook
-        tempWb.Close SaveChanges:=True
+        tempWb.Close savechanges:=True
         
     End If
     
