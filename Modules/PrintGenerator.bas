@@ -341,13 +341,16 @@ Sub ShortenLines(targetLevelName As String)
             End If
         Next j
     Next i
-    
-    Dim oFeature As New xft.Feature
-    Dim oFeatureMgr As New xft.FeatureMgr
+
+    Dim oFeature As Object
+    Dim oFeatureMgr As Object
+    Set oFeatureMgr = CreateObject("xft.FeatureMgr")
     For i = 0 To count - 1
         Set oFeature = oFeatureMgr.CreateFeature(lines(i))
+        On Error Resume Next
         If oFeature.GetProperty("StartDeadend") Then Call createDeadend(lines(i), 0)
         If oFeature.GetProperty("EndDeadend") Then Call createDeadend(lines(i), 1)
+        On Error GoTo 0
     Next i
     
 End Sub
@@ -473,8 +476,9 @@ Public Sub createDeadend(oLine As LineElement, vertexIndex As Integer)
     ActiveModelReference.AddElement deadend
     If PrintOptions.ShowDrawing Then DoEvents
     
-    Dim oFeature As New xft.Feature
-    Dim oFeatureMgr As New xft.FeatureMgr
+    Dim oFeature As Object
+    Dim oFeatureMgr As Object
+    Set oFeatureMgr = CreateObject("xft.FeatureMgr")
     Set oFeature = oFeatureMgr.CreateFeature(deadend)
     
     If oLine.Level.name = "CE-EX-ELEC-OH-PRI-COND" Or oLine.Level.name = "CE-RP-ELEC-OH-PRI-COND" Then oFeature.name = "CE_PRI_DE"
@@ -547,13 +551,16 @@ Public Sub placePole(jsonPole As Object)
     txt.TextStyle.BackgroundFillColor = 255
     txt.TextStyle.BorderColor = 255
 
+    On Error Resume Next
     txt.Level = ActiveDesignFile.Levels("CE-EX-OH-PRI-POLE")
+    On Error GoTo 0
     
     ActiveModelReference.AddElement pole
     If PrintOptions.ShowDrawing Then DoEvents
     
-    Dim oFeature As New xft.Feature
-    Dim oFeatureMgr As New xft.FeatureMgr
+    Dim oFeature As Object
+    Dim oFeatureMgr As Object
+    Set oFeatureMgr = CreateObject("xft.FeatureMgr")
 
     Set oFeature = oFeatureMgr.CreateFeature(pole)
     oFeature.name = "CE_SUPPORTSTRUCTURE"
@@ -615,10 +622,11 @@ Public Sub placePole(jsonPole As Object)
     ActiveModelReference.AddElement txt
     If PrintOptions.ShowDrawing Then DoEvents
     
-    If PrintOptions.DrawCenterLines And PrintOptions.DrawCenterLineDistances Then
-        Dim closestPt As Point3d
-        If jsonPole("location") <> "" Then
-            Call placeLocation(Point3dAdd(pt, Point3dFromXYZ(-15, -20, 0)), jsonPole("location"))
+
+    Dim closestPt As Point3d
+    If jsonPole("location") <> "" Then
+        Call placeLocation(Point3dAdd(pt, Point3dFromXYZ(-15, -20, 0)), jsonPole("location"))
+        If PrintOptions.DrawCenterLines And PrintOptions.DrawCenterLineDistances Then
             results = FindClosestPointOnCenterlines(pt)
             closestPt = results(0)
             If closestPt.x <> -1 And closestPt.y <> -1 And closestPt.Z <> -1 Then
@@ -635,8 +643,9 @@ Sub placeTransformer(jsonTransformer)
     Dim transformer As CellElement
     Dim scl As Point3d: scl = Point3dFromXYZ(1, 1, 1)
     Dim size2 As String
-    Dim oFeature As New xft.Feature
-    Dim oFeatureMgr As New xft.FeatureMgr
+    Dim oFeature As Object
+    Dim oFeatureMgr As Object
+    Set oFeatureMgr = CreateObject("xft.FeatureMgr")
     
     Dim phase As String
     phase = jsonTransformer("phase")
@@ -709,8 +718,9 @@ Sub placeCapacitor(jsonCapacitor)
     Dim capacitor As CellElement
     Dim scl As Point3d: scl = Point3dFromXYZ(1, 1, 1)
     
-    Dim oFeature As New xft.Feature
-    Dim oFeatureMgr As New xft.FeatureMgr
+    Dim oFeature As Object
+    Dim oFeatureMgr As Object
+    Set oFeatureMgr = CreateObject("xft.FeatureMgr")
     
     pt = Point3dFromXYZ(jsonCapacitor("x"), jsonCapacitor("y"), 0)
     pt = Point3dAdd(pt, Point3dFromXYZ(10, 40, 0))
@@ -754,8 +764,9 @@ Sub placeRegulator(jsonRegulator)
     Dim regulator As CellElement
     Dim scl As Point3d: scl = Point3dFromXYZ(1, 1, 1)
     
-    Dim oFeature As New xft.Feature
-    Dim oFeatureMgr As New xft.FeatureMgr
+    Dim oFeature As Object
+    Dim oFeatureMgr As Object
+    Set oFeatureMgr = CreateObject("xft.FeatureMgr")
     
     Dim phase As String
     phase = jsonRegulator("phase")
@@ -836,8 +847,9 @@ Sub placeIsolator(jsonIsolator)
     Dim isolator As CellElement
     Dim scl As Point3d: scl = Point3dFromXYZ(1, 1, 1)
     
-    Dim oFeature As New xft.Feature
-    Dim oFeatureMgr As New xft.FeatureMgr
+    Dim oFeature As Object
+    Dim oFeatureMgr As Object
+    Set oFeatureMgr = CreateObject("xft.FeatureMgr")
     
     Dim phase As String
     phase = jsonIsolator("phase")
@@ -923,8 +935,9 @@ Sub placeStreetlight(jsonStreetlight As Object)
     ActiveModelReference.AddElement streetlight
     If PrintOptions.ShowDrawing Then DoEvents
 
-    Dim oFeature As New xft.Feature
-    Dim oFeatureMgr As New xft.FeatureMgr
+    Dim oFeature As Object
+    Dim oFeatureMgr As Object
+    Set oFeatureMgr = CreateObject("xft.FeatureMgr")
     Set oFeature = oFeatureMgr.CreateFeature(streetlight)
     oFeature.name = "CE_STREETLIGHT"
     oFeature.SetProperty "LIFECYCLE", 1
@@ -968,8 +981,9 @@ Sub placeLocation(pt As Point3d, location As String)
     ActiveModelReference.AddElement oFinalCell
     If PrintOptions.ShowDrawing Then DoEvents
     
-    Dim oFeature As New xft.Feature
-    Dim oFeatureMgr As New xft.FeatureMgr
+    Dim oFeature As Object
+    Dim oFeatureMgr As Object
+    Set oFeatureMgr = CreateObject("xft.FeatureMgr")
     
     Set oFeature = oFeatureMgr.CreateFeature(oFinalCell)
     oFeature.name = "CE_LOCATION_NUMBER"
@@ -1010,8 +1024,9 @@ Public Sub placeGuy(jsonGuy As Object, pt As Point3d, OFFSET As Integer)
     ActiveModelReference.AddElement guy
     If PrintOptions.ShowDrawing Then DoEvents
     
-    Dim oFeature As New xft.Feature
-    Dim oFeatureMgr As New xft.FeatureMgr
+    Dim oFeature As Object
+    Dim oFeatureMgr As Object
+    Set oFeatureMgr = CreateObject("xft.FeatureMgr")
 
     Set oFeature = oFeatureMgr.CreateFeature(guy)
     oFeature.name = "CE_GUY"
@@ -1072,13 +1087,6 @@ Public Sub drawAddress(pt As Point3d, address As String, angle As Double)
     Dim xAxis As Vector3d
     Dim angleRadians As Double
     Dim angleDeg As Double
-    
-        If address = "4109" Then
-            Debug.Print "hello"
-        End If
-    If address = "4212" Then
-            Debug.Print "hello"
-        End If
 
     If address <> "" Then
         results = FindClosestPointOnCenterlines(pt)
@@ -1195,14 +1203,19 @@ Public Sub placeSpanguy(jsonSpanguy As Object)
     Set oLineString = CreateLineElement1(Nothing, points)
     oLineString.LineStyle = ActiveDesignFile.LineStyles.Find("SPN")
     oLineString.Class = primary
+    
+    On Error Resume Next
     oLineString.Level = ActiveDesignFile.Levels("CE-EX-ELEC-SPANGUY")
+    On Error GoTo 0
+    
     oLineString.LineWeight = 0
     oLineString.color = 73
     ActiveModelReference.AddElement oLineString
     If PrintOptions.ShowDrawing Then DoEvents
 
-    Dim oFeature As New xft.Feature
-    Dim oFeatureMgr As New xft.FeatureMgr
+    Dim oFeature As Object
+    Dim oFeatureMgr As Object
+    Set oFeatureMgr = CreateObject("xft.FeatureMgr")
 
     Set oFeature = oFeatureMgr.CreateFeature(oLineString)
     oFeature.name = "CE_SPAN_GUY"
@@ -1246,28 +1259,41 @@ Public Sub placeSpanguy(jsonSpanguy As Object)
     If angle > 180 And angle <= 270 Then angle = angle - 180
     If angle > 270 And angle <= 360 Then angle = 360 - angle
     
-    If jsonSpanguy("length") = 122 Then
-        Debug.Print "hello"
-    End If
+    Dim dx As Double, dy As Double
+    dx = jsonSpanguy("x1") - jsonSpanguy("x2")
+    dy = jsonSpanguy("y1") - jsonSpanguy("y2")
     
-    If angle > 45 And calculatedAngle >= 135 And calculatedAngle < 225 Then
-        If Not top Or Not bottom Then
-            If top Then
-                top = False
-                bottom = True
-            ElseIf bottom Then
-                bottom = False
-                top = True
+    Dim angleRad As Double
+    angleRad = Atn2(dy, dx)
+    
+    Dim angleDeg As Double
+    angleDeg = angleRad * (180 / PI)
+
+    If angleDeg < 0 Then angleDeg = angleDeg + 360
+    
+    
+    If angle > 45 And calculatedAngle >= 135 And calculatedAngle < 175 Then
+        If angleDeg <= 95 Or angleDeg > 265 Then
+            If Not top Or Not bottom Then
+                If top Then
+                    top = False
+                    bottom = True
+                ElseIf bottom Then
+                    bottom = False
+                    top = True
+                End If
             End If
         End If
     ElseIf angle <= 45 And (calculatedAngle < 225 Or calculatedAngle >= 315) Then
-        If Not top Or Not bottom Then
-            If top Then
-                top = False
-                bottom = True
-            ElseIf bottom Then
-                bottom = False
-                top = True
+        If angleDeg > 95 Or angleDeg <= 265 Then
+            If Not top Or Not bottom Then
+                If top Then
+                    top = False
+                    bottom = True
+                ElseIf bottom Then
+                    bottom = False
+                    top = True
+                End If
             End If
         End If
     End If
@@ -1290,20 +1316,13 @@ Public Sub placeSecondary(jsonSec As Object)
     layer = jsonSec("layer")
     top = jsonSec("top")
     bottom = jsonSec("bottom")
-       
+    
+
     angle = 90 - jsonSec("angle")
     If angle < 0 Then angle = angle + 360
     If angle > 90 And angle <= 180 Then angle = 180 - angle
     If angle > 180 And angle <= 270 Then angle = angle - 180
     If angle > 270 And angle <= 360 Then angle = 360 - angle
-    
-    If jsonSec("length") = 113 Then
-        Debug.Print "hello"
-    End If
-    
-    If jsonSec("length") = 80 Then
-        Debug.Print "hello"
-    End If
     
     Dim calculatedAngle As Double
     Dim pt As Point3d: pt = Point3dFromXYZ(jsonSec("x1"), jsonSec("y1"), 0)
@@ -1334,21 +1353,31 @@ Public Sub placeSecondary(jsonSec As Object)
     y1 = jsonSec("y1")
     y2 = jsonSec("y2")
     
-    If jsonSec("length") = 122 Then
-        Debug.Print "hello"
-    End If
+    Dim dx As Double, dy As Double
+    dx = jsonSec("x1") - jsonSec("x2")
+    dy = jsonSec("y1") - jsonSec("y2")
     
+    Dim angleRad As Double
+    angleRad = Atn2(dy, dx)
+    
+    Dim angleDeg As Double
+    angleDeg = angleRad * (180 / PI)
+
+    If angleDeg < 0 Then angleDeg = angleDeg + 360
+
     If angle > 45 Then
         If (calculatedAngle >= 135) And (calculatedAngle < 225) Then
             x1 = x1 + (PrintOptions.ConductorInitOffset + ((layer - 1) * PrintOptions.ConductorOffsetAmount))
             x2 = x2 + (PrintOptions.ConductorInitOffset + ((layer - 1) * PrintOptions.ConductorOffsetAmount))
-            If Not top Or Not bottom Then
-                If top Then
-                    top = False
-                    bottom = True
-                ElseIf bottom Then
-                    bottom = False
-                    top = True
+            If angleDeg <= 95 Or angleDeg > 265 Then
+                If Not top Or Not bottom Then
+                    If top Then
+                        top = False
+                        bottom = True
+                    ElseIf bottom Then
+                        bottom = False
+                        top = True
+                    End If
                 End If
             End If
         Else
@@ -1362,13 +1391,15 @@ Public Sub placeSecondary(jsonSec As Object)
         Else
             y1 = y1 - (PrintOptions.ConductorInitOffset + ((layer - 1) * PrintOptions.ConductorOffsetAmount))
             y2 = y2 - (PrintOptions.ConductorInitOffset + ((layer - 1) * PrintOptions.ConductorOffsetAmount))
-            If Not top Or Not bottom Then
-                If top Then
-                    top = False
-                    bottom = True
-                ElseIf bottom Then
-                    bottom = False
-                    top = True
+            If angleDeg > 95 Or angleDeg <= 265 Then
+                If Not top Or Not bottom Then
+                    If top Then
+                        top = False
+                        bottom = True
+                    ElseIf bottom Then
+                        bottom = False
+                        top = True
+                    End If
                 End If
             End If
         End If
@@ -1378,20 +1409,30 @@ Public Sub placeSecondary(jsonSec As Object)
     points(1) = Point3dFromXYZ(x2, y2, 0)
     
     Set oLineString = CreateLineElement1(Nothing, points)
-    oLineString.LineStyle = ActiveDesignFile.LineStyles.Find("SEC" & IIf(size2 <> "", RP, ""))
-    oLineString.Class = primary
-    oLineString.Level = ActiveDesignFile.Levels("CE-EX-ELEC-OH-SEC-COND")
-    oLineString.LineWeight = 1
+
     If size2 <> "" Then
         oLineString.color = 65
+        oLineString.LineStyle = ActiveDesignFile.LineStyles.Find("SECRP")
+        On Error Resume Next
+        oLineString.Level = ActiveDesignFile.Levels("CE-RP-ELEC-OH-SEC-COND")
+        On Error GoTo 0
     Else
         oLineString.color = 73
+        oLineString.LineStyle = ActiveDesignFile.LineStyles.Find("SEC")
+        On Error Resume Next
+        oLineString.Level = ActiveDesignFile.Levels("CE-EX-ELEC-OH-SEC-COND")
+        On Error GoTo 0
     End If
+    oLineString.Class = primary
+    oLineString.LineWeight = 1
+    
+    
     ActiveModelReference.AddElement oLineString
     If PrintOptions.ShowDrawing Then DoEvents
 
-    Dim oFeature As New xft.Feature
-    Dim oFeatureMgr As New xft.FeatureMgr
+    Dim oFeature As Object
+    Dim oFeatureMgr As Object
+    Set oFeatureMgr = CreateObject("xft.FeatureMgr")
 
     Set oFeature = oFeatureMgr.CreateFeature(oLineString)
     oFeature.name = "CE_SEC_OH_COND"
@@ -1479,17 +1520,31 @@ Public Sub placePrimary(jsonPri As Object)
     y1 = jsonPri("y1")
     y2 = jsonPri("y2")
     
+    Dim dx As Double, dy As Double
+    dx = jsonPri("x1") - jsonPri("x2")
+    dy = jsonPri("y1") - jsonPri("y2")
+    
+    Dim angleRad As Double
+    angleRad = Atn2(dy, dx)
+    
+    Dim angleDeg As Double
+    angleDeg = angleRad * (180 / PI)
+
+    If angleDeg < 0 Then angleDeg = angleDeg + 360
+    
     If angle > 45 Then
         If (calculatedAngle >= 135) And (calculatedAngle < 225) Then
             x1 = x1 + (PrintOptions.ConductorInitOffset + ((layer - 1) * PrintOptions.ConductorOffsetAmount))
             x2 = x2 + (PrintOptions.ConductorInitOffset + ((layer - 1) * PrintOptions.ConductorOffsetAmount))
-            If Not top Or Not bottom Then
-                If top Then
-                    top = False
-                    bottom = True
-                ElseIf bottom Then
-                    bottom = False
-                    top = True
+            If angleDeg <= 95 Or angleDeg > 265 Then
+                If Not top Or Not bottom Then
+                    If top Then
+                        top = False
+                        bottom = True
+                    ElseIf bottom Then
+                        bottom = False
+                        top = True
+                    End If
                 End If
             End If
         Else
@@ -1503,13 +1558,15 @@ Public Sub placePrimary(jsonPri As Object)
         Else
             y1 = y1 - (PrintOptions.ConductorInitOffset + ((layer - 1) * PrintOptions.ConductorOffsetAmount))
             y2 = y2 - (PrintOptions.ConductorInitOffset + ((layer - 1) * PrintOptions.ConductorOffsetAmount))
-            If Not top Or Not bottom Then
-                If top Then
-                    top = False
-                    bottom = True
-                ElseIf bottom Then
-                    bottom = False
-                    top = True
+            If angleDeg > 95 Or angleDeg <= 265 Then
+                If Not top Or Not bottom Then
+                    If top Then
+                        top = False
+                        bottom = True
+                    ElseIf bottom Then
+                        bottom = False
+                        top = True
+                    End If
                 End If
             End If
         End If
@@ -1521,18 +1578,24 @@ Public Sub placePrimary(jsonPri As Object)
     Set oLineString = CreateLineElement1(Nothing, points)
     oLineString.LineStyle = ActiveDesignFile.LineStyles.Find("PRI" & phase & "P" & IIf(size2 <> "", "RP", ""))
     oLineString.Class = primary
-    oLineString.Level = ActiveDesignFile.Levels("CE-EX-ELEC-OH-PRI-COND")
     oLineString.LineWeight = 1
     If size2 <> "" Then
         oLineString.color = 64
+        On Error Resume Next
+        oLineString.Level = ActiveDesignFile.Levels("CE-RP-ELEC-OH-PRI-COND")
+        On Error GoTo 0
     Else
         oLineString.color = 72
+        On Error Resume Next
+        oLineString.Level = ActiveDesignFile.Levels("CE-EX-ELEC-OH-PRI-COND")
+        On Error GoTo 0
     End If
     ActiveModelReference.AddElement oLineString
     If PrintOptions.ShowDrawing Then DoEvents
 
-    Dim oFeature As New xft.Feature
-    Dim oFeatureMgr As New xft.FeatureMgr
+    Dim oFeature As Object
+    Dim oFeatureMgr As Object
+    Set oFeatureMgr = CreateObject("xft.FeatureMgr")
 
     Set oFeature = oFeatureMgr.CreateFeature(oLineString)
     oFeature.name = "CE_PRIMARY_OH_CONDUCTOR"
@@ -1600,8 +1663,9 @@ Public Sub placeLCPObject(jsonObject As Object, cellType As String)
     Dim switch As CellElement
     Dim sensor As CellElement
     Dim riser As CellElement
-    Dim oFeature As New xft.Feature
-    Dim oFeatureMgr As New xft.FeatureMgr
+    Dim oFeature As Object
+    Dim oFeatureMgr As Object
+    Set oFeatureMgr = CreateObject("xft.FeatureMgr")
     Dim txt As TextElement
     Dim txtString As String
     
@@ -1675,9 +1739,9 @@ Public Sub placeLCPObject(jsonObject As Object, cellType As String)
         
         Set oFeature = oFeatureMgr.CreateFeature(switch)
         oFeature.name = "CE_OH_SWITCH"
-        oFeature.SetProperty "LIFECYCLE", 1
-        oFeature.SetProperty "STATE", IIf(jsonObject("open"), "Open", "Closed")
-        If jsonObject("lcp") <> "" Then oFeature.SetProperty "LCP", jsonObject("lcp")
+        'oFeature.SetProperty "LIFECYCLE", 1
+        'oFeature.SetProperty "STATE", IIf(jsonObject("open"), "Open", "Closed")
+        'If jsonObject("lcp") <> "" Then oFeature.SetProperty "LCP", jsonObject("lcp")
         
         oFeature.Write (True)
         'switch.Redraw msdDrawingModeNormal
@@ -1762,24 +1826,10 @@ Sub PlaceTextAboveAndBelow(oLine As LineElement, text1String As String, text2Str
 
     If angleDeg < 0 Then angleDeg = angleDeg + 360
 
-    If text1String = "3/0+SN" And text2String = "120'" Then
-        Debug.Print "hi"
-    End If
-
-    If text1String = "1/0TX" And text2String = "42'" Then
-        Debug.Print "hi"
-    End If
-
     If angleDeg > 85 And angleDeg <= 275 Then
         If angleDeg >= 95 Then
             angleRad = angleRad - PI
-            
-           ' If Not top Then text2String = ""
-       ' Else
-        '    If Not bottom Then text2String = ""
         End If
-    Else
-        'If Not bottom Then text2String = ""
     End If
 
     If Not bottom Then text2String = ""
