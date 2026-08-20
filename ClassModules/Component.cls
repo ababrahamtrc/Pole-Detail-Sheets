@@ -39,13 +39,13 @@ Public Function getDownGuy() As guy
     Set getDownGuy = guy
 End Function
 
-Public Function getEquipment() As Equipment
-    Dim Equipment As Equipment: Set Equipment = New Equipment
-    Equipment.height = Me.height
-    Equipment.bottomHeight = Me.bottomHeight
-    Equipment.size = Me.size
-    Equipment.owner = Me.owner
-    Equipment.componentType = Me.componentType
+Public Function getEquipment() As equipment
+    Dim equipment As equipment: Set equipment = New equipment
+    equipment.height = Me.height
+    equipment.bottomHeight = Me.bottomHeight
+    equipment.size = Me.size
+    equipment.owner = Me.owner
+    equipment.componentType = Me.componentType
     
-    Set getEquipment = Equipment
+    Set getEquipment = equipment
 End Function
