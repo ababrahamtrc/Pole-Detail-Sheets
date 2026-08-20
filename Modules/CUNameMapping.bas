@@ -4,6 +4,7 @@ Private CUNameMapping As Scripting.Dictionary
 Private CUExtraCUsNeeded As Scripting.Dictionary
 Private CUOpenWireNameMapping As Scripting.Dictionary
 Private CUSecNameMapping As Scripting.Dictionary
+Private CUPriNameMapping As Scripting.Dictionary
 Private CUAssemblyMapping As Scripting.Dictionary
 
 Public Function getCUAssemblyMapping() As Scripting.Dictionary
@@ -100,6 +101,21 @@ Public Function getSecNameMapping(ByVal key As String) As String
     End If
 End Function
 
+Public Function getPriNameMapping(ByVal key As String) As String
+    key = Replace(key, " ", "")
+    
+    If CUPriNameMapping Is Nothing Then
+        Set CUPriNameMapping = New Scripting.Dictionary
+        Call InitializeCUPriNameMapping
+    End If
+    
+    If CUPriNameMapping.exists(key) Then
+        getPriNameMapping = CUPriNameMapping(key)
+    Else
+        getPriNameMapping = ""
+    End If
+End Function
+
 Private Function cleanseKey(key As String) As String
     key = Trim(UCase(key))
     key = Replace(key, " ", "")
@@ -126,8 +142,8 @@ Private Sub InitializeCUExtraCUsNeeded()
     CUExtraCUsNeeded("NEUTDE") = True
     CUExtraCUsNeeded("SECDE") = True
     CUExtraCUsNeeded("PTP") = True
-    CUExtraCUsNeeded("SPINS") = True
-    CUExtraCUsNeeded("SCORS") = True
+    CUExtraCUsNeeded("SPIN") = True
+    CUExtraCUsNeeded("SCOR") = True
     CUExtraCUsNeeded("1VPO") = True
     CUExtraCUsNeeded("2VPO") = True
     CUExtraCUsNeeded("3VPO") = True
@@ -135,7 +151,6 @@ End Sub
 
 Private Sub InitializeCUNameCorrecting()
     CUNameCorrecting("DEVICEARM") = "S8S"
-    CUNameCorrecting("JUMPERSPIN") = "JUMPERSPINS"
     CUNameCorrecting("LCPTAGS") = "LCPTAG"
     CUNameCorrecting("VDE") = "PRIDE"
     CUNameCorrecting("CLUSTERMOUNTBRACKET") = "CLUSTERMOUNT"
@@ -149,14 +164,19 @@ Private Sub InitializeCUNameMapping()
     CUNameMapping("S8L") = "100013"
     CUNameMapping("S10S") = "100017"
     CUNameMapping("D8S") = "100006"
+    CUNameMapping("D10S") = "100002"
     CUNameMapping("D8M") = "100004"
     CUNameMapping("D8L") = "100011"
     CUNameMapping("S8FGDE") = "107000"
+    CUNameMapping("S10FGDE") = "107001"
+    CUNameMapping("S11FGDE") = "107002"
     CUNameMapping("SSA") = "100027"
     CUNameMapping("DSA") = "100007"
     CUNameMapping("SPIN") = "100022"
-    CUNameMapping("JUMPERSPINS") = "100022"
+    CUNameMapping("PPI") = "200495"
+    CUNameMapping("JUMPERSPIN") = "100022"
     CUNameMapping("SCOR") = "100105"
+    CUNameMapping("RISERPIN") = "100016"
     CUNameMapping("WR") = "100052"
     CUNameMapping("TANCLAMP") = "100056"
     CUNameMapping("SECTANCLAMP") = "100056"
@@ -183,7 +203,7 @@ Private Sub InitializeCUNameMapping()
     CUNameMapping("TEMPORARYJUMPER") = "106277"
     CUNameMapping("TEMPJUMPER") = "106277"
     
-    CUNameMapping("FGINSULATOR") = "100192"
+    CUNameMapping("FGINS") = "100192"
     CUNameMapping("FG") = "100192"
     CUNameMapping("FGLINK") = "100192"
     
@@ -260,6 +280,36 @@ Private Sub InitializeCUNameMapping()
     CUNameMapping("3|0ACSRDEGRIP") = "100626"
     CUNameMapping("336ACSRDEGRIP") = "100694"
     CUNameMapping("336ALDEGRIP") = "100696"
+    
+    CUNameMapping("6CUPRIDE") = "100710"
+    CUNameMapping("4ACSRPRIDE") = "100635"
+    CUNameMapping("2ACSRPRIDE") = "100619"
+    CUNameMapping("1|0ACSRPRIDE") = "100609"
+    CUNameMapping("3|0ACSRPRIDE") = "100626"
+    CUNameMapping("336ACSRPRIDE") = "100694"
+    CUNameMapping("336ALDPRIDE") = "100696"
+    
+    CUNameMapping("6PRIDE") = "100710"
+    CUNameMapping("4PRIDE") = "100635"
+    CUNameMapping("2PRIDE") = "100619"
+    CUNameMapping("1|0PRIDE") = "100609"
+    CUNameMapping("3|0PRIDE") = "100626"
+    CUNameMapping("336PRIDE") = "100694"
+    
+    CUNameMapping("6NEUTDE") = "100710"
+    CUNameMapping("4NEUTDE") = "100635"
+    CUNameMapping("2NEUTDE") = "100619"
+    CUNameMapping("1|0NEUTDE") = "100609"
+    CUNameMapping("3|0NEUTDE") = "100626"
+    CUNameMapping("336NEUTDE") = "100694"
+    
+    CUNameMapping("6CUNEUTDE") = "100710"
+    CUNameMapping("4ACSRNEUTDE") = "100635"
+    CUNameMapping("2ACSRNEUTDE") = "100619"
+    CUNameMapping("1|0ACSRNEUTDE") = "100609"
+    CUNameMapping("3|0ACSRNEUTDE") = "100626"
+    CUNameMapping("336ACSRNEUTDE") = "100694"
+    CUNameMapping("336ALDNEUTDE") = "100696"
     
     CUNameMapping("1|0ASCDEGRIP") = "201043"
     CUNameMapping("336ASCDEGRIP") = "200725"
@@ -485,4 +535,58 @@ Private Sub InitializeCUSecNameMapping()
     CUSecNameMapping("1|0AWACACSR") = "710053"
     CUSecNameMapping("1|0ACSRAWAC") = "710053"
     CUSecNameMapping("1|0AWAC") = "710053"
+End Sub
+
+Private Sub InitializeCUPriNameMapping()
+    CUPriNameMapping("14ACSR") = "713011"
+    CUPriNameMapping("24ACSR") = "013011"
+    CUPriNameMapping("34ACSR") = "913011"
+    CUPriNameMapping("14") = "713011"
+    CUPriNameMapping("24") = "013011"
+    CUPriNameMapping("34") = "913011"
+    
+    CUPriNameMapping("13CU") = "712091"
+    CUPriNameMapping("23CU") = "012091"
+    CUPriNameMapping("33CU") = "912091"
+    CUPriNameMapping("13") = "712091"
+    CUPriNameMapping("23") = "012091"
+    CUPriNameMapping("33") = "912091"
+    
+    CUPriNameMapping("12ACSR") = "711011"
+    CUPriNameMapping("22ACSR") = "011011"
+    CUPriNameMapping("32ACSR") = "911012"
+    CUPriNameMapping("12") = "711011"
+    CUPriNameMapping("22") = "011011"
+    CUPriNameMapping("32") = "911012"
+    
+    CUPriNameMapping("11|0ACSR") = "710011"
+    CUPriNameMapping("21|0ACSR") = "010011"
+    CUPriNameMapping("31|0ACSR") = "910011"
+    CUPriNameMapping("11|0") = "710011"
+    CUPriNameMapping("21|0") = "010011"
+    CUPriNameMapping("31|0") = "910011"
+    
+    CUPriNameMapping("13|0ACSR") = "708011"
+    CUPriNameMapping("23|0ACSR") = "008011"
+    CUPriNameMapping("33|0ACSR") = "908011"
+    CUPriNameMapping("13|0") = "708011"
+    CUPriNameMapping("23|0") = "008011"
+    CUPriNameMapping("33|0") = "908011"
+    
+    CUPriNameMapping("1336ACSR") = "705011"
+    CUPriNameMapping("2336ACSR") = "005011"
+    CUPriNameMapping("3336ACSR") = "905011"
+    CUPriNameMapping("1336KCMILACSR") = "705011"
+    CUPriNameMapping("2336KCMILACSR") = "005011"
+    CUPriNameMapping("3336KCMILACSR") = "905011"
+    CUPriNameMapping("1336") = "705011"
+    CUPriNameMapping("2336") = "005011"
+    CUPriNameMapping("3336") = "905011"
+    
+    CUPriNameMapping("1795ACSR") = "701011"
+    CUPriNameMapping("2795ACSR") = "001011"
+    CUPriNameMapping("3795ACSR") = "901011"
+    CUPriNameMapping("1795") = "701011"
+    CUPriNameMapping("2795") = "001011"
+    CUPriNameMapping("3795") = "901011"
 End Sub
