@@ -745,7 +745,7 @@ End Sub
 Private Function getOpenWireSizeFromSpan(Span As String) As String
     Dim found As Integer: found = 0
     Dim name As Variant
-    Dim openWireSizes As String: Output = ""
+    Dim openWireSizes As String: output = ""
     For i = 1 To 12
         For Each name In pds.names
             If name.name = "'" & pds.name & "'" & "!" & "TOPOLE" & i Then
