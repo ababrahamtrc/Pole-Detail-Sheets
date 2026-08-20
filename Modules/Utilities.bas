@@ -56,7 +56,7 @@ End Function
 
 Public Sub CheckAndCloseWorkbook(filePath As String)
     If IsWorkbookOpen(filePath) Then
-        Workbooks.Open(filePath).Close SaveChanges:=False
+        Workbooks.Open(filePath).Close savechanges:=False
     End If
 End Sub
 
@@ -405,6 +405,162 @@ Public Function SwapWords(text As String, word1 As String, word2 As String) As S
     text = Replace(text, word2, word1)
     text = Replace(text, temp, word2)
     SwapWords = text
+End Function
+
+Public Function compactListString(ByVal inputCol As Variant) As String
+    Dim tempArr() As Variant: ReDim tempArr(1 To inputCol.count)
+    
+    Dim i As Long: i = 1
+    For Each item In inputCol
+        tempArr(i) = item
+        i = i + 1
+    Next item
+    
+    Dim j As Long, temp As Variant
+    For i = 1 To UBound(tempArr) - 1
+        For j = i + 1 To UBound(tempArr)
+            If Val(tempArr(i)) > Val(tempArr(j)) Then
+                temp = tempArr(i)
+                tempArr(i) = tempArr(j)
+                tempArr(j) = temp
+            End If
+        Next j
+    Next i
+ 
+    Set col = Nothing
+    Set col = New Collection
+    For i = 1 To UBound(tempArr)
+        col.Add tempArr(i)
+    Next i
+    
+    Dim output As String: output = ""
+    Dim previousItem As String: previousItem = "-999"
+    Dim consecutiveStartItem As String: consecutiveStartItem = ""
+    Dim consecutive As Long: consecutive = 0
+    i = 1
+    For Each item In col
+        If Val(previousItem) + 1 = Val(item) Then
+            If consecutive = 0 Then consecutiveStartItem = previousItem
+            consecutive = consecutive + 1
+        Else
+            If consecutive > 0 Then
+                If consecutive < 2 Then
+                    If output <> "" Then output = output & ","
+                    output = output & consecutiveStartItem & "," & previousItem
+                Else
+                    If output <> "" Then output = output & ","
+                    output = output & consecutiveStartItem & "-" & previousItem
+                End If
+                If i = col.count Then
+                    If output <> "" Then output = output & ","
+                    output = output & item
+                End If
+            Else
+                If previousItem <> "-999" Then
+                    If output <> "" Then output = output & ","
+                    output = output & previousItem
+                End If
+                If i = col.count Then
+                    If output <> "" Then output = output & ","
+                    output = output & item
+                End If
+            End If
+            consecutive = 0
+        End If
+        previousItem = item
+        i = i + 1
+    Next item
+    If consecutive > 0 Then
+        If output <> "" Then output = output & ","
+        If consecutive < 2 Then
+            output = output & consecutiveStartItem & "," & previousItem
+        Else
+            output = output & consecutiveStartItem & "-" & previousItem
+        End If
+    End If
+    compactListString = output
+End Function
+
+Function AreCollectionsEqual(col1 As Collection, col2 As Collection) As Boolean
+    Dim i As Long
+    
+    If col1 Is Nothing And col2 Is Nothing Then
+        AreCollectionsEqual = True
+        Exit Function
+    End If
+    If col1 Is Nothing Or col2 Is Nothing Then
+        AreCollectionsEqual = False
+        Exit Function
+    End If
+    
+    If col1.count <> col2.count Then
+        AreCollectionsEqual = False
+        Exit Function
+    End If
+    
+    For i = 1 To col1.count
+        If IsObject(col1(i)) And IsObject(col2(i)) Then
+            If Not col1(i) Is col2(i) Then
+                AreCollectionsEqual = False
+                Exit Function
+            End If
+        ElseIf IsObject(col1(i)) Xor IsObject(col2(i)) Then
+            AreCollectionsEqual = False
+            Exit Function
+        Else
+            If col1(i) <> col2(i) Then
+                AreCollectionsEqual = False
+                Exit Function
+            End If
+        End If
+    Next i
+    
+    AreCollectionsEqual = True
+End Function
+
+Function AreCollectionsEqualUnordered(col1 As Collection, col2 As Collection) As Boolean
+    If col1 Is Nothing And col2 Is Nothing Then
+        AreCollectionsEqualUnordered = True
+        Exit Function
+    End If
+    If col1 Is Nothing Or col2 Is Nothing Then
+        AreCollectionsEqualUnordered = False
+        Exit Function
+    End If
+    
+    If col1.count <> col2.count Then
+        AreCollectionsEqualUnordered = False
+        Exit Function
+    End If
+
+    Dim tempCol2 As New Collection
+    Dim item As Variant
+    For Each item In col2
+        tempCol2.Add item
+    Next item
+    
+    Dim i As Long, j As Long
+    Dim matchFound As Boolean
+    
+    For i = 1 To col1.count
+        matchFound = False
+        
+        For j = 1 To tempCol2.count
+            If col1(i) = tempCol2(j) Then matchFound = True
+            
+            If matchFound Then
+                tempCol2.Remove j
+                Exit For
+            End If
+        Next j
+        
+        If Not matchFound Then
+            AreCollectionsEqualUnordered = False
+            Exit Function
+        End If
+    Next i
+    
+    AreCollectionsEqualUnordered = True
 End Function
 
 Public Function autoGLC(poleHeight As Integer, poleSpecies As String, poleClass As String) As String
