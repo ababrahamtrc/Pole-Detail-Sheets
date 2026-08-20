@@ -1,26 +1,37 @@
 Attribute VB_Name = "MicrostationUtilities"
 Function testToken(token As String) As Boolean
-    On Error GoTo ErrorHandler
     
     Dim url As String: url = "https://gis.consumersenergy.com/mapping/rest/services/Landbase/Landbase_Grids_Boundaries_PUB/MapServer/1/query?where=1=1&outFields=*&returnGeometry=true&geometryType=esriGeometryEnvelope&geometry=&spatialRel=esriSpatialRelIntersects&inSR=2253&outSR=2253+&f=json&token=" & token
     Set http = CreateObject("MSXML2.ServerXMLHTTP.6.0")
     http.Open "POST", url, False
     http.setRequestHeader "Authorization", "Bearer " & token
     http.setRequestHeader "Content-Type", "application/json"
-    http.SetTimeouts 15000, 15000, 15000, 15000
     http.send
-    If InStr(http.responseText, "Invalid Token") > 0 Then
+    Set test = JsonConverter.ParseJson(http.responseText)
+    If InStr(http.responseText, "Invalid Token") > 0 Or InStr(http.responseText, "User does not have permissions to access") > 0 Then
+        testToken = False
+    ElseIf JsonConverter.ParseJson(http.responseText).exists("error") Then
         testToken = False
     Else
         testToken = True
     End If
     
-    Exit Function
-    
-ErrorHandler:
-    MsgBox "HTTP Request Failed or Timed Out!" & vbCrLf & _
-           "Error Number: " & Err.Number & vbCrLf & _
-           "Description: " & Err.Description, vbCritical
+    If testToken = True Then
+        url = "https://gis.consumersenergy.com/mapping/rest/services/Electric/Electric_PUB/MapServer/0/query?where=1=1&outFields=*&returnGeometry=true&geometryType=esriGeometryEnvelope&geometry=&spatialRel=esriSpatialRelIntersects&inSR=2253&outSR=2253+&f=json&token=" & token
+        Set http = CreateObject("MSXML2.ServerXMLHTTP.6.0")
+        http.Open "POST", url, False
+        http.setRequestHeader "Authorization", "Bearer " & token
+        http.setRequestHeader "Content-Type", "application/json"
+        http.send
+        Set test = JsonConverter.ParseJson(http.responseText)
+        If InStr(http.responseText, "Invalid Token") > 0 Or InStr(http.responseText, "User does not have permissions to access") > 0 Then
+            testToken = False
+        ElseIf JsonConverter.ParseJson(http.responseText).exists("error") Then
+            testToken = False
+        Else
+            testToken = True
+        End If
+    End If
 End Function
 
 Function getElectricJson(poles As Collection, layer As Integer, token As String, Optional query As String) As Object
@@ -39,7 +50,7 @@ Function getElectricJson(poles As Collection, layer As Integer, token As String,
         If highestLongitude = 0 Or pole.longitude > highestLongitude Then highestLongitude = pole.longitude
     Next pole
     
-    Dim radius As Double: radius = 750
+    Dim radius As Double: radius = 500
     
     results = LatLonToMI2253(lowestLatitude, lowestLongitude)
     x1 = results(0) - radius
@@ -60,7 +71,6 @@ Function getElectricJson(poles As Collection, layer As Integer, token As String,
     http.Open "POST", url, False
     http.setRequestHeader "Authorization", "Bearer " & token
     http.setRequestHeader "Content-Type", "application/json"
-    http.SetTimeouts 15000, 15000, 15000, 15000
     http.send
     
     If http.status = 200 Then
@@ -98,7 +108,6 @@ Function getOtherPole(x As Double, y As Double, radius As Integer, token) As Obj
     http.Open "POST", url, False
     http.setRequestHeader "Authorization", "Bearer " & token
     http.setRequestHeader "Content-Type", "application/json"
-    http.SetTimeouts 15000, 15000, 15000, 15000
     http.send
     
     If http.status = 200 Then
@@ -159,7 +168,6 @@ Function getROWJSON(poles As Collection, layer As Integer, token As String) As O
     http.Open "POST", url, False
     http.setRequestHeader "Authorization", "Bearer " & token
     http.setRequestHeader "Content-Type", "application/json"
-    http.SetTimeouts 15000, 15000, 15000, 15000
     http.send
     
     If http.status = 200 Then
