@@ -27,8 +27,8 @@ Public Sub CheckPole()
         potentialClass = 0
     Else
         glc = CDbl(GLCConvert(glc))
-        expectedClass = getExpectedClass(val(height), CStr(species), glc)
-        potentialClass = getExpectedClass(val(height), CStr(species), glc + 0.5)
+        expectedClass = getExpectedClass(Val(height), CStr(species), glc)
+        potentialClass = getExpectedClass(Val(height), CStr(species), glc + 0.5)
     End If
 
     If glc = 0 Or height = "" Or species = "" Then
