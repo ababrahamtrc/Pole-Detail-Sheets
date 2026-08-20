@@ -247,33 +247,33 @@ End Function
 
 Public Sub extractImportDataFormat()
     Set jobWs = ThisWorkbook.sheets("Job Info")
-    jobWsLastRow = jobWs.Cells(jobWs.Rows.count, "A").End(xlUp).ROW
+    jobWsLastRow = jobWs.Cells(jobWs.Rows.count, "A").End(xlUp).row
 
     Set colWs = ThisWorkbook.sheets("Collection")
-    colWsLastRow = colWs.Cells(colWs.Rows.count, "A").End(xlUp).ROW
+    colWsLastRow = colWs.Cells(colWs.Rows.count, "A").End(xlUp).row
     
     Set spanWs = ThisWorkbook.sheets("Span")
-    spanWsLastRow = spanWs.Cells(spanWs.Rows.count, "A").End(xlUp).ROW
+    spanWsLastRow = spanWs.Cells(spanWs.Rows.count, "A").End(xlUp).row
     spanWsRow = 2
     
     Set spanComWs = ThisWorkbook.sheets("Span.Communication")
-    spanComWsLastRow = spanComWs.Cells(spanComWs.Rows.count, "A").End(xlUp).ROW
+    spanComWsLastRow = spanComWs.Cells(spanComWs.Rows.count, "A").End(xlUp).row
     spanComWsRow = 2
     
     Set spanPowWs = ThisWorkbook.sheets("Span.Power Circuit")
-    spanPowWsLastRow = spanPowWs.Cells(spanPowWs.Rows.count, "A").End(xlUp).ROW
+    spanPowWsLastRow = spanPowWs.Cells(spanPowWs.Rows.count, "A").End(xlUp).row
     spanPowWsRow = 2
     
     Set anchorWs = ThisWorkbook.sheets("Anchor")
-    anchorWsLastRow = anchorWs.Cells(anchorWs.Rows.count, "A").End(xlUp).ROW
+    anchorWsLastRow = anchorWs.Cells(anchorWs.Rows.count, "A").End(xlUp).row
     anchorWsRow = 2
     
     Set guyWs = ThisWorkbook.sheets("Anchor.Guys")
-    guyWsLastRow = guyWs.Cells(guyWs.Rows.count, "A").End(xlUp).ROW
+    guyWsLastRow = guyWs.Cells(guyWs.Rows.count, "A").End(xlUp).row
     guyWsRow = 2
     
     Set equipmentWs = ThisWorkbook.sheets("Equipment")
-    equipmentWsLastRow = equipmentWs.Cells(equipmentWs.Rows.count, "A").End(xlUp).ROW
+    equipmentWsLastRow = equipmentWs.Cells(equipmentWs.Rows.count, "A").End(xlUp).row
     equipmentWsRow = 2
     
     Me.jobLocation = jobWs.Cells(2, 2)
@@ -520,20 +520,20 @@ Public Sub extractImportDataFormat()
         For equipmentWsRow = equipmentWsRow To equipmentWsLastRow
             If equipmentWs.Cells(equipmentWsRow, 1) <> pole.poleNumber Then Exit For
             
-            Dim Equipment As Equipment: Set Equipment = New Equipment
+            Dim equipment As equipment: Set equipment = New equipment
             
             parts = Split(equipmentWs.Cells(equipmentWsRow, 2), " > ")
-            Equipment.componentType = parts(0)
-            Equipment.size = parts(1)
-            Equipment.height = equipmentWs.Cells(equipmentWsRow, 3)
-            Equipment.bottomHeight = equipmentWs.Cells(equipmentWsRow, 4)
-            Equipment.owner = equipmentWs.Cells(equipmentWsRow, 5)
+            equipment.componentType = parts(0)
+            equipment.size = parts(1)
+            equipment.height = equipmentWs.Cells(equipmentWsRow, 3)
+            equipment.bottomHeight = equipmentWs.Cells(equipmentWsRow, 4)
+            equipment.owner = equipmentWs.Cells(equipmentWsRow, 5)
             
-            pole.equipments.Add Equipment
-            If Equipment.owner = "" Or UCase(Equipment.owner) = "CONSUMERS ENERGY" Then
-                pole.utilComponents.Add Equipment
+            pole.equipments.Add equipment
+            If equipment.owner = "" Or UCase(equipment.owner) = "CONSUMERS ENERGY" Then
+                pole.utilComponents.Add equipment
             Else
-                pole.commComponents.Add Equipment
+                pole.commComponents.Add equipment
             End If
         Next equipmentWsRow
         
@@ -547,7 +547,7 @@ Public Sub fillImportDataFormat()
     Dim wire As wire
     Dim anchor As anchor
     Dim guy As guy
-    Dim Equipment As Equipment
+    Dim equipment As equipment
     Dim primaryBundles As Scripting.Dictionary
     
     Set colWs = ThisWorkbook.sheets("Collection")
@@ -772,15 +772,15 @@ Public Sub fillImportDataFormat()
             guysRow = guysRow + 1
         Next guy
         
-        For Each Equipment In pole.equipments
+        For Each equipment In pole.equipments
             equipmentWs.Cells(equipmentRow, 1).Value = pole.poleNumber
-            equipmentWs.Cells(equipmentRow, 2).Value = Equipment.componentType & " > " & Equipment.size
-            equipmentWs.Cells(equipmentRow, 3).Value = Equipment.height
-            equipmentWs.Cells(equipmentRow, 4).Value = Equipment.bottomHeight
-            equipmentWs.Cells(equipmentRow, 5).Value = IIf(Equipment.owner = "", "Consumers Energy", Equipment.owner)
+            equipmentWs.Cells(equipmentRow, 2).Value = equipment.componentType & " > " & equipment.size
+            equipmentWs.Cells(equipmentRow, 3).Value = equipment.height
+            equipmentWs.Cells(equipmentRow, 4).Value = equipment.bottomHeight
+            equipmentWs.Cells(equipmentRow, 5).Value = IIf(equipment.owner = "", "Consumers Energy", equipment.owner)
             
             equipmentRow = equipmentRow + 1
-        Next Equipment
+        Next equipment
     
         colRow = colRow + 1
     Next pole
