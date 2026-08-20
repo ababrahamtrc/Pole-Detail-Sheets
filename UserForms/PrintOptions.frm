@@ -66,7 +66,7 @@ Public Sub Initialize()
         Conductor5.Value = json("ConductorInitOffset")
         Conductor6.Value = json("ConductorOffsetAmount")
         
-        ROW.Value = json("DrawROW")
+        row.Value = json("DrawROW")
         ROW1.Value = json("DrawCenterLines")
         ROW1a.Value = json("DrawCenterLineDistances")
         
@@ -79,7 +79,7 @@ Public Sub Initialize()
         Service1.Value = json("DrawUGServices")
         Service2.Value = json("DrawAdjacentServices")
         
-        Equipment.Value = json("DrawEquipment")
+        equipment.Value = json("DrawEquipment")
         Equipment1.Value = json("DrawAdjacentPoleEquipment")
         Equipment2.Value = json("DrawTransformers")
         Equipment3.Value = json("DrawStreetlights")
@@ -113,7 +113,7 @@ Private Sub CommandButton1_Click()
     ConductorInitOffset = Conductor5.Value
     ConductorOffsetAmount = Conductor6.Value
     
-    DrawROW = ROW.Value
+    DrawROW = row.Value
     DrawCenterLines = ROW1.Value And ROW1.Enabled
     DrawCenterLineDistances = ROW1a.Value And ROW1a.Enabled
     
@@ -126,7 +126,7 @@ Private Sub CommandButton1_Click()
     DrawUGServices = Service1.Value And Service1.Enabled
     DrawAdjacentServices = Service2.Value And Service2.Enabled
     
-    DrawEquipment = Equipment.Value
+    DrawEquipment = equipment.Value
     DrawAdjacentPoleEquipment = Equipment1.Value And Equipment1.Enabled
     DrawTransformers = Equipment2.Value And Equipment2.Enabled
     DrawStreetlights = Equipment3.Value And Equipment3.Enabled
@@ -154,7 +154,7 @@ Private Sub CommandButton1_Click()
     varDict.Add "ConductorInitOffset", Conductor5.Value
     varDict.Add "ConductorOffsetAmount", Conductor6.Value
     
-    varDict.Add "DrawROW", ROW.Value
+    varDict.Add "DrawROW", row.Value
     varDict.Add "DrawCenterLines", ROW1.Value
     varDict.Add "DrawCenterLineDistances", ROW1a.Value
     
@@ -167,7 +167,7 @@ Private Sub CommandButton1_Click()
     varDict.Add "DrawUGServices", Service1.Value
     varDict.Add "DrawAdjacentServices", Service2.Value
     
-    varDict.Add "DrawEquipment", Equipment.Value
+    varDict.Add "DrawEquipment", equipment.Value
     varDict.Add "DrawAdjacentPoleEquipment", Equipment1.Value
     varDict.Add "DrawTransformers", Equipment2.Value
     varDict.Add "DrawStreetlights", Equipment3.Value
@@ -216,7 +216,7 @@ End Sub
 Private Sub ROW_Click()
     For Each ctrl In Me.Controls
         If InStr(ctrl.name, "ROW") > 0 And ctrl.name <> "ROW" Then
-            ctrl.Enabled = ROW.Value
+            ctrl.Enabled = row.Value
         End If
     Next ctrl
 End Sub
@@ -232,7 +232,7 @@ End Sub
 Private Sub Equipment_Click()
     For Each ctrl In Me.Controls
         If InStr(ctrl.name, "Equipment") > 0 And ctrl.name <> "Equipment" Then
-            ctrl.Enabled = Equipment.Value
+            ctrl.Enabled = equipment.Value
         End If
     Next ctrl
 End Sub
