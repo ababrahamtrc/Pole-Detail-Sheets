@@ -33,7 +33,7 @@ Public Sub Initialize()
     
     Dim header As String
     Set colWs = ThisWorkbook.sheets("Collection")
-    colWsLastRow = colWs.Cells(colWs.Rows.count, "A").End(xlUp).ROW
+    colWsLastRow = colWs.Cells(colWs.Rows.count, "A").End(xlUp).row
     Dim colWsLastCol As Integer: colWsLastCol = colWs.Cells(1, colWs.Columns.count).End(xlToLeft).Column
     Set colWsHeaders = New Scripting.Dictionary
     For i = 1 To colWsLastCol
@@ -44,7 +44,7 @@ Public Sub Initialize()
     Next i
     
     Dim jobInfoWs As Worksheet: Set jobInfoWs = ThisWorkbook.sheets("Job Info")
-    Dim jobInfoWsLastRow As Integer: jobInfoWsLastRow = jobInfoWs.Cells(jobInfoWs.Rows.count, "A").End(xlUp).ROW
+    Dim jobInfoWsLastRow As Integer: jobInfoWsLastRow = jobInfoWs.Cells(jobInfoWs.Rows.count, "A").End(xlUp).row
     Dim jobInfoWsLastCol As Integer: jobInfoWsLastCol = jobInfoWs.Cells(1, jobInfoWs.Columns.count).End(xlToLeft).Column
     Dim jobInfoWsHeaders As Scripting.Dictionary: Set jobInfoWsHeaders = New Scripting.Dictionary
     For i = 1 To jobInfoWsLastCol
@@ -174,7 +174,7 @@ Private Sub CommandButton4_click()
     End If
     
     Dim colWs As Worksheet: Set colWs = ThisWorkbook.sheets("Collection")
-    Dim colWsLastRow As Integer: colWsLastRow = colWs.Cells(colWs.Rows.count, "A").End(xlUp).ROW
+    Dim colWsLastRow As Integer: colWsLastRow = colWs.Cells(colWs.Rows.count, "A").End(xlUp).row
     Dim colWsLastCol As Integer: colWsLastCol = colWs.Cells(1, colWs.Columns.count).End(xlToLeft).Column
     Dim colWsHeaders As Scripting.Dictionary: Set colWsHeaders = New Scripting.Dictionary
     For i = 1 To colWsLastCol
@@ -185,7 +185,7 @@ Private Sub CommandButton4_click()
     Next i
     
     Dim imageWs As Worksheet: Set imageWs = ThisWorkbook.sheets("Images")
-    Dim imageWsLastRow As Integer: imageWsLastRow = imageWs.Cells(imageWs.Rows.count, "A").End(xlUp).ROW
+    Dim imageWsLastRow As Integer: imageWsLastRow = imageWs.Cells(imageWs.Rows.count, "A").End(xlUp).row
     Dim imageWsLastCol As Integer: imageWsLastCol = imageWs.Cells(1, imageWs.Columns.count).End(xlToLeft).Column
     Dim imageWsHeaders As Scripting.Dictionary: Set imageWsHeaders = New Scripting.Dictionary
     For i = 1 To imageWsLastCol
@@ -214,8 +214,8 @@ Private Sub CommandButton4_click()
             ceid = ""
             poleNum = imageWs.Cells(i, imageWsHeaders("ID"))
             Set cell = poleNumRange.Find(what:=poleNum, LookIn:=xlValues, lookat:=xlWhole)
-            If colWsHeaders.exists("New CE ID Tag") Then ceid = colWs.Cells(cell.ROW, colWsHeaders("New CE ID Tag"))
-            If ceid = "" Then ceid = colWs.Cells(cell.ROW, colWsHeaders("CE ID Tag"))
+            If colWsHeaders.exists("New CE ID Tag") Then ceid = colWs.Cells(cell.row, colWsHeaders("New CE ID Tag"))
+            If ceid = "" Then ceid = colWs.Cells(cell.row, colWsHeaders("CE ID Tag"))
             If ceid = "" Then ceid = "FOREIGN"
             photoCounter = 1
         End If
