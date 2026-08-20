@@ -2,6 +2,8 @@ Attribute VB_Name = "MicrostationPrint"
 Sub GenerateMicrostationPrintFiles()
     Dim restartMicrostationNeeded As Boolean
     
+    Call LogMessage.SendLogMessage("GenerateMicrostationPrint")
+    
     restartMicrostationNeeded = False
     
     If Environ$("USERNAME") <> "aabraham" Then
@@ -13,11 +15,11 @@ Sub GenerateMicrostationPrintFiles()
         If Not ForceInjectModuleToBentley("JsonConverter") Then Exit Sub
     End If
     
+    If Not generateJSON Then Exit Sub
+    
     If restartMicrostationNeeded Then
         MsgBox "Restart Open Map Utilities if open for changes to take effect."
     End If
-    
-    If Not generateJSON Then Exit Sub
     
     MsgBox "Press '9' to generate the print on open map utilities. Script will have to be rerun for future generations."
 End Sub
