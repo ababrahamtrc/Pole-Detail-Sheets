@@ -436,7 +436,7 @@ Private Function QACheck(pds As Worksheet) As String
     If InStr(pds.Range("ALTTWO"), "[") > 0 Or InStr(pds.Range("ALTTWO"), "]") > 0 Then issues = issues & "• Remove any [] brackets from Alt 2 work and anything between those brackets. These are used for place holder information in scripts" & vbLf
     If InStr(pds.Range("ALTTHREE"), "[") > 0 Or InStr(pds.Range("ALTTHREE"), "]") > 0 Then issues = issues & "• Remove any [] brackets from Alt 3 work and anything between those brackets. These are used for place holder information in scripts" & vbLf
     
-    If pole.replacePole And Not isEmpty(pds.Range("ALTONE")) Then Call checkEmptyCell(pds, issues, "REPLACEPOLE", "Replace pole")
+    If pole.ReplacePole And Not isEmpty(pds.Range("ALTONE")) Then Call checkEmptyCell(pds, issues, "REPLACEPOLE", "Replace pole")
     
     If isEmpty(pds.Range("PPRR")) And (Not isEmpty(pds.Range("TREE")) Or Not isEmpty(pds.Range("TREE2")) Or Not isEmpty(pds.Range("SUMSHEET13"))) Then warnings = warnings & "Warning: if there is tree work or pole staking then make sure there's no PPRR. Ignore this warning if it's all in ROW" & vbLf
     If Not isEmpty(pds.Range("PPRR")) And (isEmpty(pds.Range("TREE")) And isEmpty(pds.Range("TREE2")) And isEmpty(pds.Range("SUMSHEET13"))) Then issues = issues & "• PPRR shouldn't be checked off if there's no tree work or staking, uncheck PPRR or check off the reason for PPRR" & vbLf
