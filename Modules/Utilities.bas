@@ -18,6 +18,7 @@ Sub applyStandardAbbreviations(ByRef str As String)
     str = Replace(str, "DCORS", "DCOR")
     str = Replace(str, "SVCS", "SVC")
     
+    str = Replace(str, "ASSEMBLY", "ASSY")
     str = Replace(str, "BRACKET", "BRKT")
     str = Replace(str, "CAPACITOR", "CAP")
     str = Replace(str, "CONDUCTOR", "COND")
