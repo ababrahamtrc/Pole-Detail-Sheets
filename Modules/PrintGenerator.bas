@@ -1,5 +1,6 @@
 Attribute VB_Name = "PrintGenerator"
 Const PI As Double = 3.14159265358979
+Dim existingLineIDs As Object
 
 Public Sub GeneratePrint()
      Set testText = CreateTextElement1(Nothing, "Test", Point3dFromXYZ(0, 0, 0), Matrix3dIdentity)
@@ -36,6 +37,23 @@ Public Sub DrawPrint()
         MsgBox "JSON file doesn't exist, generate one from pole detail sheets."
         Exit Sub
     End If
+    
+    Dim oCriteria As New ElementScanCriteria
+    oCriteria.ExcludeNonGraphical
+    oCriteria.ExcludeAllTypes
+    oCriteria.IncludeType msdElementTypeLine
+    
+    Dim oEnumerator As ElementEnumerator
+    Set oEnumerator = ActiveModelReference.Scan(oCriteria)
+    
+    Set existingLineIDs = CreateObject("Scripting.Dictionary")
+    Do While oEnumerator.MoveNext
+        Dim strID As String
+        strID = CStr(oEnumerator.Current.ID64)
+        If Not existingLineIDs.exists(strID) Then
+            existingLineIDs.Add strID, True
+        End If
+    Loop
     
     If PrintOptions.DrawCenterLines Then
         Dim centerlineLine As LineElement
@@ -258,7 +276,7 @@ Public Sub DrawPrint()
                     If PrintOptions.ShowDrawing Then DoEvents
                     
                     Dim oSubElements As ElementEnumerator: Set oSubElements = txt.GetSubElements
-                    Dim oSubElem As Element
+                    Dim oSubElem As element
                     Dim oStyle As TextStyle
                     Do While oSubElements.MoveNext
                         Set oSubElem = oSubElements.Current
@@ -296,7 +314,7 @@ End Sub
 Sub ShortenLines(targetLevelName As String)
     Dim oScan As ElementScanCriteria
     Dim oEnumerator As ElementEnumerator
-    Dim oElement As Element
+    Dim oElement As element
     Dim lines() As LineElement
     Dim pIntersectArray() As Point3d
     Dim count As Long
@@ -342,14 +360,23 @@ Sub ShortenLines(targetLevelName As String)
         Next j
     Next i
 
-    Dim oFeature As Object
+    'Dim ofeature As Object
+    Dim ofeature As xft.feature
     Dim oFeatureMgr As Object
     Set oFeatureMgr = CreateObject("xft.FeatureMgr")
     For i = 0 To count - 1
-        Set oFeature = oFeatureMgr.CreateFeature(lines(i))
         On Error Resume Next
-        If oFeature.GetProperty("StartDeadend") Then Call createDeadend(lines(i), 0)
-        If oFeature.GetProperty("EndDeadend") Then Call createDeadend(lines(i), 1)
+        
+        If Not existingLineIDs.exists(CStr(lines(i).ID64)) Then
+            Set ofeature = oFeatureMgr.CreateFeature(lines(i))
+            If ofeature.GetProperty("StartDeadend") Then
+                If Err.Number = 0 Then Call createDeadend(lines(i), 0)
+            End If
+            If ofeature.GetProperty("EndDeadend") Then
+                If Err.Number = 0 Then Call createDeadend(lines(i), 1)
+            End If
+        End If
+        
         On Error GoTo 0
     Next i
     
@@ -476,17 +503,15 @@ Public Sub createDeadend(oLine As LineElement, vertexIndex As Integer)
     ActiveModelReference.AddElement deadend
     If PrintOptions.ShowDrawing Then DoEvents
     
-    Dim oFeature As Object
+    Dim ofeature As Object
     Dim oFeatureMgr As Object
     Set oFeatureMgr = CreateObject("xft.FeatureMgr")
-    Set oFeature = oFeatureMgr.CreateFeature(deadend)
+    Set ofeature = oFeatureMgr.CreateFeature(deadend)
     
-    If oLine.Level.name = "CE-EX-ELEC-OH-PRI-COND" Or oLine.Level.name = "CE-RP-ELEC-OH-PRI-COND" Then oFeature.name = "CE_PRI_DE"
-    If oLine.Level.name = "CE-EX-ELEC-OH-SEC-COND" Or oLine.Level.name = "CE-RP-ELEC-OH-SEC-COND" Then oFeature.name = "CE_SEC_DE"
+    If oLine.Level.name = "CE-EX-ELEC-OH-PRI-COND" Or oLine.Level.name = "CE-RP-ELEC-OH-PRI-COND" Then ofeature.name = "CE_PRI_DE"
+    If oLine.Level.name = "CE-EX-ELEC-OH-SEC-COND" Or oLine.Level.name = "CE-RP-ELEC-OH-SEC-COND" Then ofeature.name = "CE_SEC_DE"
     
-    oFeature.SetProperty "LIFECYCLE", 1
-    
-    oFeature.Write (True)
+    ofeature.Write (True)
     'deadend.Redraw msdDrawingModeNormal
     'If PrintOptions.ShowDrawing Then DoEvents
 End Sub
@@ -558,35 +583,35 @@ Public Sub placePole(jsonPole As Object)
     ActiveModelReference.AddElement pole
     If PrintOptions.ShowDrawing Then DoEvents
     
-    Dim oFeature As Object
+    Dim ofeature As Object
     Dim oFeatureMgr As Object
     Set oFeatureMgr = CreateObject("xft.FeatureMgr")
 
-    Set oFeature = oFeatureMgr.CreateFeature(pole)
-    oFeature.name = "CE_SUPPORTSTRUCTURE"
+    Set ofeature = oFeatureMgr.CreateFeature(pole)
+    ofeature.name = "CE_SUPPORTSTRUCTURE"
 
     If jsonPole("replace") Then
-        oFeature.SetProperty "LIFECYCLE", 4
+        ofeature.SetProperty "LIFECYCLE", 4
     Else
-        oFeature.SetProperty "LIFECYCLE", 1
+        ofeature.SetProperty "LIFECYCLE", 1
     End If
 
-    oFeature.SetProperty "SUBTYPECD", 7
+    ofeature.SetProperty "SUBTYPECD", 7
     
     If jsonPole("ceid") = "FOREIGN" Then
-        oFeature.SetProperty "OWNER", "Foreign"
+        ofeature.SetProperty "OWNER", "Foreign"
     Else
-        oFeature.SetProperty "OWNER", "Consumers Energy"
+        ofeature.SetProperty "OWNER", "Consumers Energy"
     End If
     
-    If jsonPole("hvd") <> "" Then oFeature.SetProperty "HVD_TAG", jsonPole("hvd")
+    If jsonPole("hvd") <> "" Then ofeature.SetProperty "HVD_TAG", jsonPole("hvd")
     
-    If Not IsNull(jsonPole("height")) Then oFeature.SetProperty "HEIGHT", jsonPole("height")
-    If Not IsNull(jsonPole("class")) Then oFeature.SetProperty "CLASS", jsonPole("class")
-    If Not IsNull(jsonPole("ceid")) Then oFeature.SetProperty "CE_TAG", jsonPole("ceid")
-    oFeature.SetProperty "JOINT", "No"
+    If Not IsNull(jsonPole("height")) Then ofeature.SetProperty "HEIGHT", jsonPole("height")
+    If Not IsNull(jsonPole("class")) Then ofeature.SetProperty "CLASS", jsonPole("class")
+    If Not IsNull(jsonPole("ceid")) Then ofeature.SetProperty "CE_TAG", jsonPole("ceid")
+    ofeature.SetProperty "JOINT", "No"
 
-    oFeature.Write (True)
+    ofeature.Write (True)
     'pole.Redraw msdDrawingModeNormal
     'If PrintOptions.ShowDrawing Then DoEvents
 
@@ -598,9 +623,9 @@ Public Sub placePole(jsonPole As Object)
             ActiveModelReference.AddElement Tree
             If PrintOptions.ShowDrawing Then DoEvents
             
-            Set oFeature = oFeatureMgr.CreateFeature(Tree)
-            oFeature.name = "CE_TREE"
-            oFeature.Write (True)
+            Set ofeature = oFeatureMgr.CreateFeature(Tree)
+            ofeature.name = "CE_TREE"
+            ofeature.Write (True)
             'tree.Redraw msdDrawingModeNormal
             'If PrintOptions.ShowDrawing Then DoEvents
         End If
@@ -643,7 +668,7 @@ Sub placeTransformer(jsonTransformer)
     Dim transformer As CellElement
     Dim scl As Point3d: scl = Point3dFromXYZ(1, 1, 1)
     Dim size2 As String
-    Dim oFeature As Object
+    Dim ofeature As Object
     Dim oFeatureMgr As Object
     Set oFeatureMgr = CreateObject("xft.FeatureMgr")
     
@@ -669,8 +694,8 @@ Sub placeTransformer(jsonTransformer)
     ActiveModelReference.AddElement transformer
     If PrintOptions.ShowDrawing Then DoEvents
 
-    Set oFeature = oFeatureMgr.CreateFeature(transformer)
-    oFeature.name = "CE_OH_XFRM"
+    Set ofeature = oFeatureMgr.CreateFeature(transformer)
+    ofeature.name = "CE_OH_XFRM"
     If size2 <> "" Then
         'oFeature.SetProperty "LIFECYCLE", 4
     Else
@@ -680,7 +705,7 @@ Sub placeTransformer(jsonTransformer)
     'oFeature.SetProperty "TLM", jsonTransformer("TLM")
     'oFeature.SetProperty "SIZE", jsonTransformer("size")
 
-    Call oFeature.Write(False)
+    Call ofeature.Write(False)
     transformer.Redraw msdDrawingModeNormal
     If PrintOptions.ShowDrawing Then DoEvents
 
@@ -718,7 +743,7 @@ Sub placeCapacitor(jsonCapacitor)
     Dim capacitor As CellElement
     Dim scl As Point3d: scl = Point3dFromXYZ(1, 1, 1)
     
-    Dim oFeature As Object
+    Dim ofeature As Object
     Dim oFeatureMgr As Object
     Set oFeatureMgr = CreateObject("xft.FeatureMgr")
     
@@ -734,13 +759,13 @@ Sub placeCapacitor(jsonCapacitor)
     ActiveModelReference.AddElement capacitor
     If PrintOptions.ShowDrawing Then DoEvents
     
-    Set oFeature = oFeatureMgr.CreateFeature(capacitor)
-    oFeature.name = "CE_CAPACITOR"
-    oFeature.SetProperty "LIFECYCLE", 1
-    oFeature.SetProperty "LCP", jsonCapacitor("lcp")
-    If jsonCapacitor("lcp") <> "" Then oFeature.SetProperty "LCP", jsonCapacitor("lcp")
+    Set ofeature = oFeatureMgr.CreateFeature(capacitor)
+    ofeature.name = "CE_CAPACITOR"
+    ofeature.SetProperty "LIFECYCLE", 1
+    ofeature.SetProperty "LCP", jsonCapacitor("lcp")
+    If jsonCapacitor("lcp") <> "" Then ofeature.SetProperty "LCP", jsonCapacitor("lcp")
 
-    oFeature.Write (True)
+    ofeature.Write (True)
     'capacitor.Redraw msdDrawingModeNormal
     'If PrintOptions.ShowDrawing Then DoEvents
 
@@ -764,7 +789,7 @@ Sub placeRegulator(jsonRegulator)
     Dim regulator As CellElement
     Dim scl As Point3d: scl = Point3dFromXYZ(1, 1, 1)
     
-    Dim oFeature As Object
+    Dim ofeature As Object
     Dim oFeatureMgr As Object
     Set oFeatureMgr = CreateObject("xft.FeatureMgr")
     
@@ -806,20 +831,20 @@ Sub placeRegulator(jsonRegulator)
     ActiveModelReference.AddElement regulator
     If PrintOptions.ShowDrawing Then DoEvents
     
-    Set oFeature = oFeatureMgr.CreateFeature(regulator)
+    Set ofeature = oFeatureMgr.CreateFeature(regulator)
     If jsonRegulator("auto") Then
-        oFeature.name = "CE_AUTOBOOSTER"
+        ofeature.name = "CE_AUTOBOOSTER"
     ElseIf jsonRegulator("fixed") Then
-        oFeature.name = "CE_FIXEDBOOSTER"
+        ofeature.name = "CE_FIXEDBOOSTER"
     Else
-        oFeature.name = "CE_REGULATOR"
+        ofeature.name = "CE_REGULATOR"
     End If
-    oFeature.SetProperty "LIFECYCLE", 1
-    oFeature.SetProperty "PHASE", phase
-    oFeature.SetProperty "SIZE", jsonRegulator("size") & "A"
-    If jsonRegulator("lcp") <> "" Then oFeature.SetProperty "LCP", jsonRegulator("lcp")
+    ofeature.SetProperty "LIFECYCLE", 1
+    ofeature.SetProperty "PHASE", phase
+    ofeature.SetProperty "SIZE", jsonRegulator("size") & "A"
+    If jsonRegulator("lcp") <> "" Then ofeature.SetProperty "LCP", jsonRegulator("lcp")
 
-    oFeature.Write (True)
+    ofeature.Write (True)
     'regulator.Redraw msdDrawingModeNormal
     'If PrintOptions.ShowDrawing Then DoEvents
 
@@ -847,7 +872,7 @@ Sub placeIsolator(jsonIsolator)
     Dim isolator As CellElement
     Dim scl As Point3d: scl = Point3dFromXYZ(1, 1, 1)
     
-    Dim oFeature As Object
+    Dim ofeature As Object
     Dim oFeatureMgr As Object
     Set oFeatureMgr = CreateObject("xft.FeatureMgr")
     
@@ -871,13 +896,13 @@ Sub placeIsolator(jsonIsolator)
     ActiveModelReference.AddElement isolator
     If PrintOptions.ShowDrawing Then DoEvents
     
-    Set oFeature = oFeatureMgr.CreateFeature(isolator)
-    oFeature.name = "CE_ISOLATOR"
-    oFeature.SetProperty "LIFECYCLE", 1
-    oFeature.SetProperty "LCP", jsonIsolator("lcp")
-    If jsonIsolator("lcp") <> "" Then oFeature.SetProperty "LCP", jsonIsolator("lcp")
+    Set ofeature = oFeatureMgr.CreateFeature(isolator)
+    ofeature.name = "CE_ISOLATOR"
+    ofeature.SetProperty "LIFECYCLE", 1
+    ofeature.SetProperty "LCP", jsonIsolator("lcp")
+    If jsonIsolator("lcp") <> "" Then ofeature.SetProperty "LCP", jsonIsolator("lcp")
 
-    oFeature.Write (True)
+    ofeature.Write (True)
     'capacitor.Redraw msdDrawingModeNormal
     'If PrintOptions.ShowDrawing Then DoEvents
 
@@ -935,17 +960,17 @@ Sub placeStreetlight(jsonStreetlight As Object)
     ActiveModelReference.AddElement streetlight
     If PrintOptions.ShowDrawing Then DoEvents
 
-    Dim oFeature As Object
+    Dim ofeature As Object
     Dim oFeatureMgr As Object
     Set oFeatureMgr = CreateObject("xft.FeatureMgr")
-    Set oFeature = oFeatureMgr.CreateFeature(streetlight)
-    oFeature.name = "CE_STREETLIGHT"
-    oFeature.SetProperty "LIFECYCLE", 1
-    oFeature.SetProperty "MOUNT_TYPE", "Bracket"
-    oFeature.SetProperty "LIGHT_TYPE", "S"
-    oFeature.SetProperty "SIZE", "40"
+    Set ofeature = oFeatureMgr.CreateFeature(streetlight)
+    ofeature.name = "CE_STREETLIGHT"
+    ofeature.SetProperty "LIFECYCLE", 1
+    ofeature.SetProperty "MOUNT_TYPE", "Bracket"
+    ofeature.SetProperty "LIGHT_TYPE", "S"
+    ofeature.SetProperty "SIZE", "40"
 
-    oFeature.Write (True)
+    ofeature.Write (True)
     'streetlight.Redraw msdDrawingModeNormal
     'If PrintOptions.ShowDrawing Then DoEvents
 End Sub
@@ -954,7 +979,7 @@ Sub placeLocation(pt As Point3d, location As String)
     Dim scl As Point3d: scl = Point3dFromXYZ(1, 1, 1)
     Set oCell = CreateCellElement2("LOCATION_NUMBER", pt, scl, True, Matrix3dIdentity)
     
-    Dim subElements() As Element
+    Dim subElements() As element
     Dim subCount As Long
     subCount = 0
 
@@ -981,16 +1006,16 @@ Sub placeLocation(pt As Point3d, location As String)
     ActiveModelReference.AddElement oFinalCell
     If PrintOptions.ShowDrawing Then DoEvents
     
-    Dim oFeature As Object
+    Dim ofeature As Object
     Dim oFeatureMgr As Object
     Set oFeatureMgr = CreateObject("xft.FeatureMgr")
     
-    Set oFeature = oFeatureMgr.CreateFeature(oFinalCell)
-    oFeature.name = "CE_LOCATION_NUMBER"
+    Set ofeature = oFeatureMgr.CreateFeature(oFinalCell)
+    ofeature.name = "CE_LOCATION_NUMBER"
     
-    oFeature.SetProperty "LOCATION_NUMBER", location
+    ofeature.SetProperty "LOCATION_NUMBER", location
     
-    oFeature.Write (True)
+    ofeature.Write (True)
     'oFinalCell.Redraw msdDrawingModeNormal
     'If PrintOptions.ShowDrawing Then DoEvents
 End Sub
@@ -1024,23 +1049,23 @@ Public Sub placeGuy(jsonGuy As Object, pt As Point3d, OFFSET As Integer)
     ActiveModelReference.AddElement guy
     If PrintOptions.ShowDrawing Then DoEvents
     
-    Dim oFeature As Object
+    Dim ofeature As Object
     Dim oFeatureMgr As Object
     Set oFeatureMgr = CreateObject("xft.FeatureMgr")
 
-    Set oFeature = oFeatureMgr.CreateFeature(guy)
-    oFeature.name = "CE_GUY"
+    Set ofeature = oFeatureMgr.CreateFeature(guy)
+    ofeature.name = "CE_GUY"
 
     If jsonGuy("replace") Then
-        oFeature.SetProperty "LIFECYCLE", 4
+        ofeature.SetProperty "LIFECYCLE", 4
     Else
-        oFeature.SetProperty "LIFECYCLE", 1
+        ofeature.SetProperty "LIFECYCLE", 1
     End If
 
-    oFeature.SetProperty "TYPE", jsonGuy("count")
-    oFeature.SetProperty "FOREIGN", "No"
+    ofeature.SetProperty "TYPE", jsonGuy("count")
+    ofeature.SetProperty "FOREIGN", "No"
 
-    oFeature.Write (True)
+    ofeature.Write (True)
     'guy.Redraw msdDrawingModeNormal
     'If PrintOptions.ShowDrawing Then DoEvents
 End Sub
@@ -1213,17 +1238,17 @@ Public Sub placeSpanguy(jsonSpanguy As Object)
     ActiveModelReference.AddElement oLineString
     If PrintOptions.ShowDrawing Then DoEvents
 
-    Dim oFeature As Object
+    Dim ofeature As Object
     Dim oFeatureMgr As Object
     Set oFeatureMgr = CreateObject("xft.FeatureMgr")
 
-    Set oFeature = oFeatureMgr.CreateFeature(oLineString)
-    oFeature.name = "CE_SPAN_GUY"
+    Set ofeature = oFeatureMgr.CreateFeature(oLineString)
+    ofeature.name = "CE_SPAN_GUY"
 
-    oFeature.SetProperty "SPAN_TYPE", IIf(jsonSpanguy("count") <= 3, jsonSpanguy("count"), 3)
-    oFeature.SetProperty "LIFECYCLE", 1
+    ofeature.SetProperty "SPAN_TYPE", IIf(jsonSpanguy("count") <= 3, jsonSpanguy("count"), 3)
+    ofeature.SetProperty "LIFECYCLE", 1
 
-    oFeature.Write (True)
+    ofeature.Write (True)
    'oLineString.Redraw msdDrawingModeNormal
     'If PrintOptions.ShowDrawing Then DoEvents
     
@@ -1272,7 +1297,7 @@ Public Sub placeSpanguy(jsonSpanguy As Object)
     If angleDeg < 0 Then angleDeg = angleDeg + 360
     
     
-    If angle > 45 And calculatedAngle >= 135 And calculatedAngle < 175 Then
+    If angle > 45 And calculatedAngle >= 135 And calculatedAngle < 225 Then
         If angleDeg <= 95 Or angleDeg > 265 Then
             If Not top Or Not bottom Then
                 If top Then
@@ -1430,25 +1455,25 @@ Public Sub placeSecondary(jsonSec As Object)
     ActiveModelReference.AddElement oLineString
     If PrintOptions.ShowDrawing Then DoEvents
 
-    Dim oFeature As Object
+    Dim ofeature As Object
     Dim oFeatureMgr As Object
     Set oFeatureMgr = CreateObject("xft.FeatureMgr")
 
-    Set oFeature = oFeatureMgr.CreateFeature(oLineString)
-    oFeature.name = "CE_SEC_OH_COND"
+    Set ofeature = oFeatureMgr.CreateFeature(oLineString)
+    ofeature.name = "CE_SEC_OH_COND"
     
-    oFeature.SetProperty "TYPE", "Lighting"
+    ofeature.SetProperty "TYPE", "Lighting"
     'oFeature.SetProperty "SEC_CONFIG", "TX"
     'oFeature.SetProperty "SEC_MX_SIZE", 1
     If size2 <> "" Then
-        oFeature.SetProperty "LIFECYCLE", 4
+        ofeature.SetProperty "LIFECYCLE", 4
     Else
-        oFeature.SetProperty "LIFECYCLE", 1
+        ofeature.SetProperty "LIFECYCLE", 1
     End If
-    oFeature.SetProperty "StartDeadend", IIf(jsonSec.exists("startDeadend"), jsonSec("startDeadend"), False)
-    oFeature.SetProperty "EndDeadend", IIf(jsonSec.exists("endDeadend"), jsonSec("endDeadend"), False)
+    ofeature.SetProperty "StartDeadend", IIf(jsonSec.exists("startDeadend"), jsonSec("startDeadend"), False)
+    ofeature.SetProperty "EndDeadend", IIf(jsonSec.exists("endDeadend"), jsonSec("endDeadend"), False)
 
-    oFeature.Write (True)
+    ofeature.Write (True)
     'oLineString.Redraw msdDrawingModeNormal
     'If PrintOptions.ShowDrawing Then DoEvents
     
@@ -1593,35 +1618,35 @@ Public Sub placePrimary(jsonPri As Object)
     ActiveModelReference.AddElement oLineString
     If PrintOptions.ShowDrawing Then DoEvents
 
-    Dim oFeature As Object
+    Dim ofeature As Object
     Dim oFeatureMgr As Object
     Set oFeatureMgr = CreateObject("xft.FeatureMgr")
 
-    Set oFeature = oFeatureMgr.CreateFeature(oLineString)
-    oFeature.name = "CE_PRIMARY_OH_CONDUCTOR"
+    Set ofeature = oFeatureMgr.CreateFeature(oLineString)
+    ofeature.name = "CE_PRIMARY_OH_CONDUCTOR"
     
     If phase = "1" Then
-        oFeature.SetProperty "PHASE", "Y"
+        ofeature.SetProperty "PHASE", "Y"
     ElseIf phase = "2" Then
-        oFeature.SetProperty "PHASE", "XY"
+        ofeature.SetProperty "PHASE", "XY"
     Else
-        oFeature.SetProperty "PHASE", "3P"
+        ofeature.SetProperty "PHASE", "3P"
     End If
-    oFeature.SetProperty "PRIMARY_SIZE", size
-    oFeature.SetProperty "PRIMARY_MATERIAL", 4
-    oFeature.SetProperty "NEUTRAL_CONFIGURATION", config
-    oFeature.SetProperty "NEUTRAL_SIZE", neutSize
-    oFeature.SetProperty "NEUTRAL_MATERIAL", 1
-    oFeature.SetProperty "VOLTAGE", 1
+    ofeature.SetProperty "PRIMARY_SIZE", size
+    ofeature.SetProperty "PRIMARY_MATERIAL", 4
+    ofeature.SetProperty "NEUTRAL_CONFIGURATION", config
+    ofeature.SetProperty "NEUTRAL_SIZE", neutSize
+    ofeature.SetProperty "NEUTRAL_MATERIAL", 1
+    ofeature.SetProperty "VOLTAGE", 1
     If size2 <> "" Then
-        oFeature.SetProperty "LIFECYCLE", 4
+        ofeature.SetProperty "LIFECYCLE", 4
     Else
-        oFeature.SetProperty "LIFECYCLE", 1
+        ofeature.SetProperty "LIFECYCLE", 1
     End If
-    oFeature.SetProperty "StartDeadend", IIf(jsonPri.exists("startDeadend"), jsonPri("startDeadend"), False)
-    oFeature.SetProperty "EndDeadend", IIf(jsonPri.exists("endDeadend"), jsonPri("endDeadend"), False)
+    ofeature.SetProperty "StartDeadend", IIf(jsonPri.exists("startDeadend"), jsonPri("startDeadend"), False)
+    ofeature.SetProperty "EndDeadend", IIf(jsonPri.exists("endDeadend"), jsonPri("endDeadend"), False)
 
-    oFeature.Write (True)
+    ofeature.Write (True)
     'oLineString.Redraw msdDrawingModeNormal
     'If PrintOptions.ShowDrawing Then DoEvents
     
@@ -1663,7 +1688,7 @@ Public Sub placeLCPObject(jsonObject As Object, cellType As String)
     Dim switch As CellElement
     Dim sensor As CellElement
     Dim riser As CellElement
-    Dim oFeature As Object
+    Dim ofeature As Object
     Dim oFeatureMgr As Object
     Set oFeatureMgr = CreateObject("xft.FeatureMgr")
     Dim txt As TextElement
@@ -1679,15 +1704,15 @@ Public Sub placeLCPObject(jsonObject As Object, cellType As String)
         ActiveModelReference.AddElement fuse
         If PrintOptions.ShowDrawing Then DoEvents
         
-        Set oFeature = oFeatureMgr.CreateFeature(fuse)
-        oFeature.name = "CE_OH_FUSE"
-        oFeature.SetProperty "LIFECYCLE", 1
-        oFeature.SetProperty "STATE", IIf(jsonObject("open"), "Open", "Closed")
-        oFeature.SetProperty "TYPE", 1
-        oFeature.SetProperty "SIZE", jsonObject("size")
-        If jsonObject("lcp") <> "" Then oFeature.SetProperty "LCP", jsonObject("lcp")
+        Set ofeature = oFeatureMgr.CreateFeature(fuse)
+        ofeature.name = "CE_OH_FUSE"
+        ofeature.SetProperty "LIFECYCLE", 1
+        ofeature.SetProperty "STATE", IIf(jsonObject("open"), "Open", "Closed")
+        ofeature.SetProperty "TYPE", 1
+        ofeature.SetProperty "SIZE", jsonObject("size")
+        If jsonObject("lcp") <> "" Then ofeature.SetProperty "LCP", jsonObject("lcp")
     
-        oFeature.Write (True)
+        ofeature.Write (True)
         'fuse.Redraw msdDrawingModeNormal
         'If PrintOptions.ShowDrawing Then DoEvents
 
@@ -1698,14 +1723,14 @@ Public Sub placeLCPObject(jsonObject As Object, cellType As String)
         ActiveModelReference.AddElement recloser
         If PrintOptions.ShowDrawing Then DoEvents
         
-        Set oFeature = oFeatureMgr.CreateFeature(recloser)
-        oFeature.name = "CE_OH_RECLOSER"
-        oFeature.SetProperty "LIFECYCLE", 1
-        oFeature.SetProperty "SIZE", jsonObject("size")
-        oFeature.SetProperty "ATR", IIf(jsonObject("atr"), "Yes", "No")
-        If jsonObject("lcp") Then oFeature.SetProperty "LCP", jsonObject("lcp")
+        Set ofeature = oFeatureMgr.CreateFeature(recloser)
+        ofeature.name = "CE_OH_RECLOSER"
+        ofeature.SetProperty "LIFECYCLE", 1
+        ofeature.SetProperty "SIZE", jsonObject("size")
+        ofeature.SetProperty "ATR", IIf(jsonObject("atr"), "Yes", "No")
+        If jsonObject("lcp") Then ofeature.SetProperty "LCP", jsonObject("lcp")
         
-        oFeature.Write (True)
+        ofeature.Write (True)
         'recloser.Redraw msdDrawingModeNormal
         'If PrintOptions.ShowDrawing Then DoEvents
         
@@ -1716,13 +1741,13 @@ Public Sub placeLCPObject(jsonObject As Object, cellType As String)
         ActiveModelReference.AddElement sectionalizer
         If PrintOptions.ShowDrawing Then DoEvents
         
-        Set oFeature = oFeatureMgr.CreateFeature(sectionalizer)
-        oFeature.name = "CE_OH_SECTIONALIZER"
-        oFeature.SetProperty "LIFECYCLE", 1
-        oFeature.SetProperty "SIZE", jsonObject("size")
-        If jsonObject("lcp") Then oFeature.SetProperty "LCP", jsonObject("lcp")
+        Set ofeature = oFeatureMgr.CreateFeature(sectionalizer)
+        ofeature.name = "CE_OH_SECTIONALIZER"
+        ofeature.SetProperty "LIFECYCLE", 1
+        ofeature.SetProperty "SIZE", jsonObject("size")
+        If jsonObject("lcp") Then ofeature.SetProperty "LCP", jsonObject("lcp")
         
-        oFeature.Write (True)
+        ofeature.Write (True)
         'recloser.Redraw msdDrawingModeNormal
         'If PrintOptions.ShowDrawing Then DoEvents
         
@@ -1737,13 +1762,13 @@ Public Sub placeLCPObject(jsonObject As Object, cellType As String)
         ActiveModelReference.AddElement switch
         If PrintOptions.ShowDrawing Then DoEvents
         
-        Set oFeature = oFeatureMgr.CreateFeature(switch)
-        oFeature.name = "CE_OH_SWITCH"
+        Set ofeature = oFeatureMgr.CreateFeature(switch)
+        ofeature.name = "CE_OH_SWITCH"
         'oFeature.SetProperty "LIFECYCLE", 1
         'oFeature.SetProperty "STATE", IIf(jsonObject("open"), "Open", "Closed")
         'If jsonObject("lcp") <> "" Then oFeature.SetProperty "LCP", jsonObject("lcp")
         
-        oFeature.Write (True)
+        ofeature.Write (True)
         'switch.Redraw msdDrawingModeNormal
         'If PrintOptions.ShowDrawing Then DoEvents
         
@@ -1759,13 +1784,13 @@ Public Sub placeLCPObject(jsonObject As Object, cellType As String)
         ActiveModelReference.AddElement sensor
         If PrintOptions.ShowDrawing Then DoEvents
         
-        Set oFeature = oFeatureMgr.CreateFeature(sensor)
-        oFeature.name = "CE_SENSOR"
-        oFeature.SetProperty "LIFECYCLE", 1
-        oFeature.SetProperty "TYPE", IIf(jsonObject("power"), "PS", "IS")
-        If jsonObject("lcp") Then oFeature.SetProperty "LCP", jsonObject("lcp")
+        Set ofeature = oFeatureMgr.CreateFeature(sensor)
+        ofeature.name = "CE_SENSOR"
+        ofeature.SetProperty "LIFECYCLE", 1
+        ofeature.SetProperty "TYPE", IIf(jsonObject("power"), "PS", "IS")
+        If jsonObject("lcp") Then ofeature.SetProperty "LCP", jsonObject("lcp")
         
-        oFeature.Write (True)
+        ofeature.Write (True)
         'sensor.Redraw msdDrawingModeNormal
         'If PrintOptions.ShowDrawing Then DoEvents
         
@@ -1959,7 +1984,7 @@ End Sub
 Function FindClosestPointOnCenterlines(startPoint As Point3d) As Variant()
     Dim oScanCriteria As New ElementScanCriteria
     Dim oEnumerator As ElementEnumerator
-    Dim oEl As Element
+    Dim oEl As element
     Dim rMatrix As Matrix3d
     Dim closestPointOnAnyLine As Point3d
     Dim shortestDistance As Double
