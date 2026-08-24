@@ -422,7 +422,7 @@ Function generateJSON() As Boolean
             jsonPole("class") = pole.Class
             jsonPole("crewNotes") = pole.alt1
             jsonPole("location") = pole.location
-            jsonPole("replace") = pole.replacePole
+            jsonPole("replace") = pole.ReplacePole
             jsonPole("newHeight") = pole.newHeight / 12
             jsonPole("newClass") = pole.newClass
             jsonPole("tree") = pole.treeWork
@@ -459,7 +459,7 @@ Function generateJSON() As Boolean
                     Set jsonGuy = New Scripting.Dictionary
                     jsonGuy("angle") = anchor.angle
                     jsonGuy("count") = anchor.ceCount
-                    jsonGuy("replace") = pole.replacePole
+                    jsonGuy("replace") = pole.ReplacePole
                     jsonPole("guys").Add jsonGuy
                 End If
             Next anchor
@@ -504,6 +504,7 @@ Function generateJSON() As Boolean
                             Next i
                             
                             Dim priCount As Integer: priCount = 1
+                            Dim nonPriLayerNumber As Integer: nonPriLayerNumber = 1
                             openWireDone = False
                             For i = Span.utilWires.count To 1 Step -1
                                 Set wire = Span.utilWires(i)
@@ -575,6 +576,7 @@ Function generateJSON() As Boolean
                                     jsonsecWire("group") = pole.groupNumber
                                     json("secWires").Add jsonsecWire
                                     layerNumber = layerNumber + 1
+                                    nonPriLayerNumber = layerNumber
                                 End If
                                 
                                 If wire.componentType = "OW" And Not openWireDone Then
@@ -695,6 +697,7 @@ Function generateJSON() As Boolean
                                             jsonOpenwire("group") = pole.groupNumber
                                             json("openWires").Add jsonOpenwire
                                             layerNumber = layerNumber + 1
+                                            nonPriLayerNumber = layerNumber
                                         End If
                                     Next owWires
                                 End If
@@ -706,6 +709,7 @@ Function generateJSON() As Boolean
                                     jsonPriWire("size2") = ""
                                     jsonPriWire("phase") = wire.phase
                                     If Not priLayers.exists(priCount) Then priLayers(priCount) = 1
+                                    If nonPriLayerNumber = layerNumber Then layerNumber = layerNumber + 1
                                     If priLayers(priCount) < layerNumber Then priLayers(priCount) = layerNumber
                                     
                                     jsonPriWire("startDeadend") = True
