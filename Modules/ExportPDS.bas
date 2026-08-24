@@ -49,7 +49,7 @@ Sub ExportAllPDS()
     For Each sheet In ThisWorkbook.sheets
         If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" And sheet.Cells(2, 2).Value = "Notification:" Then
             fullPath = "": fileName = ""
-            If project.mode = "SYSTEM IMPROVEMENT" Then
+            If sheet.Range("DL") <> "" And project.mode = "SYSTEM IMPROVEMENT" Then
                 fileName = "PDS LOC " & fixIllegalCharacters(sheet.Range("DL"))
             Else
                 fileName = "M1P" & fixIllegalCharacters(sheet.Range("POLENUM").text) & "_" & fixIllegalCharacters(sheet.Range("CEID").text) & "_" & fixIllegalCharacters(sheet.Range("PERMIT").text)
@@ -138,7 +138,7 @@ Sub ExportSinglePDS()
     Dim fileName As String
     Dim fullPath As String
     If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" And sheet.Cells(2, 2).Value = "Notification:" Then
-        If project.mode = "SYSTEM IMPROVEMENT" Then
+        If sheet.Range("DL") <> "" And project.mode = "SYSTEM IMPROVEMENT" Then
             fileName = "PDS LOC " & fixIllegalCharacters(sheet.Range("DL"))
         Else
             fileName = "M1P" & fixIllegalCharacters(sheet.Range("POLENUM").text) & "_" & fixIllegalCharacters(sheet.Range("CEID").text) & "_" & fixIllegalCharacters(sheet.Range("PERMIT").text)
