@@ -34,6 +34,7 @@ Dim PreviousValueRPSNC1 As Integer, PreviousValueRPSNC2 As Integer, PreviousValu
 Dim PreviousValueINSNC1 As Integer, PreviousValueINSNC2 As Integer, PreviousValueINSNC3 As Integer, PreviousValueINSNC4 As Integer, PreviousValueINSNC5 As Integer, PreviousValueINSNC6 As Integer, PreviousValueINSNC7 As Integer
 Dim PreviousValueRMSNC1 As Integer, PreviousValueRMSNC2 As Integer, PreviousValueRMSNC3 As Integer, PreviousValueRMSNC4 As Integer, PreviousValueRMSNC5 As Integer, PreviousValueRMSNC6 As Integer, PreviousValueRMSNC7 As Integer
 Dim previousValueRPMHC1 As Integer, previousValueINMHC1 As Integer, previousValueRMMHC1 As Integer, previousValueRPMHC2 As Integer, previousValueINMHC2 As Integer, previousValueRMMHC2 As Integer
+Dim PreviousValueRECA1 As Integer, PreviousValueRECA2 As Integer, PreviousValueRECA3 As Integer, PreviousValueRECA4 As Integer
 Dim mhRP1 As Boolean, mhIN1 As Boolean, mhRM1 As Boolean, mhRP2 As Boolean, mhIN2 As Boolean, mhRM2 As Boolean
 Dim figuresUsed As Scripting.Dictionary
 Dim comms As Scripting.Dictionary
@@ -99,6 +100,11 @@ Public Sub Initialize(sheet As Worksheet)
     PreviousValueRMFUC1 = 1
     PreviousValueRMFUC2 = 1
     PreviousValueRMFUC3 = 1
+    
+    PreviousValueRECA1 = 1
+    PreviousValueRECA2 = 1
+    PreviousValueRECA3 = 1
+    PreviousValueRECA4 = 1
     
     priRP1 = False
     priRP2 = False
@@ -1282,6 +1288,42 @@ Private Sub REC4_Click()
         UASN.Value = CInt(UASN.Value) - (CInt(RECA4.Value) * 6)
     Else
         UASN.Value = CInt(UASN.Value) + (CInt(RECA4.Value) * 6)
+    End If
+End Sub
+
+Private Sub RECA1_Change()
+    If REC1.Value Then
+        If PreviousValueRECA1 <> RECA1.Value Then
+            UASN.Value = CDbl(UASN.Value) - ((RECA1.Value - PreviousValueRECA1) * 6)
+            PreviousValueRECA1 = RECA1.Value
+        End If
+    End If
+End Sub
+
+Private Sub RECA2_Change()
+    If REC2.Value Then
+        If PreviousValueRECA2 <> RECA2.Value Then
+            UASN.Value = CDbl(UASN.Value) - ((RECA2.Value - PreviousValueRECA2) * 3)
+            PreviousValueRECA2 = RECA2.Value
+        End If
+    End If
+End Sub
+
+Private Sub RECA3_Change()
+    If REC3.Value Then
+        If PreviousValueRECA3 <> RECA3.Value Then
+            UASN.Value = CDbl(UASN.Value) - ((RECA3.Value - PreviousValueRECA3) * 6)
+            PreviousValueRECA3 = RECA3.Value
+        End If
+    End If
+End Sub
+
+Private Sub RECA4_Change()
+    If REC4.Value Then
+        If PreviousValueRECA4 <> RECA4.Value Then
+            UASN.Value = CDbl(UASN.Value) - ((RECA4.Value - PreviousValueRECA4) * 6)
+            PreviousValueRECA4 = RECA4.Value
+        End If
     End If
 End Sub
 
