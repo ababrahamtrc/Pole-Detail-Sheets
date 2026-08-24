@@ -152,6 +152,7 @@ Private Function ExportSheetCUs(project As project, sheet As Worksheet) As Colle
     guySection = False
     hotsite = False
     reconductored = False
+    primaryReconductored = False
     vpoPole = False
     serviceAmount = 0
     streetlightMolding = ""
@@ -243,7 +244,7 @@ Private Function ExportSheetCUs(project As project, sheet As Worksheet) As Colle
     End If
  
     Call generateCU(cus, pole.location, "100417", timeAdder, "INSTALL")
-    If pole.replacePole And pole.primaries.count > 0 Then hotsite = True
+    If pole.ReplacePole And pole.primaries.count > 0 Then hotsite = True
     If hotsite Then Call generateCU(cus, pole.location, "106268", 1, "INSTALL")
     
     Call fixCUErrors(cus, needAdditionalCUs, missedlines)
@@ -1064,7 +1065,7 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
             End If
              
             If (InStr(hardware, "STLT") > 0 Or (InStr(hardware, "FLOOD") > 0 And InStr(hardware, "LIGHT") > 0)) And InStr(hardware, "MOLDING") > 0 Then
-                If pole.replacePole Then
+                If pole.ReplacePole Then
                     streetlightMolding = streetlightMolding & mode
                     addedCU = True
                 Else
@@ -1186,7 +1187,7 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
                 If cuCode = "" And InStr(hardware, "SWAMP FIXTURE") > 0 Then cuCode = "100085"
                 If cuCode = "200495" Then Call generateCU(cus, pole.location, "200961", amount, properAction(mode))
                 If cuCode <> "" Then
-                    If InStr(hardware, "JUMPER") > 0 And InStr(hardware, "SPIN") > 0 Then Call generateCU(cus, pole.location, "100724", amount, properAction(mode))
+                    If InStr(hardware, "JUMPER") > 0 And (InStr(hardware, "SPIN") > 0 Or InStr(hardware, "PTP") > 0) Then Call generateCU(cus, pole.location, "100724", amount, properAction(mode))
                     Call generateCU(cus, pole.location, cuCode, amount, properAction(mode))
                 End If
                 
