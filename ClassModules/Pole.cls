@@ -74,7 +74,16 @@ Public newHeight As Integer
 Public newClass As Integer
 Public dSpace As Integer
 Public pSpace As Integer
-Public replacePole As Boolean
+
+Public ReplaceAnchor As Boolean
+Public InstallAnchor As Boolean
+Public ReplacePole As Boolean
+Public InstallPole As Boolean
+Public ReplaceRiser As Boolean
+Public RemoveAnchor As Boolean
+Public RemovePole As Boolean
+
+Public firstCrossStreet As String
 
 Public groupNumber As Integer
 Public skipSpan As Boolean
@@ -146,6 +155,18 @@ Public Sub extractFromSheet(sheet As Worksheet)
     Me.Class = sheet.Range("CLASS")
     Me.address = sheet.Range("ADDRESS")
     
+    
+    
+    Me.ReplaceAnchor = sheet.Range("REPLACEANCHOR")
+    Me.InstallAnchor = sheet.Range("INSTALLANCHOR")
+    Me.ReplacePole = sheet.Range("REPLACEPOLE")
+    Me.InstallPole = sheet.Range("INSTALLPOLE")
+    Me.ReplaceRiser = sheet.Range("REPLACERISER")
+    Me.RemoveAnchor = sheet.Range("REMOVEANCHOR")
+    Me.RemovePole = sheet.Range("REMOVEPOLE")
+    
+    If Utilities.RangeExists(sheet, "FCS") Then Me.firstCrossStreet = sheet.Range("FCS").OFFSET(0, 1)
+    
     Me.location = sheet.Range("DL")
     Me.alt1 = sheet.Range("ALTONE")
     Me.alt2 = sheet.Range("ALTTWO")
@@ -184,11 +205,10 @@ Public Sub extractFromSheet(sheet As Worksheet)
         If regex.test(line) Then
             Me.newHeight = regex.Execute(line)(0).SubMatches(0) * 12
             Me.newClass = regex.Execute(line)(0).SubMatches(1)
-            Me.replacePole = True
+            Me.ReplacePole = True
         End If
         
         If InStr(line, "TOP") > 0 And InStr(line, "POLE") > 0 And InStr(line, "ABOVE") > 0 Then Me.topped = True
-        
     Next line
     
     If InStr(sheet.Range("PROPOSEDHEIGHT"), "OL") > 0 Then Me.overlash = True
