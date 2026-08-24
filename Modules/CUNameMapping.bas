@@ -159,6 +159,7 @@ End Sub
 Private Sub InitializeCUNameMapping()
     'Framing Hardware
     CUNameMapping("PTP") = "100080"
+    CUNameMapping("JUMPERPTP") = "100080"
     CUNameMapping("S8S") = "100020"
     CUNameMapping("S8M") = "100018"
     CUNameMapping("S8L") = "100013"
