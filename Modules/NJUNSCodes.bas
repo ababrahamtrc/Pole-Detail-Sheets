@@ -139,5 +139,11 @@ Private Sub InitializeNJUNSNameCorrecting()
     NJUNSCodes("NC") = "NCSDCE"
     NJUNSCodes("CENTURYLINK") = "CNTLCE"
     NJUNSCodes("BRIGHTSPEED") = "CNTLCE"
+    
+    NJUNSCodes("PLOS") = "PLSCE"
+    NJUNSCodes("WINDSTREAM") = "NLGTCE"
+    NJUNSCodes("MWFN") = "MWFNCE"
+    NJUNSCodes("MDOT") = "BAYTSC"
+    NJUNSCodes("MICHIGANDOT") = "BAYTSC"
 End Sub
 
