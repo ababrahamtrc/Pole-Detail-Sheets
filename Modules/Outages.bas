@@ -2,8 +2,12 @@ Attribute VB_Name = "Outages"
 Public ignoreIds As Scripting.Dictionary
 Const secondaryOffsetMaxDistance As Integer = 35
 
+Function AreTwoPointsEqual(x1 As Double, y1 As Double, x2 As Double, y2 As Double) As Boolean
+    AreTwoPointsEqual = Abs(x1 - x2) < 0.1 And Abs(y1 - y2) < 0.1
+End Function
+
 Function FindTLMFromSec(jsonSecondary As Variant, secondaryJson As Object, transformerJson As Object, Optional first As Boolean) As String
-    
+    Dim x As Double, y As Double
     If first Then Set ignoreIds = New Scripting.Dictionary
         
     For Each path In jsonSecondary("geometry")("paths")
@@ -11,7 +15,7 @@ Function FindTLMFromSec(jsonSecondary As Variant, secondaryJson As Object, trans
             For Each jsonTransformerFeature In transformerJson("features")
                 x = jsonTransformerFeature("geometry")("x")
                 y = jsonTransformerFeature("geometry")("y")
-                If Point(1) = x And Point(2) = y Then
+                If AreTwoPointsEqual(CDbl(Point(1)), CDbl(Point(2)), x, y) Then
                     FindTLMFromSec = jsonTransformerFeature("attributes")("TLM")
                     Exit Function
                 End If
@@ -26,7 +30,7 @@ Function FindTLMFromSec(jsonSecondary As Variant, secondaryJson As Object, trans
                 For Each Point In path
                     For Each path2 In jsonSecondary("geometry")("paths")
                         For Each point2 In path2
-                            If Point(1) = point2(1) And Point(2) = point2(2) Then
+                            If AreTwoPointsEqual(CDbl(Point(1)), CDbl(Point(2)), CDbl(point2(1)), CDbl(point2(2))) Then
                                 tlm = FindTLMFromSec(jsonFeature, secondaryJson, transformerJson)
                                 If tlm <> "" Then
                                     FindTLMFromSec = tlm
@@ -161,14 +165,14 @@ Sub DownloadOutageLists()
                                 y1 = jsonFeature("geometry")("paths")(1)(1)(2)
                                 x2 = jsonFeature("geometry")("paths")(1)(2)(1)
                                 y2 = jsonFeature("geometry")("paths")(1)(2)(2)
-                                If x1 = closestTransformer("geometry")("x") And y1 = closestTransformer("geometry")("y") Then
-                                    If x2 <> closestPoleX And y2 <> closestPoleY Then
+                                If AreTwoPointsEqual(x1, y1, CDbl(closestTransformer("geometry")("x")), CDbl(closestTransformer("geometry")("y"))) Then
+                                    If Not AreTwoPointsEqual(x2, y2, closestPoleX, closestPoleY) Then
                                         sourceX = x2
                                         sourceY = y2
                                         Exit For
                                     End If
-                                ElseIf x2 = closestTransformer("geometry")("x") And y2 = closestTransformer("geometry")("y") Then
-                                    If x1 <> closestPoleX And y1 <> closestPoleY Then
+                                ElseIf AreTwoPointsEqual(x2, y2, CDbl(closestTransformer("geometry")("x")), CDbl(closestTransformer("geometry")("y"))) Then
+                                    If Not AreTwoPointsEqual(x1, y1, closestPoleX, closestPoleY) Then
                                         sourceX = x1
                                         sourceY = y1
                                         Exit For
@@ -180,7 +184,7 @@ Sub DownloadOutageLists()
                         For Each jsonFeature In secondaryJson("features")
                             For Each path In jsonFeature("geometry")("paths")
                                 For Each Point In path
-                                    If (Point(1) = closestPoleX And Point(2) = closestPoleY) Then
+                                    If AreTwoPointsEqual(CDbl(Point(1)), CDbl(Point(2)), closestPoleX, closestPoleY) Then
                                         sourceX = closestPole("geometry")("x")
                                         sourceY = closestPole("geometry")("y")
                                         tlm = FindTLMFromSec(jsonFeature, secondaryJson, transformerJson, True)
@@ -209,7 +213,7 @@ Sub DownloadOutageLists()
                             For Each jsonFeature In secondaryJson("features")
                                 For Each path In jsonFeature("geometry")("paths")
                                     For Each Point In path
-                                        If Point(1) = sourceX And Point(2) = sourceY Then
+                                        If AreTwoPointsEqual(CDbl(Point(1)), CDbl(Point(2)), sourceX, sourceY) Then
                                             tlm = FindTLMFromSec(jsonFeature, secondaryJson, transformerJson, True)
                                             If tlm <> "" Then
                                                 duplicate = False
@@ -303,6 +307,32 @@ Sub DownloadOutageLists()
                                 End If
                             Next jsonFeature
                         End If
+                        
+                        For Each jsonFeature In tapPointsJson("features")
+                            If jsonFeature("attributes")("SUBTYPECD") = 9 Then
+                                x = jsonFeature("geometry")("x")
+                                y = jsonFeature("geometry")("y")
+                                distance = Sqr((closestPoleX - x) ^ 2 + (closestPoleY - y) ^ 2)
+                                If distance < secondaryOffsetMaxDistance Then
+                                    For Each jsonSecondaryFeature In secondaryJson("features")
+                                        For Each path In jsonSecondaryFeature("geometry")("paths")
+                                            For Each Point In path
+                                                If Point(1) = x And Point(2) = y Then
+                                                    tlm = FindTLMFromSec(jsonSecondaryFeature, secondaryJson, transformerJson, True)
+                                                    If tlm <> "" Then
+                                                        duplicate = False
+                                                        For Each tlmValue In locationTLMs(pole.location)
+                                                            If tlmValue = tlm Then duplicate = True
+                                                        Next tlmValue
+                                                        If Not duplicate Then locationTLMs(pole.location).Add tlm
+                                                    End If
+                                                End If
+                                            Next Point
+                                        Next path
+                                    Next jsonSecondaryFeature
+                                End If
+                            End If
+                        Next jsonFeature
                     End If
                 End If
             Next pole
@@ -648,7 +678,7 @@ Sub DownloadOutageLists()
                         End If
                     Next line
                     Dim reason As String
-                    If pole.replacePole Then
+                    If pole.ReplacePole Then
                         reason = "Pole Replacement"
                     ElseIf reconductored Then
                         reason = "Secondary Reconductoring"
