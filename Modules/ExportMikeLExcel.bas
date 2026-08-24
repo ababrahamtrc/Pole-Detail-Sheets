@@ -99,7 +99,7 @@ Sub MikeLExcel()
     Dim pole As pole
     Dim poleReplacements As Collection: Set poleReplacements = New Collection
     For Each pole In project.poles
-        If pole.replacePole Then poleReplacements.Add pole.location
+        If pole.ReplacePole Then poleReplacements.Add pole.location
     Next pole
     
     Dim transferWorkLocations As Collection: Set transferWorkLocations = New Collection
