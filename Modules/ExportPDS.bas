@@ -7,7 +7,7 @@ Sub ExportAllPDS()
     With fileDiag
         .AllowMultiSelect = False
         .Title = "Select a folder "
-        .InitialFileName = ThisWorkbook.path & Application.PathSeparator
+        .InitialFileName = GetLocalPath(ThisWorkbook.Path) & Application.PathSeparator
         If .Show = -1 Then outputPath = Application.FileDialog(msoFileDialogFilePicker).SelectedItems.item(1) & Application.PathSeparator Else Exit Sub
     End With
     
@@ -44,17 +44,17 @@ Sub ExportAllPDS()
 
     Dim sheetCount As Integer: sheetCount = 0
     Dim tempWb As Workbook
-    Dim fileName As String
+    Dim FileName As String
     Dim fullPath As String
     For Each sheet In ThisWorkbook.sheets
         If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" And sheet.Cells(2, 2).Value = "Notification:" Then
-            fullPath = "": fileName = ""
+            fullPath = "": FileName = ""
             If sheet.Range("DL") <> "" And project.mode = "SYSTEM IMPROVEMENT" Then
-                fileName = "PDS LOC " & fixIllegalCharacters(sheet.Range("DL"))
+                FileName = "PDS LOC " & fixIllegalCharacters(sheet.Range("DL"))
             Else
-                fileName = "M1P" & fixIllegalCharacters(sheet.Range("POLENUM").text) & "_" & fixIllegalCharacters(sheet.Range("CEID").text) & "_" & fixIllegalCharacters(sheet.Range("PERMIT").text)
+                FileName = "M1P" & fixIllegalCharacters(sheet.Range("POLENUM").text) & "_" & fixIllegalCharacters(sheet.Range("CEID").text) & "_" & fixIllegalCharacters(sheet.Range("PERMIT").text)
             End If
-            fullPath = outputPath & fileName & ".xlsx"
+            fullPath = outputPath & FileName & ".xlsx"
             Call Figures.clearSheetFigures(sheet)
             sheet.Copy
             
@@ -64,7 +64,7 @@ Sub ExportAllPDS()
             
             Set tempWb = ActiveWorkbook
             
-            tempWb.SaveAs fileName:=fullPath, FileFormat:=xlOpenXMLWorkbook
+            tempWb.SaveAs FileName:=fullPath, FileFormat:=xlOpenXMLWorkbook
             tempWb.Close savechanges:=True
             
             sheetCount = sheetCount + 1
@@ -114,7 +114,7 @@ Sub ExportSinglePDS()
     With fileDiag
         .AllowMultiSelect = False
         .Title = "Select a folder "
-        .InitialFileName = ThisWorkbook.path & Application.PathSeparator
+        .InitialFileName = GetLocalPath(ThisWorkbook.Path) & Application.PathSeparator
         If .Show = -1 Then outputPath = Application.FileDialog(msoFileDialogFilePicker).SelectedItems.item(1) & Application.PathSeparator Else Exit Sub
     End With
     
@@ -135,15 +135,15 @@ Sub ExportSinglePDS()
     Dim project As project: Set project = New project
 
     Dim tempWb As Workbook
-    Dim fileName As String
+    Dim FileName As String
     Dim fullPath As String
     If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" And sheet.Cells(2, 2).Value = "Notification:" Then
         If sheet.Range("DL") <> "" And project.mode = "SYSTEM IMPROVEMENT" Then
-            fileName = "PDS LOC " & fixIllegalCharacters(sheet.Range("DL"))
+            FileName = "PDS LOC " & fixIllegalCharacters(sheet.Range("DL"))
         Else
-            fileName = "M1P" & fixIllegalCharacters(sheet.Range("POLENUM").text) & "_" & fixIllegalCharacters(sheet.Range("CEID").text) & "_" & fixIllegalCharacters(sheet.Range("PERMIT").text)
+            FileName = "M1P" & fixIllegalCharacters(sheet.Range("POLENUM").text) & "_" & fixIllegalCharacters(sheet.Range("CEID").text) & "_" & fixIllegalCharacters(sheet.Range("PERMIT").text)
         End If
-        fullPath = outputPath & fileName & ".xlsx"
+        fullPath = outputPath & FileName & ".xlsx"
         
         For Each wb In Application.Workbooks
             If wb.FullName = fullPath Then wb.Close savechanges:=True
@@ -153,7 +153,7 @@ Sub ExportSinglePDS()
         sheet.Copy
         Set tempWb = ActiveWorkbook
         
-        tempWb.SaveAs fileName:=fullPath, FileFormat:=xlOpenXMLWorkbook
+        tempWb.SaveAs FileName:=fullPath, FileFormat:=xlOpenXMLWorkbook
         tempWb.Close savechanges:=True
         
     End If
