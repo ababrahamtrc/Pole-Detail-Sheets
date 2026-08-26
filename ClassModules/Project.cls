@@ -366,8 +366,8 @@ Public Sub extractImportDataFormat()
                 
                 wireDict.Add key, wire
             Else
-                continue = True
-                Do While continue
+                Continue = True
+                Do While Continue
                     If wireDict(key).midspans.exists(Span.spanSlot) Then
                         key = key & "A"
                         If Not wireDict.exists(key) Then
@@ -382,10 +382,10 @@ Public Sub extractImportDataFormat()
                             
                             wireDict.Add key, wire
                             
-                            continue = False
+                            Continue = False
                         End If
                     Else
-                        continue = False
+                        Continue = False
                     End If
                 Loop
             End If
@@ -434,8 +434,8 @@ Public Sub extractImportDataFormat()
                 
                 wireDict.Add key, wire
             Else
-                continue = True
-                Do While continue
+                Continue = True
+                Do While Continue
                     If wireDict(key).midspans.exists(Span.spanSlot) Then
                         key = key & "A"
                         If Not wireDict.exists(key) Then
@@ -448,10 +448,10 @@ Public Sub extractImportDataFormat()
                             
                             wireDict.Add key, wire
                             
-                            continue = False
+                            Continue = False
                         End If
                     Else
-                        continue = False
+                        Continue = False
                     End If
                 Loop
             End If
