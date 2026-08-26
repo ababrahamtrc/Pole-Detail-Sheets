@@ -2,7 +2,7 @@ Attribute VB_Name = "ImportData"
 Public Sub ImportJSONData()
     Call LogMessage.SendLogMessage("ImportData")
 
-    Dim path, msg As String: path = "": msg = ""
+    Dim Path, msg As String: Path = "": msg = ""
     Dim fileDiag As FileDialog: Set fileDiag = Application.FileDialog(msoFileDialogFilePicker)
     Dim json As Object
     
@@ -12,8 +12,8 @@ Public Sub ImportJSONData()
         .Filters.Clear
         .Filters.Add Description:="Import Files", Extensions:="*.json"
         .Title = "Select the File ... "
-        .InitialFileName = ThisWorkbook.path & Application.PathSeparator
-        If .Show = -1 Then path = Application.FileDialog(msoFileDialogFilePicker).SelectedItems.item(1) Else Exit Sub
+        .InitialFileName = GetLocalPath(ThisWorkbook.Path) & Application.PathSeparator
+        If .Show = -1 Then Path = Application.FileDialog(msoFileDialogFilePicker).SelectedItems.item(1) Else Exit Sub
     End With
     
     On Error Resume Next
@@ -27,9 +27,9 @@ Public Sub ImportJSONData()
     ProgressBar_Form.Label1.caption = "Importing Project data... Please wait..."
     ProgressBar_Form.Repaint
     
-    If InStr(path, ".json") Then
+    If InStr(Path, ".json") Then
         Set fso = CreateObject("Scripting.FileSystemObject")
-        Set tso = fso.OpenTextFile(path)
+        Set tso = fso.OpenTextFile(Path)
         If tso Is Nothing Then
             MsgBox "Sometimes theres an issue importing the json from the onedrive when the Control file is also on the onedrive, try again after moving the project json to a local directory (like downloads)"
             ProgressBar_Form.Hide
