@@ -86,7 +86,7 @@ Public Sub ExportAllSheetCUs()
     
     If cus.count > 0 Then
         Call generateCSV(project, cus)
-        Call generateCSV(project, demoCus, True)
+        If demoCus.count > 0 Then Call generateCSV(project, demoCus, True)
         If missedlines.count > 0 Then
             Call generateMissedLinesTXT(missedlines)
         Else
@@ -793,11 +793,15 @@ Private Sub generateCSV(project As project, cus As Collection, Optional demo As 
     Dim filePath As String
     
     If demo Then
-        filePath = ThisWorkbook.path & "\" & project.Notification & " - " & "CU - Demo.csv"
+        filePath = GetLocalPath(ThisWorkbook.Path) & "\" & project.Notification & " - " & "CU - Demo.csv"
     Else
-        filePath = ThisWorkbook.path & "\" & project.Notification & " - " & "CU.csv"
+        filePath = GetLocalPath(ThisWorkbook.Path) & "\" & project.Notification & " - " & "CU.csv"
     End If
-    If InStr(filePath, "sharepoint") > 0 Then filePath = Environ("USERPROFILE") & "\Downloads\" & project.Notification & " - " & "cus.csv"
+    If demo Then
+        If InStr(filePath, "sharepoint") > 0 Then filePath = Environ("USERPROFILE") & "\Downloads\" & project.Notification & " - " & "CU - Demo.csv"
+    Else
+        If InStr(filePath, "sharepoint") > 0 Then filePath = Environ("USERPROFILE") & "\Downloads\" & project.Notification & " - " & "CU.csv"
+    End If
     
     Call CheckAndCloseWorkbook(filePath)
     
@@ -864,7 +868,7 @@ Private Sub generateMissedLinesTXT(missedlines As Collection)
     Call project.extractFromSheets
     
     issues = "Lines unable to turn into CUS." & vbLf & Utilities.JoinCollection(missedlines, vbLf)
-    filePath = ThisWorkbook.path & "\" & project.Notification & " - " & "MissedLineCUs.txt"
+    filePath = GetLocalPath(ThisWorkbook.Path) & "\" & project.Notification & " - " & "MissedLineCUs.txt"
     If InStr(filePath, "sharepoint") > 0 Then filePath = Environ("USERPROFILE") & "\" & project.Notification & " - " & "MissedLineCUs.txt"
     
     fNum = FreeFile
