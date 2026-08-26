@@ -47,7 +47,7 @@ Sub InitProgress(Total As Long, Optional starting As Boolean, Optional Total2 As
     End With
 End Sub
 
-Sub UpdateProgress(fileName As String, progressType As String, Optional noFiles As Boolean)
+Sub UpdateProgress(FileName As String, progressType As String, Optional noFiles As Boolean)
     Dim pct As Double
     Dim maxWidth As Long
 
@@ -57,7 +57,7 @@ Sub UpdateProgress(fileName As String, progressType As String, Optional noFiles 
     pct = gCurrent / gTotal
 
     LoadingBar_Form2.Label1.caption = progressType & IIf(noFiles, "", " files") & "..." & gCurrent & "/" & gTotal
-    LoadingBar_Form2.Label2.caption = fileName
+    LoadingBar_Form2.Label2.caption = FileName
     LoadingBar_Form2.Label3.caption = gCurrent2 & "/" & gTotal2
     
     If pct > 1 Then pct = 1
