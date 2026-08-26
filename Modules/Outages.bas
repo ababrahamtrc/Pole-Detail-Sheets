@@ -10,8 +10,8 @@ Function FindTLMFromSec(jsonSecondary As Variant, secondaryJson As Object, trans
     Dim x As Double, y As Double
     If first Then Set ignoreIds = New Scripting.Dictionary
         
-    For Each path In jsonSecondary("geometry")("paths")
-        For Each Point In path
+    For Each Path In jsonSecondary("geometry")("paths")
+        For Each Point In Path
             For Each jsonTransformerFeature In transformerJson("features")
                 x = jsonTransformerFeature("geometry")("x")
                 y = jsonTransformerFeature("geometry")("y")
@@ -21,13 +21,13 @@ Function FindTLMFromSec(jsonSecondary As Variant, secondaryJson As Object, trans
                 End If
             Next jsonTransformerFeature
         Next Point
-    Next path
+    Next Path
 
     For Each jsonFeature In secondaryJson("features")
         If Not ignoreIds.exists(jsonSecondary("attributes")("OBJECTID")) Then ignoreIds.Add jsonSecondary("attributes")("OBJECTID"), Nothing
         If Not ignoreIds.exists(jsonFeature("attributes")("OBJECTID")) Then
-            For Each path In jsonFeature("geometry")("paths")
-                For Each Point In path
+            For Each Path In jsonFeature("geometry")("paths")
+                For Each Point In Path
                     For Each path2 In jsonSecondary("geometry")("paths")
                         For Each point2 In path2
                             If AreTwoPointsEqual(CDbl(Point(1)), CDbl(Point(2)), CDbl(point2(1)), CDbl(point2(2))) Then
@@ -40,7 +40,7 @@ Function FindTLMFromSec(jsonSecondary As Variant, secondaryJson As Object, trans
                         Next point2
                     Next path2
                 Next Point
-            Next path
+            Next Path
         End If
     Next jsonFeature
 End Function
@@ -120,6 +120,7 @@ Sub DownloadOutageLists()
     End If
     
     Dim locationTLMs As Scripting.Dictionary: Set locationTLMs = New Scripting.Dictionary
+    Dim serviceJsons As Collection: Set serviceJsons = New Collection
     For Each poleCollection In poleCollections
         outageInPoleCollection = False
         For Each pole In poleCollection
@@ -136,6 +137,7 @@ Sub DownloadOutageLists()
             Dim tapPointsJson As Object: Set tapPointsJson = getElectricJson(poleCollection, 13, token)
             Dim polesJson As Object: Set polesJson = getElectricJson(poleCollection, 3, token)
             Dim serviceJson As Object: Set serviceJson = getElectricJson(poleCollection, 26, token)
+            Call serviceJsons.Add(serviceJson)
             Dim circuitJson As Object: Set circuitJson = getElectricJson(poleCollection, 123, token)
             For Each pole In poleCollection
                 If pole.outage Then
@@ -182,8 +184,8 @@ Sub DownloadOutageLists()
                         End If
                     
                         For Each jsonFeature In secondaryJson("features")
-                            For Each path In jsonFeature("geometry")("paths")
-                                For Each Point In path
+                            For Each Path In jsonFeature("geometry")("paths")
+                                For Each Point In Path
                                     If AreTwoPointsEqual(CDbl(Point(1)), CDbl(Point(2)), closestPoleX, closestPoleY) Then
                                         sourceX = closestPole("geometry")("x")
                                         sourceY = closestPole("geometry")("y")
@@ -198,7 +200,7 @@ Sub DownloadOutageLists()
                                         End If
                                     End If
                                 Next Point
-                            Next path
+                            Next Path
                         Next jsonFeature
                         
                         Dim attributes As Scripting.Dictionary: Set attributes = New Scripting.Dictionary
@@ -211,8 +213,8 @@ Sub DownloadOutageLists()
                             sourceX = closestSource("geometry")("x")
                             sourceY = closestSource("geometry")("y")
                             For Each jsonFeature In secondaryJson("features")
-                                For Each path In jsonFeature("geometry")("paths")
-                                    For Each Point In path
+                                For Each Path In jsonFeature("geometry")("paths")
+                                    For Each Point In Path
                                         If AreTwoPointsEqual(CDbl(Point(1)), CDbl(Point(2)), sourceX, sourceY) Then
                                             tlm = FindTLMFromSec(jsonFeature, secondaryJson, transformerJson, True)
                                             If tlm <> "" Then
@@ -225,14 +227,14 @@ Sub DownloadOutageLists()
                                             End If
                                         End If
                                     Next Point
-                                Next path
+                                Next Path
                             Next jsonFeature
                         End If
                         
                         If sourceX = 0 And sourceY = 0 Then
                             For Each jsonFeature In secondaryJson("features")
-                                For Each path In jsonFeature("geometry")("paths")
-                                    For Each Point In path
+                                For Each Path In jsonFeature("geometry")("paths")
+                                    For Each Point In Path
                                         x = Point(1)
                                         y = Point(2)
                                         distance = Sqr((closestPoleX - x) ^ 2 + (closestPoleY - y) ^ 2)
@@ -249,16 +251,16 @@ Sub DownloadOutageLists()
                                             End If
                                         End If
                                     Next Point
-                                Next path
+                                Next Path
                             Next jsonFeature
                         End If
                         
                         If sourceX = 0 And sourceY = 0 Then
                             For Each jsonFeature In secondaryJson("features")
-                                For Each path In jsonFeature("geometry")("paths")
-                                    For i = 1 To path.count - 1
-                                        Set point1 = path(i)
-                                        Set point2 = path(i + 1)
+                                For Each Path In jsonFeature("geometry")("paths")
+                                    For i = 1 To Path.count - 1
+                                        Set point1 = Path(i)
+                                        Set point2 = Path(i + 1)
                                         result = GetClosestPointOnLine(CDbl(point1(1)), CDbl(point1(2)), CDbl(point2(1)), CDbl(point2(2)), closestPoleX, closestPoleY)
                                         x = result(0)
                                         y = result(1)
@@ -276,7 +278,7 @@ Sub DownloadOutageLists()
                                             End If
                                         End If
                                     Next i
-                                Next path
+                                Next Path
                             Next jsonFeature
                         End If
                         
@@ -288,8 +290,8 @@ Sub DownloadOutageLists()
                                     distance = Sqr((sourceX - x) ^ 2 + (sourceY - y) ^ 2)
                                     If distance < secondaryOffsetMaxDistance Then
                                         For Each jsonSecondaryFeature In secondaryJson("features")
-                                            For Each path In jsonSecondaryFeature("geometry")("paths")
-                                                For Each Point In path
+                                            For Each Path In jsonSecondaryFeature("geometry")("paths")
+                                                For Each Point In Path
                                                     If Point(1) = x And Point(2) = y Then
                                                         tlm = FindTLMFromSec(jsonSecondaryFeature, secondaryJson, transformerJson, True)
                                                         If tlm <> "" Then
@@ -301,7 +303,7 @@ Sub DownloadOutageLists()
                                                         End If
                                                     End If
                                                 Next Point
-                                            Next path
+                                            Next Path
                                         Next jsonSecondaryFeature
                                     End If
                                 End If
@@ -315,8 +317,8 @@ Sub DownloadOutageLists()
                                 distance = Sqr((closestPoleX - x) ^ 2 + (closestPoleY - y) ^ 2)
                                 If distance < secondaryOffsetMaxDistance Then
                                     For Each jsonSecondaryFeature In secondaryJson("features")
-                                        For Each path In jsonSecondaryFeature("geometry")("paths")
-                                            For Each Point In path
+                                        For Each Path In jsonSecondaryFeature("geometry")("paths")
+                                            For Each Point In Path
                                                 If Point(1) = x And Point(2) = y Then
                                                     tlm = FindTLMFromSec(jsonSecondaryFeature, secondaryJson, transformerJson, True)
                                                     If tlm <> "" Then
@@ -328,7 +330,7 @@ Sub DownloadOutageLists()
                                                     End If
                                                 End If
                                             Next Point
-                                        Next path
+                                        Next Path
                                     Next jsonSecondaryFeature
                                 End If
                             End If
@@ -336,10 +338,13 @@ Sub DownloadOutageLists()
                     End If
                 End If
             Next pole
+        Else
+            Call serviceJsons.Add(Nothing)
         End If
     Next poleCollection
     
-    Dim downloadPath As String: downloadPath = Environ("USERPROFILE") & "\Downloads\"
+    Dim downloadPath As String: downloadPath = GetLocalPath(ThisWorkbook.Path) & "\"
+    If InStr(downloadPath, "sharepoint") > 0 Then downloadPath = Environ("USERPROFILE") & "\Downloads\"
     
     Set objNetwork = CreateObject("WScript.Network")
     Dim DesignerName As String: DesignerName = GetObject("WinNT://" & objNetwork.UserDomain & "/" & objNetwork.UserName & ",user").FullName
@@ -369,7 +374,10 @@ Sub DownloadOutageLists()
     Application.ScreenUpdating = False
     Application.DisplayAlerts = False
     
+    Dim poleCollectionCount As Integer: poleCollectionCount = 0
     For Each poleCollection In poleCollections
+        poleCollectionCount = poleCollectionCount + 1
+        Set serviceJson = serviceJsons(poleCollectionCount)
         For Each pole In poleCollection
             If LoadingBar_Form2.gTotal = 0 Then Exit Sub
             If locationTLMs.exists(pole.location) And Not usedPoles.exists(pole.location) Then
@@ -619,8 +627,8 @@ Sub DownloadOutageLists()
                 
                 locationNumbers = compactListString(locationsUsed)
                 
-                fileName = project.Notification & " - Outage List Loc " & locationNumbers & ".xlsx"
-                NewBook.SaveAs fileName:=downloadPath & fileName, FileFormat:=xlOpenXMLWorkbook
+                FileName = project.Notification & " - Outage List Loc " & locationNumbers & ".xlsx"
+                NewBook.SaveAs FileName:=downloadPath & FileName, FileFormat:=xlOpenXMLWorkbook
                 NewBook.Close savechanges:=False
                 
                 If LoadingBar_Form2.gTotal = 0 Then Exit Sub
@@ -696,8 +704,8 @@ Sub DownloadOutageLists()
                     wdDoc.ContentControls(18).Range.text = JoinCollection(cardStreets, ", ")
                     wdDoc.ContentControls(19).Range.text = WorksheetFunction.Proper(county & "/" & city)
                     
-                    fileName = project.Notification & " - Outage Card Loc " & locationNumbers & ".docx"
-                    wdDoc.saveAs2 downloadPath & fileName
+                    FileName = project.Notification & " - Outage Card Loc " & locationNumbers & ".docx"
+                    wdDoc.saveAs2 downloadPath & FileName
                     wdDoc.Close savechanges:=False
                     wdApp.Quit
                 End If
