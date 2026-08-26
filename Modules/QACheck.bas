@@ -38,7 +38,7 @@ Public Sub QACheckAllPoles()
     
     If issues = "" Then issues = "No issues found on any pole :)"
     
-    filePath = ThisWorkbook.path & "\QACheck.txt"
+    filePath = GetLocalPath(ThisWorkbook.Path) & "\QACheck.txt"
     If InStr(filePath, "sharepoint") > 0 Then filePath = Environ("USERPROFILE") & "\Downloads\QACheck.txt"
     
     Application.EnableEvents = True
