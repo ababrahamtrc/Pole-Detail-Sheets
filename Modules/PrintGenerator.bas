@@ -516,12 +516,12 @@ Public Sub createDeadend(oLine As LineElement, vertexIndex As Integer)
     'If PrintOptions.ShowDrawing Then DoEvents
 End Sub
 
-Function ReadJSON(fileName As String) As Object
+Function ReadJSON(FileName As String) As Object
     Dim filePath As String
     Dim jsonText As String
     Dim fileNum As Integer
     
-    filePath = "C:\ProgramData\Bentley\OpenUtilities Map Connect Edition\Configuration\WorkSpaces\ConsumersEnergy\Standards\vba\" & fileName & ".json"
+    filePath = "C:\ProgramData\Bentley\OpenUtilities Map Connect Edition\Configuration\WorkSpaces\ConsumersEnergy\Standards\vba\" & FileName & ".json"
 
     fileNum = FreeFile
     
@@ -2041,13 +2041,13 @@ Function FindClosestPointOnCenterlines(startPoint As Point3d) As Variant()
     End If
 End Function
 
-Function ClosestPointOnSegment(A As Point3d, B As Point3d, P As Point3d) As Point3d
+Function ClosestPointOnSegment(A As Point3d, b As Point3d, p As Point3d) As Point3d
     Dim Ax As Double: Ax = A.x
     Dim Ay As Double: Ay = A.y
-    Dim Bx As Double: Bx = B.x
-    Dim By As Double: By = B.y
-    Dim Px As Double: Px = P.x
-    Dim Py As Double: Py = P.y
+    Dim Bx As Double: Bx = b.x
+    Dim By As Double: By = b.y
+    Dim Px As Double: Px = p.x
+    Dim Py As Double: Py = p.y
     
     Dim ABx As Double, ABy As Double
     Dim APx As Double, APy As Double
