@@ -82,7 +82,7 @@ End Sub
 Private Sub CommandButton2_Click()
     On Error Resume Next
     
-    Dim folderPath, folderName, photosFolder, oldPath, newFileName, newPath, permit, poleNumber, ceid, poleNum, fileName As String
+    Dim folderPath, folderName, photosFolder, oldPath, newFileName, newPath, permit, poleNumber, ceid, poleNum, FileName As String
     Dim photoCounter, counter As Integer
     
     folderPath = TextBox1.Value & Application.PathSeparator
@@ -115,14 +115,14 @@ Private Sub CommandButton2_Click()
         If colWsHeaders.exists("New CE ID Tag") Then ceid = colWs.Cells(i, colWsHeaders("New CE ID Tag"))
         If ceid = "" Then ceid = colWs.Cells(i, colWsHeaders("CE ID Tag"))
         If ceid = "" Then ceid = "FOREIGN"
-        fileName = Dir(folderPath & poleNum & Application.PathSeparator & "*")
+        FileName = Dir(folderPath & poleNum & Application.PathSeparator & "*")
         Dim oldFiles As Collection: Set oldFiles = New Collection
-        Do While fileName <> ""
-            oldPath = folderPath & poleNum & Application.PathSeparator & fileName
+        Do While FileName <> ""
+            oldPath = folderPath & poleNum & Application.PathSeparator & FileName
             If GetAttr(oldPath) <> vbDirectory Then
                 oldFiles.Add oldPath
             End If
-            fileName = Dir()
+            FileName = Dir()
         Loop
         photoCounter = 1
         For Each oldFile In oldFiles
@@ -155,7 +155,7 @@ Private Sub CommandButton3_click()
 End Sub
 
 Private Sub CommandButton4_click()
-    Dim header, imageUrl, photosFolder, folderPath, fileName, savepath, poleNum, ceid, permit As String
+    Dim header, imageUrl, photosFolder, folderPath, FileName, savepath, poleNum, ceid, permit As String
     Dim photoCounter As Integer
     Dim http, stream As Object
     
@@ -220,8 +220,8 @@ Private Sub CommandButton4_click()
             photoCounter = 1
         End If
         Do
-            fileName = "M1P" & poleNum & "-" & photoCounter & "_" & ceid & "_" & permit & ".jpg"
-            savepath = photosFolder & Application.PathSeparator & fileName
+            FileName = "M1P" & poleNum & "-" & photoCounter & "_" & ceid & "_" & permit & ".jpg"
+            savepath = photosFolder & Application.PathSeparator & FileName
             photoCounter = photoCounter + 1
         Loop While Dir(savepath) <> ""
         http.Open "Get", imageUrl, False
