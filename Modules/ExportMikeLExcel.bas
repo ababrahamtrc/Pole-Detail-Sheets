@@ -118,10 +118,10 @@ Sub MikeLExcel()
     MikeLExcel.sheets(1).Cells.EntireColumn.AutoFit
     MikeLExcel.sheets(1).Cells.EntireRow.AutoFit
     
-    filePath = ThisWorkbook.path & "\" & Notification & " - Mike L Excel.xlsx"
+    filePath = GetLocalPath(ThisWorkbook.Path) & "\" & Notification & " - Mike L Excel.xlsx"
     If InStr(filePath, "sharepoint") > 0 Then filePath = Environ("USERPROFILE") & "\" & Notification & " - Mike L Excel.xlsx"
     
-    MikeLExcel.SaveAs fileName:=filePath
+    MikeLExcel.SaveAs FileName:=filePath
     
     Application.EnableEvents = True
     Application.DisplayAlerts = True
