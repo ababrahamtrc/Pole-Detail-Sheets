@@ -360,8 +360,7 @@ Sub ShortenLines(targetLevelName As String)
         Next j
     Next i
 
-    'Dim ofeature As Object
-    Dim ofeature As xft.feature
+    Dim ofeature As object
     Dim oFeatureMgr As Object
     Set oFeatureMgr = CreateObject("xft.FeatureMgr")
     For i = 0 To count - 1
