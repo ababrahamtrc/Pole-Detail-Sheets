@@ -8,12 +8,12 @@ Public Sub FixPoleForemanJSON()
         .AllowMultiSelect = False
         .Title = "Select a pole foreman json"
         .Filters.Add "Pole Foreman File", "*.json", 1
-        .InitialFileName = ThisWorkbook.path & Application.PathSeparator
-        If .Show = -1 Then path = Application.FileDialog(msoFileDialogFilePicker).SelectedItems.item(1) Else Exit Sub
+        .InitialFileName = GetLocalPath(ThisWorkbook.Path) & Application.PathSeparator
+        If .Show = -1 Then Path = Application.FileDialog(msoFileDialogFilePicker).SelectedItems.item(1) Else Exit Sub
     End With
     
     Set fso = CreateObject("Scripting.FileSystemObject")
-    Set tso = fso.OpenTextFile(path)
+    Set tso = fso.OpenTextFile(Path)
     Set json = JsonConverter.ParseJson(tso.ReadAll)
     tso.Close
     Set tso = Nothing
@@ -199,7 +199,7 @@ Public Sub FixPoleForemanJSON()
     Dim file As Object
     
     Set fso = CreateObject("Scripting.FileSystemObject")
-    Set tso = fso.CreateTextFile(path, True, False)
+    Set tso = fso.CreateTextFile(Path, True, False)
     
     tso.Write jsonText
     tso.Close
