@@ -8,8 +8,8 @@ Sub ImportApplication()
         .Filters.Clear
         .Filters.Add Description:="Excel Files", Extensions:="*.xls,*.xlsx,*.csv"
         .Title = "Select the File ... "
-        .InitialFileName = ThisWorkbook.path & Application.PathSeparator
-        If .Show = -1 Then path = Application.FileDialog(msoFileDialogFilePicker).SelectedItems.item(1) Else Exit Sub
+        .InitialFileName = GetLocalPath(ThisWorkbook.Path) & Application.PathSeparator
+        If .Show = -1 Then Path = Application.FileDialog(msoFileDialogFilePicker).SelectedItems.item(1) Else Exit Sub
     End With
     
     On Error Resume Next
@@ -24,7 +24,7 @@ Sub ImportApplication()
     ProgressBar_Form.Repaint
     
     Dim applicationWb As Workbook
-    Set applicationWb = Workbooks.Open(path, False)
+    Set applicationWb = Workbooks.Open(Path, False)
     If applicationWb Is Nothing Then
         ProgressBar_Form.Hide
         MsgBox "Either close or enable editing on the application"
