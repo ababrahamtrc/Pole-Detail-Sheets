@@ -894,24 +894,24 @@ Function generateJSON() As Boolean
                         If jsonFeature.exists("geometry") Then
                             If jsonFeature("geometry").exists("paths") Then
                                 For Each jsonPath In jsonFeature("geometry")("paths")
-                                    Set path = New Collection
+                                    Set Path = New Collection
                                     For Each jsonLine In jsonPath
                                         Set line = New Collection
                                         line.Add jsonLine(1)
                                         line.Add jsonLine(2)
-                                        path.Add line
+                                        Path.Add line
                                     Next jsonLine
                                     Dim exists As Boolean
                                     For Each road In json("roads")
                                         exists = False
-                                        If path.count = road.count And path.count > 0 Then
+                                        If Path.count = road.count And Path.count > 0 Then
                                             exists = True
                                             For j = 1 To road.count
-                                                If path(j)(1) <> road(j)(1) Then
+                                                If Path(j)(1) <> road(j)(1) Then
                                                     exists = False
                                                     Exit For
                                                 End If
-                                                If path(j)(2) <> road(j)(2) Then
+                                                If Path(j)(2) <> road(j)(2) Then
                                                     exists = False
                                                     Exit For
                                                 End If
@@ -919,7 +919,7 @@ Function generateJSON() As Boolean
                                             If exists Then Exit For
                                         End If
                                     Next road
-                                    If Not exists Then json("roads").Add path
+                                    If Not exists Then json("roads").Add Path
                                 Next jsonPath
                             End If
                         End If
@@ -945,24 +945,24 @@ Function generateJSON() As Boolean
                     If jsonFeature.exists("geometry") Then
                         If jsonFeature("geometry").exists("paths") Then
                             For Each jsonPath In jsonFeature("geometry")("paths")
-                                Set path = New Collection
+                                Set Path = New Collection
                                 For Each jsonLine In jsonPath
                                     Set line = New Collection
                                     line.Add jsonLine(1)
                                     line.Add jsonLine(2)
-                                    path.Add line
+                                    Path.Add line
                                 Next jsonLine
                                 exists = False
                                 For Each centerline In json("centerlines")
                                     exists = False
-                                    If path.count = centerline.count And path.count > 0 Then
+                                    If Path.count = centerline.count And Path.count > 0 Then
                                         exists = True
                                         For j = 1 To centerline.count
-                                            If path(j)(1) <> centerline(j)(1) Then
+                                            If Path(j)(1) <> centerline(j)(1) Then
                                                 exists = False
                                                 Exit For
                                             End If
-                                            If path(j)(2) <> centerline(j)(2) Then
+                                            If Path(j)(2) <> centerline(j)(2) Then
                                                 exists = False
                                                 Exit For
                                             End If
@@ -970,7 +970,7 @@ Function generateJSON() As Boolean
                                         If exists Then Exit For
                                     End If
                                 Next centerline
-                                If Not exists Then json("centerlines").Add path
+                                If Not exists Then json("centerlines").Add Path
                             Next jsonPath
                         End If
                     End If
@@ -1864,7 +1864,7 @@ Function GetToken() As String
     For Each file In folder.Files
         If LCase(file.name) Like "arcgis_token*.json" Then
             If LCase(file.name) = "arcgis_token.json" Or file.name Like "*(*).json" Then
-                If file.path <> newestFile.path Then
+                If file.Path <> newestFile.Path Then
                     file.Delete True
                 End If
             End If
@@ -1886,7 +1886,7 @@ Function GetToken() As String
     Dim finalPath As String
     finalPath = downloadsPath & "arcgis_token.json"
     
-    If newestFile.path <> finalPath Then
+    If newestFile.Path <> finalPath Then
         If fso.FileExists(finalPath) Then fso.DeleteFile finalPath, True
         newestFile.name = "arcgis_token.json"
     End If
