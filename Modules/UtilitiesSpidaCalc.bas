@@ -100,18 +100,18 @@ Public Function InitProjectFromSpidaJson(ByVal json As Object) As project
                     Next wep
                 Next wireEndPoint
                 
-                Dim equipment As equipment
+                Dim Equipment As Equipment
                 
                 For Each jsonEquipment In existing("equipments")
-                    Set equipment = New equipment
+                    Set Equipment = New Equipment
                 
-                    equipment.componentType = getSpidaCalcNameMapping(jsonEquipment("clientItem")("type"))
-                    equipment.size = getSpidaCalcNameMapping(jsonEquipment("clientItem")("size"))
-                    equipment.height = jsonEquipment("attachmentHeight")("value") * 39.3701
-                    equipment.bottomHeight = jsonEquipment("bottomHeight")("value") * 39.3701
+                    Equipment.componentType = getSpidaCalcNameMapping(jsonEquipment("clientItem")("type"))
+                    Equipment.size = getSpidaCalcNameMapping(jsonEquipment("clientItem")("size"))
+                    Equipment.height = jsonEquipment("attachmentHeight")("value") * 39.3701
+                    Equipment.bottomHeight = jsonEquipment("bottomHeight")("value") * 39.3701
                     
                     
-                    If equipment.size <> "NOT BONDED" Then pole.equipments.Add equipment
+                    If Equipment.size <> "NOT BONDED" Then pole.equipments.Add Equipment
                 Next jsonEquipment
                 
                 Dim anchor As anchor
