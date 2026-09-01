@@ -483,17 +483,17 @@ Public Function GetLocalPath(ByVal Path As String, _
             Dim cid As String: cid = IIf(vDir Like "*" & ps & "Personal" & ps, _
                                          "????????????*", _
                                          "????????-????-????-????-????????????")
-            Dim FileName As String: FileName = Dir(vDir, vbNormal)
-            Do Until FileName = vbNullString
-                If FileName Like cid & ".ini" _
-                Or FileName Like cid & ".dat" _
-                Or FileName Like "ClientPolicy*.ini" _
-                Or StrComp(FileName, "GroupFolders.ini", vbTextCompare) = 0 _
-                Or StrComp(FileName, "global.ini", vbTextCompare) = 0 _
-                Or StrComp(FileName, "SyncEngineDatabase.db", _
+            Dim fileName As String: fileName = Dir(vDir, vbNormal)
+            Do Until fileName = vbNullString
+                If fileName Like cid & ".ini" _
+                Or fileName Like cid & ".dat" _
+                Or fileName Like "ClientPolicy*.ini" _
+                Or StrComp(fileName, "GroupFolders.ini", vbTextCompare) = 0 _
+                Or StrComp(fileName, "global.ini", vbTextCompare) = 0 _
+                Or StrComp(fileName, "SyncEngineDatabase.db", _
                            vbTextCompare) = 0 Then _
-                    requiredFiles.Add item:=vDir & FileName
-                FileName = Dir
+                    requiredFiles.Add item:=vDir & fileName
+                fileName = Dir
             Loop
         Next vDir
     End If
@@ -511,7 +511,7 @@ Public Function GetLocalPath(ByVal Path As String, _
     End If
 
     'If execution reaches this point, the cache will be fully rebuilt...
-    Dim fileNum As Long, syncID As String, b() As Byte, j As Long, k As Long
+    Dim fileNum As Long, syncID As String, B() As Byte, j As Long, k As Long
     'Variables for manual decoding of UTF-8, UTF-32 and ANSI
     Dim m As Long, ansi() As Byte, sAnsi As String
     Dim utf16() As Byte, sUtf16 As String, utf32() As Byte
@@ -604,7 +604,7 @@ Public Function GetLocalPath(ByVal Path As String, _
                     Dim readSucceeded As Boolean: readSucceeded = False
                     On Error GoTo ReadFailed
                     Open vFile For Binary Access Read As #fileNum
-                        ReDim b(0 To LOF(fileNum)): Get fileNum, , b: s = b
+                        ReDim B(0 To LOF(fileNum)): Get fileNum, , B: s = B
                         readSucceeded = True
 ReadFailed:             On Error GoTo -1
                     Close #fileNum: fileNum = 0
@@ -677,13 +677,13 @@ ReadFailed:             On Error GoTo -1
         If Dir(vDir & "global.ini", vbNormal) = "" Then GoTo NextFolder
         fileNum = FreeFile()
         Open vDir & "global.ini" For Binary Access Read As #fileNum
-            ReDim b(0 To LOF(fileNum)): Get fileNum, , b
+            ReDim B(0 To LOF(fileNum)): Get fileNum, , B
         Close #fileNum: fileNum = 0
         #If Mac Then 'On Mac, the OneDrive settings files use UTF-8 encoding
-            sUtf8 = b: GoSub DecodeUTF8
-            b = sUtf16
+            sUtf8 = B: GoSub DecodeUTF8
+            B = sUtf16
         #End If
-        For Each line In Split(b, vbNewLine)
+        For Each line In Split(B, vbNewLine)
             If line Like "cid = *" Then cid = Mid$(line, 7): Exit For
         Next line
 
@@ -701,12 +701,12 @@ ReadFailed:             On Error GoTo -1
 
         'Get email for business accounts
         '(only necessary to let user choose preferredMountPointOwner)
-        FileName = Dir(clpPath, vbNormal)
-        Do Until FileName = vbNullString
-            i = InStrRev(FileName, cid, , vbTextCompare)
+        fileName = Dir(clpPath, vbNormal)
+        Do Until fileName = vbNullString
+            i = InStrRev(fileName, cid, , vbTextCompare)
             If i > 1 And cid <> vbNullString Then _
-                email = LCase$(Left$(FileName, i - 2)): Exit Do
-            FileName = Dir
+                email = LCase$(Left$(fileName, i - 2)): Exit Do
+            fileName = Dir
         Loop
 
         #If Mac Then
@@ -735,34 +735,34 @@ ReadFailed:             On Error GoTo -1
 
         'Read all the ClientPloicy*.ini files:
         Dim cliPolColl As Collection: Set cliPolColl = New Collection
-        FileName = Dir(vDir, vbNormal)
-        Do Until FileName = vbNullString
-            If FileName Like "ClientPolicy*.ini" Then
+        fileName = Dir(vDir, vbNormal)
+        Do Until fileName = vbNullString
+            If fileName Like "ClientPolicy*.ini" Then
                 fileNum = FreeFile()
-                Open vDir & FileName For Binary Access Read As #fileNum
-                    ReDim b(0 To LOF(fileNum)): Get fileNum, , b
+                Open vDir & fileName For Binary Access Read As #fileNum
+                    ReDim B(0 To LOF(fileNum)): Get fileNum, , B
                 Close #fileNum: fileNum = 0
                 #If Mac Then 'On Mac, OneDrive settings files use UTF-8 encoding
-                    sUtf8 = b: GoSub DecodeUTF8
-                    b = sUtf16
+                    sUtf8 = B: GoSub DecodeUTF8
+                    B = sUtf16
                 #End If
-                cliPolColl.Add key:=FileName, item:=New Collection
-                For Each line In Split(b, vbNewLine)
+                cliPolColl.Add key:=fileName, item:=New Collection
+                For Each line In Split(B, vbNewLine)
                     If InStr(1, line, " = ", vbBinaryCompare) Then
                         tag = Left$(line, InStr(1, line, " = ", 0) - 1)
                         s = Mid$(line, InStr(1, line, " = ", 0) + 3)
                         Select Case tag
                         Case "DavUrlNamespace"
-                            cliPolColl(FileName).Add key:=tag, item:=s
+                            cliPolColl(fileName).Add key:=tag, item:=s
                         Case "SiteID", "IrmLibraryId", "WebID" 'Only used for
                             s = Replace(LCase$(s), "-", "") 'backup method later
                             If Len(s) > 3 Then s = Mid$(s, 2, Len(s) - 2)
-                            cliPolColl(FileName).Add key:=tag, item:=s
+                            cliPolColl(fileName).Add key:=tag, item:=s
                         End Select
                     End If
                 Next line
             End If
-            FileName = Dir
+            fileName = Dir
         Loop
 
         'If cid.dat file doesn't exist, skip this part:
@@ -787,8 +787,8 @@ Try:    On Error GoTo Catch
                 Dim lenDatFile As Long: lenDatFile = LOF(fileNum)
                 If buffSize = -1 Then buffSize = lenDatFile 'Initialize buffer
                 'Overallocate a bit so read chunks overlap to recognize all dirs
-                ReDim b(0 To buffSize + chunkOverlap)
-                Get fileNum, lastChunkEndPos, b: s = b
+                ReDim B(0 To buffSize + chunkOverlap)
+                Get fileNum, lastChunkEndPos, B: s = B
                 Dim size As Long: size = LenB(s)
             Close #fileNum: fileNum = 0
             lastChunkEndPos = lastChunkEndPos + buffSize
@@ -936,7 +936,7 @@ Continue:
         End If
 
         lastFileUpdate = 0
-        ReDim b(1 To chunkSize)
+        ReDim B(1 To chunkSize)
         Dim t As Single: t = Timer
         Do
             If Timer - t > 0.1! Then
@@ -951,14 +951,14 @@ Continue:
                 lastFileUpdate = FileDateTime(vDir & "SyncEngineDatabase.db")
                 lastRecord = 1
             End If
-            Get fileNum, lastRecord, b
-            s = b
+            Get fileNum, lastRecord, B
+            s = B
             i = InStrB(1, s, sig)
             Do While i > 0
                 If isPersonal Then
                     For j = i - 1 To i - maxIDSize Step -1
                         If j = 0 Then GoTo NextSig
-                        If b(j) < bangCode Then Exit For
+                        If B(j) < bangCode Then Exit For
                     Next j
                     If (j < maxHeader) Or (i - j < minIDSize) Then GoTo NextSig
                 Else
@@ -968,7 +968,7 @@ Continue:
                     If idSize(4) > maxIDSize Then GoTo NextSig
                     For j = i - 1 To i - maxThreeIDSizes Step -1
                         If j = 0 Then GoTo NextSig
-                        If b(j) < bangCode Then Exit For
+                        If B(j) < bangCode Then Exit For
                     Next j
                     If j < maxHeader Then GoTo NextSig
                     idSize(1) = i - j - 1 'ID 1+2+3
@@ -977,30 +977,30 @@ Continue:
                 
                 k = j + 1 'ID1 Start
                 For j = j To j - headBytesOffset + 1 Step -1
-                    If b(j) > maxSigByte Then GoTo NextSig
+                    If B(j) > maxSigByte Then GoTo NextSig
                 Next j
-                If (b(j) <= maxSigByte) And (b(j - 1) < &H80) Then j = j - 1
-                If b(j) < minName Then j = j - 1
+                If (B(j) <= maxSigByte) And (B(j - 1) < &H80) Then j = j - 1
+                If B(j) < minName Then j = j - 1
                 
-                nameSize = b(j)
+                nameSize = B(j)
                 If nameSize Mod 2 = 0 Then GoTo NextSig
                 nameSize = (nameSize - 13) / 2
-                If b(j - 1) > &H7F Then
-                    nameSize = (b(j - 1) - &H80) * &H40 + nameSize
+                If B(j - 1) > &H7F Then
+                    nameSize = (B(j - 1) - &H80) * &H40 + nameSize
                     j = j - 1
                 End If
-                If (nameSize < 1) Or (b(j - 4) = 0) Then GoTo NextSig
+                If (nameSize < 1) Or (B(j - 4) = 0) Then GoTo NextSig
                 
                 If isPersonal Then
-                    idSize(4) = (b(j - 1) - 13) / 2
-                    idSize(3) = (b(j - 2) - 13) / 2
-                    idSize(2) = (b(j - 3) - 13) / 2
-                    idSize(1) = (b(j - 4) - 13) / 2
+                    idSize(4) = (B(j - 1) - 13) / 2
+                    idSize(3) = (B(j - 2) - 13) / 2
+                    idSize(2) = (B(j - 3) - 13) / 2
+                    idSize(1) = (B(j - 4) - 13) / 2
                     nameStart = k + idSize(1) + idSize(2) + idSize(3) + idSize(4)
                 Else
-                    If b(j - 1) <> idSize(4) * 2 + 13 Then GoTo NextSig
-                    idSize(3) = (b(j - 2) - 13) / 2
-                    idSize(2) = (b(j - 3) - 13) / 2
+                    If B(j - 1) <> idSize(4) * 2 + 13 Then GoTo NextSig
+                    idSize(3) = (B(j - 2) - 13) / 2
+                    idSize(2) = (B(j - 3) - 13) / 2
                     idSize(1) = idSize(1) - idSize(2) - idSize(3)
                     nameStart = i + idSize(4)
                 End If
@@ -1057,7 +1057,7 @@ Continue:
                     folderName = MidB$(s, nameStart, nameSize)
                     isASCII = True
                     For k = nameStart To nameEnd
-                        If b(k) > &H7F Then
+                        If B(k) > &H7F Then
                             isASCII = False
                             Exit For
                         End If
@@ -1080,7 +1080,7 @@ Continue:
                         folderName = MidB$(s, nameStart, nameSize)
                         isASCII = True
                         For k = nameStart To nameEnd
-                            If b(k) > &H7F Then
+                            If B(k) > &H7F Then
                                 isASCII = False
                                 Exit For
                             End If
@@ -1120,11 +1120,11 @@ SkipDbFile:
         'Read cid.ini file
         fileNum = FreeFile()
         Open vDir & cid & ".ini" For Binary Access Read As #fileNum
-            ReDim b(0 To LOF(fileNum)): Get fileNum, , b
+            ReDim B(0 To LOF(fileNum)): Get fileNum, , B
         Close #fileNum: fileNum = 0
         #If Mac Then 'On Mac, the OneDrive settings files use UTF-8 encoding
-            sUtf8 = b: GoSub DecodeUTF8:
-            b = sUtf16
+            sUtf8 = B: GoSub DecodeUTF8:
+            B = sUtf16
         #End If 'The lines from cid.ini are out of order on some systems:
         Dim sortedLines As Collection: Set sortedLines = New Collection
         Dim possTags As Variant 'Must be ordered correctly in the Array!
@@ -1133,7 +1133,7 @@ SkipDbFile:
         For Each vItem In possTags
             bucketColl.Add New Collection, CStr(vItem)
         Next vItem
-        For Each line In Split(b, vbNewLine)
+        For Each line In Split(B, vbNewLine)
             If InStr(1, line, " = ", vbBinaryCompare) = 0 Then Exit For
             tag = Left$(line, InStr(1, line, " = ", 0) - 1)
             Select Case tag: Case "libraryScope", "libraryFolder", "AddedScope"
@@ -1168,12 +1168,12 @@ SkipDbFile:
                     folderType = parts(3): parts = Split(parts(8), " ")
                     siteID = parts(1): webID = parts(2): libID = parts(3)
                     If Split(line, " ", 4, vbBinaryCompare)(2) = "0" Then
-                        mainMount = locRoot: FileName = "ClientPolicy.ini"
+                        mainMount = locRoot: fileName = "ClientPolicy.ini"
                         mainSyncID = syncID: mainSyncFind = syncFind
-                    Else: FileName = "ClientPolicy_" & libID & siteID & ".ini"
+                    Else: fileName = "ClientPolicy_" & libID & siteID & ".ini"
                     End If
                     On Error Resume Next 'On error try backup method...
-                    webRoot = cliPolColl(FileName)("DavUrlNamespace")
+                    webRoot = cliPolColl(fileName)("DavUrlNamespace")
                     On Error GoTo 0
                     If webRoot = "" Then 'Backup method to find webRoot:
                         For Each vItem In cliPolColl
@@ -1212,9 +1212,9 @@ SkipDbFile:
                     relPath = parts(5): If relPath = " " Then relPath = ""  'lib
                     parts = Split(parts(4), " "): siteID = parts(1)
                     webID = parts(2): libID = parts(3): lnkID = parts(4)
-                    FileName = "ClientPolicy_" & libID & siteID & lnkID & ".ini"
+                    fileName = "ClientPolicy_" & libID & siteID & lnkID & ".ini"
                     On Error Resume Next 'On error try backup method...
-                    webRoot = cliPolColl(FileName)("DavUrlNamespace") & relPath
+                    webRoot = cliPolColl(fileName)("DavUrlNamespace") & relPath
                     On Error GoTo 0
                     If webRoot = "" Then 'Backup method to find webRoot:
                         For Each vItem In cliPolColl
@@ -1246,7 +1246,7 @@ SkipDbFile:
             Next line
         ElseIf dirName = "Personal" Then 'Settings files for personal OD account
         'Only one Personal OneDrive account can be signed in at a time.
-            For Each line In Split(b, vbNewLine) 'Loop should exit at first line
+            For Each line In Split(B, vbNewLine) 'Loop should exit at first line
                 If line Like "library = *" Then
                     parts = Split(line, """"): locRoot = parts(3)
                     syncFind = locRoot: syncID = Split(parts(4), " ")(2)
@@ -1267,13 +1267,13 @@ SkipDbFile:
             'Read GroupFolders.ini file
             cid = vbNullString: fileNum = FreeFile()
             Open vDir & "GroupFolders.ini" For Binary Access Read As #fileNum
-                ReDim b(0 To LOF(fileNum)): Get fileNum, , b
+                ReDim B(0 To LOF(fileNum)): Get fileNum, , B
             Close #fileNum: fileNum = 0
             #If Mac Then 'On Mac, the OneDrive settings files use UTF-8 encoding
-                sUtf8 = b: GoSub DecodeUTF8
-                b = sUtf16
+                sUtf8 = B: GoSub DecodeUTF8
+                B = sUtf16
             #End If 'Two lines per synced folder from other peoples personal ODs
-            For Each line In Split(b, vbNewLine)
+            For Each line In Split(B, vbNewLine)
                 If line Like "*_BaseUri = *" And cid = vbNullString Then
                     cid = LCase$(Mid$(line, InStrRev(line, "/", , 0) + 1, _
                        InStrRev(line, "!", , 0) - InStrRev(line, "/", , 0) - 1))
@@ -1327,7 +1327,7 @@ NextFolder:
 
 DecodeUTF8: 'UTF-8 must be transcoded to UTF-16 manually in VBA
     Const raiseErrors As Boolean = False 'Raise error if invalid UTF-8 is found?
-    Dim o As Long, p As Long, q As Long
+    Dim o As Long, P As Long, q As Long
     Static numBytesOfCodePoints(0 To 255) As Byte
     Static mask(2 To 4) As Long
     Static minCp(2 To 4) As Long
@@ -1345,7 +1345,7 @@ DecodeUTF8: 'UTF-8 must be transcoded to UTF-16 manually in VBA
     Dim currByte As Byte
     utf8 = sUtf8
     ReDim utf16(0 To (UBound(utf8) - LBound(utf8) + 1) * 2)
-    p = 0
+    P = 0
     o = LBound(utf8)
     Do While o <= UBound(utf8)
         codepoint = utf8(o)
@@ -1354,8 +1354,8 @@ DecodeUTF8: 'UTF-8 must be transcoded to UTF-16 manually in VBA
             If raiseErrors Then Err.Raise 5
             GoTo insertErrChar
         ElseIf numBytesOfCodePoint = 1 Then
-            utf16(p) = codepoint
-            p = p + 2
+            utf16(P) = codepoint
+            P = P + 2
         ElseIf o + numBytesOfCodePoint - 1 > UBound(utf8) Then
             If raiseErrors Then Err.Raise 5
             GoTo insertErrChar
@@ -1376,47 +1376,47 @@ DecodeUTF8: 'UTF-8 must be transcoded to UTF-16 manually in VBA
                 If raiseErrors Then Err.Raise 5
                 GoTo insertErrChar
             ElseIf codepoint < &HD800& Then
-                utf16(p) = CByte(codepoint And &HFF&)
-                utf16(p + 1) = CByte(codepoint \ &H100&)
-                p = p + 2
+                utf16(P) = CByte(codepoint And &HFF&)
+                utf16(P + 1) = CByte(codepoint \ &H100&)
+                P = P + 2
             ElseIf codepoint < &HE000& Then
                 If raiseErrors Then Err.Raise 5
                 GoTo insertErrChar
             ElseIf codepoint < &H10000 Then
                 If codepoint = &HFEFF& Then GoTo nextCp '(BOM - will be ignored)
-                utf16(p) = codepoint And &HFF&
-                utf16(p + 1) = codepoint \ &H100&
-                p = p + 2
+                utf16(P) = codepoint And &HFF&
+                utf16(P + 1) = codepoint \ &H100&
+                P = P + 2
             ElseIf codepoint < &H110000 Then 'Calculate surrogate pair
                 m = codepoint - &H10000
                 Dim loSurrogate As Long: loSurrogate = &HDC00& Or (m And &H3FF)
                 Dim hiSurrogate As Long: hiSurrogate = &HD800& Or (m \ &H400&)
-                utf16(p) = hiSurrogate And &HFF&
-                utf16(p + 1) = hiSurrogate \ &H100&
-                utf16(p + 2) = loSurrogate And &HFF&
-                utf16(p + 3) = loSurrogate \ &H100&
-                p = p + 4
+                utf16(P) = hiSurrogate And &HFF&
+                utf16(P + 1) = hiSurrogate \ &H100&
+                utf16(P + 2) = loSurrogate And &HFF&
+                utf16(P + 3) = loSurrogate \ &H100&
+                P = P + 4
             Else
                 If raiseErrors Then Err.Raise 5
-insertErrChar:  utf16(p) = &HFD
-                utf16(p + 1) = &HFF
-                p = p + 2
+insertErrChar:  utf16(P) = &HFD
+                utf16(P + 1) = &HFF
+                P = P + 2
                 If numBytesOfCodePoint = 0 Then numBytesOfCodePoint = 1
             End If
         End If
 nextCp: o = o + numBytesOfCodePoint 'Move to the next UTF-8 codepoint
     Loop
-    sUtf16 = MidB$(utf16, 1, p)
+    sUtf16 = MidB$(utf16, 1, P)
     Return
 
 DecodeANSI: 'Code for decoding ANSI string manually:
     ansi = sAnsi
-    p = UBound(ansi) - LBound(ansi) + 1
-    If p > 0 Then
-        ReDim utf16(0 To p * 2 - 1): q = 0
-        For p = LBound(ansi) To UBound(ansi)
-            utf16(q) = ansi(p): q = q + 2
-        Next p
+    P = UBound(ansi) - LBound(ansi) + 1
+    If P > 0 Then
+        ReDim utf16(0 To P * 2 - 1): q = 0
+        For P = LBound(ansi) To UBound(ansi)
+            utf16(q) = ansi(P): q = q + 2
+        Next P
         sUtf16 = utf16
     Else
         sUtf16 = vbNullString
