@@ -1,5 +1,6 @@
 Attribute VB_Name = "Outages"
 Public ignoreIds As Scripting.Dictionary
+Const OUTAGECARDNAME = "Outage Card2.docx"
 Const secondaryOffsetMaxDistance As Integer = 35
 
 Function AreTwoPointsEqual(x1 As Double, y1 As Double, x2 As Double, y2 As Double) As Boolean
@@ -93,12 +94,12 @@ Sub DownloadOutageLists()
     Dim poleCollections As Collection: Set poleCollections = findPoleGroups(project.poles)
     Dim poleCollection As Collection
     
-    Dim outageCardExists As Boolean: outageCardExists = Dir(Environ("TEMP") & "\Outage Card.docx") <> ""
+    Dim outageCardExists As Boolean: outageCardExists = Dir(Environ("TEMP") & "\" & OUTAGECARDNAME) <> ""
     If Not outageCardExists Then
         Dim url As String: url = "https://api.github.com/repos/ababrahamtrc/Pole-Detail-Sheets/contents/"
         Dim file As Object
         Dim http As Object: Set http = CreateObject("MSXML2.XMLHTTP")
-        http.Open "GET", url & "Blanks/Outage Card.docx", False
+        http.Open "GET", url & "Blanks/" & OUTAGECARDNAME, False
         http.setRequestHeader "User-Agent", "ExcelVBA"
         http.send
         If http.status = 200 Then
@@ -420,7 +421,7 @@ Sub DownloadOutageLists()
                             If LoadingBar_Form2.gTotal = 0 Then Exit Sub
                             serviceTLM = jsonFeature("attributes")("geoAIM_ElecDist.ELECDIST.ServicePoint.TLM")
                             If serviceTLM = tlm Then
-                                Dim row As Collection: Set row = New Collection
+                                Dim ROW As Collection: Set ROW = New Collection
                                 
                                 If Not IsNull(jsonFeature("attributes")("geoAIM_ElecDist.ELECDIST.ServicePoint.FEEDERID")) Then feederId = jsonFeature("attributes")("geoAIM_ElecDist.ELECDIST.ServicePoint.FEEDERID")
                                 If Not IsNull(jsonFeature("attributes")("geoAIM_ElecDist.ELECDIST.ServicePoint.FEEDERID2")) Then feederId2 = jsonFeature("attributes")("geoAIM_ElecDist.ELECDIST.ServicePoint.FEEDERID2")
@@ -512,28 +513,28 @@ Sub DownloadOutageLists()
                                         If connectStatus = "Connected" Then connectedCount = connectedCount + 1
                                         If connectStatus = "Disconnected" Then disconnectedCount = disconnectedCount + 1
                                         
-                                        row.Add accountNumber
-                                        row.Add accountType
-                                        row.Add lastName
-                                        row.Add firstName
-                                        row.Add street
-                                        row.Add city
-                                        row.Add "MI"
-                                        row.Add postalCode
-                                        row.Add telephone1
-                                        row.Add telephone2
-                                        row.Add telephone3
-                                        row.Add telephone4
-                                        row.Add ""
-                                        row.Add criticalCustomer
-                                        row.Add connectStatus
-                                        row.Add meter
-                                        row.Add ""
-                                        row.Add serviceTLM
-                                        row.Add phase
-                                        row.Add group
+                                        ROW.Add accountNumber
+                                        ROW.Add accountType
+                                        ROW.Add lastName
+                                        ROW.Add firstName
+                                        ROW.Add street
+                                        ROW.Add city
+                                        ROW.Add "MI"
+                                        ROW.Add postalCode
+                                        ROW.Add telephone1
+                                        ROW.Add telephone2
+                                        ROW.Add telephone3
+                                        ROW.Add telephone4
+                                        ROW.Add ""
+                                        ROW.Add criticalCustomer
+                                        ROW.Add connectStatus
+                                        ROW.Add meter
+                                        ROW.Add ""
+                                        ROW.Add serviceTLM
+                                        ROW.Add phase
+                                        ROW.Add group
                                          
-                                        outageList.Add row
+                                        outageList.Add ROW
                                     End If
                                 End If
                             End If
@@ -612,13 +613,13 @@ Sub DownloadOutageLists()
                 
                 For Each cell In sheet.UsedRange
                     cell.WrapText = False
-                    If (cell.row < 3 And cell.Column < 23) Or (cell.Column < 21 And cell.row > 4) Then
+                    If (cell.ROW < 3 And cell.Column < 23) Or (cell.Column < 21 And cell.ROW > 4) Then
                         With cell.Borders
                             .LineStyle = xlContinuous
                             .Weight = xlThin
                         End With
                     End If
-                    If cell.row = 1 Or cell.row = 5 Then
+                    If cell.ROW = 1 Or cell.ROW = 5 Then
                         cell.Font.Bold = True
                     End If
                 Next cell
@@ -627,13 +628,13 @@ Sub DownloadOutageLists()
                 
                 locationNumbers = compactListString(locationsUsed)
                 
-                FileName = project.Notification & " - Outage List Loc " & locationNumbers & ".xlsx"
-                NewBook.SaveAs FileName:=downloadPath & FileName, FileFormat:=xlOpenXMLWorkbook
+                fileName = project.Notification & " - Outage List Loc " & locationNumbers & ".xlsx"
+                NewBook.SaveAs fileName:=downloadPath & fileName, FileFormat:=xlOpenXMLWorkbook
                 NewBook.Close savechanges:=False
                 
                 If LoadingBar_Form2.gTotal = 0 Then Exit Sub
                 
-                If comCount > 3 Or resCount > 9 Then
+                If comCount > 3 Or comCount + resCount > 9 Then
                     Dim cardStreets As New Collection
                     For Each streetKey In streets
                         Dim addStreet As Boolean: addStreet = True
@@ -649,22 +650,21 @@ Sub DownloadOutageLists()
                         If addStreet And Not duplicate Then cardStreets.Add streetKey
                     Next streetKey
                     
-                    Set wdApp = CreateObject("Word.Application")
-                    wdApp.visible = False
-                    Set wdDoc = wdApp.Documents.Open(Environ("TEMP") & "\Outage Card.docx")
+                    Set wdapp = CreateObject("Word.Application")
+                    wdapp.visible = False
+                    
+                    Dim wdDoc As Document
+                    
+                    wdapp.AutomationSecurity = 1
+                    wdapp.DisplayAlerts = 0
+                    Set wdDoc = wdapp.Documents.Open(Environ("TEMP") & "\" & OUTAGECARDNAME)
+                    wdapp.DisplayAlerts = -1
         
+                    On Error GoTo errorHandler
                     Dim center As String: center = ""
                     If InStr(county, "KENT") > 0 Then center = "Grand Rapids Work Management Center"
                     If InStr(county, "JACKSON") > 0 Then center = "Jackson Work Management Center"
                     If InStr(county, "SAGINAW") > 0 Then center = "Saginaw Work Management Center"
-                    
-                    wdDoc.ContentControls(1).Range.text = DesignerName
-                    wdDoc.ContentControls(6).Range.text = center
-                    wdDoc.ContentControls(12).Range.text = JoinCollection(locationTLMs(pole.location), ", ")
-                    If feederId <> "" Then
-                        wdDoc.ContentControls(13).Range.text = substation & "-" & Left(feederId, 4)
-                        wdDoc.ContentControls(14).Range.text = circuit & "-" & Right(feederId, 2)
-                    End If
                     
                     Dim secRegex As Object
                     Set secRegex = CreateObject("VBScript.RegExp")
@@ -698,16 +698,25 @@ Sub DownloadOutageLists()
                         reason = "Raising Secondary"
                     End If
                     
-                    wdDoc.ContentControls(15).Range.text = reason
-                    wdDoc.ContentControls(16).Range.text = comCount + resCount
-                    wdDoc.ContentControls(17).Range.text = project.Notification
-                    wdDoc.ContentControls(18).Range.text = JoinCollection(cardStreets, ", ")
-                    wdDoc.ContentControls(19).Range.text = WorksheetFunction.Proper(county & "/" & city)
+                    Call ReplaceNthOccurrence(wdDoc, "Click or tap here to enter text.", WorksheetFunction.Proper(county & "/" & city), 17)
+                    Call ReplaceNthOccurrence(wdDoc, "Click or tap here to enter text.", JoinCollection(cardStreets, ", "), 16)
+                    Call ReplaceNthOccurrence(wdDoc, "Click or tap here to enter text.", project.Notification, 15)
+                    Call ReplaceNthOccurrence(wdDoc, "Click or tap here to enter text.", comCount + resCount, 14)
+                    Call ReplaceNthOccurrence(wdDoc, "Click or tap here to enter text.", reason, 13)
+                    If feederId <> "" Then
+                        Call ReplaceNthOccurrence(wdDoc, "Click or tap here to enter text.", WorksheetFunction.Proper(circuit) & " - " & Right(feederId, 2), 12)
+                        Call ReplaceNthOccurrence(wdDoc, "Click or tap here to enter text.", WorksheetFunction.Proper(substation) & " - " & Left(feederId, 4), 11)
+                    End If
                     
-                    FileName = project.Notification & " - Outage Card Loc " & locationNumbers & ".docx"
-                    wdDoc.saveAs2 downloadPath & FileName
+                    Call ReplaceNthOccurrence(wdDoc, "Click or tap here to enter text.", JoinCollection(locationTLMs(pole.location), ", "), 10)
+                    Call ReplaceNthOccurrence(wdDoc, "Click or tap here to enter text.", DesignerName, 1)
+                    Call ReplaceNthOccurrence(wdDoc, "Choose an Item.", center, 1)
+                    
+                    fileName = project.Notification & " - Outage Card Loc " & locationNumbers & ".docx"
+                    wdDoc.saveAs2 downloadPath & fileName
                     wdDoc.Close savechanges:=False
-                    wdApp.Quit
+                    wdapp.Quit
+                    On Error GoTo 0
                 End If
             End If
             If locationTLMs.exists(pole.location) Then Call LoadingBar_Form2.UpdateProgress("Downloading Outage Lists/Cards", "Locations Downloaded", True)
@@ -720,4 +729,41 @@ Sub DownloadOutageLists()
     
     Call LoadingBar_Form2.FinishProgress
     MsgBox "Finished generate List/Cards"
+    Exit Sub
+
+errorHandler:
+    wdDoc.Close savechanges:=False
+    wdapp.Quit
+    Call LoadingBar_Form2.FinishProgress
+    MsgBox "Ran into an error filling out card. Please retry"
 End Sub
+
+Function ReplaceNthOccurrence(doc As Object, findStr As String, replaceStr As String, occurrence As Long) As Boolean
+    Dim objRange As Object
+    Dim count As Long
+    
+    Set objRange = doc.Content
+    count = 0
+    
+    With objRange.Find
+        .text = findStr
+        .Forward = True
+        .Wrap = 0
+        .MatchCase = False
+        .MatchWholeWord = False
+        
+        Do While .Execute
+            count = count + 1
+            If count = occurrence Then
+                objRange.text = replaceStr
+                ReplaceNthOccurrence = True
+                Exit Function
+            End If
+        Loop
+    End With
+    
+    ReplaceNthOccurrence = False
+End Function
+
+
+
