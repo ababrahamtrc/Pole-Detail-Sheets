@@ -33,7 +33,7 @@ Public Sub Initialize()
     
     Dim header As String
     Set colWs = ThisWorkbook.sheets("Collection")
-    colWsLastRow = colWs.Cells(colWs.Rows.count, "A").End(xlUp).row
+    colWsLastRow = colWs.Cells(colWs.Rows.count, "A").End(xlUp).ROW
     Dim colWsLastCol As Integer: colWsLastCol = colWs.Cells(1, colWs.Columns.count).End(xlToLeft).Column
     Set colWsHeaders = New Scripting.Dictionary
     For i = 1 To colWsLastCol
@@ -44,7 +44,7 @@ Public Sub Initialize()
     Next i
     
     Dim jobInfoWs As Worksheet: Set jobInfoWs = ThisWorkbook.sheets("Job Info")
-    Dim jobInfoWsLastRow As Integer: jobInfoWsLastRow = jobInfoWs.Cells(jobInfoWs.Rows.count, "A").End(xlUp).row
+    Dim jobInfoWsLastRow As Integer: jobInfoWsLastRow = jobInfoWs.Cells(jobInfoWs.Rows.count, "A").End(xlUp).ROW
     Dim jobInfoWsLastCol As Integer: jobInfoWsLastCol = jobInfoWs.Cells(1, jobInfoWs.Columns.count).End(xlToLeft).Column
     Dim jobInfoWsHeaders As Scripting.Dictionary: Set jobInfoWsHeaders = New Scripting.Dictionary
     For i = 1 To jobInfoWsLastCol
@@ -82,7 +82,7 @@ End Sub
 Private Sub CommandButton2_Click()
     On Error Resume Next
     
-    Dim folderPath, folderName, photosFolder, oldPath, newFileName, newPath, permit, poleNumber, ceid, poleNum, FileName As String
+    Dim folderPath, folderName, photosFolder, oldPath, newFileName, newPath, permit, poleNumber, ceid, poleNum, fileName As String
     Dim photoCounter, counter As Integer
     
     folderPath = TextBox1.Value & Application.PathSeparator
@@ -115,14 +115,14 @@ Private Sub CommandButton2_Click()
         If colWsHeaders.exists("New CE ID Tag") Then ceid = colWs.Cells(i, colWsHeaders("New CE ID Tag"))
         If ceid = "" Then ceid = colWs.Cells(i, colWsHeaders("CE ID Tag"))
         If ceid = "" Then ceid = "FOREIGN"
-        FileName = Dir(folderPath & poleNum & Application.PathSeparator & "*")
+        fileName = Dir(folderPath & poleNum & Application.PathSeparator & "*")
         Dim oldFiles As Collection: Set oldFiles = New Collection
-        Do While FileName <> ""
-            oldPath = folderPath & poleNum & Application.PathSeparator & FileName
+        Do While fileName <> ""
+            oldPath = folderPath & poleNum & Application.PathSeparator & fileName
             If GetAttr(oldPath) <> vbDirectory Then
                 oldFiles.Add oldPath
             End If
-            FileName = Dir()
+            fileName = Dir()
         Loop
         photoCounter = 1
         For Each oldFile In oldFiles
@@ -155,7 +155,7 @@ Private Sub CommandButton3_click()
 End Sub
 
 Private Sub CommandButton4_click()
-    Dim header, imageUrl, photosFolder, folderPath, FileName, savepath, poleNum, ceid, permit As String
+    Dim header, imageUrl, photosFolder, folderPath, fileName, savepath, poleNum, ceid, permit As String
     Dim photoCounter As Integer
     Dim http, stream As Object
     
@@ -174,7 +174,7 @@ Private Sub CommandButton4_click()
     End If
     
     Dim colWs As Worksheet: Set colWs = ThisWorkbook.sheets("Collection")
-    Dim colWsLastRow As Integer: colWsLastRow = colWs.Cells(colWs.Rows.count, "A").End(xlUp).row
+    Dim colWsLastRow As Integer: colWsLastRow = colWs.Cells(colWs.Rows.count, "A").End(xlUp).ROW
     Dim colWsLastCol As Integer: colWsLastCol = colWs.Cells(1, colWs.Columns.count).End(xlToLeft).Column
     Dim colWsHeaders As Scripting.Dictionary: Set colWsHeaders = New Scripting.Dictionary
     For i = 1 To colWsLastCol
@@ -185,7 +185,7 @@ Private Sub CommandButton4_click()
     Next i
     
     Dim imageWs As Worksheet: Set imageWs = ThisWorkbook.sheets("Images")
-    Dim imageWsLastRow As Integer: imageWsLastRow = imageWs.Cells(imageWs.Rows.count, "A").End(xlUp).row
+    Dim imageWsLastRow As Integer: imageWsLastRow = imageWs.Cells(imageWs.Rows.count, "A").End(xlUp).ROW
     Dim imageWsLastCol As Integer: imageWsLastCol = imageWs.Cells(1, imageWs.Columns.count).End(xlToLeft).Column
     Dim imageWsHeaders As Scripting.Dictionary: Set imageWsHeaders = New Scripting.Dictionary
     For i = 1 To imageWsLastCol
@@ -214,14 +214,14 @@ Private Sub CommandButton4_click()
             ceid = ""
             poleNum = imageWs.Cells(i, imageWsHeaders("ID"))
             Set cell = poleNumRange.Find(what:=poleNum, LookIn:=xlValues, lookat:=xlWhole)
-            If colWsHeaders.exists("New CE ID Tag") Then ceid = colWs.Cells(cell.row, colWsHeaders("New CE ID Tag"))
-            If ceid = "" Then ceid = colWs.Cells(cell.row, colWsHeaders("CE ID Tag"))
+            If colWsHeaders.exists("New CE ID Tag") Then ceid = colWs.Cells(cell.ROW, colWsHeaders("New CE ID Tag"))
+            If ceid = "" Then ceid = colWs.Cells(cell.ROW, colWsHeaders("CE ID Tag"))
             If ceid = "" Then ceid = "FOREIGN"
             photoCounter = 1
         End If
         Do
-            FileName = "M1P" & poleNum & "-" & photoCounter & "_" & ceid & "_" & permit & ".jpg"
-            savepath = photosFolder & Application.PathSeparator & FileName
+            fileName = "M1P" & poleNum & "-" & photoCounter & "_" & ceid & "_" & permit & ".jpg"
+            savepath = photosFolder & Application.PathSeparator & fileName
             photoCounter = photoCounter + 1
         Loop While Dir(savepath) <> ""
         http.Open "Get", imageUrl, False
