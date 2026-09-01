@@ -30,14 +30,14 @@ Sub ImportAllPDS()
     Dim duplicateNumbersString As String: duplicateNumbersString = ""
     Dim sheet As Worksheet
     Dim sheetCount As Integer: sheetCount = 0
-    Dim FileName As String: FileName = Dir(Path & "*.xlsx")
+    Dim fileName As String: fileName = Dir(Path & "*.xlsx")
     Dim sourceWb As Workbook
     Dim insertSpot As Worksheet
-    Do While FileName <> ""
+    Do While fileName <> ""
         ProgressBar_Form.Label1.caption = "Importing Pole Detail Sheets... " & sheetCount & " sheets imported."
         ProgressBar_Form.Repaint
         
-        Set sourceWb = Workbooks.Open(Path & FileName)
+        Set sourceWb = Workbooks.Open(Path & fileName)
         If sourceWb.sheets(1).Cells(2, 2).Value = "Notification:" Then
             rpSourceName = ThisWorkbook.RemoveParentheses(sourceWb.sheets(1).name)
             If Not poleNumbers.exists(rpSourceName) Then
@@ -74,7 +74,7 @@ Sub ImportAllPDS()
             End If
         End If
         sourceWb.Close savechanges:=False
-        FileName = Dir
+        fileName = Dir
     Loop
     ThisWorkbook.sheets("Control").Activate
     
@@ -194,13 +194,13 @@ Sub ImportLocationPDS()
     Dim duplicateNumbersString As String: duplicateNumbersString = ""
     
     Dim sheetCount As Integer: sheetCount = 0
-    Dim FileName As String: FileName = Dir(Path & "*.xlsx")
+    Dim fileName As String: fileName = Dir(Path & "*.xlsx")
     Dim sourceWb As Workbook
     Dim insertSpot As Worksheet
-    Do While FileName <> ""
+    Do While fileName <> ""
         ProgressBar_Form.Label1.caption = "Importing Pole Detail Sheets... " & sheetCount & " sheets imported."
         ProgressBar_Form.Repaint
-        Set sourceWb = Workbooks.Open(Path & FileName)
+        Set sourceWb = Workbooks.Open(Path & fileName)
         If sourceWb.sheets(1).Cells(2, 2).Value = "Notification:" Then
             If Trim(sourceWb.sheets(1).Range("DL").Value) <> "" Then
                 rpSourceName = ThisWorkbook.RemoveParentheses(sourceWb.sheets(1).name)
@@ -240,7 +240,7 @@ Sub ImportLocationPDS()
             End If
         End If
         sourceWb.Close savechanges:=False
-        FileName = Dir
+        fileName = Dir
     Loop
     ThisWorkbook.sheets("Control").Activate
     
@@ -291,13 +291,13 @@ Sub ImportNjunsPDS()
     Dim duplicateNumbersString As String: duplicateNumbersString = ""
     
     Dim sheetCount As Integer: sheetCount = 0
-    Dim FileName As String: FileName = Dir(Path & "*.xlsx")
+    Dim fileName As String: fileName = Dir(Path & "*.xlsx")
     Dim sourceWb As Workbook
     Dim insertSpot As Worksheet
-    Do While FileName <> ""
+    Do While fileName <> ""
         ProgressBar_Form.Label1.caption = "Importing Pole Detail Sheets... " & sheetCount & " sheets imported."
         ProgressBar_Form.Repaint
-        Set sourceWb = Workbooks.Open(Path & FileName)
+        Set sourceWb = Workbooks.Open(Path & fileName)
         If sourceWb.sheets(1).Cells(2, 2).Value = "Notification:" Then
             If (Trim(sourceWb.sheets(1).Range("NJUNS").Value) <> "" And LCase(Trim(sourceWb.sheets(1).Range("NJUNS").Value)) <> "n/a" And LCase(Trim(sourceWb.sheets(1).Range("NJUNS").Value)) <> "comm make ready work") Or _
                 (Trim(sourceWb.sheets(1).Range("NJUNSTICKET").Value) <> "" And LCase(Trim(sourceWb.sheets(1).Range("NJUNSTICKET").Value)) <> "n/a") Then
@@ -337,7 +337,7 @@ Sub ImportNjunsPDS()
             End If
         End If
         sourceWb.Close savechanges:=False
-        FileName = Dir
+        fileName = Dir
     Loop
     ThisWorkbook.sheets("Control").Activate
     
