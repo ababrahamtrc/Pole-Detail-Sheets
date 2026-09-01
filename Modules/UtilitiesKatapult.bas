@@ -9,7 +9,7 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As project
     Dim wire As wire
     Dim Arm As Arm
     Dim Insulator As Insulator
-    Dim equipment As equipment
+    Dim Equipment As Equipment
     Dim guy As guy
     
     Dim nodeKey, photoKey, armKey, insulatorKey, wireKey, equipmentKey, poleTagKey, connectionKey, poleTopKey, guyKey As Variant
@@ -88,11 +88,11 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As project
                                                 If jsonArm.exists("_children") Then
                                                     If jsonArm("_children").exists("equipment") Then
                                                         For Each equipmentKey In jsonArm("_children")("equipment")
-                                                            Set equipment = UtilitiesKatapult.InitEquipmentFromKatapultJson(jsonArm("_children")("equipment"), CStr(equipmentKey), True)
-                                                            equipment.height = getMesManHeight(jsonArm)
-                                                            If Not equipment Is Nothing Then
-                                                                If equipment.Bonded = "YES" Or equipment.Bonded = "NO" Then pole.Bonded = equipment.Bonded
-                                                                pole.equipments.Add equipment
+                                                            Set Equipment = UtilitiesKatapult.InitEquipmentFromKatapultJson(jsonArm("_children")("equipment"), CStr(equipmentKey), True)
+                                                            Equipment.height = getMesManHeight(jsonArm)
+                                                            If Not Equipment Is Nothing Then
+                                                                If Equipment.Bonded = "YES" Or Equipment.Bonded = "NO" Then pole.Bonded = Equipment.Bonded
+                                                                pole.equipments.Add Equipment
                                                             End If
                                                         Next equipmentKey
                                                     End If
@@ -146,10 +146,10 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As project
                                     End If
                                     If jsonPhotoData.exists("equipment") Then
                                         For Each equipmentKey In jsonPhotoData("equipment")
-                                            Set equipment = UtilitiesKatapult.InitEquipmentFromKatapultJson(jsonPhotoData("equipment"), CStr(equipmentKey))
-                                            If Not equipment Is Nothing Then
-                                                If equipment.Bonded = "YES" Or equipment.Bonded = "NO" Then pole.Bonded = equipment.Bonded
-                                                pole.equipments.Add equipment
+                                            Set Equipment = UtilitiesKatapult.InitEquipmentFromKatapultJson(jsonPhotoData("equipment"), CStr(equipmentKey))
+                                            If Not Equipment Is Nothing Then
+                                                If Equipment.Bonded = "YES" Or Equipment.Bonded = "NO" Then pole.Bonded = Equipment.Bonded
+                                                pole.equipments.Add Equipment
                                             End If
                                         Next equipmentKey
                                     End If
@@ -510,10 +510,10 @@ Private Sub addConnections(ByVal json As Object, connectionKey As String, ByVal 
     End If
 End Sub
 
-Private Function InitEquipmentFromKatapultJson(ByVal equipments As Object, equipmentKey As String, Optional Arm As Boolean) As equipment
+Private Function InitEquipmentFromKatapultJson(ByVal equipments As Object, equipmentKey As String, Optional Arm As Boolean) As Equipment
     Dim otherEquipmentKey As Variant
     
-    Dim equipment As equipment: Set equipment = New equipment
+    Dim Equipment As Equipment: Set Equipment = New Equipment
     Dim json, otherJson As Object
     
     Dim measurementType, otherMeasurementType As String
@@ -522,31 +522,31 @@ Private Function InitEquipmentFromKatapultJson(ByVal equipments As Object, equip
     Set json = equipments(equipmentKey)
     Dim katapultComponentType As String
     katapultComponentType = LCase(json("equipment_type"))
-    equipment.componentType = getKatapultNameMapping(katapultComponentType)
+    Equipment.componentType = getKatapultNameMapping(katapultComponentType)
     
-    equipment.equipmentId = equipmentKey
+    Equipment.equipmentId = equipmentKey
     measurementType = ""
     If json.exists("measurement_of") Then measurementType = json("measurement_of")
     If json.exists("CE_MKR_bonded_STL") Then
         If json("CE_MKR_bonded_STL") = "Bonde" Then
-            equipment.Bonded = "YES"
+            Equipment.Bonded = "YES"
         ElseIf json("CE_MKR_bonded_STL") = "Not Bonded" Then
-            equipment.Bonded = "NO"
+            Equipment.Bonded = "NO"
         End If
     End If
         
-    If equipment.componentType = "DL" Then
-        equipment.height = getMesManHeight(json)
-        equipment.size = getKatapultNameMapping(json("drip_loop_spec"))
-        equipment.bottomHeight = equipment.height
-    ElseIf equipment.componentType = "RISER" Then
-        equipment.height = getMesManHeight(json)
-        equipment.size = getKatapultNameMapping(json("riser_spec"))
-    ElseIf InStr(measurementType, "bottom") > 0 And (equipment.componentType = "SL" Or equipment.componentType = "XFMR") Then
+    If Equipment.componentType = "DL" Then
+        Equipment.height = getMesManHeight(json)
+        Equipment.size = getKatapultNameMapping(json("drip_loop_spec"))
+        Equipment.bottomHeight = Equipment.height
+    ElseIf Equipment.componentType = "RISER" Then
+        Equipment.height = getMesManHeight(json)
+        Equipment.size = getKatapultNameMapping(json("riser_spec"))
+    ElseIf InStr(measurementType, "bottom") > 0 And (Equipment.componentType = "SL" Or Equipment.componentType = "XFMR") Then
         trace = json("_trace")
     
-        equipment.bottomHeight = getMesManHeight(json)
-        equipment.size = getKatapultNameMapping(json(katapultComponentType & "_spec"))
+        Equipment.bottomHeight = getMesManHeight(json)
+        Equipment.size = getKatapultNameMapping(json(katapultComponentType & "_spec"))
         For Each otherEquipmentKey In equipments
             If otherEquipmentKey <> equipmentKey Then
                 Set otherJson = equipments(otherEquipmentKey)
@@ -554,16 +554,16 @@ Private Function InitEquipmentFromKatapultJson(ByVal equipments As Object, equip
                     otherMeasurementType = ""
                     If otherJson.exists("measurement_of") Then otherMeasurementType = otherJson("measurement_of")
                     If InStr(otherMeasurementType, "top") Then
-                        equipment.height = getMesManHeight(otherJson)
+                        Equipment.height = getMesManHeight(otherJson)
                     End If
                 End If
             End If
         Next otherEquipmentKey
-    ElseIf InStr(measurementType, "top") > 0 And (equipment.componentType <> "SL" And equipment.componentType <> "XFMR") Then
+    ElseIf InStr(measurementType, "top") > 0 And (Equipment.componentType <> "SL" And Equipment.componentType <> "XFMR") Then
         trace = json("_trace")
         
-        equipment.height = getMesManHeight(json)
-        equipment.size = getKatapultNameMapping(json(katapultComponentType & "_spec"))
+        Equipment.height = getMesManHeight(json)
+        Equipment.size = getKatapultNameMapping(json(katapultComponentType & "_spec"))
     
         For Each otherEquipmentKey In equipments
             If otherEquipmentKey <> equipmentKey Then
@@ -572,24 +572,24 @@ Private Function InitEquipmentFromKatapultJson(ByVal equipments As Object, equip
                     otherMeasurementType = ""
                     If otherJson.exists("measurement_of") Then otherMeasurementType = otherJson("measurement_of")
                     If InStr(otherMeasurementType, "bottom") Then
-                        equipment.bottomHeight = getMesManHeight(otherJson)
+                        Equipment.bottomHeight = getMesManHeight(otherJson)
                     End If
                 End If
             End If
         Next otherEquipmentKey
-    ElseIf equipment.componentType <> "SL" And equipment.componentType <> "XFMR" And equipment.componentType <> "CAPACITOR" And equipment.componentType <> "RISER" And equipment.componentType <> "RECLOSER" And equipment.componentType <> "REGULATOR" Then
-        equipment.height = getMesManHeight(json)
-        equipment.size = equipment.componentType
-        equipment.owner = json("company")
+    ElseIf Equipment.componentType <> "SL" And Equipment.componentType <> "XFMR" And Equipment.componentType <> "CAPACITOR" And Equipment.componentType <> "RISER" And Equipment.componentType <> "RECLOSER" And Equipment.componentType <> "REGULATOR" Then
+        Equipment.height = getMesManHeight(json)
+        Equipment.size = Equipment.componentType
+        Equipment.owner = json("company")
     End If
     
-    If Not equipment Is Nothing And Not Arm Then
-        If equipment.height = 0 And equipment.bottomHeight = 0 Then
-            Set equipment = Nothing
+    If Not Equipment Is Nothing And Not Arm Then
+        If Equipment.height = 0 And Equipment.bottomHeight = 0 Then
+            Set Equipment = Nothing
         End If
     End If
     
-    Set InitEquipmentFromKatapultJson = equipment
+    Set InitEquipmentFromKatapultJson = Equipment
     
 End Function
 
