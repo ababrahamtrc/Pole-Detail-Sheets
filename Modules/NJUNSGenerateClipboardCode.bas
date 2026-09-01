@@ -301,7 +301,7 @@ Private Function checkCodes() As Boolean
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
     If controlWs.Range("NJUNSCODES").Value = "" Then Call NJUNSCodes.generateNJUNSCodes
     Dim codeRange As Range: Set codeRange = controlWs.Range("NJUNSCODES").EntireColumn
-    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).row
+    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).ROW
     Set codeRange = controlWs.Range(controlWs.Cells(3, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
     
     Dim cell As Range
@@ -323,7 +323,7 @@ Private Function getSheetNJUNSCode(project As project, pole As pole, Optional pr
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
     If controlWs.Range("NJUNSCODES").Value = "" Then Call NJUNSCodes.generateNJUNSCodes
     Dim codeRange As Range: Set codeRange = controlWs.Range("NJUNSCODES").EntireColumn
-    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).row
+    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).ROW
     Set codeRange = controlWs.Range(controlWs.Cells(3, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
     
     If pole.njunsSteps.count = 0 Then
@@ -512,7 +512,7 @@ Private Function getDuplicateSheetNJUNSCode(project As project, pole As pole) As
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
     If controlWs.Range("NJUNSCODES").Value = "" Then Call NJUNSCodes.generateNJUNSCodes
     Dim codeRange As Range: Set codeRange = controlWs.Range("NJUNSCODES").EntireColumn
-    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).row
+    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).ROW
     Set codeRange = controlWs.Range(controlWs.Cells(3, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
     
     If pole.njunsSteps.count = 0 Then
@@ -613,7 +613,7 @@ Private Function getAlmostDuplicateSheetNJUNSCode(project As project, pole As po
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
     If controlWs.Range("NJUNSCODES").Value = "" Then Call NJUNSCodes.generateNJUNSCodes
     Dim codeRange As Range: Set codeRange = controlWs.Range("NJUNSCODES").EntireColumn
-    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).row
+    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).ROW
     Set codeRange = controlWs.Range(controlWs.Cells(3, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
     
     If pole.njunsSteps.count = 0 Then
@@ -750,8 +750,8 @@ End Function
 Private Function findNJUNSCode(ByVal company As String) As String
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
     Dim codeRange As Range: Set codeRange = controlWs.Range("NJUNSCODES").EntireColumn
-    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).row
-    Set codeRange = controlWs.Range(controlWs.Cells(controlWs.Range("NJUNSCODES").row, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
+    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).ROW
+    Set codeRange = controlWs.Range(controlWs.Cells(controlWs.Range("NJUNSCODES").ROW, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
 
     company = UCase(Replace(company, " ", ""))
     company = Replace(company, ":", "")
@@ -837,7 +837,7 @@ Private Function getUpdateSheetNJUNSCode(project As project, pole As pole) As St
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
     If controlWs.Range("NJUNSCODES").Value = "" Then Call NJUNSCodes.generateNJUNSCodes
     Dim codeRange As Range: Set codeRange = controlWs.Range("NJUNSCODES").EntireColumn
-    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).row
+    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).ROW
     Set codeRange = controlWs.Range(controlWs.Cells(3, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
     
     If pole.njunsSteps.count = 0 Then
