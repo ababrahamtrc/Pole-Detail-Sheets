@@ -19,8 +19,6 @@ Public Sub fixAttachmentHeights()
     Application.ScreenUpdating = False
     Application.DisplayAlerts = False
 
-    dim name as variant
-
     For i = 1 To 12
         For Each name In sheet.names
             If name.name = "'" & sheet.name & "'" & "!" & "TOPOLE" & i Then spans = spans + 1
