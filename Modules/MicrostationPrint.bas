@@ -1605,6 +1605,7 @@ Function generateJSON() As Boolean
                             If InStr(line, "/") > 0 Then line = Split(line, "/")(1)
                             If InStr(line, "KVA") > 0 Then jsonXFMR("size2") = Left(line, InStr(line, "KVA") - 1)
                             If IsNumeric(jsonXFMR("size2")) Then jsonXFMR("size2") = CInt(jsonXFMR("size2"))
+                            If size2 = 0 Then Call jsonXFMR.Remove("size2")
                         End If
                     End If
                 Next line
