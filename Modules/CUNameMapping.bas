@@ -171,6 +171,7 @@ Private Sub InitializeCUNameMapping()
     CUNameMapping("S8FGDE") = "107000"
     CUNameMapping("S10FGDE") = "107001"
     CUNameMapping("S11FGDE") = "107002"
+    CUNameMapping("S11FGTAN") = "107003"
     CUNameMapping("SSA") = "100027"
     CUNameMapping("DSA") = "100007"
     CUNameMapping("SPIN") = "100022"
@@ -204,9 +205,9 @@ Private Sub InitializeCUNameMapping()
     CUNameMapping("TEMPORARYJUMPER") = "106277"
     CUNameMapping("TEMPJUMPER") = "106277"
     
-    CUNameMapping("FGINS") = "100192"
-    CUNameMapping("FG") = "100192"
-    CUNameMapping("FGLINK") = "100192"
+    CUNameMapping("FGINS") = "100191"
+    CUNameMapping("FG") = "100191"
+    CUNameMapping("FGLINK") = "100191"
     
     CUNameMapping("CLUSTERMOUNT") = "200548"
     CUNameMapping("SIDEWALKBRACE") = "100432"
