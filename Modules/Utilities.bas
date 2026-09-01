@@ -30,6 +30,8 @@ Sub applyStandardAbbreviations(ByRef str As String)
     str = Replace(str, "DE BRACKET", "DEBKT")
     str = Replace(str, "EXTENSION", "EXT")
     str = Replace(str, "FIBERGLASS", "FG")
+    str = Replace(str, "FG STANDOFFS", "FGSB")
+    str = Replace(str, "FG STANDOFF", "FGSB")
     str = Replace(str, "FG STANDOFF BRKT", "FGSB")
     str = Replace(str, "FGSOB", "FGSB")
     str = Replace(str, "FEET", "FT")
@@ -46,7 +48,7 @@ Public Function SheetExists(ByVal sheetName As String, Optional wb As Workbook) 
     If wb Is Nothing Then Set wb = ThisWorkbook
  
     For Each sheet In wb.Worksheets
-        If ThisWorkbook.RemoveParentheses(sheet.name) = ThisWorkbook.RemoveParentheses(sheetName) Then
+        If Trim(ThisWorkbook.RemoveParentheses(sheet.name)) = Trim(ThisWorkbook.RemoveParentheses(sheetName)) Then
             SheetExists = True
             Exit Function
         End If
@@ -317,7 +319,7 @@ End Function
 Public Function GetPDS(name As String) As Worksheet
     If Utilities.SheetExists(name) Then
         For Each sheet In ThisWorkbook.sheets
-            If ThisWorkbook.RemoveParentheses(sheet.name) = name Then
+            If Trim(ThisWorkbook.RemoveParentheses(sheet.name)) = name Then
                 Set GetPDS = sheet
                 Exit Function
             End If
