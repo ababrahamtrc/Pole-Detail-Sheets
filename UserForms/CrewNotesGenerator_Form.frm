@@ -2449,17 +2449,17 @@ Private Sub generateDownguysSection()
 End Sub
 
 Private Sub compileCrewNotes()
-    If installNotes <> "" Then
-        crewNotes = crewNotes & "INSTALL" & vbLf & installNotes & vbLf
-    End If
-    If removeNotes <> "" Then
-        crewNotes = crewNotes & "REMOVE" & vbLf & removeNotes & vbLf
-    End If
     If replaceNotes <> "" Then
         crewNotes = crewNotes & "REPLACE" & vbLf & replaceNotes & vbLf
     End If
+    If installNotes <> "" Then
+        crewNotes = crewNotes & "INSTALL" & vbLf & installNotes & vbLf
+    End If
     If transferNotes <> "" Then
         crewNotes = crewNotes & "TRANSFER" & vbLf & transferNotes & vbLf
+    End If
+    If removeNotes <> "" Then
+        crewNotes = crewNotes & "REMOVE" & vbLf & removeNotes & vbLf
     End If
     If notes <> "" Then
         crewNotes = crewNotes & notes
