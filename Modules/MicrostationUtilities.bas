@@ -35,7 +35,7 @@ Function testToken(token As String) As Boolean
 End Function
 
 Function getElectricJson(poles As Collection, layer As Integer, token As String, Optional query As String) As Object
-    On Error GoTo ErrorHandler
+    On Error GoTo errorHandler
     
     Dim lowestLatitude As Double
     Dim lowestLongitude As Double
@@ -82,7 +82,7 @@ Function getElectricJson(poles As Collection, layer As Integer, token As String,
     
     Exit Function
     
-ErrorHandler:
+errorHandler:
     MsgBox "HTTP Request Failed or Timed Out!" & vbCrLf & _
            "Error Number: " & Err.Number & vbCrLf & _
            "Description: " & Err.Description, vbCritical
@@ -90,7 +90,7 @@ ErrorHandler:
 End Function
 
 Function getOtherPole(x As Double, y As Double, radius As Integer, token) As Object
-    On Error GoTo ErrorHandler
+    On Error GoTo errorHandler
     
     x1 = x - radius
     y1 = y - radius
@@ -120,14 +120,14 @@ Function getOtherPole(x As Double, y As Double, radius As Integer, token) As Obj
     Set http = Nothing
     Exit Function
     
-ErrorHandler:
+errorHandler:
     MsgBox "HTTP Request Failed or Timed Out!" & vbCrLf & _
            "Error Number: " & Err.Number & vbCrLf & _
            "Description: " & Err.Description, vbCritical
 End Function
 
 Function getROWJSON(poles As Collection, layer As Integer, token As String) As Object
-    On Error GoTo ErrorHandler
+    On Error GoTo errorHandler
     
     Dim lowestLatitude As Double
     Dim lowestLongitude As Double
@@ -180,7 +180,7 @@ Function getROWJSON(poles As Collection, layer As Integer, token As String) As O
     Set http = Nothing
     Exit Function
     
-ErrorHandler:
+errorHandler:
     MsgBox "HTTP Request Failed or Timed Out!" & vbCrLf & _
            "Error Number: " & Err.Number & vbCrLf & _
            "Description: " & Err.Description, vbCritical
