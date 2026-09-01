@@ -924,9 +924,9 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
             line2 = Trim(matches(0).SubMatches(1))
             If timeAdder = 1 Then timeAdder = 2
             If pole.buck Then timeAdder = 3
-            For Each equipment In pole.equipments
-                If equipment.componentType = "XFMR" Then timeAdder = 3
-            Next equipment
+            For Each Equipment In pole.equipments
+                If Equipment.componentType = "XFMR" Then timeAdder = 3
+            Next Equipment
         ElseIf InStr(line, "SVC RISER") > 0 And InStr(line, "|C") > 0 Then
             line1 = Left(line, InStr(line, "SVC RISER") - 1) & "RISER"
             line2 = Left(line, InStr(line, "SVC RISER") - 1) & "RISER"
@@ -1133,7 +1133,7 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
                     Set polesDict = New Scripting.Dictionary
                     Set cuSortWs = ThisWorkbook.sheets("CUSortOrder")
                     
-                    lastRow = cuSortWs.Cells(cuSortWs.Rows.count, "A").End(xlUp).row
+                    lastRow = cuSortWs.Cells(cuSortWs.Rows.count, "A").End(xlUp).ROW
                     
                     For i = 1 To lastRow
                         If cuSortWs.Cells(i, "B").Value = "5" Then
@@ -1148,7 +1148,7 @@ Private Sub parseLineToCUs(project As project, needAdditionalCUs As Collection, 
                             If polesDict.exists(cu.code) And cu.action = "RET REM" And cu.location = properLocation(pole.location) Then
                                 Call generateCU(demoCus, pole.location, "100417", 1, "INSTALL")
                                 demoCus.Add cus(i)
-                                Call generateCU(demoCus, pole.location, "100066", 1, "INSTALL")
+                                Call generateCU(demoCus, pole.location, "101513", 1, "INSTALL")
                                 cus.Remove (i)
                                 Exit For
                             End If
@@ -1338,11 +1338,11 @@ Private Sub generatePrimaryReconductorCUs(cus As Collection, missedlines As Coll
     End If
     
     If finished1 And finished2 Then
-        Dim equipment As equipment
+        Dim Equipment As Equipment
         Dim withEquipment As Boolean
-        For Each equipment In pole.equipments
-            If equipment.componentType = "XFMR" Or equipment.componentType = "CAPACITOR" Or equipment.componentType = "RECLOSER" Or equipment.componentType = "REGULATOR" Then withEquipment = True
-        Next equipment
+        For Each Equipment In pole.equipments
+            If Equipment.componentType = "XFMR" Or Equipment.componentType = "CAPACITOR" Or Equipment.componentType = "RECLOSER" Or Equipment.componentType = "REGULATOR" Then withEquipment = True
+        Next Equipment
         
         If phase1 = phase2 And phase1 = 3 Then
             If withEquipment Then
@@ -1561,12 +1561,12 @@ Private Sub generateTransferStreetlightCU(line As String, cus As Collection, pol
     
     If InStr(line, "@") > 0 Then streetlightBottomBracketHeight = Utilities.convertToInches(Mid(line, InStr(line, "@")))
     If streetlightBottomBracketHeight < 1 Then
-        For Each equipment In pole.equipments
-            If equipment.componentType = "SL" Then
-                streetlightBottomBracketHeight = equipment.bottomHeight
+        For Each Equipment In pole.equipments
+            If Equipment.componentType = "SL" Then
+                streetlightBottomBracketHeight = Equipment.bottomHeight
                 Exit For
             End If
-        Next equipment
+        Next Equipment
     End If
     
     
@@ -1662,11 +1662,11 @@ Private Sub generateSecondaryRiserCU(cus As Collection, pole As pole, hardware A
                 If amount = 0 Then amount = WorksheetFunction.RoundUp((pole.newHeight - 83) / 12, 0)
             End If
         ElseIf action = "RET REM" Then
-            For Each equipment In pole.equipments
-                If equipment.componentType = "RISER" Then
-                    If amount = 0 Then amount = WorksheetFunction.RoundUp(equipment.height / 12, 0)
+            For Each Equipment In pole.equipments
+                If Equipment.componentType = "RISER" Then
+                    If amount = 0 Then amount = WorksheetFunction.RoundUp(Equipment.height / 12, 0)
                 End If
-            Next equipment
+            Next Equipment
         End If
         
         Call generateCU(cus, pole.location, "101523", amount, action)
