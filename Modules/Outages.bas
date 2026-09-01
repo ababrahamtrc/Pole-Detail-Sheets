@@ -653,7 +653,7 @@ Sub DownloadOutageLists()
                     Set wdapp = CreateObject("Word.Application")
                     wdapp.visible = False
                     
-                    Dim wdDoc As Document
+                    Dim wdDoc As Object
                     
                     wdapp.AutomationSecurity = 1
                     wdapp.DisplayAlerts = 0
