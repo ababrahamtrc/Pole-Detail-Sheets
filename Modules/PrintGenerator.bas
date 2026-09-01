@@ -312,6 +312,7 @@ Public Sub DrawPrint()
 End Sub
 
 Sub ShortenLines(targetLevelName As String)
+    Dim olevel As Object
     Dim oScan As ElementScanCriteria
     Dim oEnumerator As ElementEnumerator
     Dim oElement As element
@@ -323,10 +324,10 @@ Sub ShortenLines(targetLevelName As String)
     Dim status As Boolean
     
     On Error Resume Next
-    Set oLevel = ActiveDesignFile.Levels(targetLevelName)
+    Set olevel = ActiveDesignFile.Levels(targetLevelName)
     On Error GoTo 0
     
-    If oLevel Is Nothing Then
+    If olevel Is Nothing Then
         MsgBox "Level '" & targetLevelName & "' not found in this DGN file.", vbCritical
         Exit Sub
     End If
@@ -335,7 +336,7 @@ Sub ShortenLines(targetLevelName As String)
     oScan.ExcludeAllTypes
     oScan.IncludeType msdElementTypeLine
     oScan.ExcludeAllLevels
-    oScan.IncludeLevel oLevel
+    oScan.IncludeLevel olevel
     
     Set oEnumerator = ActiveModelReference.Scan(oScan)
     
@@ -360,7 +361,8 @@ Sub ShortenLines(targetLevelName As String)
         Next j
     Next i
 
-    Dim ofeature As object
+    'Dim ofeature As Object
+    Dim ofeature As xft.feature
     Dim oFeatureMgr As Object
     Set oFeatureMgr = CreateObject("xft.FeatureMgr")
     For i = 0 To count - 1
@@ -404,7 +406,7 @@ Private Sub AdjustLineLength(oLine As LineElement, pInt As Point3d)
     End If
 End Sub
 
-Private Function IsVertexConnected(pVertex As Point3d, oCurrentLine As LineElement, oLevel As Level) As Boolean
+Private Function IsVertexConnected(pVertex As Point3d, oCurrentLine As LineElement, olevel As Level) As Boolean
     Dim oScan As New ElementScanCriteria
     Dim oEnumerator As ElementEnumerator
     Dim oCheckLine As LineElement
@@ -417,7 +419,7 @@ Private Function IsVertexConnected(pVertex As Point3d, oCurrentLine As LineEleme
     oScan.ExcludeAllTypes
     oScan.IncludeType msdElementTypeLine
     oScan.ExcludeAllLevels
-    oScan.IncludeLevel oLevel
+    oScan.IncludeLevel olevel
     
     Set oEnumerator = ActiveModelReference.Scan(oScan)
     
@@ -515,12 +517,12 @@ Public Sub createDeadend(oLine As LineElement, vertexIndex As Integer)
     'If PrintOptions.ShowDrawing Then DoEvents
 End Sub
 
-Function ReadJSON(FileName As String) As Object
+Function ReadJSON(fileName As String) As Object
     Dim filePath As String
     Dim jsonText As String
     Dim fileNum As Integer
     
-    filePath = "C:\ProgramData\Bentley\OpenUtilities Map Connect Edition\Configuration\WorkSpaces\ConsumersEnergy\Standards\vba\" & FileName & ".json"
+    filePath = "C:\ProgramData\Bentley\OpenUtilities Map Connect Edition\Configuration\WorkSpaces\ConsumersEnergy\Standards\vba\" & fileName & ".json"
 
     fileNum = FreeFile
     
@@ -621,6 +623,10 @@ Public Sub placePole(jsonPole As Object)
             Set Tree = CreateCellElement2("TREE1", pt, scaleMatrix, True, Matrix3dIdentity)
             ActiveModelReference.AddElement Tree
             If PrintOptions.ShowDrawing Then DoEvents
+            
+            On Error Resume Next
+            Tree.Level = ActiveDesignFile.Levels("CN-LND-TREE")
+            On Error GoTo 0
             
             Set ofeature = oFeatureMgr.CreateFeature(Tree)
             ofeature.name = "CE_TREE"
@@ -2040,13 +2046,13 @@ Function FindClosestPointOnCenterlines(startPoint As Point3d) As Variant()
     End If
 End Function
 
-Function ClosestPointOnSegment(A As Point3d, b As Point3d, p As Point3d) As Point3d
+Function ClosestPointOnSegment(A As Point3d, B As Point3d, P As Point3d) As Point3d
     Dim Ax As Double: Ax = A.x
     Dim Ay As Double: Ay = A.y
-    Dim Bx As Double: Bx = b.x
-    Dim By As Double: By = b.y
-    Dim Px As Double: Px = p.x
-    Dim Py As Double: Py = p.y
+    Dim Bx As Double: Bx = B.x
+    Dim By As Double: By = B.y
+    Dim Px As Double: Px = P.x
+    Dim Py As Double: Py = P.y
     
     Dim ABx As Double, ABy As Double
     Dim APx As Double, APy As Double
