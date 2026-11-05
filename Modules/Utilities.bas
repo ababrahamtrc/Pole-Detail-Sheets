@@ -1,4 +1,21 @@
 Attribute VB_Name = "Utilities"
+Sub addSensitivityLabel(ByRef windowsFile As Variant)
+    Dim info As Office.LabelInfo
+    Dim context As Object
+
+    Set info = windowsFile.SensitivityLabel.CreateLabelInfo()
+    Set context = CreateObject("Scripting.Dictionary")
+    
+    With info
+        .LabelId = "ea80ea2e-ac10-4b4d-a89d-c256d604ead7"
+        .siteID = "2d6eb7d9-36ed-469a-be0e-a849e88582fd"
+        .labelName = "defa4170-0d19-0005-0003-bc88714345d2"
+        .AssignmentMethod = Office.MsoAssignmentMethod.PRIVILEGED
+    End With
+
+    'windowsFile.SensitivityLabel.SetLabel info, context
+End Sub
+
 Sub applyStandardAbbreviations(ByRef str As String)
     str = UCase(str)
     
@@ -33,6 +50,7 @@ Sub applyStandardAbbreviations(ByRef str As String)
     str = Replace(str, "FG STANDOFFS", "FGSB")
     str = Replace(str, "FG STANDOFF", "FGSB")
     str = Replace(str, "FG STANDOFF BRKT", "FGSB")
+    str = Replace(str, "FGSB BRKT", "FGSB")
     str = Replace(str, "FGSOB", "FGSB")
     str = Replace(str, "FEET", "FT")
     str = Replace(str, "GROUND", "GRD")
@@ -269,9 +287,49 @@ Public Function degreesToDirection(degrees As Integer) As String
     End Select
 End Function
 
+Public Function GetJobDirectory(notification As String) As String
+    GetJobDirectory = ""
+    If Environ$("USERNAME") <> "aabraham" Then Exit Function
+    
+    Dim fso As Object
+    Dim shellObj As Object
+    Dim downloadPath As String
+    Dim parentFolder As Object
+    Dim subFolder As Object
+    
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set shellObj = CreateObject("Shell.Application")
+    
+
+    jobsPath = "C:\Users\aabraham\Documents\Jobs"
+    
+    If Not fso.FolderExists(jobsPath) Then Exit Function
+    
+    Set parentFolder = fso.GetFolder(jobsPath)
+    
+    For Each jobTypeFolder In parentFolder.SubFolders
+        For Each jobFolder In jobTypeFolder.SubFolders
+            If InStr(jobFolder.name, notification) Then
+                GetJobDirectory = jobFolder.Path
+                Exit Function
+            End If
+        Next jobFolder
+    Next jobTypeFolder
+    
+    Set jobTypeFolder = Nothing
+    Set parentFolder = Nothing
+    Set jobFolder = Nothing
+    Set fso = Nothing
+End Function
+
 Public Function JoinCollection(col As Variant, delimiter As String) As String
     Dim item As Variant
     Dim result As String
+    
+    If col Is Nothing Then
+        JoinCollection = ""
+        Exit Function
+    End If
     
     For Each item In col
         If item <> "" Then result = result & item & delimiter
@@ -288,7 +346,7 @@ Public Function IsPDS(sheet As Worksheet) As Boolean
     IsPDS = False
     
     If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" Then
-        If sheet.Cells(2, 2).Value = "Notification:" Then
+        If sheet.cells(2, 2).value = "Notification:" Then
             IsPDS = True
             Exit Function
         End If
@@ -411,6 +469,7 @@ Public Function SwapWords(text As String, word1 As String, word2 As String) As S
 End Function
 
 Public Function compactListString(ByVal inputCol As Variant) As String
+    If inputCol.count = 0 Then compactListString = "N/A": Exit Function
     Dim tempArr() As Variant: ReDim tempArr(1 To inputCol.count)
     
     Dim i As Long: i = 1
@@ -482,6 +541,7 @@ Public Function compactListString(ByVal inputCol As Variant) As String
         End If
     End If
     compactListString = output
+    If output = "" Then compactListString = "N/A"
 End Function
 
 Function AreCollectionsEqual(col1 As Collection, col2 As Collection) As Boolean
