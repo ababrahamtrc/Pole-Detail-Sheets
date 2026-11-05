@@ -28,39 +28,39 @@ Public Sub Initialize()
     On Error Resume Next
     
     Me.StartUpPosition = 0
-    Me.Left = Application.Left + (0.5 * Application.Width) - (0.5 * Me.Width)
+    Me.Left = Application.Left + (0.5 * Application.width) - (0.5 * Me.width)
     Me.top = Application.top + (0.5 * Application.height) - (0.5 * Me.height)
     
     Dim header As String
     Set colWs = ThisWorkbook.sheets("Collection")
-    colWsLastRow = colWs.Cells(colWs.Rows.count, "A").End(xlUp).ROW
-    Dim colWsLastCol As Integer: colWsLastCol = colWs.Cells(1, colWs.Columns.count).End(xlToLeft).Column
+    colWsLastRow = colWs.cells(colWs.Rows.count, "A").End(xlUp).ROW
+    Dim colWsLastCol As Integer: colWsLastCol = colWs.cells(1, colWs.Columns.count).End(xlToLeft).column
     Set colWsHeaders = New Scripting.Dictionary
     For i = 1 To colWsLastCol
-        header = Trim(colWs.Cells(1, i).Value)
+        header = Trim(colWs.cells(1, i).value)
         If header <> "" Then
             colWsHeaders(header) = i
         End If
     Next i
     
     Dim jobInfoWs As Worksheet: Set jobInfoWs = ThisWorkbook.sheets("Job Info")
-    Dim jobInfoWsLastRow As Integer: jobInfoWsLastRow = jobInfoWs.Cells(jobInfoWs.Rows.count, "A").End(xlUp).ROW
-    Dim jobInfoWsLastCol As Integer: jobInfoWsLastCol = jobInfoWs.Cells(1, jobInfoWs.Columns.count).End(xlToLeft).Column
+    Dim jobInfoWsLastRow As Integer: jobInfoWsLastRow = jobInfoWs.cells(jobInfoWs.Rows.count, "A").End(xlUp).ROW
+    Dim jobInfoWsLastCol As Integer: jobInfoWsLastCol = jobInfoWs.cells(1, jobInfoWs.Columns.count).End(xlToLeft).column
     Dim jobInfoWsHeaders As Scripting.Dictionary: Set jobInfoWsHeaders = New Scripting.Dictionary
     For i = 1 To jobInfoWsLastCol
-        header = Trim(jobInfoWs.Cells(1, i).Value)
+        header = Trim(jobInfoWs.cells(1, i).value)
         If header <> "" Then
             jobInfoWsHeaders(header) = i
         End If
     Next i
     
-    If jobInfoWsHeaders.exists("Permit") Then TextBox2.Value = jobInfoWs.Cells(2, jobInfoWsHeaders("Permit"))
+    If jobInfoWsHeaders.exists("Permit") Then TextBox2.value = jobInfoWs.cells(2, jobInfoWsHeaders("Permit"))
 End Sub
 
 Private Sub CommandButton1_Click()
     On Error Resume Next
     Dim folderPath As String
-    folderPath = TextBox1.Value
+    folderPath = TextBox1.value
     
     If folderPath = "" Or Dir(folderPath, vbDirectory) = "" Then
         MsgBox "Please select a directory"
@@ -69,7 +69,7 @@ Private Sub CommandButton1_Click()
     
     Dim counter As Integer
     For i = 2 To colWsLastRow
-        folderName = folderPath & Application.PathSeparator & colWs.Cells(i, colWsHeaders("ID"))
+        folderName = folderPath & Application.PathSeparator & colWs.cells(i, colWsHeaders("ID"))
         If Dir(folderName, vbDirectory) = "" Then
             MkDir folderName
             counter = counter + 1
@@ -82,12 +82,12 @@ End Sub
 Private Sub CommandButton2_Click()
     On Error Resume Next
     
-    Dim folderPath, folderName, photosFolder, oldPath, newFileName, newPath, permit, poleNumber, ceid, poleNum, fileName As String
+    Dim folderPath, folderName, photosFolder, oldPath, newFileName, newPath, Permit, poleNumber, ceid, poleNum, fileName As String
     Dim photoCounter, counter As Integer
     
-    folderPath = TextBox1.Value & Application.PathSeparator
+    folderPath = TextBox1.value & Application.PathSeparator
     
-    If TextBox2.Value = "" Then
+    If TextBox2.value = "" Then
         MsgBox "Please enter a permit number."
         Exit Sub
     ElseIf folderPath = "" Or Dir(folderPath, vbDirectory) = "" Then
@@ -96,7 +96,7 @@ Private Sub CommandButton2_Click()
     End If
     
     For i = 2 To colWsLastRow
-        folderName = folderPath & colWs.Cells(i, colWsHeaders("ID")).Value
+        folderName = folderPath & colWs.cells(i, colWsHeaders("ID")).value
         If Dir(folderName, vbDirectory) = "" Then
             MsgBox "Not all folders created in directory, please generate folders."
             Exit Sub
@@ -108,12 +108,12 @@ Private Sub CommandButton2_Click()
         MkDir photosFolder
     End If
     
-    permit = TextBox2.Value
+    Permit = TextBox2.value
     For i = 2 To colWsLastRow
-        poleNum = colWs.Cells(i, colWsHeaders("ID")).Value
+        poleNum = colWs.cells(i, colWsHeaders("ID")).value
         ceid = ""
-        If colWsHeaders.exists("New CE ID Tag") Then ceid = colWs.Cells(i, colWsHeaders("New CE ID Tag"))
-        If ceid = "" Then ceid = colWs.Cells(i, colWsHeaders("CE ID Tag"))
+        If colWsHeaders.exists("New CE ID Tag") Then ceid = colWs.cells(i, colWsHeaders("New CE ID Tag"))
+        If ceid = "" Then ceid = colWs.cells(i, colWsHeaders("CE ID Tag"))
         If ceid = "" Then ceid = "FOREIGN"
         fileName = Dir(folderPath & poleNum & Application.PathSeparator & "*")
         Dim oldFiles As Collection: Set oldFiles = New Collection
@@ -127,7 +127,7 @@ Private Sub CommandButton2_Click()
         photoCounter = 1
         For Each oldFile In oldFiles
             Do
-                newFileName = "M1P" & poleNum & "-" & photoCounter & "_" & ceid & "_" & permit & ".jpg"
+                newFileName = "M1P" & poleNum & "-" & photoCounter & "_" & ceid & "_" & Permit & ".jpg"
                 newPath = photosFolder & Application.PathSeparator & newFileName
                 photoCounter = photoCounter + 1
             Loop While Dir(newPath) <> ""
@@ -151,18 +151,18 @@ Private Sub CommandButton3_click()
         If .Show = -1 Then outputPath = Application.FileDialog(msoFileDialogFilePicker).SelectedItems.item(1) Else Exit Sub
     End With
     
-    TextBox1.Value = outputPath
+    TextBox1.value = outputPath
 End Sub
 
 Private Sub CommandButton4_click()
-    Dim header, imageUrl, photosFolder, folderPath, fileName, savepath, poleNum, ceid, permit As String
+    Dim header, imageUrl, photosFolder, folderPath, fileName, savepath, poleNum, ceid, Permit As String
     Dim photoCounter As Integer
     Dim http, stream As Object
     
     On Error Resume Next
     
-    folderPath = TextBox1.Value & Application.PathSeparator
-    If TextBox2.Value = "" Then
+    folderPath = TextBox1.value & Application.PathSeparator
+    If TextBox2.value = "" Then
         MsgBox "Please enter a permit number."
         Exit Sub
     ElseIf folderPath = "" Or Dir(folderPath, vbDirectory) = "" Then
@@ -174,22 +174,22 @@ Private Sub CommandButton4_click()
     End If
     
     Dim colWs As Worksheet: Set colWs = ThisWorkbook.sheets("Collection")
-    Dim colWsLastRow As Integer: colWsLastRow = colWs.Cells(colWs.Rows.count, "A").End(xlUp).ROW
-    Dim colWsLastCol As Integer: colWsLastCol = colWs.Cells(1, colWs.Columns.count).End(xlToLeft).Column
+    Dim colWsLastRow As Integer: colWsLastRow = colWs.cells(colWs.Rows.count, "A").End(xlUp).ROW
+    Dim colWsLastCol As Integer: colWsLastCol = colWs.cells(1, colWs.Columns.count).End(xlToLeft).column
     Dim colWsHeaders As Scripting.Dictionary: Set colWsHeaders = New Scripting.Dictionary
     For i = 1 To colWsLastCol
-        header = Trim(colWs.Cells(1, i).Value)
+        header = Trim(colWs.cells(1, i).value)
         If header <> "" Then
             colWsHeaders(header) = i
         End If
     Next i
     
     Dim imageWs As Worksheet: Set imageWs = ThisWorkbook.sheets("Images")
-    Dim imageWsLastRow As Integer: imageWsLastRow = imageWs.Cells(imageWs.Rows.count, "A").End(xlUp).ROW
-    Dim imageWsLastCol As Integer: imageWsLastCol = imageWs.Cells(1, imageWs.Columns.count).End(xlToLeft).Column
+    Dim imageWsLastRow As Integer: imageWsLastRow = imageWs.cells(imageWs.Rows.count, "A").End(xlUp).ROW
+    Dim imageWsLastCol As Integer: imageWsLastCol = imageWs.cells(1, imageWs.Columns.count).End(xlToLeft).column
     Dim imageWsHeaders As Scripting.Dictionary: Set imageWsHeaders = New Scripting.Dictionary
     For i = 1 To imageWsLastCol
-        header = Trim(imageWs.Cells(1, i).Value)
+        header = Trim(imageWs.cells(1, i).value)
         If header <> "" Then
             imageWsHeaders(header) = i
         End If
@@ -203,29 +203,29 @@ Private Sub CommandButton4_click()
     ProgressBar_Form.Show vbModeless
     
     Dim poleNumRange, cell As Range
-    Set poleNumRange = colWs.Range(colWs.Cells(2, colWsHeaders("ID")), colWs.Cells(colWsLastRow, colWsHeaders("ID")))
-    permit = TextBox2.Value
+    Set poleNumRange = colWs.Range(colWs.cells(2, colWsHeaders("ID")), colWs.cells(colWsLastRow, colWsHeaders("ID")))
+    Permit = TextBox2.value
     Set http = CreateObject("MSXML2.XMLHTTP")
     For i = 2 To imageWsLastRow
         ProgressBar_Form.Label1.caption = "Downloading image " & (i - 1) & " of " & (imageWsLastRow - 1) & " ... please wait..."
         ProgressBar_Form.Repaint
-        imageUrl = imageWs.Cells(i, imageWsHeaders("value"))
-        If poleNum <> imageWs.Cells(i, imageWsHeaders("ID")) Then
+        imageUrl = imageWs.cells(i, imageWsHeaders("value"))
+        If poleNum <> imageWs.cells(i, imageWsHeaders("ID")) Then
             ceid = ""
-            poleNum = imageWs.Cells(i, imageWsHeaders("ID"))
-            Set cell = poleNumRange.Find(what:=poleNum, LookIn:=xlValues, lookat:=xlWhole)
-            If colWsHeaders.exists("New CE ID Tag") Then ceid = colWs.Cells(cell.ROW, colWsHeaders("New CE ID Tag"))
-            If ceid = "" Then ceid = colWs.Cells(cell.ROW, colWsHeaders("CE ID Tag"))
+            poleNum = imageWs.cells(i, imageWsHeaders("ID"))
+            Set cell = poleNumRange.Find(What:=poleNum, LookIn:=xlValues, LookAt:=xlWhole)
+            If colWsHeaders.exists("New CE ID Tag") Then ceid = colWs.cells(cell.ROW, colWsHeaders("New CE ID Tag"))
+            If ceid = "" Then ceid = colWs.cells(cell.ROW, colWsHeaders("CE ID Tag"))
             If ceid = "" Then ceid = "FOREIGN"
             photoCounter = 1
         End If
         Do
-            fileName = "M1P" & poleNum & "-" & photoCounter & "_" & ceid & "_" & permit & ".jpg"
+            fileName = "M1P" & poleNum & "-" & photoCounter & "_" & ceid & "_" & Permit & ".jpg"
             savepath = photosFolder & Application.PathSeparator & fileName
             photoCounter = photoCounter + 1
         Loop While Dir(savepath) <> ""
         http.Open "Get", imageUrl, False
-        http.send
+        http.Send
         If http.status = 200 Then
             Set stream = CreateObject("ADODB.Stream")
             stream.Type = 1
