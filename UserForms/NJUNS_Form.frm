@@ -38,7 +38,7 @@ Private ticketType As String
 
 Sub Initialize()
     Me.StartUpPosition = 0
-    Me.Left = Application.Left + (0.5 * Application.Width) - (0.5 * Me.Width)
+    Me.Left = Application.Left + (0.5 * Application.width) - (0.5 * Me.width)
     Me.top = Application.top + (0.5 * Application.height) - (0.5 * Me.height)
     Set companies = New Collection
     companies.Add CommCompany1
@@ -245,31 +245,31 @@ Private Sub InitComms()
     Call pole.extractFromSheet(sheet)
 
     If Not sheet.Range("CEPOLE") Is Nothing Then
-        If sheet.Range("CEPOLE").Value = True Then
-            TextBox1.Value = "Consumers Energy"
+        If sheet.Range("CEPOLE").value = True Then
+            TextBox1.value = "Consumers Energy"
         Else
             If Not sheet.Range("OTHERPOLEOWNER") Is Nothing Then
-                TextBox1.Value = sheet.Range("OTHERPOLEOWNER").Value
+                TextBox1.value = sheet.Range("OTHERPOLEOWNER").value
             Else
-                TextBox1.Value = "Unknown"
+                TextBox1.value = "Unknown"
             End If
         End If
     End If
     
-    For Each Comm In pole.commWires
-        If Comm.modification > pole.applicant.modification Then CheckBox2.Value = False
-    Next Comm
+    For Each comm In pole.commWires
+        If comm.modification > pole.applicant.modification Then CheckBox2.value = False
+    Next comm
     
-    If pole.applicant.height > 0 And Not pole.overlash Then CheckBox1.Value = True
+    If pole.applicant.height > 0 And Not pole.overlash Then CheckBox1.value = True
     
     Dim commCount As Integer: commCount = 0
     For i = 1 To 8
         If commCount > 8 Then Exit For
         If Not sheet.Range("COMM" & i) Is Nothing Then
-            If sheet.Range("COMM" & i).Value <> "COMM #" & i Then
+            If sheet.Range("COMM" & i).value <> "COMM #" & i Then
                 For j = 0 To 7
                     If commCount > 8 Then Exit For
-                    modificationString = sheet.Range("COMM" & i).OFFSET(2 + (j * 2), 0).OFFSET(0, 1)
+                    modificationString = sheet.Range("COMM" & i).offSet(2 + (j * 2), 0).offSet(0, 1)
                     If Len(modificationString) > 0 Then
                         If Not IsNumeric(Left(modificationString, 1)) Then
                             modificationString = ""
@@ -282,15 +282,15 @@ Private Sub InitComms()
                     
                     If j = 0 Or modificationString <> "" Then
                         commCount = commCount + 1
-                        modifications(commCount).Value = modificationString
-                        companies(commCount).Value = sheet.Range("COMM" & i).Value
+                        modifications(commCount).value = modificationString
+                        companies(commCount).value = sheet.Range("COMM" & i).value
                         
                         Dim anchorDistance As String: anchorDistance = ""
                         For Each anchor In pole.anchors
                             test1 = UCase(anchor.owner)
-                            test2 = UCase(companies(commCount).Value)
+                            test2 = UCase(companies(commCount).value)
                             test3 = test1 = test2
-                            If Trim(UCase(anchor.owner)) = Trim(UCase(companies(commCount).Value)) Then
+                            If Trim(UCase(anchor.owner)) = Trim(UCase(companies(commCount).value)) Then
                                 If anchorDistance <> "" Then
                                     anchorDistance = ""
                                     Exit For
@@ -300,9 +300,9 @@ Private Sub InitComms()
                         Next anchor
                         If anchorDistance <> "" Then dgaprevious(i).text = anchorDistance
                         
-                        heights(commCount).Value = Utilities.inchesToFeetInches(Utilities.convertToInches(sheet.Range("COMM" & i).OFFSET(2 + (j * 2), 0)))
+                        heights(commCount).value = Utilities.inchesToFeetInches(Utilities.convertToInches(sheet.Range("COMM" & i).offSet(2 + (j * 2), 0)))
                         
-                        If modifications(commCount).Value = "" Then modifications(commCount).Value = heights(commCount).Value
+                        If modifications(commCount).value = "" Then modifications(commCount).value = heights(commCount).value
                     End If
                 Next j
             End If
@@ -313,62 +313,62 @@ End Sub
 Private Function reset()
     Dim temp As Variant
     For Each temp In companies
-        temp.Value = ""
+        temp.value = ""
     Next temp
     
     For Each temp In heights
-        temp.Value = ""
+        temp.value = ""
     Next temp
     
     For Each temp In modifications
-        temp.Value = ""
+        temp.value = ""
     Next temp
     
     For Each temp In MoveAnchor
-        temp.Value = False
+        temp.value = False
     Next temp
     
     For Each temp In rpguy
-        temp.Value = False
+        temp.value = False
     Next temp
     
     For Each temp In drops
-        temp.Value = False
+        temp.value = False
     Next temp
     
     For Each temp In dgaprevious
-        temp.Value = ""
+        temp.value = ""
     Next temp
     
     For Each temp In dgaafter
-        temp.Value = ""
+        temp.value = ""
     Next temp
     
     For Each temp In mainlines
-        temp.Value = True
+        temp.value = True
     Next temp
     
     For Each temp In Ignored
-        temp.Value = False
+        temp.value = False
     Next temp
     
     For Each temp In NotAttached
-        temp.Value = False
+        temp.value = False
     Next temp
         
     For Each temp In Boxed
-        temp.Value = False
+        temp.value = False
     Next temp
     
     For Each temp In Bracket
-        temp.Value = False
+        temp.value = False
     Next temp
     
     For Each temp In InstallAnchor
-        temp.Value = False
+        temp.value = False
     Next temp
     
-    TextBox1.Value = ""
+    TextBox1.value = ""
     
 End Function
 
@@ -384,10 +384,10 @@ Private Sub CommandButton1_Click()
     Dim NJUNSType As String
     NJUNSType = ticketType
     Dim applicant As Boolean
-    applicant = CheckBox1.Value
+    applicant = CheckBox1.value
     Dim ApplyAbove As Boolean
     If applicant Then
-        ApplyAbove = CheckBox2.Value
+        ApplyAbove = CheckBox2.value
     Else
         ApplyAbove = False
     End If
@@ -396,11 +396,11 @@ Private Sub CommandButton1_Click()
     Dim commmodification As Integer
     Dim movements As Collection
     Set movements = New Collection
-    Dim Comm As Comm
-    For Each Comm In sortedcomms
-        commheight = Utilities.convertToInches(Comm.height)
-        commmodification = Utilities.convertToInches(Comm.modification)
-        If Comm.NotAttached Then
+    Dim comm As comm
+    For Each comm In sortedcomms
+        commheight = Utilities.convertToInches(comm.height)
+        commmodification = Utilities.convertToInches(comm.modification)
+        If comm.NotAttached Then
             movements.Add "Attach"
         ElseIf commmodification = -1 Or commmodification = commheight Then
             movements.Add "Nothing"
@@ -409,7 +409,7 @@ Private Sub CommandButton1_Click()
         Else
             movements.Add "Raise"
         End If
-    Next Comm
+    Next comm
           
     NJUNSString = moveComms(1, sortedcomms, movements, applicant, ApplyAbove)
     
@@ -435,7 +435,7 @@ Private Sub CommandButton1_Click()
         NJUNSStringCondensed = Left(NJUNSStringCondensed, Len(NJUNSStringCondensed) - 1)
     Loop
     
-    If CE.Value And NJUNSStringCondensed <> "" Then
+    If CE.value And NJUNSStringCondensed <> "" Then
         NJUNSStringCondensed = "Consumers to complete required work." & vbCrLf & vbCrLf & NJUNSStringCondensed
     End If
     
@@ -445,7 +445,7 @@ Private Sub CommandButton1_Click()
     DataObj.PutInClipboard
     
     If Not sheet.Range("NJUNS") Is Nothing Then
-        If Trim(sheet.Range("NJUNS").Value) = "" Then sheet.Range("NJUNS").Value = NJUNSStringCondensed
+        If Trim(sheet.Range("NJUNS").value) = "" Then sheet.Range("NJUNS").value = NJUNSStringCondensed
     End If
     
     MsgBox NJUNSStringCondensed
@@ -463,10 +463,10 @@ Private Sub CommandButton2_Click()
     Dim NJUNSType As String
     NJUNSType = ticketType
     Dim applicant As Boolean
-    applicant = CheckBox1.Value
+    applicant = CheckBox1.value
     Dim ApplyAbove As Boolean
     If applicant Then
-        ApplyAbove = CheckBox2.Value
+        ApplyAbove = CheckBox2.value
     Else
         ApplyAbove = False
     End If
@@ -500,7 +500,7 @@ Private Sub CommandButton2_Click()
     DataObj.PutInClipboard
     
     If Not sheet.Range("NJUNS") Is Nothing Then
-        If Trim(sheet.Range("NJUNS").Value) = "" Then sheet.Range("NJUNS").Value = NJUNSStringCondensed
+        If Trim(sheet.Range("NJUNS").value) = "" Then sheet.Range("NJUNS").value = NJUNSStringCondensed
     End If
     
     MsgBox NJUNSStringCondensed
@@ -511,7 +511,7 @@ Private Sub CommandButton3_click()
 
     On Error Resume Next
 
-    NJUNSString = TextBox1.Value & vbCrLf
+    NJUNSString = TextBox1.value & vbCrLf
     NJUNSString = NJUNSString & "Safety zone violation was identified at pole location, verify NESC clearance requirements." & vbCrLf
     NJUNSString = NJUNSString & "Low clearance was identified at pole location in [DIRECTION] span, verify NESC clearance requirements." & vbCrLf
     NJUNSString = NJUNSString & "Pole is tagged for replacement." & vbCrLf
@@ -523,7 +523,7 @@ Private Sub CommandButton3_click()
     DataObj.PutInClipboard
     
     If Not sheet.Range("NJUNS") Is Nothing Then
-        If Trim(sheet.Range("NJUNS").Value) = "" Then sheet.Range("NJUNS").Value = NJUNSString
+        If Trim(sheet.Range("NJUNS").value) = "" Then sheet.Range("NJUNS").value = NJUNSString
     End If
     
     MsgBox NJUNSString
@@ -533,36 +533,36 @@ End Sub
 Private Sub FillComms()
     Dim i As Integer
     For i = 1 To 8
-        Dim Comm As Comm
-        Set Comm = New Comm
-        If companies(i).Value <> "" And heights(i).Value <> "" Then
-            If companyCount(companies, i) > 1 Then Comm.orientation = findOrientation(heights, companies, i)
-            Comm.owner = companies(i).Value
-            Comm.height = heights(i).Value
-            Comm.modification = Trim(modifications(i).Value)
-            Comm.reasonForMovement = Replace(reasonForMovement(i).Value, "OTHER", "[REASON FOR WORK]. ")
-            Comm.reasonForAnchorMovement = Replace(reasonForAnchorMovement(i).Value, "OTHER", "[REASON FOR WORK]. ")
-            If Comm.modification = "" Then Comm.modification = Comm.height
-            Comm.drops = drops(i).Value
-            Comm.MoveAnchor = MoveAnchor(i).Value
-            Comm.InstallAnchor = InstallAnchor(i).Value
-            If Comm.MoveAnchor Then
-                If OnlyNumbers(dgaprevious(i).Value) = "" Then dgaprevious(i).Value = 0
-                If OnlyNumbers(dgaafter(i).Value) = "" Then dgaafter(i).Value = 0
-                If InStr(dgaprevious(i).Value, "'") = 0 Then dgaprevious(i).Value = Utilities.OnlyNumbers(dgaprevious(i).Value) & "'"
-                If InStr(dgaafter(i).Value, "'") = 0 Then dgaafter(i).Value = Utilities.OnlyNumbers(dgaafter(i).Value) & "'"
-                Comm.PreviousAnchor = Utilities.OnlyNumbers(dgaprevious(i).Value)
-                Comm.NextAnchor = Utilities.OnlyNumbers(dgaafter(i).Value)
-            ElseIf Comm.InstallAnchor Then
-                Comm.NextAnchor = Utilities.OnlyNumbers(dgaafter(i).Value)
+        Dim comm As comm
+        Set comm = New comm
+        If companies(i).value <> "" And heights(i).value <> "" Then
+            If companyCount(companies, i) > 1 Then comm.orientation = findOrientation(heights, companies, i)
+            comm.owner = companies(i).value
+            comm.height = heights(i).value
+            comm.modification = Trim(modifications(i).value)
+            comm.reasonForMovement = Replace(reasonForMovement(i).value, "OTHER", "[REASON FOR WORK]. ")
+            comm.reasonForAnchorMovement = Replace(reasonForAnchorMovement(i).value, "OTHER", "[REASON FOR WORK]. ")
+            If comm.modification = "" Then comm.modification = comm.height
+            comm.drops = drops(i).value
+            comm.MoveAnchor = MoveAnchor(i).value
+            comm.InstallAnchor = InstallAnchor(i).value
+            If comm.MoveAnchor Then
+                If OnlyNumbers(dgaprevious(i).value) = "" Then dgaprevious(i).value = 0
+                If OnlyNumbers(dgaafter(i).value) = "" Then dgaafter(i).value = 0
+                If InStr(dgaprevious(i).value, "'") = 0 Then dgaprevious(i).value = Utilities.OnlyNumbers(dgaprevious(i).value) & "'"
+                If InStr(dgaafter(i).value, "'") = 0 Then dgaafter(i).value = Utilities.OnlyNumbers(dgaafter(i).value) & "'"
+                comm.PreviousAnchor = Utilities.OnlyNumbers(dgaprevious(i).value)
+                comm.NextAnchor = Utilities.OnlyNumbers(dgaafter(i).value)
+            ElseIf comm.InstallAnchor Then
+                comm.NextAnchor = Utilities.OnlyNumbers(dgaafter(i).value)
             End If
-            Comm.UpgradeGuy = rpguy(i).Value
-            Comm.Mainline = mainlines(i).Value
-            Comm.Ignored = Ignored(i).Value
-            Comm.NotAttached = NotAttached(i).Value
-            Comm.Boxed = Boxed(i).Value
-            Comm.Bracket = Bracket(i).Value
-            comms.Add Comm
+            comm.UpgradeGuy = rpguy(i).value
+            comm.Mainline = mainlines(i).value
+            comm.Ignored = Ignored(i).value
+            comm.NotAttached = NotAttached(i).value
+            comm.Boxed = Boxed(i).value
+            comm.Bracket = Bracket(i).value
+            comms.Add comm
         End If
     Next i
 End Sub
@@ -570,7 +570,7 @@ End Sub
 Public Function companyCount(companies As Collection, i As Integer) As Integer
     count = 0
     For j = 1 To companies.count
-        If companies(j).Value = companies(i).Value Then count = count + 1
+        If companies(j).value = companies(i).value Then count = count + 1
     Next j
     companyCount = count
 End Function
@@ -582,11 +582,11 @@ Public Function findOrientation(heights As Collection, companies As Collection, 
     duplicateHeight = False
     For j = 1 To 8
         If i <> j And companies(i) = companies(j) Then
-            If Utilities.convertToInches(heights(j).Value) > Utilities.convertToInches(heights(i).Value) Then
+            If Utilities.convertToInches(heights(j).value) > Utilities.convertToInches(heights(i).value) Then
                 highestCompany = False
-            ElseIf Utilities.convertToInches(heights(j).Value) < Utilities.convertToInches(heights(i).Value) Then
+            ElseIf Utilities.convertToInches(heights(j).value) < Utilities.convertToInches(heights(i).value) Then
                 lowestCompany = False
-            ElseIf Utilities.convertToInches(heights(j).Value) = Utilities.convertToInches(heights(i).Value) Then
+            ElseIf Utilities.convertToInches(heights(j).value) = Utilities.convertToInches(heights(i).value) Then
                 duplicateHeight = True
             End If
         End If
