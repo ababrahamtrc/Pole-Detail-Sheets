@@ -7,13 +7,14 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-Public Notification As String
-Public permit As String
+Public notification As String
+Public Permit As String
 Public applicant As String
 Public jobLocation As String
 Public county As String
 Public township As String
 Public fielder As String
+Public dataCollectionDate As String
 Public poles As Collection
 Public mode As String
 
@@ -22,12 +23,12 @@ Private Sub Class_Initialize()
     Me.mode = ThisWorkbook.sheets("Control").Range("MODE").text
 End Sub
 
-Public Sub extractFromSheets()
+Public Sub extractFromSheets(Optional printMode As Boolean)
     Dim sheet As Worksheet
     Dim pole As pole
 
     For Each sheet In ThisWorkbook.sheets
-        If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" And sheet.Cells(2, 2).Value = "Notification:" Then
+        If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" And sheet.cells(2, 2).value = "Notification:" Then
             Set pole = New pole
             Call pole.extractFromSheet(sheet)
             Me.poles.Add pole
@@ -35,143 +36,147 @@ Public Sub extractFromSheets()
             If Me.township = "" Then Me.township = sheet.Range("TWP")
             If Me.county = "" Then Me.county = sheet.Range("COUNTY")
             If Me.applicant = "" Then Me.applicant = sheet.Range("APPLICANT")
-            If Me.Notification = "" Then Me.Notification = sheet.Range("NOTIFICATION")
-            If Me.permit = "" Then Me.permit = sheet.Range("PERMIT")
+            If Me.notification = "" Then Me.notification = sheet.Range("NOTIFICATION")
+            If Me.Permit = "" Then Me.Permit = sheet.Range("PERMIT")
+            If Me.fielder = "" Then Me.fielder = sheet.Range("INSPECTEDBY")
+            If Me.dataCollectionDate = "" Then Me.dataCollectionDate = sheet.Range("DATE").value
         End If
     Next sheet
     
-    Dim Span As Span
-    Dim otherPole As pole
-    Dim otherSpan As Span
-    For Each pole In Me.poles
-        If pole.latitude = 0 Or pole.longitude = 0 Then
-            For Each Span In pole.spans
-                Set otherPole = Me.findPole(Span.otherPole)
-                If Not otherPole Is Nothing Then
-                    For Each otherSpan In otherPole.spans
-                        If otherSpan.otherPole = pole.poleNumber Then
-                            If otherPole.latitude <> 0 And otherPole.longitude <> 0 Then
-                                R = 20902231#
-                                PI = 4# * Atn(1#)
-                                
-                                radLat = otherPole.latitude * PI / 180#
-                                radLon = otherPole.longitude * PI / 180#
-                                radAngle = otherSpan.angle * PI / 180#
-                                
-                                dLat = (otherSpan.distance * Cos(radAngle)) / R
-                                dLon = (otherSpan.distance * Sin(radAngle)) / (R * Cos(radLat))
-                                
-                                pole.latitude = otherPole.latitude + (dLat * 180# / PI)
-                                pole.longitude = otherPole.longitude + (dLon * 180# / PI)
-                                results = LatLonToMI2253(pole.latitude, pole.longitude)
-                                pole.x = results(0)
-                                pole.y = results(1)
-                            End If
-                        End If
-                    Next otherSpan
-                End If
-            Next Span
-        End If
-    Next pole
-    
-    Dim otherSpan2 As Span
-    Dim otherSpan3 As Span
-    Dim otherPole2 As pole
-    Dim otherPole3 As pole
-    Dim wire As wire
-    Dim angleOffsetLimit: angleOffsetLimit = 15
-    For Each pole In Me.poles
-        If pole.primaries.count = 0 Then
-            For Each Span In pole.spans
-                Set otherPole = Me.findPole(Span.otherPole)
-                If Not otherPole Is Nothing Then
-                    If otherPole.primaries.count > 0 Then
+    If printMode Then
+        Dim Span As Span
+        Dim otherPole As pole
+        Dim otherSpan As Span
+        For Each pole In Me.poles
+            If pole.latitude = 0 Or pole.longitude = 0 Then
+                For Each Span In pole.spans
+                    Set otherPole = Me.findPole(Span.otherPole)
+                    If Not otherPole Is Nothing Then
                         For Each otherSpan In otherPole.spans
-                            For Each wire In otherSpan.utilWires
-                                If wire.componentType = "PRI" Then
-                                    angle1 = Span.angle
-                                    angle2 = otherSpan.angle
-                                    If angle1 > angle2 Then
-                                        angleDifference = angle1 - angle2
-                                    Else
-                                        angleDifference = angle2 - angle1
-                                    End If
-                                    If Abs(angleDifference - 180) < angleOffsetLimit Then
-                                        pole.skipSpan = True
-                                        Exit For
-                                    End If
-                                End If
-                            Next wire
-                            If pole.skipSpan Then Exit For
-                        Next otherSpan
-                    Else
-                        For Each otherSpan In otherPole.spans
-                            angle1 = Span.angle
-                            angle2 = otherSpan.angle
-                            If Abs(angle1 - angle2) < angleOffsetLimit Then
-                                Set otherPole2 = Me.findPole(otherSpan.otherPole)
-                                If Not otherPole2 Is Nothing Then
-                                    If otherPole2.primaries.count > 0 Then
-                                        For Each otherSpan2 In otherPole2.spans
-                                            For Each wire In otherSpan2.utilWires
-                                                If wire.componentType = "PRI" Then
-                                                    angle1 = otherSpan.angle
-                                                    angle2 = otherSpan2.angle
-                                                    If angle1 > angle2 Then
-                                                        angleDifference = angle1 - angle2
-                                                    Else
-                                                        angleDifference = angle2 - angle1
-                                                    End If
-                                                    If Abs(angleDifference - 180) < angleOffsetLimit Then
-                                                        pole.skipSpan = True
-                                                        Exit For
-                                                    End If
-                                                End If
-                                            Next wire
-                                            If pole.skipSpan Then Exit For
-                                        Next otherSpan2
-                                    Else
-                                        For Each otherSpan2 In otherPole2.spans
-                                            angle1 = otherSpan.angle
-                                            angle2 = otherSpan2.angle
-                                            If Abs(angle1 - angle2) < angleOffsetLimit Then
-                                                Set otherPole3 = Me.findPole(otherSpan2.otherPole)
-                                                If Not otherPole3 Is Nothing Then
-                                                    If otherPole3.primaries.count > 0 Then
-                                                        For Each otherSpan3 In otherPole3.spans
-                                                            For Each wire In otherSpan3.utilWires
-                                                                If wire.componentType = "PRI" Then
-                                                                    angle1 = otherSpan2.angle
-                                                                    angle2 = otherSpan3.angle
-                                                                    If angle1 > angle2 Then
-                                                                        angleDifference = angle1 - angle2
-                                                                    Else
-                                                                        angleDifference = angle2 - angle1
-                                                                    End If
-                                                                    If Abs(angleDifference - 180) < angleOffsetLimit Then
-                                                                        pole.skipSpan = True
-                                                                        Exit For
-                                                                    End If
-                                                                End If
-                                                            Next wire
-                                                            If pole.skipSpan Then Exit For
-                                                        Next otherSpan3
-                                                    End If
-                                                End If
-                                            End If
-                                            If pole.skipSpan Then Exit For
-                                        Next otherSpan2
-                                    End If
+                            If otherSpan.otherPole = pole.poleNumber Then
+                                If otherPole.latitude <> 0 And otherPole.longitude <> 0 Then
+                                    r = 20902231#
+                                    PI = 4# * Atn(1#)
+                                    
+                                    radLat = otherPole.latitude * PI / 180#
+                                    radLon = otherPole.longitude * PI / 180#
+                                    radAngle = otherSpan.angle * PI / 180#
+                                    
+                                    dLat = (otherSpan.distance * Cos(radAngle)) / r
+                                    dLon = (otherSpan.distance * Sin(radAngle)) / (r * Cos(radLat))
+                                    
+                                    pole.latitude = otherPole.latitude + (dLat * 180# / PI)
+                                    pole.longitude = otherPole.longitude + (dLon * 180# / PI)
+                                    results = LatLonToMI2253(pole.latitude, pole.longitude)
+                                    pole.x = results(0)
+                                    pole.y = results(1)
                                 End If
                             End If
-                            If pole.skipSpan Then Exit For
                         Next otherSpan
                     End If
-                End If
-                If pole.skipSpan Then Exit For
-            Next Span
-        End If
-    Next pole
+                Next Span
+            End If
+        Next pole
+        
+        Dim otherSpan2 As Span
+        Dim otherSpan3 As Span
+        Dim otherPole2 As pole
+        Dim otherPole3 As pole
+        Dim wire As wire
+        Dim angleOffsetLimit: angleOffsetLimit = 15
+        For Each pole In Me.poles
+            If pole.primaries.count = 0 Then
+                For Each Span In pole.spans
+                    Set otherPole = Me.findPole(Span.otherPole)
+                    If Not otherPole Is Nothing Then
+                        If otherPole.primaries.count > 0 Then
+                            For Each otherSpan In otherPole.spans
+                                For Each wire In otherSpan.utilWires
+                                    If wire.componentType = "PRI" Then
+                                        angle1 = Span.angle
+                                        angle2 = otherSpan.angle
+                                        If angle1 > angle2 Then
+                                            angleDifference = angle1 - angle2
+                                        Else
+                                            angleDifference = angle2 - angle1
+                                        End If
+                                        If Abs(angleDifference - 180) < angleOffsetLimit Then
+                                            pole.skipSpan = True
+                                            Exit For
+                                        End If
+                                    End If
+                                Next wire
+                                If pole.skipSpan Then Exit For
+                            Next otherSpan
+                        Else
+                            For Each otherSpan In otherPole.spans
+                                angle1 = Span.angle
+                                angle2 = otherSpan.angle
+                                If Abs(angle1 - angle2) < angleOffsetLimit Then
+                                    Set otherPole2 = Me.findPole(otherSpan.otherPole)
+                                    If Not otherPole2 Is Nothing Then
+                                        If otherPole2.primaries.count > 0 Then
+                                            For Each otherSpan2 In otherPole2.spans
+                                                For Each wire In otherSpan2.utilWires
+                                                    If wire.componentType = "PRI" Then
+                                                        angle1 = otherSpan.angle
+                                                        angle2 = otherSpan2.angle
+                                                        If angle1 > angle2 Then
+                                                            angleDifference = angle1 - angle2
+                                                        Else
+                                                            angleDifference = angle2 - angle1
+                                                        End If
+                                                        If Abs(angleDifference - 180) < angleOffsetLimit Then
+                                                            pole.skipSpan = True
+                                                            Exit For
+                                                        End If
+                                                    End If
+                                                Next wire
+                                                If pole.skipSpan Then Exit For
+                                            Next otherSpan2
+                                        Else
+                                            For Each otherSpan2 In otherPole2.spans
+                                                angle1 = otherSpan.angle
+                                                angle2 = otherSpan2.angle
+                                                If Abs(angle1 - angle2) < angleOffsetLimit Then
+                                                    Set otherPole3 = Me.findPole(otherSpan2.otherPole)
+                                                    If Not otherPole3 Is Nothing Then
+                                                        If otherPole3.primaries.count > 0 Then
+                                                            For Each otherSpan3 In otherPole3.spans
+                                                                For Each wire In otherSpan3.utilWires
+                                                                    If wire.componentType = "PRI" Then
+                                                                        angle1 = otherSpan2.angle
+                                                                        angle2 = otherSpan3.angle
+                                                                        If angle1 > angle2 Then
+                                                                            angleDifference = angle1 - angle2
+                                                                        Else
+                                                                            angleDifference = angle2 - angle1
+                                                                        End If
+                                                                        If Abs(angleDifference - 180) < angleOffsetLimit Then
+                                                                            pole.skipSpan = True
+                                                                            Exit For
+                                                                        End If
+                                                                    End If
+                                                                Next wire
+                                                                If pole.skipSpan Then Exit For
+                                                            Next otherSpan3
+                                                        End If
+                                                    End If
+                                                End If
+                                                If pole.skipSpan Then Exit For
+                                            Next otherSpan2
+                                        End If
+                                    End If
+                                End If
+                                If pole.skipSpan Then Exit For
+                            Next otherSpan
+                        End If
+                    End If
+                    If pole.skipSpan Then Exit For
+                Next Span
+            End If
+        Next pole
+    End If
 End Sub
 
 Public Sub createAndFillSheets()
@@ -212,13 +217,13 @@ Public Sub createAndFillSheets()
             For Each Span In pole.spans
                 If pole.applicant.mrMoves.exists(Span.spanSlot) And Span.otherPole <> "" Then
                     Dim lines() As String
-                    lines = Split(sheet.Range("CMRF2").Value, vbLf)
+                    lines = Split(sheet.Range("CMRF2").value, vbLf)
                     For j = LBound(lines) To UBound(lines)
                         If InStr(lines(j), " @P" & Span.otherPole) > 0 Then
                             lines(j) = Utilities.inchesToFeetInches(Utilities.convertToInches(lines(j)) + CInt(pole.applicant.mrMoves(Span.spanSlot))) & " @P" & Span.otherPole
                         End If
                     Next j
-                    sheet.Range("CMRF2").Value = Join(lines, vbLf)
+                    sheet.Range("CMRF2").value = Join(lines, vbLf)
                 End If
             Next Span
         End If
@@ -247,87 +252,87 @@ End Function
 
 Public Sub extractImportDataFormat()
     Set jobWs = ThisWorkbook.sheets("Job Info")
-    jobWsLastRow = jobWs.Cells(jobWs.Rows.count, "A").End(xlUp).ROW
+    jobWsLastRow = jobWs.cells(jobWs.Rows.count, "A").End(xlUp).ROW
 
     Set colWs = ThisWorkbook.sheets("Collection")
-    colWsLastRow = colWs.Cells(colWs.Rows.count, "A").End(xlUp).ROW
+    colWsLastRow = colWs.cells(colWs.Rows.count, "A").End(xlUp).ROW
     
     Set spanWs = ThisWorkbook.sheets("Span")
-    spanWsLastRow = spanWs.Cells(spanWs.Rows.count, "A").End(xlUp).ROW
+    spanWsLastRow = spanWs.cells(spanWs.Rows.count, "A").End(xlUp).ROW
     spanWsRow = 2
     
     Set spanComWs = ThisWorkbook.sheets("Span.Communication")
-    spanComWsLastRow = spanComWs.Cells(spanComWs.Rows.count, "A").End(xlUp).ROW
+    spanComWsLastRow = spanComWs.cells(spanComWs.Rows.count, "A").End(xlUp).ROW
     spanComWsRow = 2
     
     Set spanPowWs = ThisWorkbook.sheets("Span.Power Circuit")
-    spanPowWsLastRow = spanPowWs.Cells(spanPowWs.Rows.count, "A").End(xlUp).ROW
+    spanPowWsLastRow = spanPowWs.cells(spanPowWs.Rows.count, "A").End(xlUp).ROW
     spanPowWsRow = 2
     
     Set anchorWs = ThisWorkbook.sheets("Anchor")
-    anchorWsLastRow = anchorWs.Cells(anchorWs.Rows.count, "A").End(xlUp).ROW
+    anchorWsLastRow = anchorWs.cells(anchorWs.Rows.count, "A").End(xlUp).ROW
     anchorWsRow = 2
     
     Set guyWs = ThisWorkbook.sheets("Anchor.Guys")
-    guyWsLastRow = guyWs.Cells(guyWs.Rows.count, "A").End(xlUp).ROW
+    guyWsLastRow = guyWs.cells(guyWs.Rows.count, "A").End(xlUp).ROW
     guyWsRow = 2
     
     Set equipmentWs = ThisWorkbook.sheets("Equipment")
-    equipmentWsLastRow = equipmentWs.Cells(equipmentWs.Rows.count, "A").End(xlUp).ROW
+    equipmentWsLastRow = equipmentWs.cells(equipmentWs.Rows.count, "A").End(xlUp).ROW
     equipmentWsRow = 2
     
-    Me.jobLocation = jobWs.Cells(2, 2)
-    Me.permit = jobWs.Cells(2, 3)
-    Me.applicant = jobWs.Cells(2, 4)
-    Me.Notification = jobWs.Cells(2, 5)
-    Me.county = jobWs.Cells(2, 6)
-    Me.township = jobWs.Cells(2, 7)
-    Me.fielder = jobWs.Cells(2, 8)
+    Me.jobLocation = jobWs.cells(2, 2)
+    Me.Permit = jobWs.cells(2, 3)
+    Me.applicant = jobWs.cells(2, 4)
+    Me.notification = jobWs.cells(2, 5)
+    Me.county = jobWs.cells(2, 6)
+    Me.township = jobWs.cells(2, 7)
+    Me.fielder = jobWs.cells(2, 8)
     
     For colWsRow = 2 To colWsLastRow
         Dim pole As pole: Set pole = New pole
         
-        pole.poleNumber = colWs.Cells(colWsRow, 1)
-        pole.gisCEID = colWs.Cells(colWsRow, 2)
-        pole.existingCEID = colWs.Cells(colWsRow, 3)
+        pole.poleNumber = colWs.cells(colWsRow, 1)
+        pole.gisCEID = colWs.cells(colWsRow, 2)
+        pole.existingCEID = colWs.cells(colWsRow, 3)
         If pole.existingCEID = "" Then pole.existingCEID = pole.gisCEID
-        parts = Split(colWs.Cells(colWsRow, 4), " > ")
+        parts = Split(colWs.cells(colWsRow, 4), " > ")
         pole.species = parts(0)
         pole.Class = parts(1)
         pole.height = parts(2)
-        pole.classVerified = colWs.Cells(colWsRow, 5).Value
-        pole.heightVerified = colWs.Cells(colWsRow, 6).Value
-        pole.owner = colWs.Cells(colWsRow, 7).Value
-        pole.glc = colWs.Cells(colWsRow, 8).Value
-        pole.address = colWs.Cells(colWsRow, 9).Value
-        pole.hammerTestFailed = colWs.Cells(colWsRow, 10).Value
-        pole.visualCheckFailed = colWs.Cells(colWsRow, 11).Value
-        pole.notes = colWs.Cells(colWsRow, 12).Value
-        pole.collectedDate = colWs.Cells(colWsRow, 13).Value
-        pole.latitude = colWs.Cells(colWsRow, 14).Value
-        pole.longitude = colWs.Cells(colWsRow, 15).Value
-        pole.agl = colWs.Cells(colWsRow, 16).Value
-        pole.Bonded = colWs.Cells(colWsRow, 17).Value
-        pole.treeWork = colWs.Cells(colWsRow, 18).Value
+        pole.classVerified = colWs.cells(colWsRow, 5).value
+        pole.heightVerified = colWs.cells(colWsRow, 6).value
+        pole.owner = colWs.cells(colWsRow, 7).value
+        pole.glc = colWs.cells(colWsRow, 8).value
+        pole.address = colWs.cells(colWsRow, 9).value
+        pole.hammerTestFailed = colWs.cells(colWsRow, 10).value
+        pole.visualCheckFailed = colWs.cells(colWsRow, 11).value
+        pole.notes = colWs.cells(colWsRow, 12).value
+        pole.collectedDate = colWs.cells(colWsRow, 13).value
+        pole.latitude = colWs.cells(colWsRow, 14).value
+        pole.longitude = colWs.cells(colWsRow, 15).value
+        pole.agl = colWs.cells(colWsRow, 16).value
+        pole.Bonded = colWs.cells(colWsRow, 17).value
+        pole.treeWork = colWs.cells(colWsRow, 18).value
         
         'Span section
         Dim slotCount As Integer: slotCount = 0
         For spanWsRow = spanWsRow To spanWsLastRow
-            If spanWs.Cells(spanWsRow, 1) <> pole.poleNumber Then Exit For
+            If spanWs.cells(spanWsRow, 1) <> pole.poleNumber Then Exit For
             
             Dim Span As Span: Set Span = New Span
             
-            Span.spanId = spanWs.Cells(spanWsRow, 2)
-            Span.distance = spanWs.Cells(spanWsRow, 3)
-            Span.angle = spanWs.Cells(spanWsRow, 4)
+            Span.spanId = spanWs.cells(spanWsRow, 2)
+            Span.distance = spanWs.cells(spanWsRow, 3)
+            Span.angle = spanWs.cells(spanWsRow, 4)
             Span.direction = Utilities.degreesToDirection(Span.angle)
-            Span.houseNumber = spanWs.Cells(spanWsRow, 5)
-            Span.treeWork = spanWs.Cells(spanWsRow, 6)
+            Span.houseNumber = spanWs.cells(spanWsRow, 5)
+            Span.treeWork = spanWs.cells(spanWsRow, 6)
             
             For j = 2 To spanWsLastRow
                 If j <> spanWsRow Then
-                    If spanWs.Cells(j, 2) = Span.spanId Then
-                        Span.otherPole = spanWs.Cells(j, 1)
+                    If spanWs.cells(j, 2) = Span.spanId Then
+                        Span.otherPole = spanWs.cells(j, 1)
                         Exit For
                     End If
                 End If
@@ -342,15 +347,15 @@ Public Sub extractImportDataFormat()
         'Communication wire section
         Dim wireDict As Scripting.Dictionary: Set wireDict = New Scripting.Dictionary
         For spanComWsRow = spanComWsRow To spanComWsLastRow
-            If spanComWs.Cells(spanComWsRow, 1) <> pole.poleNumber Then Exit For
+            If spanComWs.cells(spanComWsRow, 1) <> pole.poleNumber Then Exit For
             
-            Set Span = pole.findSpanBySpanId(spanComWs.Cells(spanComWsRow, 2))
-            size = spanComWs.Cells(spanComWsRow, 3)
-            owner = spanComWs.Cells(spanComWsRow, 4)
-            height = spanComWs.Cells(spanComWsRow, 5)
-            componentType = spanComWs.Cells(spanComWsRow, 7)
-            modification = spanComWs.Cells(spanComWsRow, 8)
-            wepHeight = spanComWs.Cells(spanComWsRow, 12)
+            Set Span = pole.findSpanBySpanId(spanComWs.cells(spanComWsRow, 2))
+            size = spanComWs.cells(spanComWsRow, 3)
+            owner = spanComWs.cells(spanComWsRow, 4)
+            height = spanComWs.cells(spanComWsRow, 5)
+            componentType = spanComWs.cells(spanComWsRow, 7)
+            modification = spanComWs.cells(spanComWsRow, 8)
+            wepHeight = spanComWs.cells(spanComWsRow, 12)
             key = size & owner & height & componentType
             
             Dim wire As wire
@@ -391,10 +396,10 @@ Public Sub extractImportDataFormat()
             End If
             
             Set wire = wireDict(key)
-            wire.midspans.Add Span.spanSlot, spanComWs.Cells(spanComWsRow, 6)
-            If spanComWs.Cells(spanComWsRow, 9) <> "" Then wire.diameter = spanComWs.Cells(spanComWsRow, 9)
-            If spanComWs.Cells(spanComWsRow, 10) <> "" Then wire.tensions.Add Span.spanSlot, spanComWs.Cells(spanComWsRow, 10)
-            If spanComWs.Cells(spanComWsRow, 11) <> "" Then wire.mrMoves.Add Span.spanSlot, spanComWs.Cells(spanComWsRow, 11)
+            wire.midspans.Add Span.spanSlot, spanComWs.cells(spanComWsRow, 6)
+            If spanComWs.cells(spanComWsRow, 9) <> "" Then wire.diameter = spanComWs.cells(spanComWsRow, 9)
+            If spanComWs.cells(spanComWsRow, 10) <> "" Then wire.tensions.Add Span.spanSlot, spanComWs.cells(spanComWsRow, 10)
+            If spanComWs.cells(spanComWsRow, 11) <> "" Then wire.mrMoves.Add Span.spanSlot, spanComWs.cells(spanComWsRow, 11)
             
             Span.wires.Add wire
             Span.commWires.Add wire
@@ -415,13 +420,13 @@ Public Sub extractImportDataFormat()
         'Utility Wire Section
         Set wireDict = New Scripting.Dictionary
         For spanPowWsRow = spanPowWsRow To spanPowWsLastRow
-            If spanPowWs.Cells(spanPowWsRow, 1) <> pole.poleNumber Then Exit For
+            If spanPowWs.cells(spanPowWsRow, 1) <> pole.poleNumber Then Exit For
             
-            Set Span = pole.findSpanBySpanId(spanPowWs.Cells(spanPowWsRow, 2))
-            size = spanPowWs.Cells(spanPowWsRow, 3)
-            height = spanPowWs.Cells(spanPowWsRow, 4)
-            componentType = spanPowWs.Cells(spanPowWsRow, 6)
-            wepHeight = spanPowWs.Cells(spanPowWsRow, 7)
+            Set Span = pole.findSpanBySpanId(spanPowWs.cells(spanPowWsRow, 2))
+            size = spanPowWs.cells(spanPowWsRow, 3)
+            height = spanPowWs.cells(spanPowWsRow, 4)
+            componentType = spanPowWs.cells(spanPowWsRow, 6)
+            wepHeight = spanPowWs.cells(spanPowWsRow, 7)
             key = size & height & componentType
             
             If Not wireDict.exists(key) Then
@@ -457,7 +462,7 @@ Public Sub extractImportDataFormat()
             End If
             
             Set wire = wireDict(key)
-            wire.midspans.Add Span.spanSlot, spanPowWs.Cells(spanPowWsRow, 5)
+            wire.midspans.Add Span.spanSlot, spanPowWs.cells(spanPowWsRow, 5)
             
             Span.wires.Add wire
             Span.utilWires.Add wire
@@ -474,31 +479,31 @@ Public Sub extractImportDataFormat()
         
         'Anchor section
         For anchorWsRow = anchorWsRow To anchorWsLastRow
-            If anchorWs.Cells(anchorWsRow, 1) <> pole.poleNumber Then Exit For
+            If anchorWs.cells(anchorWsRow, 1) <> pole.poleNumber Then Exit For
         
             Dim anchor As anchor: Set anchor = New anchor
             
-            anchor.distance = anchorWs.Cells(anchorWsRow, 2)
-            anchor.angle = anchorWs.Cells(anchorWsRow, 3)
+            anchor.distance = anchorWs.cells(anchorWsRow, 2)
+            anchor.angle = anchorWs.cells(anchorWsRow, 3)
             anchor.direction = Utilities.degreesToDirection(anchor.angle)
-            anchor.owner = anchorWs.Cells(anchorWsRow, 4)
-            anchor.ceCount = anchorWs.Cells(anchorWsRow, 5)
+            anchor.owner = anchorWs.cells(anchorWsRow, 4)
+            anchor.ceCount = anchorWs.cells(anchorWsRow, 5)
             
             pole.anchors.Add anchor
         Next anchorWsRow
         
         'Guy section
         For guyWsRow = guyWsRow To guyWsLastRow
-            If guyWs.Cells(guyWsRow, 1) <> pole.poleNumber Then Exit For
+            If guyWs.cells(guyWsRow, 1) <> pole.poleNumber Then Exit For
         
             Dim guy As guy: Set guy = New guy
             
-            If guyWs.Cells(guyWsRow, 4) <> "" Then
-                guy.size = guyWs.Cells(guyWsRow, 2)
-                parts = Split(guyWs.Cells(guyWsRow, 3), " > ")
+            If guyWs.cells(guyWsRow, 4) <> "" Then
+                guy.size = guyWs.cells(guyWsRow, 2)
+                parts = Split(guyWs.cells(guyWsRow, 3), " > ")
                 ownerType = parts(0)
                 guy.owner = parts(1)
-                guy.height = guyWs.Cells(guyWsRow, 4)
+                guy.height = guyWs.cells(guyWsRow, 4)
                 guy.componentType = "DG"
                 
                 pole.guys.Add guy
@@ -507,10 +512,10 @@ Public Sub extractImportDataFormat()
                 Else
                     pole.commComponents.Add guy
                 End If
-            ElseIf guyWs.Cells(guyWsRow, 5) <> "" Then
-                guy.proposedSize = guyWs.Cells(guyWsRow, 5)
-                guy.proposedLead = guyWs.Cells(guyWsRow, 6)
-                guy.proposedDirection = guyWs.Cells(guyWsRow, 7)
+            ElseIf guyWs.cells(guyWsRow, 5) <> "" Then
+                guy.proposedSize = guyWs.cells(guyWsRow, 5)
+                guy.proposedLead = guyWs.cells(guyWsRow, 6)
+                guy.proposedDirection = guyWs.cells(guyWsRow, 7)
                 
                 pole.applicantGuys.Add guy
             End If
@@ -518,16 +523,16 @@ Public Sub extractImportDataFormat()
 
         'Equipment section
         For equipmentWsRow = equipmentWsRow To equipmentWsLastRow
-            If equipmentWs.Cells(equipmentWsRow, 1) <> pole.poleNumber Then Exit For
+            If equipmentWs.cells(equipmentWsRow, 1) <> pole.poleNumber Then Exit For
             
             Dim Equipment As Equipment: Set Equipment = New Equipment
             
-            parts = Split(equipmentWs.Cells(equipmentWsRow, 2), " > ")
+            parts = Split(equipmentWs.cells(equipmentWsRow, 2), " > ")
             Equipment.componentType = parts(0)
             Equipment.size = parts(1)
-            Equipment.height = equipmentWs.Cells(equipmentWsRow, 3)
-            Equipment.bottomHeight = equipmentWs.Cells(equipmentWsRow, 4)
-            Equipment.owner = equipmentWs.Cells(equipmentWsRow, 5)
+            Equipment.height = equipmentWs.cells(equipmentWsRow, 3)
+            Equipment.bottomHeight = equipmentWs.cells(equipmentWsRow, 4)
+            Equipment.owner = equipmentWs.cells(equipmentWsRow, 5)
             
             pole.equipments.Add Equipment
             If Equipment.owner = "" Or UCase(Equipment.owner) = "CONSUMERS ENERGY" Then
@@ -551,88 +556,88 @@ Public Sub fillImportDataFormat()
     Dim primaryBundles As Scripting.Dictionary
     
     Set colWs = ThisWorkbook.sheets("Collection")
-    colWs.Cells(1, 1).Value = "ID"
-    colWs.Cells(1, 2).Value = "GIS CE ID Tag"
-    colWs.Cells(1, 3).Value = "Existing CE ID Tag"
-    colWs.Cells(1, 4).Value = "Type"
-    colWs.Cells(1, 5).Value = "Pole Class Verified"
-    colWs.Cells(1, 6).Value = "Pole Height Verified"
-    colWs.Cells(1, 7).Value = "Owner"
-    colWs.Cells(1, 8).Value = "Circumference ("")"
-    colWs.Cells(1, 9).Value = "Pole Address"
-    colWs.Cells(1, 10).Value = "Hammer Test Failed"
-    colWs.Cells(1, 11).Value = "Visual Test Failed"
-    colWs.Cells(1, 12).Value = "Note"
-    colWs.Cells(1, 13).Value = "collectedAt"
-    colWs.Cells(1, 14).Value = "Location.latitude"
-    colWs.Cells(1, 15).Value = "Location.longitude"
-    colWs.Cells(1, 16).Value = "Tip"
-    colWs.Cells(1, 17).Value = "Bonded Streetlight"
-    colWs.Cells(1, 18).Value = "Tree Work"
+    colWs.cells(1, 1).value = "ID"
+    colWs.cells(1, 2).value = "GIS CE ID Tag"
+    colWs.cells(1, 3).value = "Existing CE ID Tag"
+    colWs.cells(1, 4).value = "Type"
+    colWs.cells(1, 5).value = "Pole Class Verified"
+    colWs.cells(1, 6).value = "Pole Height Verified"
+    colWs.cells(1, 7).value = "Owner"
+    colWs.cells(1, 8).value = "Circumference ("")"
+    colWs.cells(1, 9).value = "Pole Address"
+    colWs.cells(1, 10).value = "Hammer Test Failed"
+    colWs.cells(1, 11).value = "Visual Test Failed"
+    colWs.cells(1, 12).value = "Note"
+    colWs.cells(1, 13).value = "collectedAt"
+    colWs.cells(1, 14).value = "Location.latitude"
+    colWs.cells(1, 15).value = "Location.longitude"
+    colWs.cells(1, 16).value = "Tip"
+    colWs.cells(1, 17).value = "Bonded Streetlight"
+    colWs.cells(1, 18).value = "Tree Work"
     
     Set jobInfoWs = ThisWorkbook.sheets("Job Info")
-    jobInfoWs.Cells(1, 1).Value = "ID"
-    jobInfoWs.Cells(1, 5).Value = "Notification"
-    jobInfoWs.Cells(1, 3).Value = "Permit"
-    jobInfoWs.Cells(1, 4).Value = "Applicant"
-    jobInfoWs.Cells(1, 2).Value = "Job Location"
-    jobInfoWs.Cells(1, 6).Value = "County"
-    jobInfoWs.Cells(1, 7).Value = "Township"
-    jobInfoWs.Cells(1, 8).Value = "Fielder"
+    jobInfoWs.cells(1, 1).value = "ID"
+    jobInfoWs.cells(1, 5).value = "Notification"
+    jobInfoWs.cells(1, 3).value = "Permit"
+    jobInfoWs.cells(1, 4).value = "Applicant"
+    jobInfoWs.cells(1, 2).value = "Job Location"
+    jobInfoWs.cells(1, 6).value = "County"
+    jobInfoWs.cells(1, 7).value = "Township"
+    jobInfoWs.cells(1, 8).value = "Fielder"
     
     Set spanWs = ThisWorkbook.sheets("Span")
-    spanWs.Cells(1, 1).Value = "ID"
-    spanWs.Cells(1, 2).Value = "Span Id"
-    spanWs.Cells(1, 3).Value = "Span Length"
-    spanWs.Cells(1, 4).Value = "Span Length.bearing"
-    spanWs.Cells(1, 5).Value = "House"
-    spanWs.Cells(1, 6).Value = "Tree Work"
+    spanWs.cells(1, 1).value = "ID"
+    spanWs.cells(1, 2).value = "Span Id"
+    spanWs.cells(1, 3).value = "Span Length"
+    spanWs.cells(1, 4).value = "Span Length.bearing"
+    spanWs.cells(1, 5).value = "House"
+    spanWs.cells(1, 6).value = "Tree Work"
     
     Set equipmentWs = ThisWorkbook.sheets("Equipment")
-    equipmentWs.Cells(1, 1).Value = "ID"
-    equipmentWs.Cells(1, 2).Value = "Type"
-    equipmentWs.Cells(1, 3).Value = "Attachment Height"
-    equipmentWs.Cells(1, 4).Value = "Bottom Height"
-    equipmentWs.Cells(1, 5).Value = "Owner"
+    equipmentWs.cells(1, 1).value = "ID"
+    equipmentWs.cells(1, 2).value = "Type"
+    equipmentWs.cells(1, 3).value = "Attachment Height"
+    equipmentWs.cells(1, 4).value = "Bottom Height"
+    equipmentWs.cells(1, 5).value = "Owner"
     
     Set anchorWs = ThisWorkbook.sheets("Anchor")
-    anchorWs.Cells(1, 1).Value = "ID"
-    anchorWs.Cells(1, 2).Value = "Lead Length"
-    anchorWs.Cells(1, 3).Value = "Lead Length.bearing"
-    anchorWs.Cells(1, 4).Value = "Owner"
-    anchorWs.Cells(1, 5).Value = "ceCount"
+    anchorWs.cells(1, 1).value = "ID"
+    anchorWs.cells(1, 2).value = "Lead Length"
+    anchorWs.cells(1, 3).value = "Lead Length.bearing"
+    anchorWs.cells(1, 4).value = "Owner"
+    anchorWs.cells(1, 5).value = "ceCount"
     
     Set guysWs = ThisWorkbook.sheets("Anchor.Guys")
-    guysWs.Cells(1, 1).Value = "ID"
-    guysWs.Cells(1, 2).Value = "Size"
-    guysWs.Cells(1, 3).Value = "Owner"
-    guysWs.Cells(1, 4).Value = "Attachment Height"
-    guysWs.Cells(1, 5).Value = "Proposed Size"
-    guysWs.Cells(1, 6).Value = "Proposed Lead"
-    guysWs.Cells(1, 7).Value = "Proposed Direction"
+    guysWs.cells(1, 1).value = "ID"
+    guysWs.cells(1, 2).value = "Size"
+    guysWs.cells(1, 3).value = "Owner"
+    guysWs.cells(1, 4).value = "Attachment Height"
+    guysWs.cells(1, 5).value = "Proposed Size"
+    guysWs.cells(1, 6).value = "Proposed Lead"
+    guysWs.cells(1, 7).value = "Proposed Direction"
     
     Set spanPowWs = ThisWorkbook.sheets("Span.Power Circuit")
-    spanPowWs.Cells(1, 1).Value = "ID"
-    spanPowWs.Cells(1, 2).Value = "Span Id"
-    spanPowWs.Cells(1, 3).Value = "Size"
-    spanPowWs.Cells(1, 4).Value = "Attachment Height"
-    spanPowWs.Cells(1, 5).Value = "Mid Span Height"
-    spanPowWs.Cells(1, 6).Value = "Type"
-    spanPowWs.Cells(1, 7).Value = "WEP Height"
+    spanPowWs.cells(1, 1).value = "ID"
+    spanPowWs.cells(1, 2).value = "Span Id"
+    spanPowWs.cells(1, 3).value = "Size"
+    spanPowWs.cells(1, 4).value = "Attachment Height"
+    spanPowWs.cells(1, 5).value = "Mid Span Height"
+    spanPowWs.cells(1, 6).value = "Type"
+    spanPowWs.cells(1, 7).value = "WEP Height"
     
     Set spanComWs = ThisWorkbook.sheets("Span.Communication")
-    spanComWs.Cells(1, 1).Value = "ID"
-    spanComWs.Cells(1, 2).Value = "Span Id"
-    spanComWs.Cells(1, 3).Value = "Size"
-    spanComWs.Cells(1, 4).Value = "Owner"
-    spanComWs.Cells(1, 5).Value = "Attachment Height"
-    spanComWs.Cells(1, 6).Value = "Mid Span Height"
-    spanComWs.Cells(1, 7).Value = "Type"
-    spanComWs.Cells(1, 8).Value = "Modification"
-    spanComWs.Cells(1, 9).Value = "Diameter"
-    spanComWs.Cells(1, 10).Value = "Tension"
-    spanComWs.Cells(1, 11).Value = "MrMove"
-    spanComWs.Cells(1, 12).Value = "WEP Height"
+    spanComWs.cells(1, 1).value = "ID"
+    spanComWs.cells(1, 2).value = "Span Id"
+    spanComWs.cells(1, 3).value = "Size"
+    spanComWs.cells(1, 4).value = "Owner"
+    spanComWs.cells(1, 5).value = "Attachment Height"
+    spanComWs.cells(1, 6).value = "Mid Span Height"
+    spanComWs.cells(1, 7).value = "Type"
+    spanComWs.cells(1, 8).value = "Modification"
+    spanComWs.cells(1, 9).value = "Diameter"
+    spanComWs.cells(1, 10).value = "Tension"
+    spanComWs.cells(1, 11).value = "MrMove"
+    spanComWs.cells(1, 12).value = "WEP Height"
     
     Dim spanRow As Integer: spanRow = 2
     Dim spanPowRow As Integer: spanPowRow = 2
@@ -642,71 +647,74 @@ Public Sub fillImportDataFormat()
     Dim anchorRow As Integer: anchorRow = 2
     Dim guysRow As Integer: guysRow = 2
     For Each pole In poles
-        colWs.Cells(colRow, 1).Value = pole.poleNumber
-        colWs.Cells(colRow, 2).NumberFormat = "@"
-        colWs.Cells(colRow, 2).Value = pole.gisCEID
-        colWs.Cells(colRow, 3).NumberFormat = "@"
-        colWs.Cells(colRow, 3).Value = pole.existingCEID
-        colWs.Cells(colRow, 4).Value = pole.species & " > " & pole.Class & " > " & pole.height
-        colWs.Cells(colRow, 5).Value = pole.classVerified
-        colWs.Cells(colRow, 6).Value = pole.heightVerified
-        colWs.Cells(colRow, 7).Value = pole.owner
-        colWs.Cells(colRow, 8).Value = pole.glc
-        colWs.Cells(colRow, 9).Value = pole.address
-        colWs.Cells(colRow, 10).Value = pole.hammerTestFailed
-        colWs.Cells(colRow, 11).Value = pole.visualCheckFailed
-        colWs.Cells(colRow, 12).Value = pole.notes
-        colWs.Cells(colRow, 13).Value = pole.collectedDate
-        colWs.Cells(colRow, 14).Value = pole.latitude
-        colWs.Cells(colRow, 15).Value = pole.longitude
-        colWs.Cells(colRow, 16).Value = pole.agl
-        colWs.Cells(colRow, 17).Value = pole.Bonded
-        colWs.Cells(colRow, 18).Value = pole.treeWork
+        Do While Left$(pole.poleNumber, 1) = "0" And Len(pole.poleNumber) > 1
+            pole.poleNumber = Mid$(pole.poleNumber, 2)
+        Loop
+        colWs.cells(colRow, 1).value = pole.poleNumber
+        colWs.cells(colRow, 2).NumberFormat = "@"
+        colWs.cells(colRow, 2).value = pole.gisCEID
+        colWs.cells(colRow, 3).NumberFormat = "@"
+        colWs.cells(colRow, 3).value = pole.existingCEID
+        colWs.cells(colRow, 4).value = pole.species & " > " & pole.Class & " > " & pole.height
+        colWs.cells(colRow, 5).value = pole.classVerified
+        colWs.cells(colRow, 6).value = pole.heightVerified
+        colWs.cells(colRow, 7).value = pole.owner
+        colWs.cells(colRow, 8).value = pole.glc
+        colWs.cells(colRow, 9).value = pole.address
+        colWs.cells(colRow, 10).value = pole.hammerTestFailed
+        colWs.cells(colRow, 11).value = pole.visualCheckFailed
+        colWs.cells(colRow, 12).value = pole.notes
+        colWs.cells(colRow, 13).value = pole.collectedDate
+        colWs.cells(colRow, 14).value = pole.latitude
+        colWs.cells(colRow, 15).value = pole.longitude
+        colWs.cells(colRow, 16).value = pole.agl
+        colWs.cells(colRow, 17).value = pole.Bonded
+        colWs.cells(colRow, 18).value = pole.treeWork
         
-        jobInfoWs.Cells(colRow, 1).Value = pole.poleNumber
-        jobInfoWs.Cells(colRow, 2).Value = jobLocation
-        jobInfoWs.Cells(colRow, 3).Value = permit
-        jobInfoWs.Cells(colRow, 4).Value = applicant
-        jobInfoWs.Cells(colRow, 5).Value = Notification
-        jobInfoWs.Cells(colRow, 6).Value = county
-        jobInfoWs.Cells(colRow, 7).Value = township
-        jobInfoWs.Cells(colRow, 8).Value = fielder
+        jobInfoWs.cells(colRow, 1).value = pole.poleNumber
+        jobInfoWs.cells(colRow, 2).value = jobLocation
+        jobInfoWs.cells(colRow, 3).value = Permit
+        jobInfoWs.cells(colRow, 4).value = applicant
+        jobInfoWs.cells(colRow, 5).value = notification
+        jobInfoWs.cells(colRow, 6).value = county
+        jobInfoWs.cells(colRow, 7).value = township
+        jobInfoWs.cells(colRow, 8).value = fielder
         
         For Each Span In pole.spans
-            spanWs.Cells(spanRow, 1).Value = pole.poleNumber
-            spanWs.Cells(spanRow, 2).Value = Span.spanId
-            spanWs.Cells(spanRow, 3).Value = Span.distance
-            spanWs.Cells(spanRow, 4).Value = Span.angle
-            spanWs.Cells(spanRow, 5).Value = Span.houseNumber
-            spanWs.Cells(spanRow, 6).Value = Span.treeWork
+            spanWs.cells(spanRow, 1).value = pole.poleNumber
+            spanWs.cells(spanRow, 2).value = Span.spanId
+            spanWs.cells(spanRow, 3).value = Span.distance
+            spanWs.cells(spanRow, 4).value = Span.angle
+            spanWs.cells(spanRow, 5).value = Span.houseNumber
+            spanWs.cells(spanRow, 6).value = Span.treeWork
             
             spanRow = spanRow + 1
             Set primaryBundles = New Scripting.Dictionary
             For Each wire In Span.utilWires
-                spanPowWs.Cells(spanPowRow, 1).Value = pole.poleNumber
-                spanPowWs.Cells(spanPowRow, 2).Value = Span.spanId
-                spanPowWs.Cells(spanPowRow, 3).Value = wire.size
-                spanPowWs.Cells(spanPowRow, 4).Value = wire.height
-                spanPowWs.Cells(spanPowRow, 5).Value = wire.midspans(Span.spanSlot)
-                spanPowWs.Cells(spanPowRow, 6).Value = wire.componentType
-                spanPowWs.Cells(spanPowRow, 7).Value = wire.wepHeight
+                spanPowWs.cells(spanPowRow, 1).value = pole.poleNumber
+                spanPowWs.cells(spanPowRow, 2).value = Span.spanId
+                spanPowWs.cells(spanPowRow, 3).value = wire.size
+                spanPowWs.cells(spanPowRow, 4).value = wire.height
+                spanPowWs.cells(spanPowRow, 5).value = wire.midspans(Span.spanSlot)
+                spanPowWs.cells(spanPowRow, 6).value = wire.componentType
+                spanPowWs.cells(spanPowRow, 7).value = wire.wepHeight
                 
                 spanPowRow = spanPowRow + 1
             Next wire
             
             For Each wire In Span.commWires
-                spanComWs.Cells(spanComRow, 1).Value = pole.poleNumber
-                spanComWs.Cells(spanComRow, 2).Value = Span.spanId
-                spanComWs.Cells(spanComRow, 3).Value = wire.size
-                spanComWs.Cells(spanComRow, 4).Value = wire.owner
-                spanComWs.Cells(spanComRow, 5).Value = wire.height
-                spanComWs.Cells(spanComRow, 6).Value = wire.midspans(Span.spanSlot)
-                spanComWs.Cells(spanComRow, 7).Value = wire.componentType
-                spanComWs.Cells(spanComRow, 8).Value = wire.modification
-                spanComWs.Cells(spanComRow, 9).Value = wire.diameter
-                spanComWs.Cells(spanComRow, 10).Value = wire.tensions(Span.spanSlot)
-                spanComWs.Cells(spanComRow, 11).Value = wire.mrMoves(Span.spanSlot)
-                spanComWs.Cells(spanComRow, 12).Value = wire.wepHeight
+                spanComWs.cells(spanComRow, 1).value = pole.poleNumber
+                spanComWs.cells(spanComRow, 2).value = Span.spanId
+                spanComWs.cells(spanComRow, 3).value = wire.size
+                spanComWs.cells(spanComRow, 4).value = wire.owner
+                spanComWs.cells(spanComRow, 5).value = wire.height
+                spanComWs.cells(spanComRow, 6).value = wire.midspans(Span.spanSlot)
+                spanComWs.cells(spanComRow, 7).value = wire.componentType
+                spanComWs.cells(spanComRow, 8).value = wire.modification
+                spanComWs.cells(spanComRow, 9).value = wire.diameter
+                spanComWs.cells(spanComRow, 10).value = wire.tensions(Span.spanSlot)
+                spanComWs.cells(spanComRow, 11).value = wire.mrMoves(Span.spanSlot)
+                spanComWs.cells(spanComRow, 12).value = wire.wepHeight
                 
                 spanComRow = spanComRow + 1
             Next wire
@@ -714,10 +722,10 @@ Public Sub fillImportDataFormat()
         
         For Each wire In pole.utilWires
             If wire.midspans.count = 0 Then
-                equipmentWs.Cells(equipmentRow, 1).Value = pole.poleNumber
-                equipmentWs.Cells(equipmentRow, 2).Value = wire.componentType & " > " & wire.size
-                equipmentWs.Cells(equipmentRow, 3).Value = wire.height
-                equipmentWs.Cells(equipmentRow, 5).Value = IIf(wire.owner = "", "Consumers Energy", wire.owner)
+                equipmentWs.cells(equipmentRow, 1).value = pole.poleNumber
+                equipmentWs.cells(equipmentRow, 2).value = wire.componentType & " > " & wire.size
+                equipmentWs.cells(equipmentRow, 3).value = wire.height
+                equipmentWs.cells(equipmentRow, 5).value = IIf(wire.owner = "", "Consumers Energy", wire.owner)
                 
                 equipmentRow = equipmentRow + 1
             End If
@@ -725,59 +733,59 @@ Public Sub fillImportDataFormat()
         
         For Each wire In pole.commWires
             If wire.midspans.count = 0 Then
-                equipmentWs.Cells(equipmentRow, 1).Value = pole.poleNumber
+                equipmentWs.cells(equipmentRow, 1).value = pole.poleNumber
                 If wire.componentType = "DROP" Then
-                    equipmentWs.Cells(equipmentRow, 2).Value = wire.componentType & " > " & wire.componentType
+                    equipmentWs.cells(equipmentRow, 2).value = wire.componentType & " > " & wire.componentType
                 Else
-                    equipmentWs.Cells(equipmentRow, 2).Value = wire.componentType & " > " & wire.size
+                    equipmentWs.cells(equipmentRow, 2).value = wire.componentType & " > " & wire.size
                 End If
-                equipmentWs.Cells(equipmentRow, 3).Value = wire.height
-                equipmentWs.Cells(equipmentRow, 5).Value = IIf(wire.owner = "", "Consumers Energy", wire.owner)
+                equipmentWs.cells(equipmentRow, 3).value = wire.height
+                equipmentWs.cells(equipmentRow, 5).value = IIf(wire.owner = "", "Consumers Energy", wire.owner)
                 
                 equipmentRow = equipmentRow + 1
             End If
         Next wire
         
         For Each anchor In pole.anchors
-            anchorWs.Cells(anchorRow, 1).Value = pole.poleNumber
-            anchorWs.Cells(anchorRow, 2).Value = anchor.distance
-            anchorWs.Cells(anchorRow, 3).Value = anchor.angle
-            anchorWs.Cells(anchorRow, 4).Value = anchor.owner
-            anchorWs.Cells(anchorRow, 5).Value = anchor.ceCount
+            anchorWs.cells(anchorRow, 1).value = pole.poleNumber
+            anchorWs.cells(anchorRow, 2).value = anchor.distance
+            anchorWs.cells(anchorRow, 3).value = anchor.angle
+            anchorWs.cells(anchorRow, 4).value = anchor.owner
+            anchorWs.cells(anchorRow, 5).value = anchor.ceCount
                 
             anchorRow = anchorRow + 1
             
         Next anchor
         
         For Each guy In pole.guys
-            guysWs.Cells(guysRow, 1).Value = pole.poleNumber
-            guysWs.Cells(guysRow, 2).Value = guy.size
+            guysWs.cells(guysRow, 1).value = pole.poleNumber
+            guysWs.cells(guysRow, 2).value = guy.size
             If guy.owner = "CONSUMERS ENERGY" Then
-                guysWs.Cells(guysRow, 3).Value = "UTILITY > " & guy.owner
+                guysWs.cells(guysRow, 3).value = "UTILITY > " & guy.owner
             Else
-                guysWs.Cells(guysRow, 3).Value = "COMMUNICATION > " & guy.owner
+                guysWs.cells(guysRow, 3).value = "COMMUNICATION > " & guy.owner
             End If
-            guysWs.Cells(guysRow, 4).Value = guy.height
+            guysWs.cells(guysRow, 4).value = guy.height
             
             guysRow = guysRow + 1
         Next guy
         
         For Each guy In pole.applicantGuys
-            guysWs.Cells(guysRow, 1).Value = pole.poleNumber
+            guysWs.cells(guysRow, 1).value = pole.poleNumber
         
-            guysWs.Cells(guysRow, 5).Value = guy.proposedSize
-            guysWs.Cells(guysRow, 6).Value = guy.proposedLead
-            guysWs.Cells(guysRow, 7).Value = guy.proposedDirection
+            guysWs.cells(guysRow, 5).value = guy.proposedSize
+            guysWs.cells(guysRow, 6).value = guy.proposedLead
+            guysWs.cells(guysRow, 7).value = guy.proposedDirection
         
             guysRow = guysRow + 1
         Next guy
         
         For Each Equipment In pole.equipments
-            equipmentWs.Cells(equipmentRow, 1).Value = pole.poleNumber
-            equipmentWs.Cells(equipmentRow, 2).Value = Equipment.componentType & " > " & Equipment.size
-            equipmentWs.Cells(equipmentRow, 3).Value = Equipment.height
-            equipmentWs.Cells(equipmentRow, 4).Value = Equipment.bottomHeight
-            equipmentWs.Cells(equipmentRow, 5).Value = IIf(Equipment.owner = "", "Consumers Energy", Equipment.owner)
+            equipmentWs.cells(equipmentRow, 1).value = pole.poleNumber
+            equipmentWs.cells(equipmentRow, 2).value = Equipment.componentType & " > " & Equipment.size
+            equipmentWs.cells(equipmentRow, 3).value = Equipment.height
+            equipmentWs.cells(equipmentRow, 4).value = Equipment.bottomHeight
+            equipmentWs.cells(equipmentRow, 5).value = IIf(Equipment.owner = "", "Consumers Energy", Equipment.owner)
             
             equipmentRow = equipmentRow + 1
         Next Equipment
