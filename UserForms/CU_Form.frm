@@ -31,12 +31,12 @@ End Sub
 Public Sub Initialize(size As String)
     Me.Label1.caption = "Size " & size & " Primary"
     Me.StartUpPosition = 0
-    Me.Left = Application.Left + (0.5 * Application.Width) - (0.5 * Me.Width)
+    Me.Left = Application.Left + (0.5 * Application.width) - (0.5 * Me.width)
     Me.top = Application.top + (0.5 * Application.height) - (0.5 * Me.height)
 End Sub
 
 Private Sub CommandButton1_Click()
-    If Me.OptionButton1.visible And Not Me.OptionButton1.Value And Not Me.OptionButton2.Value Then
+    If Me.OptionButton1.visible And Not Me.OptionButton1.value And Not Me.OptionButton2.value Then
         MsgBox "Please select whether it's top or side ties."
     End If
     
