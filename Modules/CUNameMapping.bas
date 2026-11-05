@@ -282,6 +282,8 @@ Private Sub InitializeCUNameMapping()
     CUNameMapping("3|0ACSRDEGRIP") = "100626"
     CUNameMapping("336ACSRDEGRIP") = "100694"
     CUNameMapping("336ALDEGRIP") = "100696"
+    CUNameMapping("795ALPRIDEGRIP") = "100694"
+    CUNameMapping("795PRIDEGRIP") = "100694"
     
     CUNameMapping("6CUPRIDE") = "100710"
     CUNameMapping("4ACSRPRIDE") = "100635"
@@ -290,6 +292,7 @@ Private Sub InitializeCUNameMapping()
     CUNameMapping("3|0ACSRPRIDE") = "100626"
     CUNameMapping("336ACSRPRIDE") = "100694"
     CUNameMapping("336ALDPRIDE") = "100696"
+    CUNameMapping("795ALDPRIDE") = "100694"
     
     CUNameMapping("6PRIDE") = "100710"
     CUNameMapping("4PRIDE") = "100635"
@@ -297,6 +300,11 @@ Private Sub InitializeCUNameMapping()
     CUNameMapping("1|0PRIDE") = "100609"
     CUNameMapping("3|0PRIDE") = "100626"
     CUNameMapping("336PRIDE") = "100694"
+    CUNameMapping("795PRIDE") = "100694"
+    CUNameMapping("336DE") = "100694"
+    CUNameMapping("795DE") = "100694"
+    CUNameMapping("336DEGRIP") = "100694"
+    CUNameMapping("795DEGRIP") = "100694"
     
     CUNameMapping("6NEUTDE") = "100710"
     CUNameMapping("4NEUTDE") = "100635"
