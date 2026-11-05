@@ -16,8 +16,8 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As project
     Dim nodeType As String
     
     If json.exists("metadata") Then
-        If json("metadata").exists("TRC_tracking_ID") Then project.Notification = Trim(json("metadata")("TRC_tracking_ID"))
-        If json("metadata").exists("communication_tracking_ID") Then project.permit = Trim(json("metadata")("communication_tracking_ID"))
+        If json("metadata").exists("TRC_tracking_ID") Then project.notification = Trim(json("metadata")("TRC_tracking_ID"))
+        If json("metadata").exists("communication_tracking_ID") Then project.Permit = Trim(json("metadata")("communication_tracking_ID"))
         If json("metadata").exists("communication_tracking_ID") Then
             project.township = Trim(json("metadata")("job_city"))
             project.jobLocation = project.township & ", MI"
@@ -29,6 +29,7 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As project
     Dim nodeKeys As Scripting.Dictionary: Set nodeKeys = New Scripting.Dictionary
     Dim insulators As Scripting.Dictionary: Set insulators = New Scripting.Dictionary
     Dim wires As Scripting.Dictionary: Set wires = New Scripting.Dictionary
+    Dim noScidCount As Integer: noScidCount = 1
     
     If json.exists("nodes") Then
         For Each nodeKey In json("nodes").keys
@@ -42,6 +43,10 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As project
                         pole.heightVerified = False
                         
                         If jsonNode("attributes").exists("scid") Then pole.poleNumber = getFirstValueJson(jsonNode("attributes")("scid"))
+                        If pole.poleNumber = "" Then
+                            pole.poleNumber = "NOSCID" & noScidCount
+                            noScidCount = noScidCount + 1
+                        End If
                         If jsonNode("attributes").exists("hammer_test") Then pole.hammerTestFailed = getFirstValueJson(jsonNode("attributes")("hammer_test")) = "Hammer Fail"
                         If jsonNode("attributes").exists("visual_test") Then pole.visualCheckFailed = getFirstValueJson(jsonNode("attributes")("visual_test")) = "Visual Fail"
                         If jsonNode("attributes").exists("pole_height") Then pole.height = getFirstValueJson(jsonNode("attributes")("pole_height"))
@@ -107,7 +112,6 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As project
                                                             wire.owner = UCase(json("traces")("trace_data")(wire.trace)("company"))
                                                             wire.componentType = getKatapultNameMapping(json("traces")("trace_data")(wire.trace)("cable_type"))
                                                             If wire.componentType = "NEUT" Then wire.crossArm = Arm.armSpec
-                                                            Set Insulator.wire = wire
                                                             pole.wires.Add wire
                                                             Call splitUtilCommWires(wire, pole)
                                                         Next wireKey
@@ -223,12 +227,14 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As project
                         End If
                         If jsonNode.exists("latitude") Then pole.latitude = jsonNode("latitude")
                         If jsonNode.exists("longitude") Then pole.longitude = jsonNode("longitude")
-                            
+                        
+                        If jsonNode("attributes").exists("pole_owner") Then pole.owner = getFirstValueJson(jsonNode("attributes")("pole_owner"))
+                        
                         If jsonNode("attributes").exists("pole_tag") Then
                             For Each poleTagKey In jsonNode("attributes")("pole_tag")
                                 Set jsonPoleTag = jsonNode("attributes")("pole_tag")(poleTagKey)
                                 If jsonPoleTag.exists("tagtext") Then pole.gisCEID = jsonPoleTag("tagtext")
-                                If jsonPoleTag.exists("company") Then pole.owner = jsonPoleTag("company")
+                                If jsonPoleTag.exists("company") And pole.owner = "" Then pole.owner = jsonPoleTag("company")
                             Next poleTagKey
                         End If
                         
@@ -259,12 +265,12 @@ Public Function InitProjectFromKatapultJson(ByVal json As Object) As project
         Call pole.setLineStructureTypes
     Next pole
 
-    If project.Notification = "" Then
-        project.Notification = InputBox("Enter the Notification:", "User Input")
+    If project.notification = "" Then
+        project.notification = InputBox("Enter the Notification:", "User Input")
     End If
     
-    If project.permit = "" Then
-        project.permit = InputBox("Enter the Permit:", "User Input")
+    If project.Permit = "" Then
+        project.Permit = InputBox("Enter the Permit:", "User Input")
     End If
 
     If project.county = "" Then
@@ -369,6 +375,7 @@ Private Sub addConnections(ByVal json As Object, connectionKey As String, ByVal 
                                                     wire.trace = trace
                                                     wire.owner = owner
                                                     wire.componentType = componentType
+                                                    If wire.componentType = "OW" Then wire.componentType = "SEC"
                                                     
                                                     pole.wires.Add wire
                                                     Call splitUtilCommWires(wire, pole)
@@ -385,8 +392,9 @@ Private Sub addConnections(ByVal json As Object, connectionKey As String, ByVal 
                                                     If jsonWire.exists("tension") Then wire.tensions.Add Span.spanSlot, jsonWire("tension")
                                                     If jsonWire.exists("mr_move") Then wire.mrMoves.Add Span.spanSlot, jsonWire("mr_move")
                                                 End If
-                                                
+                                                                                                                        
                                                 wire.size = getKatapultNameMapping(jsonWire("wire_spec"))
+                                                
                                                 If wire.componentType = "SEC" And isOpenWire(wire.size) Then wire.componentType = "OW"
                                                 
                                                 If wire.componentType = "SPG" Then
@@ -653,11 +661,11 @@ End Sub
 
 Private Function DistanceAngleFromLatLong(lat1 As Double, long1 As Double, lat2 As Double, long2 As Double)
     Const PI As Double = 3.14159265358979
-    Const R As Double = 20903520  ' Earth radius in ft
+    Const r As Double = 20903520  ' Earth radius in ft
     
     Dim phi1 As Double, phi2 As Double
     Dim dPhi As Double, dLambda As Double
-    Dim A As Double, C As Double
+    Dim A As Double, c As Double
     Dim distance As Double
     Dim y As Double, x As Double
     Dim bearing As Double
@@ -669,9 +677,9 @@ Private Function DistanceAngleFromLatLong(lat1 As Double, long1 As Double, lat2 
     
     A = (Sin(dPhi / 2) * Sin(dPhi / 2)) + (Cos(phi1) * Cos(phi2) * Sin(dLambda / 2) * Sin(dLambda / 2))
     
-    C = 2 * Atn2(Sqr(A), Sqr(1 - A))
+    c = 2 * Atn2(Sqr(A), Sqr(1 - A))
     
-    distance = R * C
+    distance = r * c
     
     y = Sin(dLambda) * Cos(phi2)
     x = Cos(phi1) * Sin(phi2) - Sin(phi1) * Cos(phi2) * Cos(dLambda)
