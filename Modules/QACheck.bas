@@ -6,7 +6,7 @@ Public Sub QACheckPole()
     Call LogMessage.SendLogMessage("QACheckPole")
 
     Set sheet = ThisWorkbook.ActiveSheet()
-    If sheet.name = "4 Spans" Or sheet.name = "8 Spans" Or sheet.name = "12 Spans" Or sheet.Cells(2, 2).Value <> "Notification:" Then
+    If sheet.name = "4 Spans" Or sheet.name = "8 Spans" Or sheet.name = "12 Spans" Or sheet.cells(2, 2).value <> "Notification:" Then
         MsgBox "You need to have a pole detail sheet active to run this script."
         Exit Sub
     End If
@@ -30,7 +30,7 @@ Public Sub QACheckAllPoles()
     
     issues = ""
     For Each sheet In ThisWorkbook.sheets
-        If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" And sheet.Cells(2, 2).Value = "Notification:" Then
+        If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" And sheet.cells(2, 2).value = "Notification:" Then
             poleIssues = QACheck(sheet)
             If InStr(poleIssues, "No issues") = 0 Then issues = issues & QACheck(sheet) & vbLf & vbLf
         End If
@@ -85,7 +85,7 @@ Private Function QACheck(pds As Worksheet) As String
     Call checkEmptyCell(pds, issues, "HEIGHT", "Pole Height")
     Call checkEmptyCell(pds, issues, "TYPE", "Pole Type")
     Call checkEmptyCell(pds, issues, "CLASSESTIMATE", "Pole Class Estimate")
-    Call checkEmptyCell(pds, issues, "GLC", "GLC")
+    If pds.Range("GLC") = "" Then issues = issues & "• GLC cell empty" & vbLf
     Call checkEmptyCell(pds, issues, "HEIGHTESTIMATE", "Pole Height Estimate")
     Call checkEmptyCell(pds, issues, "CEID", "CEID")
     If isEmpty(pds.Range("CEPOLE")) And isEmpty(pds.Range("OTHERPOLE")) Then issues = issues & "• CE Pole or Other pole owner needs to be checked off at the top" & vbLf
@@ -93,7 +93,7 @@ Private Function QACheck(pds As Worksheet) As String
     If isEmpty(pds.Range("TANGENT")) And isEmpty(pds.Range("ANGLE")) And isEmpty(pds.Range("CORNER")) And isEmpty(pds.Range("DEADEND")) And isEmpty(pds.Range("BUCK")) And isEmpty(pds.Range("SECONLY")) Then issues = issues & "• Need to select a framing type" & vbLf
     If (Not isEmpty(pds.Range("TANGENT")) Or Not isEmpty(pds.Range("ANGLE")) Or Not isEmpty(pds.Range("CORNER")) Or Not isEmpty(pds.Range("DEADEND")) Or Not isEmpty(pds.Range("BUCK"))) And Not isEmpty(pds.Range("SECONLY")) Then issues = issues & "• Sec only can't be selected if there are other framing types selected" & vbLf
     If Not isEmpty(ThisWorkbook.sheets("Control").Range("QAFU")) Then
-        If isEmpty(pds.Range("SECONLY")) And (isEmpty(pds.Range("TANGENT").OFFSET(0, 1)) And isEmpty(pds.Range("ANGLE").OFFSET(0, 1)) And isEmpty(pds.Range("CORNER").OFFSET(0, 1)) And isEmpty(pds.Range("DEADEND").OFFSET(0, 1)) And isEmpty(pds.Range("BUCK").OFFSET(0, 1))) Then issues = issues & "• Framing unit not specified" & vbLf
+        If isEmpty(pds.Range("SECONLY")) And (isEmpty(pds.Range("TANGENT").offSet(0, 1)) And isEmpty(pds.Range("ANGLE").offSet(0, 1)) And isEmpty(pds.Range("CORNER").offSet(0, 1)) And isEmpty(pds.Range("DEADEND").offSet(0, 1)) And isEmpty(pds.Range("BUCK").offSet(0, 1))) Then issues = issues & "• Framing unit not specified" & vbLf
     End If
 
     If project.mode <> "SYSTEM IMPROVEMENT" Then
@@ -125,7 +125,7 @@ Private Function QACheck(pds As Worksheet) As String
         ' Pole Denied
         If Not isEmpty(pds.Range("SUMSHEET8")) Then
             Call checkEmptyCell(pds, issues, "SUMSHEET14", "Comments - Applicant")
-            If pds.Range("CMRF1").Value <> "DENIED" Or pds.Range("CMRF2").Value <> "DENIED" Or pds.Range("CMRF3").Value <> "DENIED" Then issues = issues & "• If pole is denied, put DENIED in applicant CMRF sections." & vbLf
+            If pds.Range("CMRF1").value <> "DENIED" Or pds.Range("CMRF2").value <> "DENIED" Or pds.Range("CMRF3").value <> "DENIED" Then issues = issues & "• If pole is denied, put DENIED in applicant CMRF sections." & vbLf
             If Not isEmpty(pds.Range("SUMSHEET1")) Then issues = issues & "• If pole is denied, ok to attach before work shouldn't be checked off" & vbLf
             If Not isEmpty(pds.Range("SUMSHEET2")) Then issues = issues & "• If pole is denied, work required before attach shouldn't be checked off" & vbLf
             If isEmpty(pds.Range("NEWAPP")) Then issues = issues & "• Even if pole is denied, there should be a new app percentage. Put DENIED if no percentage" & vbLf
@@ -154,11 +154,11 @@ Private Function QACheck(pds As Worksheet) As String
                 Call checkEmptyCell(pds, issues, "ROOMTOGUY", "Room to guy")
                 Call checkEmptyCell(pds, issues, "PGUY", "Top proposed guying ok")
             End If
-            If Not isEmpty(pds.Range("NEWAPPLEAD").OFFSET(1, 0)) Then Call checkEmptyCell(pds, issues, "PGUY2", "Bottom proposed guying ok")
+            If Not isEmpty(pds.Range("NEWAPPLEAD").offSet(1, 0)) Then Call checkEmptyCell(pds, issues, "PGUY2", "Bottom proposed guying ok")
             If pds.Range("ROOMTOGUY") = "NO" Then Call checkEmptyCell(pds, issues, "GUYCOMMENT", "Guying Comment")
             If Not isEmpty(pds.Range("SUMSHEET8")) And Not isEmpty(pds.Range("NEWAPPLEAD")) Then
                 If pds.Range("PGUY") = "YES" Then issues = issues & "• Top proposed guying shouldn't be YES if pole is denied." & vbLf
-                If Not isEmpty(pds.Range("NEWAPPLEAD").OFFSET(1, 0)) Then
+                If Not isEmpty(pds.Range("NEWAPPLEAD").offSet(1, 0)) Then
                     If pds.Range("PGUY2") = "YES" Then issues = issues & "• Bottom proposed guying shouldn't be YES if pole is denied." & vbLf
                 End If
             End If
@@ -170,7 +170,7 @@ Private Function QACheck(pds As Worksheet) As String
             End If
             If Not isEmpty(pds.Range("STLTBRKT")) Then
                 Call checkEmptyCell(pds, issues, "BONDED", "Streetlight Bonded")
-                If pole.location <> "" Then If isEmpty(pds.Range("MBSM").OFFSET(0, 1)) Then issues = issues & "• Miss/Brkn Streetlight molding needs to be selected if there's a streetlight." & vbLf
+                If pole.location <> "" Then If isEmpty(pds.Range("MBSM").offSet(0, 1)) Then issues = issues & "• Miss/Brkn Streetlight molding needs to be selected if there's a streetlight." & vbLf
             End If
         End If
     End If
@@ -179,7 +179,7 @@ Private Function QACheck(pds As Worksheet) As String
     If Not isEmpty(pds.Range("NJUNS")) And InStr(pds.Range("NJUNS"), "COMM MAKE READY WORK") = 0 Then Call checkEmptyCell(pds, issues, "NJUNSTICKET", "NJUNS Ticket")
     If project.mode <> "SYSTEM IMPROVEMENT" Then
         If Not isEmpty(pds.Range("CMRF1")) Then Call checkEmptyCell(pds, issues, "CMRF2", "New Attacher Midspans")
-        If Not isEmpty(pds.Range("NEWAPPLEAD")) And pds.Range("ROOMTOGUY").Value = "YES" Then Call checkEmptyCell(pds, issues, "CMRF3", "New Attacher Down Guy")
+        If Not isEmpty(pds.Range("NEWAPPLEAD")) And pds.Range("ROOMTOGUY").value = "YES" Then Call checkEmptyCell(pds, issues, "CMRF3", "New Attacher Down Guy")
         If InStr(pds.Range("NJUNS"), "COMM MAKE READY WORK") > 0 And Not isEmpty(pds.Range("NJUNSTICKET")) Then issues = issues & "• If it's comm make ready work, there shouldn't be an NJUNS ticket" & vbLf
     
         ' Summary Sheet checks
@@ -196,14 +196,14 @@ Private Function QACheck(pds As Worksheet) As String
         
         If pds.Range("CMRF1") = "DENIED" Then Call checkEmptyCell(pds, issues, "SUMSHEET8", "ATTACHMENT DENIED")
         If pds.Range("CEID") = "FOREIGN" Or Not isEmpty(pds.Range("OTHERPOLE")) Then Call checkEmptyCell(pds, issues, "SUMSHEET9", "FOREIGN POLE")
-        If Not isEmpty(pds.Range("NEWAPPLEAD").OFFSET(1, 0)) Then Call checkEmptyCell(pds, issues, "CMRF3", "New Attacher Down Guy")
+        If Not isEmpty(pds.Range("NEWAPPLEAD").offSet(1, 0)) Then Call checkEmptyCell(pds, issues, "CMRF3", "New Attacher Down Guy")
         
         If Not isEmpty(pds.Range("ALTONE")) And Not isEmpty(pds.Range("ALTTWO")) And Not isEmpty(pds.Range("ALTTHREE")) Then
-            If Replace(Trim(pds.Range("SUMSHEET11").Value), Chr(130), Chr(44)) <> "1" & Chr(44) & "2" & Chr(44) & "3" Then issues = issues & "• Alt work doesn't match alts done on summary sheet, should be 1,2,3" & vbLf
+            If Replace(Trim(pds.Range("SUMSHEET11").value), Chr(130), Chr(44)) <> "1" & Chr(44) & "2" & Chr(44) & "3" Then issues = issues & "• Alt work doesn't match alts done on summary sheet, should be 1,2,3" & vbLf
         ElseIf Not isEmpty(pds.Range("ALTONE")) And Not isEmpty(pds.Range("ALTTWO")) Then
-            If Replace(Trim(pds.Range("SUMSHEET11").Value), Chr(130), Chr(44)) <> "1" & Chr(44) & "2" Then issues = issues & "• Alt work doesn't match alts done on summary sheet, should be 1,2" & vbLf
+            If Replace(Trim(pds.Range("SUMSHEET11").value), Chr(130), Chr(44)) <> "1" & Chr(44) & "2" Then issues = issues & "• Alt work doesn't match alts done on summary sheet, should be 1,2" & vbLf
         ElseIf Not isEmpty(pds.Range("ALTONE")) And Not isEmpty(pds.Range("ALTTHREE")) Then
-            If Replace(Trim(pds.Range("SUMSHEET11").Value), Chr(130), Chr(44)) <> "1" & Chr(44) & "3" Then issues = issues & "• Alt work doesn't match alts done on summary sheet, should be 1,3" & vbLf
+            If Replace(Trim(pds.Range("SUMSHEET11").value), Chr(130), Chr(44)) <> "1" & Chr(44) & "3" Then issues = issues & "• Alt work doesn't match alts done on summary sheet, should be 1,3" & vbLf
         ElseIf Not isEmpty(pds.Range("ALTONE")) Then
             issues = issues & "• Alt work doesn't match alts done on summary sheet" & vbLf
         Else
@@ -228,8 +228,8 @@ Private Function QACheck(pds As Worksheet) As String
 
     If isEmpty(pds.Range("REPLACEANCHOR")) And isEmpty(pds.Range("INSTALLANCHOR")) And isEmpty(pds.Range("INSTALLPOLE")) And Not isEmpty(pds.Range("SUMSHEET13")) Then issues = issues & "• Pole staking should not be checked off if there's no anchor work or new pole install." & vbLf
     
+    paapms = False
     If project.mode <> "SYSTEM IMPROVEMENT" Then
-        paapms = False
         Dim foundOwner As Boolean: foundOwner = False
         If pds.Range("PGUY") = "NO" Or pds.Range("PGUY2") = "NO" Then paapms = True
         If InStr(pds.Range("PROPOSEDHEIGHT"), "OL") = 0 Then
@@ -237,11 +237,11 @@ Private Function QACheck(pds As Worksheet) As String
         Else
             If InStr(pds.Range("CMRF1"), "OL") = 0 And isEmpty(pds.Range("SUMSHEET8")) And isEmpty(pds.Range("SUMSHEET9")) Then issues = issues & "• New attacher height should say ""OL @ XX'XX"" if overlash job" & vbLf
             For i = 0 To 100
-                If pds.Range("CMOWNER").OFFSET(i, 0).Interior.color <> 16312794 Then Exit For
-                If UCase(pds.Range("CMOWNER").OFFSET(i, 0)) = UCase(pds.Range("APPLICANT")) Then
+                If pds.Range("CMOWNER").offSet(i, 0).Interior.color <> 16312794 Then Exit For
+                If UCase(pds.Range("CMOWNER").offSet(i, 0)) = UCase(pds.Range("APPLICANT")) Then
                     foundOwner = True
-                    If InStr(pds.Range("CMOWNER").OFFSET(i, 0), "DG") = 0 Then
-                        If pds.Range("CMRF1") <> "" And InStr(pds.Range("CMRF1"), pds.Range("CMHEIGHT").OFFSET(i, 0)) = 0 Then
+                    If InStr(pds.Range("CMOWNER").offSet(i, 0), "DG") = 0 Then
+                        If pds.Range("CMRF1") <> "" And InStr(pds.Range("CMRF1"), pds.Range("CMHEIGHT").offSet(i, 0)) = 0 Then
                             paapms = True
                             Exit For
                         End If
@@ -251,7 +251,7 @@ Private Function QACheck(pds As Worksheet) As String
             If foundOwner = False Then issues = issues & "• Overlash job but applicant doesn't have their name on the owner section of any of the comms" & vbLf
         End If
         
-        If pole.applicant.modification > 0 And pole.applicant.height <> pole.applicant.modification Then paapms = True
+        If InStr(pds.Range("CMRF1"), "OL") = 0 And pole.applicant.modification > 0 And pole.applicant.height <> pole.applicant.modification Then paapms = True
         
         If Not paapms Then
             For Each midspan In pole.applicant.midspans
@@ -288,13 +288,13 @@ Private Function QACheck(pds As Worksheet) As String
         For Each name In pds.names
             If name.name = "'" & pds.name & "'" & "!TOPOLE" & i Then
                 If Trim(Replace(pds.Range("TOPOLE" & i), "-", "")) <> "" Then
-                    If Trim(Replace(pds.Range("TOPOLE" & i).OFFSET(1, 0), "-", "")) <> "" Then
-                        If InStr(pds.Range("TOPOLE" & i).OFFSET(1, 0), ",") Then commaMidspan = True
-                        If InStr(pds.Range("TOPOLE" & i).OFFSET(1, 0), "GUESS") Then guessMidspan = True
-                        If InStr(pds.Range("TOPOLE" & i).OFFSET(1, 0), "'") = 0 Or InStr(pds.Range("TOPOLE" & i).OFFSET(1, 0), """") = 0 And pds.Range("TOPOLE" & i).OFFSET(1, 0) <> "N/A" Then missingInchOrFoot = True
-                        If UCase(pds.Range("TOPOLE" & i).OFFSET(1, 0)) = "N/A" Or UCase(pds.Range("TOPOLE" & i).OFFSET(1, 0)) = "NA" Then namidSpan = True
+                    If Trim(Replace(pds.Range("TOPOLE" & i).offSet(1, 0), "-", "")) <> "" Then
+                        If InStr(pds.Range("TOPOLE" & i).offSet(1, 0), ",") Then commaMidspan = True
+                        If InStr(pds.Range("TOPOLE" & i).offSet(1, 0), "GUESS") Then guessMidspan = True
+                        If InStr(pds.Range("TOPOLE" & i).offSet(1, 0), "'") = 0 Or InStr(pds.Range("TOPOLE" & i).offSet(1, 0), """") = 0 And pds.Range("TOPOLE" & i).offSet(1, 0) <> "N/A" Then missingInchOrFoot = True
+                        If UCase(pds.Range("TOPOLE" & i).offSet(1, 0)) = "N/A" Or UCase(pds.Range("TOPOLE" & i).offSet(1, 0)) = "NA" Then namidSpan = True
                     End If
-                    If regex.test(pds.Range("TOPOLE" & i)) Then
+                    If regex.Test(pds.Range("TOPOLE" & i)) Then
                         Set matches = regex.Execute(pds.Range("TOPOLE" & i))
                         otherSheetName = matches(0)
                         If SheetExists(otherSheetName) Then
@@ -308,23 +308,23 @@ Private Function QACheck(pds As Worksheet) As String
                             For j = 1 To 12
                                 For Each otherName In otherSheet.names
                                     If otherName.name = "'" & otherSheet.name & "'" & "!TOPOLE" & j Then
-                                        If regex.test(otherSheet.Range("TOPOLE" & j)) Then
+                                        If regex.Test(otherSheet.Range("TOPOLE" & j)) Then
                                             Set matches = regex.Execute(otherSheet.Range("TOPOLE" & j))
                                             If matches(0) = pds.Range("POLENUM") Then
                                                 angle = Trim(Replace(pds.Range("TOPOLE" & i), "-", ""))
                                                 If InStr(angle, "(") > 0 And InStr(angle, ")") > 0 Then angle = Mid(angle, InStr(angle, "(") + 1, InStr(angle, ")") - (InStr(angle, "(") + 1))
                                                 
-                                                If Trim(pds.Range("TOPOLE" & i).OFFSET(1, 0)) <> Trim(otherSheet.Range("TOPOLE" & j).OFFSET(1, 0)) Then issues = issues & "• Proposed midspan towards pole " & otherSheetName & " doesn't match proposed midspan on sheet " & otherSheetName & vbLf
-                                                If Trim(pds.Range("TOPOLE" & i).OFFSET(2, 0)) <> Trim(otherSheet.Range("TOPOLE" & j).OFFSET(2, 0)) Then issues = issues & "• Proposed tension towards pole " & otherSheetName & " doesn't match proposed tension on sheet " & otherSheetName & vbLf
+                                                If Trim(pds.Range("TOPOLE" & i).offSet(1, 0)) <> Trim(otherSheet.Range("TOPOLE" & j).offSet(1, 0)) Then issues = issues & "• Proposed midspan towards pole " & otherSheetName & " doesn't match proposed midspan on sheet " & otherSheetName & vbLf
+                                                If Trim(pds.Range("TOPOLE" & i).offSet(2, 0)) <> Trim(otherSheet.Range("TOPOLE" & j).offSet(2, 0)) Then issues = issues & "• Proposed tension towards pole " & otherSheetName & " doesn't match proposed tension on sheet " & otherSheetName & vbLf
                                                 
                                                 For k = 0 To 100
-                                                    If pds.Range("UTTYPE").OFFSET(k, 0).Interior.color <> 16312794 Then Exit For
-                                                    comparingMidspan = Trim(Replace(pds.Range("UTMIDSPAN" & i).OFFSET(k, 0), "-", ""))
+                                                    If pds.Range("UTTYPE").offSet(k, 0).Interior.color <> 16312794 Then Exit For
+                                                    comparingMidspan = Trim(Replace(pds.Range("UTMIDSPAN" & i).offSet(k, 0), "-", ""))
                                                     If comparingMidspan <> "" Then
                                                         found = False
                                                         For l = 0 To 100
-                                                            If otherSheet.Range("UTTYPE").OFFSET(l, 0).Interior.color <> 16312794 Then Exit For
-                                                            comparedMidspan = Trim(Replace(otherSheet.Range("UTMIDSPAN" & j).OFFSET(l, 0), "-", ""))
+                                                            If otherSheet.Range("UTTYPE").offSet(l, 0).Interior.color <> 16312794 Then Exit For
+                                                            comparedMidspan = Trim(Replace(otherSheet.Range("UTMIDSPAN" & j).offSet(l, 0), "-", ""))
                                                             If comparingMidspan = comparedMidspan Then
                                                                 found = True
                                                                 Exit For
@@ -334,13 +334,13 @@ Private Function QACheck(pds As Worksheet) As String
                                                     End If
                                                 Next k
                                                 For k = 0 To 100
-                                                    If pds.Range("CMOWNER").OFFSET(k, 0).Interior.color <> 16312794 Then Exit For
-                                                    comparingMidspan = Trim(Replace(pds.Range("CMMIDSPAN" & i).OFFSET(k, 0), "-", ""))
+                                                    If pds.Range("CMOWNER").offSet(k, 0).Interior.color <> 16312794 Then Exit For
+                                                    comparingMidspan = Trim(Replace(pds.Range("CMMIDSPAN" & i).offSet(k, 0), "-", ""))
                                                     If comparingMidspan <> "" Then
                                                         found = False
                                                         For l = 0 To 100
-                                                            If otherSheet.Range("CMOWNER").OFFSET(l, 0).Interior.color <> 16312794 Then Exit For
-                                                            comparedMidspan = Trim(Replace(otherSheet.Range("CMMIDSPAN" & j).OFFSET(l, 0), "-", ""))
+                                                            If otherSheet.Range("CMOWNER").offSet(l, 0).Interior.color <> 16312794 Then Exit For
+                                                            comparedMidspan = Trim(Replace(otherSheet.Range("CMMIDSPAN" & j).offSet(l, 0), "-", ""))
                                                             If comparingMidspan = comparedMidspan Then
                                                                 found = True
                                                                 Exit For
@@ -362,15 +362,15 @@ Private Function QACheck(pds As Worksheet) As String
                                 Next otherName
                             Next j
                             
-                            If Trim(Replace(pds.Range("TOPOLE" & i).OFFSET(1, 0), "-", "")) <> "" Then
+                            If Trim(Replace(pds.Range("TOPOLE" & i).offSet(1, 0), "-", "")) <> "" Then
                                 If InStr(otherSheet.Range("PROPOSEDHEIGHT"), "OL") = 0 Then
                                     If otherSheet.Range("CMRF1") <> "" And otherSheet.Range("PROPOSEDHEIGHT") <> "" And InStr(otherSheet.Range("CMRF1"), otherSheet.Range("PROPOSEDHEIGHT")) = 0 And InStr(otherSheet.Range("CMRF1"), "APPLY") = 0 Then paapms = True
                                 Else
                                     For j = 0 To 100
-                                        If otherSheet.Range("CMOWNER").OFFSET(j, 0).Interior.color <> 16312794 Then Exit For
-                                        If UCase(otherSheet.Range("CMOWNER").OFFSET(j, 0)) = UCase(pds.Range("APPLICANT")) Then
-                                            If InStr(otherSheet.Range("CMOWNER").OFFSET(j, 0), "DG") = 0 Then
-                                                If otherSheet.Range("CMRF1") <> "" And InStr(otherSheet.Range("CMRF1"), otherSheet.Range("CMHEIGHT").OFFSET(j, 0)) = 0 And InStr(otherSheet.Range("CMRF1"), "APPLY") = 0 Then
+                                        If otherSheet.Range("CMOWNER").offSet(j, 0).Interior.color <> 16312794 Then Exit For
+                                        If UCase(otherSheet.Range("CMOWNER").offSet(j, 0)) = UCase(pds.Range("APPLICANT")) Then
+                                            If InStr(otherSheet.Range("CMOWNER").offSet(j, 0), "DG") = 0 Then
+                                                If otherSheet.Range("CMRF1") <> "" And InStr(otherSheet.Range("CMRF1"), otherSheet.Range("CMHEIGHT").offSet(j, 0)) = 0 And InStr(otherSheet.Range("CMRF1"), "APPLY") = 0 Then
                                                     paapms = True
                                                     Exit For
                                                 End If
@@ -380,7 +380,7 @@ Private Function QACheck(pds As Worksheet) As String
                                 End If
                             End If
                         Else
-                            If Trim(Replace(pds.Range("TOPOLE" & i).OFFSET(1, 0), "-", "")) <> "" Then
+                            If Trim(Replace(pds.Range("TOPOLE" & i).offSet(1, 0), "-", "")) <> "" Then
                                 If otherSheetName = "N" Then
                                     connectingWarning = True
                                 ElseIf otherSheetName = "E" Then connectingWarning = True
@@ -413,24 +413,22 @@ Private Function QACheck(pds As Worksheet) As String
     End If
     
     ' Streetlight checks
-    If InStr(pds.Range("SEP").OFFSET(1, 0), "(Assuming Not Bonded)") > 0 Then issues = issues & "• Remove the (Assuming Not Bonded) or the entire violation if bonded" & vbLf
+    If InStr(pds.Range("SEP").offSet(1, 0), "(Assuming Not Bonded)") > 0 Then issues = issues & "• Remove the (Assuming Not Bonded) or the entire violation if bonded" & vbLf
     
     ' Misc checks
     If InStr(pds.Range("ALTONE").text, "OUTAGE") > 0 Then Call checkEmptyCell(pds, issues, "OUTAGE", "Outage")
     If checkTreeNote(pds.Range("ALTONE")) And (isEmpty(pds.Range("TREE")) And (pds.Range("TREE2") = "NO" Or pds.Range("TREE2") = "N/A")) Then Call checkEmptyCell(pds, issues, "TREE", "Tree Trimming")
     If Not isEmpty(pds.Range("OUTAGE")) And InStr(pds.Range("ALTONE"), "OUTAGE") = 0 Then issues = issues & "• No outage note in alt 1" & vbLf
     If (Not isEmpty(pds.Range("TREE")) Or pds.Range("TREE2") = "YES") And checkTreeNote(pds.Range("ALTONE").text) = 0 Then issues = issues & "• No tree trimming note detected in alt 1" & vbLf
-    If isEmpty(pds.Range("SEP").OFFSET(-5, 0)) And Not isEmpty(pds.Range("ALTTHREE")) Then issues = issues & "• Front page CE Make Ready cell empty" & vbLf
+    If isEmpty(pds.Range("SEP").offSet(-5, 0)) And Not isEmpty(pds.Range("ALTTHREE")) Then issues = issues & "• Front page CE Make Ready cell empty" & vbLf
     If isEmpty(pds.Range("OTHERPOLE")) And pds.Range("CEID") = "FOREIGN" Then issues = issues & "• Other pole owner should be checked off at the top if foreign" & vbLf
     If Not isEmpty(pds.Range("CEPOLE")) And Not isEmpty(pds.Range("OTHERPOLE")) Then issues = issues & "• Can't have both CE and Other pole owner checked off" & vbLf
     If isEmpty(pds.Range("DL")) And Not isEmpty(pds.Range("ALTONE")) Then issues = issues & "• Location number should be filled in if there's alt 1 work" & vbLf
     If Not isEmpty(ThisWorkbook.sheets("Control").Range("QATTC")) Then
         If Not isEmpty(pds.Range("DL")) And isEmpty(pds.Range("TTC")) Then issues = issues & "• There should be a TTC number if it's a location" & vbLf
     End If
-    If InStr(pds.Range("ALTONE").text, "DETERIOR") > 0 And isEmpty(pds.Range("DET").OFFSET(0, 1)) Then issues = issues & "• CE - Work violations Deterioration should be filled out if the pole is deteriorated" & vbLf
-    If Not isEmpty(ThisWorkbook.sheets("Control").Range("QACO")) Then
-        If InStr(pds.Range("INVENTORY").text, "CO") > 0 And (InStr(pds.Range("INVENTORY").text, "LCOM") = 0 And InStr(pds.Range("INVENTORY").text, "SA") = 0) Then issues = issues & "• If there's a CO, it should specify CO ON LCOM or CO ON SA" & vbLf
-    End If
+    If InStr(pds.Range("ALTONE").text, "DETERIOR") > 0 And isEmpty(pds.Range("DET").offSet(0, 1)) Then issues = issues & "• CE - Work violations Deterioration should be filled out if the pole is deteriorated" & vbLf
+
     If InStr(pds.Range("NJUNS"), "[REASON FOR WORK]") > 0 Then issues = issues & "• Remove the [REASON FOR WORK] from the njuns " & vbLf
     If InStr(pds.Range("ALTONE"), "[") > 0 Or InStr(pds.Range("ALTONE"), "]") > 0 Then issues = issues & "• Remove any [] brackets from Alt 1 work and anything between those brackets. These are used for place holder information in scripts" & vbLf
     If InStr(pds.Range("ALTTWO"), "[") > 0 Or InStr(pds.Range("ALTTWO"), "]") > 0 Then issues = issues & "• Remove any [] brackets from Alt 2 work and anything between those brackets. These are used for place holder information in scripts" & vbLf
@@ -448,7 +446,7 @@ Private Function QACheck(pds As Worksheet) As String
         If (Not isEmpty(pds.Range("REPLACEANCHOR")) Or Not isEmpty(pds.Range("INSTALLANCHOR")) Or Not isEmpty(pds.Range("REPLACEPOLE")) Or Not isEmpty(pds.Range("INSTALLPOLE")) Or Not isEmpty(pds.Range("REPLACERISER")) Or Not isEmpty(pds.Range("REMOVEANCHOR")) Or Not isEmpty(pds.Range("REMOVEPOLE"))) Then
             nameExists = pds.Evaluate("ISREF(" & "FCS" & ")")
             If nameExists Then
-                If Trim(pds.Range("FCS").OFFSET(0, 1).Value) = "" Then
+                If Trim(pds.Range("FCS").offSet(0, 1).value) = "" Then
                     issues = issues & "• If there's work that requires a Missdig ticket, then there should be a first cross street filled in" & vbLf
                 End If
             End If
@@ -456,7 +454,7 @@ Private Function QACheck(pds As Worksheet) As String
     End If
     If ThisWorkbook.RemoveParentheses(pds.name) <> pds.Range("POLENUM") Then issues = issues & "• Pole number doesn't match sheet name, this can cause a lot of scripts to bug out, fix whichever one is wrong." & vbLf
     If Trim(pds.Range("CLASS")) = "7" And isEmpty(pds.Range("SUMSHEET9")) Then warnings = warnings & "Warning: Class 7 poles can't be modeled in pole foreman, make sure to account for this." & vbLf
-    If UCase(Trim(pds.Range("NEWAPP"))) = "DENIED" And pds.Range("NEWAPPPF").Value <> "N/A" Then issues = issues & "• New APP Pole Loading should be NA if percentage is Denied." & vbLf
+    If UCase(Trim(pds.Range("NEWAPP"))) = "DENIED" And pds.Range("NEWAPPPF").value <> "N/A" Then issues = issues & "• New APP Pole Loading should be NA if percentage is Denied." & vbLf
     
     
     ' midspan check
@@ -465,13 +463,13 @@ Private Function QACheck(pds As Worksheet) As String
     Dim utilityBoundryReached As Boolean: utilityBoundryReached = False
     Dim comBoundryReached As Boolean: comBoundryReached = False
     For i = 0 To 100
-        If pds.Range("UTMIDSPAN1").OFFSET(i, 0).Interior.color <> 16312794 Then utilityBoundryReached = True
-        If pds.Range("CMMIDSPAN1").OFFSET(i + 1, 0).Interior.color <> 16312794 Then comBoundryReached = True
+        If pds.Range("UTMIDSPAN1").offSet(i, 0).Interior.color <> 16312794 Then utilityBoundryReached = True
+        If pds.Range("CMMIDSPAN1").offSet(i + 1, 0).Interior.color <> 16312794 Then comBoundryReached = True
         For j = 1 To 12
             For Each name In pds.names
                 If name.name = "'" & pds.name & "'" & "!UTMIDSPAN" & j Then
-                    If Not utilityBoundryReached And Trim(pds.Range("UTMIDSPAN" & j).OFFSET(i, 0)) = "0'0""" Then utilityMidspanIssue = True
-                    If Not comBoundryReached And Trim(pds.Range("CMMIDSPAN" & j).OFFSET(i, 0)) = "0'0""" Then comMidspanIssue = True
+                    If Not utilityBoundryReached And Trim(pds.Range("UTMIDSPAN" & j).offSet(i, 0)) = "0'0""" Then utilityMidspanIssue = True
+                    If Not comBoundryReached And Trim(pds.Range("CMMIDSPAN" & j).offSet(i, 0)) = "0'0""" Then comMidspanIssue = True
                     Exit For
                 End If
             Next name
@@ -492,8 +490,8 @@ Private Function QACheck(pds As Worksheet) As String
     
     ' Troll section
     Randomize
-    UserName = LCase(Environ("USERNAME"))
-    If UserName = "hnguyen1" Or UserName = "mwatts5" Or UserName = "aabraham" Then
+    userName = LCase(Environ("USERNAME"))
+    If userName = "hnguyen1" Or userName = "mwatts5" Or userName = "aabraham" Then
         Const DesiredPercentage As Double = 0.05
         Dim randomNumber As Double: randomNumber = Rnd
         
@@ -503,9 +501,9 @@ Private Function QACheck(pds As Worksheet) As String
                     Case 1
                         warnings = warnings & vbLf & "Wrong Highlight Color" & vbLf
                     Case 2
-                        If UserName = "hnguyen1" Then
+                        If userName = "hnguyen1" Then
                             warnings = warnings & vbLf & "I believe in you <3" & vbLf
-                        ElseIf UserName = "mwatts5" Then
+                        ElseIf userName = "mwatts5" Then
                             warnings = warnings & vbLf & "I don't believe in you :/" & vbLf
                         End If
                     Case 3
