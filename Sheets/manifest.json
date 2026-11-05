@@ -14,7 +14,25 @@
   "NJUNSCode": {
     "visible": false
   },
+  "CS": {
+    "visible": false
+  },
+  "DATA": {
+    "visible": false
+  },
+  "MKR SAP": {
+    "visible": false
+  },
+  "SI SAP": {
+    "visible": true
+  },
   "Control": {
     "visible": true
+  },
+  "CMRF": {
+    "visible": false
+  },
+  "SS": {
+    "visible": false
   }
 }
