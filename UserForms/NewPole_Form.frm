@@ -18,17 +18,17 @@ Public Sub Initialize()
     ComboBox1.list = Array("35", "40", "45", "50", "55", "60", "65", "70")
     ComboBox2.list = Array("2", "3", "4")
     Me.StartUpPosition = 0
-    Me.Left = Application.Left + (0.5 * Application.Width) - (0.5 * Me.Width)
+    Me.Left = Application.Left + (0.5 * Application.width) - (0.5 * Me.width)
     Me.top = Application.top + (0.5 * Application.height) - (0.5 * Me.height)
 End Sub
 
 Private Sub CommandButton1_Click()
-    If ComboBox1.Value = "" Or ComboBox2.Value = "" Or TextBox1.Value = "" Or TextBox2.Value = "" Then
+    If ComboBox1.value = "" Or ComboBox2.value = "" Or TextBox1.value = "" Or TextBox2.value = "" Then
         MsgBox "Fill in all the required fields first."
         Exit Sub
     End If
     
-    If SheetExists(TextBox1.Value) Then
+    If SheetExists(TextBox1.value) Then
         MsgBox "There's already a pole with that number."
         Exit Sub
     End If
@@ -37,10 +37,10 @@ Private Sub CommandButton1_Click()
     Dim pole As pole: Set pole = New pole
     project.extractFromSheets
     
-    pole.poleNumber = TextBox1.Value
-    pole.height = ComboBox1.Value
-    pole.Class = ComboBox2.Value
-    pole.species = TextBox2.Value
+    pole.poleNumber = TextBox1.value
+    pole.height = ComboBox1.value
+    pole.Class = ComboBox2.value
+    pole.species = TextBox2.value
     
     Call pole.createSheet(project)
     
