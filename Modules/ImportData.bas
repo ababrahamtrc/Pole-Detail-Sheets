@@ -87,14 +87,14 @@ End Sub
 
 Public Sub ClearData()
 
-    ThisWorkbook.sheets("Collection").Cells.Clear
-    ThisWorkbook.sheets("Job Info").Cells.Clear
-    ThisWorkbook.sheets("Span").Cells.Clear
-    ThisWorkbook.sheets("Span.Power Circuit").Cells.Clear
-    ThisWorkbook.sheets("Span.Communication").Cells.Clear
-    ThisWorkbook.sheets("Anchor").Cells.Clear
-    ThisWorkbook.sheets("Anchor.Guys").Cells.Clear
-    ThisWorkbook.sheets("Equipment").Cells.Clear
-    ThisWorkbook.sheets("Control").Range("PHOTODIR").Value = ""
+    ThisWorkbook.sheets("Collection").cells.Clear
+    ThisWorkbook.sheets("Job Info").cells.Clear
+    ThisWorkbook.sheets("Span").cells.Clear
+    ThisWorkbook.sheets("Span.Power Circuit").cells.Clear
+    ThisWorkbook.sheets("Span.Communication").cells.Clear
+    ThisWorkbook.sheets("Anchor").cells.Clear
+    ThisWorkbook.sheets("Anchor.Guys").cells.Clear
+    ThisWorkbook.sheets("Equipment").cells.Clear
+    ThisWorkbook.sheets("Control").Range("PHOTODIR").value = ""
     
 End Sub
