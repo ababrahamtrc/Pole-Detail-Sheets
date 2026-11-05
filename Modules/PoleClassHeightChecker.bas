@@ -5,7 +5,7 @@ Public Sub CheckPole()
     Call LogMessage.SendLogMessage("CheckPole")
 
     Set sheet = Application.ActiveSheet()
-    If sheet.name = "4 Spans" Or sheet.name = "8 Spans" Or sheet.name = "12 Spans" Or sheet.Cells(2, 2).Value <> "Notification:" Then
+    If sheet.name = "4 Spans" Or sheet.name = "8 Spans" Or sheet.name = "12 Spans" Or sheet.cells(2, 2).value <> "Notification:" Then
         MsgBox "You need to have a pole detail sheet active to run this script."
         Exit Sub
     End If
@@ -55,6 +55,11 @@ End Sub
 
 Private Function GLCConvert(glc As Variant) As String
     glc = CStr(glc)
+    
+    If Utilities.OnlyNumbers(CStr(glc)) = "" Then
+        GLCConvert = "0"
+        Exit Function
+    End If
     
     glc = Replace(glc, """", "")
     glc = Replace(glc, " ", "")
