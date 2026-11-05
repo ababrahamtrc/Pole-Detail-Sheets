@@ -38,7 +38,7 @@ Sub ImportAllPDS()
         ProgressBar_Form.Repaint
         
         Set sourceWb = Workbooks.Open(Path & fileName)
-        If sourceWb.sheets(1).Cells(2, 2).Value = "Notification:" Then
+        If sourceWb.sheets(1).cells(2, 2).value = "Notification:" Then
             rpSourceName = ThisWorkbook.RemoveParentheses(sourceWb.sheets(1).name)
             If Not poleNumbers.exists(rpSourceName) Then
                 poleNumbers.Add rpSourceName, Nothing
@@ -54,7 +54,7 @@ Sub ImportAllPDS()
                 For Each sheet In ThisWorkbook.sheets
                     rpName = ThisWorkbook.RemoveParentheses(sheet.name)
                     If rpName <> "4 Spans" And rpName <> "8 Spans" And rpName <> "12 Spans" Then
-                        If sheet.Cells(2, 2).Value = "Notification:" Then
+                        If sheet.cells(2, 2).value = "Notification:" Then
                             If Val(rpName) > Val(rpSourceName) Or (Val(rpName) = Val(rpSourceName) And rpName > rpSourceName) Then
                                 Set insertSpot = sheet
                                 Exit For
@@ -66,7 +66,7 @@ Sub ImportAllPDS()
                 Call ThisWorkbook.decideTabColor(sourceWb.sheets(1))
                 
                 If insertSpot Is Nothing Then
-                    sourceWb.sheets(1).Copy after:=ThisWorkbook.sheets(ThisWorkbook.sheets.count)
+                    sourceWb.sheets(1).Copy After:=ThisWorkbook.sheets(ThisWorkbook.sheets.count)
                 Else
                     sourceWb.sheets(1).Copy Before:=insertSpot
                 End If
@@ -82,7 +82,7 @@ Sub ImportAllPDS()
     
     For Each sheet In ThisWorkbook.sheets
         If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" Then
-            If sheet.Cells(2, 2).Value = "Notification:" Then
+            If sheet.cells(2, 2).value = "Notification:" Then
                 sheet.Activate
                 Call Figures.getSheetFigures(sheet)
                 sheet.Range("A1").Select
@@ -94,7 +94,7 @@ Sub ImportAllPDS()
     
     ProgressBar_Form.Hide
     
-    ThisWorkbook.sheets("Control").Range("PHOTODIR").Value = ""
+    ThisWorkbook.sheets("Control").Range("PHOTODIR").value = ""
     
     If duplicateNumbersString <> "" Then MsgBox "The following pole numbers have duplicate files in the selected folder, please make sure the correct one was imported and that they are given differen't pole numbers, or delete the one that's not needed." & vbLf & duplicateNumbersString
     
@@ -131,14 +131,14 @@ Sub ImportSinglePDS()
     Dim sourceWb As Workbook: Set sourceWb = Workbooks.Open(Path)
     Dim newSheet As Worksheet: Set newSheet = Nothing
     Dim insertSpot As Worksheet
-    If sourceWb.sheets(1).Cells(2, 2).Value = "Notification:" Then
+    If sourceWb.sheets(1).cells(2, 2).value = "Notification:" Then
         rpSourceName = ThisWorkbook.RemoveParentheses(sourceWb.sheets(1).name)
         If Not SheetExists(rpSourceName) Then
             Set insertSpot = Nothing
             For Each sheet In ThisWorkbook.sheets
                 rpName = ThisWorkbook.RemoveParentheses(sheet.name)
                 If rpName <> "4 Spans" And rpName <> "8 Spans" And rpName <> "12 Spans" Then
-                    If sheet.Cells(2, 2).Value = "Notification:" Then
+                    If sheet.cells(2, 2).value = "Notification:" Then
                         If Val(rpName) > Val(rpSourceName) Or (Val(rpName) = Val(rpSourceName) And rpName > rpSourceName) Then
                             Set insertSpot = sheet
                             Exit For
@@ -151,7 +151,7 @@ Sub ImportSinglePDS()
             Call Figures.getSheetFigures(sourceWb.sheets(1))
             
             If insertSpot Is Nothing Then
-                sourceWb.sheets(1).Copy after:=ThisWorkbook.sheets(ThisWorkbook.sheets.count)
+                sourceWb.sheets(1).Copy After:=ThisWorkbook.sheets(ThisWorkbook.sheets.count)
             Else
                 sourceWb.sheets(1).Copy Before:=insertSpot
             End If
@@ -201,8 +201,8 @@ Sub ImportLocationPDS()
         ProgressBar_Form.Label1.caption = "Importing Pole Detail Sheets... " & sheetCount & " sheets imported."
         ProgressBar_Form.Repaint
         Set sourceWb = Workbooks.Open(Path & fileName)
-        If sourceWb.sheets(1).Cells(2, 2).Value = "Notification:" Then
-            If Trim(sourceWb.sheets(1).Range("DL").Value) <> "" Then
+        If sourceWb.sheets(1).cells(2, 2).value = "Notification:" Then
+            If Trim(sourceWb.sheets(1).Range("DL").value) <> "" Then
                 rpSourceName = ThisWorkbook.RemoveParentheses(sourceWb.sheets(1).name)
                 If Not poleNumbers.exists(rpSourceName) Then
                     poleNumbers.Add rpSourceName, Nothing
@@ -218,7 +218,7 @@ Sub ImportLocationPDS()
                     For Each sheet In ThisWorkbook.sheets
                         rpName = ThisWorkbook.RemoveParentheses(sheet.name)
                         If rpName <> "4 Spans" And rpName <> "8 Spans" And rpName <> "12 Spans" Then
-                            If sheet.Cells(2, 2).Value = "Notification:" Then
+                            If sheet.cells(2, 2).value = "Notification:" Then
                                 If Val(rpName) > Val(rpSourceName) Or (Val(rpName) = Val(rpSourceName) And rpName > rpSourceName) Then
                                     Set insertSpot = sheet
                                     Exit For
@@ -231,7 +231,7 @@ Sub ImportLocationPDS()
                     Call Figures.getSheetFigures(sourceWb.sheets(1))
                     
                     If insertSpot Is Nothing Then
-                        sourceWb.sheets(1).Copy after:=ThisWorkbook.sheets(ThisWorkbook.sheets.count)
+                        sourceWb.sheets(1).Copy After:=ThisWorkbook.sheets(ThisWorkbook.sheets.count)
                     Else
                         sourceWb.sheets(1).Copy Before:=insertSpot
                     End If
@@ -248,7 +248,7 @@ Sub ImportLocationPDS()
     
     For Each sheet In ThisWorkbook.sheets
         If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" Then
-            If sheet.Cells(2, 2).Value = "Notification:" Then
+            If sheet.cells(2, 2).value = "Notification:" Then
                 sheet.Activate
                 sheet.Range("A1").Select
             End If
@@ -298,9 +298,9 @@ Sub ImportNjunsPDS()
         ProgressBar_Form.Label1.caption = "Importing Pole Detail Sheets... " & sheetCount & " sheets imported."
         ProgressBar_Form.Repaint
         Set sourceWb = Workbooks.Open(Path & fileName)
-        If sourceWb.sheets(1).Cells(2, 2).Value = "Notification:" Then
-            If (Trim(sourceWb.sheets(1).Range("NJUNS").Value) <> "" And LCase(Trim(sourceWb.sheets(1).Range("NJUNS").Value)) <> "n/a" And LCase(Trim(sourceWb.sheets(1).Range("NJUNS").Value)) <> "comm make ready work") Or _
-                (Trim(sourceWb.sheets(1).Range("NJUNSTICKET").Value) <> "" And LCase(Trim(sourceWb.sheets(1).Range("NJUNSTICKET").Value)) <> "n/a") Then
+        If sourceWb.sheets(1).cells(2, 2).value = "Notification:" Then
+            If (Trim(sourceWb.sheets(1).Range("NJUNS").value) <> "" And LCase(Trim(sourceWb.sheets(1).Range("NJUNS").value)) <> "n/a" And LCase(Trim(sourceWb.sheets(1).Range("NJUNS").value)) <> "comm make ready work") Or _
+                (Trim(sourceWb.sheets(1).Range("NJUNSTICKET").value) <> "" And LCase(Trim(sourceWb.sheets(1).Range("NJUNSTICKET").value)) <> "n/a") Then
                 rpSourceName = ThisWorkbook.RemoveParentheses(sourceWb.sheets(1).name)
                 If Not poleNumbers.exists(rpSourceName) Then
                     poleNumbers.Add rpSourceName, Nothing
@@ -316,7 +316,7 @@ Sub ImportNjunsPDS()
                     For Each sheet In ThisWorkbook.sheets
                         rpName = ThisWorkbook.RemoveParentheses(sheet.name)
                         If rpName <> "4 Spans" And rpName <> "8 Spans" And rpName <> "12 Spans" Then
-                            If sheet.Cells(2, 2).Value = "Notification:" Then
+                            If sheet.cells(2, 2).value = "Notification:" Then
                                 If Val(rpName) > Val(rpSourceName) Or (Val(rpName) = Val(rpSourceName) And rpName > rpSourceName) Then
                                     Set insertSpot = sheet
                                     Exit For
@@ -328,7 +328,7 @@ Sub ImportNjunsPDS()
                     Call ThisWorkbook.decideTabColor(sourceWb.sheets(1))
                     
                     If insertSpot Is Nothing Then
-                        sourceWb.sheets(1).Copy after:=ThisWorkbook.sheets(ThisWorkbook.sheets.count)
+                        sourceWb.sheets(1).Copy After:=ThisWorkbook.sheets(ThisWorkbook.sheets.count)
                     Else
                         sourceWb.sheets(1).Copy Before:=insertSpot
                     End If
@@ -345,7 +345,7 @@ Sub ImportNjunsPDS()
     
     For Each sheet In ThisWorkbook.sheets
         If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" Then
-            If sheet.Cells(2, 2).Value = "Notification:" Then
+            If sheet.cells(2, 2).value = "Notification:" Then
                 sheet.Activate
                 sheet.Range("A1").Select
             End If
