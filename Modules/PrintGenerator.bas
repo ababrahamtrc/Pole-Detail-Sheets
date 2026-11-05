@@ -3,7 +3,7 @@ Const PI As Double = 3.14159265358979
 Dim existingLineIDs As Object
 
 Public Sub GeneratePrint()
-     Set testText = CreateTextElement1(Nothing, "Test", Point3dFromXYZ(0, 0, 0), Matrix3dIdentity)
+    Set testText = CreateTextElement1(Nothing, "Test", Point3dFromXYZ(0, 0, 0), Matrix3dIdentity)
     
     On Error Resume Next
     ActiveModelReference.AddElement testText
@@ -31,7 +31,8 @@ Public Sub DrawPrint()
     
     Dim textHeight As Double
     textHeight = ActiveSettings.TextStyle.height
-    ActiveSettings.TextStyle = ActiveDesignFile.TextStyles("Engineering")
+    'ActiveSettings.TextStyle = ActiveDesignFile.TextStyles("Engineering")
+    CadInputQueue.SendKeyin "TEXTSTYLE ACTIVE ""Engineering-Mask"""
     
     If json Is Nothing Then
         MsgBox "JSON file doesn't exist, generate one from pole detail sheets."
@@ -248,8 +249,8 @@ Public Sub DrawPrint()
     
     Dim startPoint As Point3d
     
-    Dim OFFSET As Point3d
-    OFFSET = Point3dFromXYZ(-25, -10, 0)
+    Dim offSet As Point3d
+    offSet = Point3dFromXYZ(-25, -10, 0)
 
     Dim groupStartingPoints As Object: Set groupStartingPoints = CreateObject("Scripting.Dictionary")
     For Each groupKey In json("groups")
@@ -276,7 +277,7 @@ Public Sub DrawPrint()
                     If PrintOptions.ShowDrawing Then DoEvents
                     
                     Dim oSubElements As ElementEnumerator: Set oSubElements = txt.GetSubElements
-                    Dim oSubElem As element
+                    Dim oSubElem As Element
                     Dim oStyle As TextStyle
                     Do While oSubElements.MoveNext
                         Set oSubElem = oSubElements.Current
@@ -297,7 +298,7 @@ Public Sub DrawPrint()
                     'txt.Redraw
                     'If PrintOptions.ShowDrawing Then DoEvents
                     
-                    Call placeLocation(Point3dAdd(startPoint, OFFSET), jsonPole("location"))
+                    Call placeLocation(Point3dAdd(startPoint, offSet), jsonPole("location"))
                     
                     startPoint.y = startPoint.y - ((UBound(strLines) + 2) * 15) - (45)
                     groupStartingPoints(group) = startPoint
@@ -315,7 +316,7 @@ Sub ShortenLines(targetLevelName As String)
     Dim olevel As Object
     Dim oScan As ElementScanCriteria
     Dim oEnumerator As ElementEnumerator
-    Dim oElement As element
+    Dim oElement As Element
     Dim lines() As LineElement
     Dim pIntersectArray() As Point3d
     Dim count As Long
@@ -983,7 +984,7 @@ Sub placeLocation(pt As Point3d, location As String)
     Dim scl As Point3d: scl = Point3dFromXYZ(1, 1, 1)
     Set oCell = CreateCellElement2("LOCATION_NUMBER", pt, scl, True, Matrix3dIdentity)
     
-    Dim subElements() As element
+    Dim subElements() As Element
     Dim subCount As Long
     subCount = 0
 
@@ -1024,7 +1025,7 @@ Sub placeLocation(pt As Point3d, location As String)
     'If PrintOptions.ShowDrawing Then DoEvents
 End Sub
 
-Public Sub placeGuy(jsonGuy As Object, pt As Point3d, OFFSET As Integer)
+Public Sub placeGuy(jsonGuy As Object, pt As Point3d, offSet As Integer)
     Dim guy As CellElement
     Dim scl As Point3d: scl = Point3dFromXYZ(1, 1, 1)
     Dim guyPt As Point3d
@@ -1032,8 +1033,8 @@ Public Sub placeGuy(jsonGuy As Object, pt As Point3d, OFFSET As Integer)
     angle = jsonGuy("angle")
     angle = 180 - 90 - angle
     
-    guyPt.x = pt.x + OFFSET * 25 * Cos(angle * (PI / 180))
-    guyPt.y = pt.y + OFFSET * 25 * Sin(angle * (PI / 180))
+    guyPt.x = pt.x + offSet * 25 * Cos(angle * (PI / 180))
+    guyPt.y = pt.y + offSet * 25 * Sin(angle * (PI / 180))
     guyPt.Z = 0
     
     If jsonGuy("count") < 2 Then
@@ -1438,22 +1439,22 @@ Public Sub placeSecondary(jsonSec As Object)
     points(1) = Point3dFromXYZ(x2, y2, 0)
     
     Set oLineString = CreateLineElement1(Nothing, points)
-
+    oLineString.Class = primary
     If size2 <> "" Then
         oLineString.color = 65
         oLineString.LineStyle = ActiveDesignFile.LineStyles.Find("SECRP")
         On Error Resume Next
         oLineString.Level = ActiveDesignFile.Levels("CE-RP-ELEC-OH-SEC-COND")
         On Error GoTo 0
+        oLineString.LineWeight = 6
     Else
         oLineString.color = 73
         oLineString.LineStyle = ActiveDesignFile.LineStyles.Find("SEC")
         On Error Resume Next
         oLineString.Level = ActiveDesignFile.Levels("CE-EX-ELEC-OH-SEC-COND")
         On Error GoTo 0
+        oLineString.LineWeight = 1
     End If
-    oLineString.Class = primary
-    oLineString.LineWeight = 1
     
     
     ActiveModelReference.AddElement oLineString
@@ -1607,17 +1608,18 @@ Public Sub placePrimary(jsonPri As Object)
     Set oLineString = CreateLineElement1(Nothing, points)
     oLineString.LineStyle = ActiveDesignFile.LineStyles.Find("PRI" & phase & "P" & IIf(size2 <> "", "RP", ""))
     oLineString.Class = primary
-    oLineString.LineWeight = 1
     If size2 <> "" Then
         oLineString.color = 64
         On Error Resume Next
         oLineString.Level = ActiveDesignFile.Levels("CE-RP-ELEC-OH-PRI-COND")
         On Error GoTo 0
+        oLineString.LineWeight = 6
     Else
         oLineString.color = 72
         On Error Resume Next
         oLineString.Level = ActiveDesignFile.Levels("CE-EX-ELEC-OH-PRI-COND")
         On Error GoTo 0
+        oLineString.LineWeight = 1
     End If
     ActiveModelReference.AddElement oLineString
     If PrintOptions.ShowDrawing Then DoEvents
@@ -1732,8 +1734,9 @@ Public Sub placeLCPObject(jsonObject As Object, cellType As String)
         ofeature.SetProperty "LIFECYCLE", 1
         ofeature.SetProperty "SIZE", jsonObject("size")
         ofeature.SetProperty "ATR", IIf(jsonObject("atr"), "Yes", "No")
+        On Error Resume Next
         If jsonObject("lcp") Then ofeature.SetProperty "LCP", jsonObject("lcp")
-        
+        On Error GoTo 0
         ofeature.Write (True)
         'recloser.Redraw msdDrawingModeNormal
         'If PrintOptions.ShowDrawing Then DoEvents
@@ -1988,7 +1991,7 @@ End Sub
 Function FindClosestPointOnCenterlines(startPoint As Point3d) As Variant()
     Dim oScanCriteria As New ElementScanCriteria
     Dim oEnumerator As ElementEnumerator
-    Dim oEl As element
+    Dim oEl As Element
     Dim rMatrix As Matrix3d
     Dim closestPointOnAnyLine As Point3d
     Dim shortestDistance As Double
@@ -2045,13 +2048,13 @@ Function FindClosestPointOnCenterlines(startPoint As Point3d) As Variant()
     End If
 End Function
 
-Function ClosestPointOnSegment(A As Point3d, B As Point3d, P As Point3d) As Point3d
+Function ClosestPointOnSegment(A As Point3d, B As Point3d, p As Point3d) As Point3d
     Dim Ax As Double: Ax = A.x
     Dim Ay As Double: Ay = A.y
     Dim Bx As Double: Bx = B.x
     Dim By As Double: By = B.y
-    Dim Px As Double: Px = P.x
-    Dim Py As Double: Py = P.y
+    Dim Px As Double: Px = p.x
+    Dim Py As Double: Py = p.y
     
     Dim ABx As Double, ABy As Double
     Dim APx As Double, APy As Double
