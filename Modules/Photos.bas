@@ -16,7 +16,9 @@ Public Sub photoNameValidate()
         If .Show = -1 Then Path = Application.FileDialog(msoFileDialogFilePicker).SelectedItems.item(1) & Application.PathSeparator Else Exit Sub
     End With
     
-    ThisWorkbook.sheets("Control").Range("PHOTODIR").Value = Path
+    Path = GetLocalPath(Path)
+    
+    ThisWorkbook.sheets("Control").Range("PHOTODIR").value = Path
     Shell "powershell -command ""Get-ChildItem '" & Path & "' | Unblock-File""", vbHide
     
     Dim matches As Object
@@ -31,6 +33,12 @@ Public Sub photoNameValidate()
     regex.Pattern = "M1P([^-]*)-([^_]+)_([^_]+)_([^.]*)\.(jpg|png)"
     regex.Global = True
     regex.IgnoreCase = True
+    
+    Dim regexSI As Object
+    Set regexSI = CreateObject("VBScript.RegExp")
+    regexSI.Pattern = "LOC (.*) PIC (\d*).(jpg|png)"
+    regexSI.Global = True
+    regexSI.IgnoreCase = True
     
     Dim cleanedName As String
     
@@ -82,7 +90,7 @@ Public Sub photoNameValidate()
             regEx5.Pattern = "Location\s*" & pole.location & "-"
             regEx5.IgnoreCase = True
             
-            If InStr(fileName, "_Misc_") > 0 Or InStr(fileName, "_(No Tag)") > 0 Then
+            If InStr(fileName, "_Misc_") > 0 Or InStr(fileName, "_(No Tag)") > 0 Or InStr(fileName, "Midspan_Height") > 0 Then
                 newName = "DELETE" & "." & fileExtension
             
                 Do While fso.FileExists(Path & newName)
@@ -90,45 +98,77 @@ Public Sub photoNameValidate()
                     newName = "DELETE" & deleteCounter & "." & fileExtension
                 Loop
                 Name Path & fileName As Path & newName
-            ElseIf regex2.test(fileName) Then
-                newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.permit & "." & fileExtension
+            ElseIf regex2.Test(fileName) Then
+                If project.mode = "SYSTEM IMPROVEMENT" And pole.location <> "" Then
+                    newName = "LOC " & pole.location & " PIC " & photoCounter & "." & fileExtension
+                Else
+                    newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.Permit & "." & fileExtension
+                End If
                 
                 Do While fso.FileExists(Path & correctFileName(newName))
                     photoCounter = photoCounter + 1
-                    newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.permit & "." & fileExtension
+                    If project.mode = "SYSTEM IMPROVEMENT" And pole.location <> "" Then
+                        newName = "LOC " & pole.location & " PIC " & photoCounter & "." & fileExtension
+                    Else
+                        newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.Permit & "." & fileExtension
+                    End If
                 Loop
                 
                 Name Path & fileName As Path & correctFileName(newName)
                 photoCounter = photoCounter + 1
-            ElseIf regEx3.test(fileName) Then
-                newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.permit & "." & fileExtension
+            ElseIf regEx3.Test(fileName) Then
+                If project.mode = "SYSTEM IMPROVEMENT" And pole.location <> "" Then
+                    newName = "LOC " & pole.location & " PIC " & photoCounter & "." & fileExtension
+                Else
+                    newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.Permit & "." & fileExtension
+                End If
                             
                 Do While fso.FileExists(Path & correctFileName(newName))
                     photoCounter = photoCounter + 1
-                    newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.permit & "." & fileExtension
-                Loop
-                
-                If CInt(existingPhotoCounter) > CInt(photCounter) Then Name Path & fileName As Path & correctFileName(newName)
-                photoCounter = photoCounter + 1
-            ElseIf regEx4.test(fileName) Then
-                newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.permit & "." & fileExtension
-                
-                Do While fso.FileExists(Path & correctFileName(newName))
-                    photoCounter = photoCounter + 1
-                    newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.permit & "." & fileExtension
+                    If project.mode = "SYSTEM IMPROVEMENT" And pole.location <> "" Then
+                        newName = "LOC " & pole.location & " PIC " & photoCounter & "." & fileExtension
+                    Else
+                        newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.Permit & "." & fileExtension
+                    End If
                 Loop
                 
                 Name Path & fileName As Path & correctFileName(newName)
                 photoCounter = photoCounter + 1
-            ElseIf regEx5.test(fileName) Then
-                newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.permit & "." & fileExtension
+            ElseIf regEx4.Test(fileName) Then
+                If project.mode = "SYSTEM IMPROVEMENT" And pole.location <> "" Then
+                    newName = "LOC " & pole.location & " PIC " & photoCounter & "." & fileExtension
+                Else
+                    newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.Permit & "." & fileExtension
+                End If
                 
                 Do While fso.FileExists(Path & correctFileName(newName))
                     photoCounter = photoCounter + 1
-                    newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.permit & "." & fileExtension
+                    If project.mode = "SYSTEM IMPROVEMENT" And pole.location <> "" Then
+                        newName = "LOC " & pole.location & " PIC " & photoCounter & "." & fileExtension
+                    Else
+                        newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.Permit & "." & fileExtension
+                    End If
                 Loop
                 
-                If CInt(existingPhotoCounter) > CInt(photCounter) Then Name Path & fileName As Path & correctFileName(newName)
+                Name Path & fileName As Path & correctFileName(newName)
+                photoCounter = photoCounter + 1
+            ElseIf regEx5.Test(fileName) Then
+                If project.mode = "SYSTEM IMPROVEMENT" And pole.location <> "" Then
+                    newName = "LOC " & pole.location & " PIC " & photoCounter & "." & fileExtension
+                Else
+                    newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.Permit & "." & fileExtension
+                End If
+                
+                Do While fso.FileExists(Path & correctFileName(newName))
+                    photoCounter = photoCounter + 1
+                    If project.mode = "SYSTEM IMPROVEMENT" And pole.location <> "" Then
+                        newName = "LOC " & pole.location & " PIC " & photoCounter & "." & fileExtension
+                    Else
+                        newName = "M1P" & pole.poleNumber & "-" & photoCounter & "_" & pole.existingCEID & "_" & project.Permit & "." & fileExtension
+                    End If
+                Loop
+                
+                Name Path & fileName As Path & correctFileName(newName)
                 photoCounter = photoCounter + 1
             End If
         
@@ -136,111 +176,130 @@ Public Sub photoNameValidate()
         Loop
     Next pole
     
-    fileName = Dir(Path & "*")
-    Do While fileName <> ""
-        cleanedName = fileName
-        If InStr(cleanedName, project.permit) > 0 Then cleanedName = Replace(cleanedName, project.permit, "")
-        If Len(cleanedName) - Len(Replace(cleanedName, "_", "")) > 2 Then
-            firstPos = InStr(1, cleanedName, "_")
-            lastPos = InStrRev(cleanedName, "_")
-            middle = Replace(Mid$(cleanedName, firstPos + 1, lastPos - firstPos - 1), "_", "")
-            cleanedName = Left$(cleanedName, firstPos) & middle & Mid$(cleanedName, lastPos)
-        End If
-        If regex.test(cleanedName) Then
-            Set matches = regex.Execute(cleanedName)
-            Dim poleNumber As String
-            poleNumber = matches(0).SubMatches(0)
-            existingPhotoCounter = matches(0).SubMatches(1)
-            ceid = matches(0).SubMatches(2)
-            permit = matches(0).SubMatches(3)
-            fileExtension = matches(0).SubMatches(4)
-            
-            If Utilities.SheetExists(poleNumber) Then
-                Dim pds As Worksheet
-                For Each sheet In ThisWorkbook.sheets
-                    If ThisWorkbook.RemoveParentheses(sheet.name) = poleNumber Then
-                        Set pds = sheet
-                        Exit For
-                    End If
-                Next sheet
-                If pds Is Nothing Then Exit Sub
+    If project.mode = "MAKE READY" Then
+        fileName = Dir(Path & "*")
+        Do While fileName <> ""
+            cleanedName = fileName
+            If InStr(cleanedName, project.Permit) > 0 Then cleanedName = Replace(cleanedName, project.Permit, "")
+            If Len(cleanedName) - Len(Replace(cleanedName, "_", "")) > 2 Then
+                firstPos = InStr(1, cleanedName, "_")
+                lastPos = InStrRev(cleanedName, "_")
+                middle = Replace(Mid$(cleanedName, firstPos + 1, lastPos - firstPos - 1), "_", "")
+                cleanedName = Left$(cleanedName, firstPos) & middle & Mid$(cleanedName, lastPos)
+            End If
+            If regex.Test(cleanedName) Then
+                Set matches = regex.Execute(cleanedName)
+                Dim poleNumber As String
+                poleNumber = matches(0).SubMatches(0)
+                existingPhotoCounter = matches(0).SubMatches(1)
+                ceid = matches(0).SubMatches(2)
+                Permit = matches(0).SubMatches(3)
+                fileExtension = matches(0).SubMatches(4)
                 
-                If ceid = pds.Range("CEID") Then
-                    If Not photoCounts.exists(poleNumber) Then photoCounts.Add poleNumber, 0
-                    photoCounts(poleNumber) = photoCounts(poleNumber) + 1
+                If Utilities.SheetExists(poleNumber) Then
+                    Dim pds As Worksheet
+                    For Each sheet In ThisWorkbook.sheets
+                        If ThisWorkbook.RemoveParentheses(sheet.name) = poleNumber Then
+                            Set pds = sheet
+                            Exit For
+                        End If
+                    Next sheet
+                    If pds Is Nothing Then Exit Sub
                     
-                    photoCounter = 1
-                    newName = "M1P" & poleNumber & "-" & photoCounter & "_" & pds.Range("CEID") & "_" & project.permit & "." & fileExtension
-                       
-                    Do While fso.FileExists(Path & correctFileName(newName))
-                        photoCounter = photoCounter + 1
-                        newName = "M1P" & poleNumber & "-" & photoCounter & "_" & pds.Range("CEID") & "_" & project.permit & "." & fileExtension
-                    Loop
-                    
-                    Name Path & fileName As Path & correctFileName(newName)
+                    If ceid = pds.Range("CEID") Then
+                        If Not photoCounts.exists(poleNumber) Then photoCounts.Add poleNumber, 0
+                        photoCounts(poleNumber) = photoCounts(poleNumber) + 1
+                        
+                        photoCounter = 1
+                        newName = "M1P" & poleNumber & "-" & photoCounter & "_" & pds.Range("CEID") & "_" & project.Permit & "." & fileExtension
+                           
+                        Do While fso.FileExists(Path & correctFileName(newName))
+                            photoCounter = photoCounter + 1
+                            newName = "M1P" & poleNumber & "-" & photoCounter & "_" & pds.Range("CEID") & "_" & project.Permit & "." & fileExtension
+                        Loop
+                        
+                        If CInt(existingPhotoCounter) > CInt(photoCounter) Then Name Path & fileName As Path & correctFileName(newName)
+                    End If
+                ElseIf IsNumeric(ceid) Then
+                    For Each sheet In ThisWorkbook.sheets
+                        If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" Then
+                            If sheet.cells(2, 2).value = "Notification:" Then
+                                If ceid = sheet.Range("CEID") Then
+                                    If Not photoCounts.exists(sheet.Range("POLENUM")) Then photoCounts.Add sheet.Range("POLENUM"), 0
+                                    photoCounts(sheet.Range("POLENUM")) = photoCounts(sheet.Range("POLENUM")) + 1
+                                
+                                    photoCounter = 1
+                                    newName = "M1P" & sheet.Range("POLENUM") & "-" & photoCounter & "_" & sheet.Range("CEID") & "_" & project.Permit & "." & fileExtension
+                                       
+                                    Do While fso.FileExists(Path & correctFileName(newName))
+                                        photoCounter = photoCounter + 1
+                                        newName = "M1P" & sheet.Range("POLENUM") & "-" & photoCounter & "_" & sheet.Range("CEID") & "_" & project.Permit & "." & fileExtension
+                                    Loop
+                                        
+                                    If CInt(existingPhotoCounter) > CInt(photoCounter) Then Name Path & fileName As Path & correctFileName(newName)
+                                End If
+                            End If
+                        End If
+                    Next sheet
                 End If
-            ElseIf IsNumeric(ceid) Then
+            ElseIf regexSI.Test(cleanedName) Then
+                Set matches = regexSI.Execute(cleanedName)
+                poleLocation = matches(0).SubMatches(0)
+                existingPhotoCounter = matches(0).SubMatches(1)
+    
                 For Each sheet In ThisWorkbook.sheets
                     If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" Then
-                        If sheet.Cells(2, 2).Value = "Notification:" Then
-                            If ceid = sheet.Range("CEID") Then
-                                If Not photoCounts.exists(sheet.Range("POLENUM")) Then photoCounts.Add sheet.Range("POLENUM"), 0
-                                photoCounts(sheet.Range("POLENUM")) = photoCounts(sheet.Range("POLENUM")) + 1
-                            
-                                photoCounter = 1
-                                newName = "M1P" & sheet.Range("POLENUM") & "-" & photoCounter & "_" & sheet.Range("CEID") & "_" & project.permit & "." & fileExtension
-                                   
-                                Do While fso.FileExists(Path & correctFileName(newName))
-                                    photoCounter = photoCounter + 1
-                                    newName = "M1P" & sheet.Range("POLENUM") & "-" & photoCounter & "_" & sheet.Range("CEID") & "_" & project.permit & "." & fileExtension
-                                Loop
-                                    
-                                Name Path & fileName As Path & correctFileName(newName)
+                        If sheet.cells(2, 2).value = "Notification:" Then
+                            If CStr(sheet.Range("DL")) = poleLocation Then
+                                Set pds = sheet
+                                Exit For
                             End If
                         End If
                     End If
                 Next sheet
-            End If
-        End If
-        fileName = Dir()
-    Loop
+                If pds Is Nothing Then Exit Sub
     
-    For Each poleNum In photoCounts
-        For Each sheet In ThisWorkbook.sheets
-            If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" Then
-                If sheet.Cells(2, 2).Value = "Notification:" Then
-                    If poleNum = sheet.Range("POLENUM") Then
-                        sheet.Range("PICTURES").Value = "1-" & photoCounts(poleNum)
-                    End If
+                If CStr(pds.Range("DL")) = poleLocation Then
+                    photoCounter = 1
+                    newName = "M1P" & poleNumber & "-" & photoCounter & "_" & pds.Range("CEID") & "_" & project.Permit & "." & fileExtension
+                    Do While fso.FileExists(Path & correctFileName(newName))
+                        photoCounter = photoCounter + 1
+                        newName = "M1P" & poleNumber & "-" & photoCounter & "_" & pds.Range("CEID") & "_" & project.Permit & "." & fileExtension
+                    Loop
+    
+                    Name Path & fileName As Path & correctFileName(newName)
                 End If
             End If
-        Next sheet
-    Next poleNum
+            fileName = Dir()
+        Loop
+    End If
     
     If project.mode = "SYSTEM IMPROVEMENT" Then
         For Each pole In project.poles
             If pole.location <> "" Then
+
                 fileName = Dir(Path & "*")
                 Do While fileName <> ""
                     cleanedName = fileName
-                    If InStr(cleanedName, project.permit) > 0 Then cleanedName = Replace(cleanedName, project.permit, "")
+                    If InStr(cleanedName, project.Permit) > 0 Then cleanedName = Replace(cleanedName, project.Permit, "")
                     If Len(cleanedName) - Len(Replace(cleanedName, "_", "")) > 2 Then
                         firstPos = InStr(1, cleanedName, "_")
                         lastPos = InStrRev(cleanedName, "_")
                         middle = Replace(Mid$(cleanedName, firstPos + 1, lastPos - firstPos - 1), "_", "")
                         cleanedName = Left$(cleanedName, firstPos) & middle & Mid$(cleanedName, lastPos)
                     End If
-                    If regex.test(cleanedName) Then
-                        
-            
+                    If regex.Test(cleanedName) Then
                         Set matches = regex.Execute(fileName)
                         poleNumber = matches(0).SubMatches(0)
                         existingPhotoCounter = matches(0).SubMatches(1)
                         ceid = matches(0).SubMatches(2)
-                        permit = matches(0).SubMatches(3)
+                        Permit = matches(0).SubMatches(3)
                         fileExtension = matches(0).SubMatches(4)
         
-                        If pole.poleNumber = poleNumber Then
+                        If pole.poleNumber = poleNumber Or pole.existingCEID = ceid Then
+                            If Not photoCounts.exists(pole.poleNumber) Then photoCounts.Add pole.poleNumber, 0
+                            photoCounts(pole.poleNumber) = photoCounts(pole.poleNumber) + 1
+                        
                             photoCounter = 1
                             newName = "LOC " & pole.location & " PIC " & photoCounter & "." & fileExtension
                             Do While fso.FileExists(Path & correctFileName(newName))
@@ -250,12 +309,42 @@ Public Sub photoNameValidate()
             
                             Name Path & fileName As Path & correctFileName(newName)
                         End If
+                    ElseIf regexSI.Test(cleanedName) Then
+                        Set matches = regexSI.Execute(cleanedName)
+                        poleLocation = matches(0).SubMatches(0)
+                        existingPhotoCounter = matches(0).SubMatches(1)
+        
+                        If pole.location = poleLocation Then
+                            If Not photoCounts.exists(pole.poleNumber) Then photoCounts.Add pole.poleNumber, 0
+                            photoCounts(pole.poleNumber) = photoCounts(pole.poleNumber) + 1
+                        
+                            photoCounter = 1
+                            newName = "LOC " & pole.location & " PIC " & photoCounter & "." & fileExtension
+                            Do While fso.FileExists(Path & correctFileName(newName))
+                                photoCounter = photoCounter + 1
+                                newName = "LOC " & pole.location & " PIC " & photoCounter & "." & fileExtension
+                            Loop
+            
+                            If CInt(existingPhotoCounter) > CInt(photoCounter) Then Name Path & fileName As Path & correctFileName(newName)
+                        End If
                     End If
                     fileName = Dir()
                 Loop
             End If
         Next pole
     End If
+    
+    For Each poleNum In photoCounts
+        For Each sheet In ThisWorkbook.sheets
+            If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" Then
+                If sheet.cells(2, 2).value = "Notification:" Then
+                    If poleNum = sheet.Range("POLENUM") Then
+                        sheet.Range("PICTURES").value = "1-" & photoCounts(poleNum)
+                    End If
+                End If
+            End If
+        Next sheet
+    Next poleNum
     
     Dim renameCount As Integer
     For Each name In originalNames
@@ -286,7 +375,7 @@ Public Sub OpenPolePhoto(Optional getDir As Boolean = True)
                 .InitialFileName = GetLocalPath(ThisWorkbook.Path) & Application.PathSeparator
                 If .Show = -1 Then Path = Application.FileDialog(msoFileDialogFilePicker).SelectedItems.item(1) & Application.PathSeparator Else Exit Sub
             End With
-            ThisWorkbook.sheets("Control").Range("PHOTODIR").Value = Path
+            ThisWorkbook.sheets("Control").Range("PHOTODIR").value = Path
         ElseIf Dir(Path) = "" Then
             Set fileDiag = Application.FileDialog(msoFileDialogFolderPicker)
             With fileDiag
@@ -295,7 +384,7 @@ Public Sub OpenPolePhoto(Optional getDir As Boolean = True)
                 .InitialFileName = GetLocalPath(ThisWorkbook.Path) & Application.PathSeparator
                 If .Show = -1 Then Path = Application.FileDialog(msoFileDialogFilePicker).SelectedItems.item(1) & Application.PathSeparator Else Exit Sub
             End With
-            ThisWorkbook.sheets("Control").Range("PHOTODIR").Value = Path
+            ThisWorkbook.sheets("Control").Range("PHOTODIR").value = Path
         End If
     End If
     
@@ -304,7 +393,7 @@ Public Sub OpenPolePhoto(Optional getDir As Boolean = True)
     If project.mode = "SYSTEM IMPROVEMENT" And pole.location <> "" Then
         photoName = "LOC " & pole.location & " PIC 1.jpg"
     Else
-        photoName = "M1P" & pole.poleNumber & "-1_" & pole.existingCEID & "_" & Utilities.correctFileName(pole.permit) & ".jpg"
+        photoName = "M1P" & pole.poleNumber & "-1_" & pole.existingCEID & "_" & Utilities.correctFileName(pole.Permit) & ".jpg"
     End If
     filePath = Path & photoName
     
