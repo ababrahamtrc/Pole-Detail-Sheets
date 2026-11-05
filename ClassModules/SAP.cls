@@ -352,9 +352,10 @@ Public Sub fillSheet()
         If Me.docWarehouseLink <> "" Then
             If Me.docWarehouseLink <> "Link Not Found" Then
                 Set cell = sapWs.cells.Find("Doc Warehouse Link:", LookAt:=xlWhole).offSet(0, 1)
-                cell.Parent.Hyperlinks.Add _
-                    anchor:=cell, _
-                    address:=Me.docWarehouseLink
+                cell.value = Me.docWarehouseLink
+                'cell.Parent.Hyperlinks.Add
+                    'anchor:=cell, _
+                    'address:=Me.docWarehouseLink
             Else
                 sapWs.cells.Find("Doc Warehouse Link:", LookAt:=xlWhole).offSet(0, 1).value = Me.docWarehouseLink
             End If
