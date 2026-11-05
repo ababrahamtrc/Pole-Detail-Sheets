@@ -4,13 +4,13 @@ Function testToken(token As String) As Boolean
     Dim url As String: url = "https://gis.consumersenergy.com/mapping/rest/services/Landbase/Landbase_Grids_Boundaries_PUB/MapServer/1/query?where=1=1&outFields=*&returnGeometry=true&geometryType=esriGeometryEnvelope&geometry=&spatialRel=esriSpatialRelIntersects&inSR=2253&outSR=2253+&f=json&token=" & token
     Set http = CreateObject("MSXML2.ServerXMLHTTP.6.0")
     http.Open "POST", url, False
-    http.setRequestHeader "Authorization", "Bearer " & token
-    http.setRequestHeader "Content-Type", "application/json"
-    http.send
-    Set test = JsonConverter.ParseJson(http.responseText)
-    If InStr(http.responseText, "Invalid Token") > 0 Or InStr(http.responseText, "User does not have permissions to access") > 0 Then
+    http.SetRequestHeader "Authorization", "Bearer " & token
+    http.SetRequestHeader "Content-Type", "application/json"
+    http.Send
+    Set Test = JsonConverter.ParseJson(http.ResponseText)
+    If InStr(http.ResponseText, "Invalid Token") > 0 Or InStr(http.ResponseText, "User does not have permissions to access") > 0 Then
         testToken = False
-    ElseIf JsonConverter.ParseJson(http.responseText).exists("error") Then
+    ElseIf JsonConverter.ParseJson(http.ResponseText).exists("error") Then
         testToken = False
     Else
         testToken = True
@@ -20,13 +20,13 @@ Function testToken(token As String) As Boolean
         url = "https://gis.consumersenergy.com/mapping/rest/services/Electric/Electric_PUB/MapServer/0/query?where=1=1&outFields=*&returnGeometry=true&geometryType=esriGeometryEnvelope&geometry=&spatialRel=esriSpatialRelIntersects&inSR=2253&outSR=2253+&f=json&token=" & token
         Set http = CreateObject("MSXML2.ServerXMLHTTP.6.0")
         http.Open "POST", url, False
-        http.setRequestHeader "Authorization", "Bearer " & token
-        http.setRequestHeader "Content-Type", "application/json"
-        http.send
-        Set test = JsonConverter.ParseJson(http.responseText)
-        If InStr(http.responseText, "Invalid Token") > 0 Or InStr(http.responseText, "User does not have permissions to access") > 0 Then
+        http.SetRequestHeader "Authorization", "Bearer " & token
+        http.SetRequestHeader "Content-Type", "application/json"
+        http.Send
+        Set Test = JsonConverter.ParseJson(http.ResponseText)
+        If InStr(http.ResponseText, "Invalid Token") > 0 Or InStr(http.ResponseText, "User does not have permissions to access") > 0 Then
             testToken = False
-        ElseIf JsonConverter.ParseJson(http.responseText).exists("error") Then
+        ElseIf JsonConverter.ParseJson(http.ResponseText).exists("error") Then
             testToken = False
         Else
             testToken = True
@@ -34,7 +34,7 @@ Function testToken(token As String) As Boolean
     End If
 End Function
 
-Function getElectricJson(poles As Collection, layer As Integer, token As String, Optional query As String) As Object
+Function getElectricJson(poles As Collection, layer As Integer, token As String, Optional query As String, Optional radius_ As Double) As Object
     On Error GoTo errorHandler
     
     Dim lowestLatitude As Double
@@ -51,6 +51,7 @@ Function getElectricJson(poles As Collection, layer As Integer, token As String,
     Next pole
     
     Dim radius As Double: radius = 500
+    If radius_ > 0 Then radius = radius_
     
     results = LatLonToMI2253(lowestLatitude, lowestLongitude)
     x1 = results(0) - radius
@@ -69,15 +70,15 @@ Function getElectricJson(poles As Collection, layer As Integer, token As String,
 
     Set http = CreateObject("MSXML2.ServerXMLHTTP.6.0")
     http.Open "POST", url, False
-    http.setRequestHeader "Authorization", "Bearer " & token
-    http.setRequestHeader "Content-Type", "application/json"
-    http.send
+    http.SetRequestHeader "Authorization", "Bearer " & token
+    http.SetRequestHeader "Content-Type", "application/json"
+    http.Send
     
     If http.status = 200 Then
-        Set getElectricJson = JsonConverter.ParseJson(http.responseText)
+        Set getElectricJson = JsonConverter.ParseJson(http.ResponseText)
     Else
         Set getElectricJson = Nothing
-        Debug.Print "Error: " & http.status & " - " & http.statusText
+        Debug.Print "Error: " & http.status & " - " & http.StatusText
     End If
     
     Exit Function
@@ -106,15 +107,15 @@ Function getOtherPole(x As Double, y As Double, radius As Integer, token) As Obj
 
     Set http = CreateObject("MSXML2.ServerXMLHTTP.6.0")
     http.Open "POST", url, False
-    http.setRequestHeader "Authorization", "Bearer " & token
-    http.setRequestHeader "Content-Type", "application/json"
-    http.send
+    http.SetRequestHeader "Authorization", "Bearer " & token
+    http.SetRequestHeader "Content-Type", "application/json"
+    http.Send
     
     If http.status = 200 Then
-        Set getOtherPole = JsonConverter.ParseJson(http.responseText)
+        Set getOtherPole = JsonConverter.ParseJson(http.ResponseText)
     Else
         Set getOtherPole = Nothing
-        Debug.Print "Error: " & http.status & " - " & http.statusText
+        Debug.Print "Error: " & http.status & " - " & http.StatusText
     End If
     
     Set http = Nothing
@@ -126,7 +127,7 @@ errorHandler:
            "Description: " & Err.Description, vbCritical
 End Function
 
-Function getROWJSON(poles As Collection, layer As Integer, token As String) As Object
+Function getROWJSON(poles As Collection, layer As Integer, token As String, Optional radius_ As Double) As Object
     On Error GoTo errorHandler
     
     Dim lowestLatitude As Double
@@ -148,6 +149,7 @@ Function getROWJSON(poles As Collection, layer As Integer, token As String) As O
     Else
         radius = 500
     End If
+    If radius_ > 0 Then radius = radius_
     
     results = LatLonToMI2253(lowestLatitude, lowestLongitude)
     x1 = results(0) - radius
@@ -166,15 +168,15 @@ Function getROWJSON(poles As Collection, layer As Integer, token As String) As O
     
     Set http = CreateObject("MSXML2.ServerXMLHTTP.6.0")
     http.Open "POST", url, False
-    http.setRequestHeader "Authorization", "Bearer " & token
-    http.setRequestHeader "Content-Type", "application/json"
-    http.send
+    http.SetRequestHeader "Authorization", "Bearer " & token
+    http.SetRequestHeader "Content-Type", "application/json"
+    http.Send
     
     If http.status = 200 Then
-        Set getROWJSON = JsonConverter.ParseJson(http.responseText)
+        Set getROWJSON = JsonConverter.ParseJson(http.ResponseText)
     Else
         Set getROWJSON = Nothing
-        Debug.Print "Error: " & http.status & " - " & http.statusText
+        Debug.Print "Error: " & http.status & " - " & http.StatusText
     End If
     
     Set http = Nothing
@@ -187,8 +189,8 @@ errorHandler:
 End Function
 
 Public Function getDistanceAngle(sheet As Worksheet, ByVal i As String) As Collection
-    distance = OnlyNumbers(sheet.Range("SPAN" & i).Value)
-    angle = OnlyNumbers(Mid(sheet.Range("TOPOLE" & i).Value, InStr(sheet.Range("TOPOLE" & i).Value, "(")))
+    distance = OnlyNumbers(sheet.Range("SPAN" & i).value)
+    angle = OnlyNumbers(Mid(sheet.Range("TOPOLE" & i).value, InStr(sheet.Range("TOPOLE" & i).value, "(")))
     
     Dim distanceAngle As Collection: Set distanceAngle = New Collection
     distanceAngle.Add distance
@@ -207,12 +209,12 @@ Public Function getClosestAngle(sheet As Worksheet, ByVal k As Integer, ByVal an
         For Each name In sheet.names
             If name.name = "'" & sheet.name & "'" & "!TOPOLE" & i Then
                 If Trim(Replace(sheet.Range("TOPOLE" & i), "-", "")) <> "" Then
-                    If Replace(sheet.Range("UTMIDSPAN" & i).OFFSET(k, 0), "-", "") <> "" Then
+                    If Replace(sheet.Range("UTMIDSPAN" & i).offSet(k, 0), "-", "") <> "" Then
                         Set results = getDistanceAngle(sheet, i)
                         angleDif = Abs(angle - results(2))
                         If smallestAngleDif > angleDif Then
                             smallestAngleDif = angleDif
-                            size = OnlyNumbers(sheet.Range("UTSIZE").OFFSET(k, 0), True)
+                            size = OnlyNumbers(sheet.Range("UTSIZE").offSet(k, 0), True)
                         End If
                     End If
                 End If
