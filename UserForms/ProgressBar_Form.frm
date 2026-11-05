@@ -21,6 +21,6 @@ Attribute VB_Exposed = False
 
 Public Sub Initialize()
   Me.StartUpPosition = 0
-  Me.Left = Application.Left + (0.5 * Application.Width) - (0.5 * Me.Width)
+  Me.Left = Application.Left + (0.5 * Application.width) - (0.5 * Me.width)
   Me.top = Application.top + (0.5 * Application.height) - (0.5 * Me.height)
 End Sub
