@@ -59,7 +59,7 @@ Public Sub Initialize(sheet_ As Worksheet, powers_ As Collection, OGPowers_ As C
     enterDone = True
     
     Me.StartUpPosition = 0
-    Me.Left = Application.Left + (0.5 * Application.Width) - (0.5 * Me.Width)
+    Me.Left = Application.Left + (0.5 * Application.width) - (0.5 * Me.width)
     Me.top = Application.top + (0.5 * Application.height) - (0.5 * Me.height)
     
     Set sheet = sheet_
@@ -87,20 +87,20 @@ Public Sub Initialize(sheet_ As Worksheet, powers_ As Collection, OGPowers_ As C
     Next midspanSlot
     
     Set powers = powers_
-    LWSTPWR.Value = Utilities.inchesToFeetInches(powers(1))
-    STLTBRKT.Value = Utilities.inchesToFeetInches(powers(2))
-    STLTDL.Value = Utilities.inchesToFeetInches(powers(3))
+    LWSTPWR.value = Utilities.inchesToFeetInches(powers(1))
+    STLTBRKT.value = Utilities.inchesToFeetInches(powers(2))
+    STLTDL.value = Utilities.inchesToFeetInches(powers(3))
     If powers(2) > 0 Then TrimDL.visible = True
     
     Set OGPowers = OGPowers_
-    OGLWSTPWR.Value = Utilities.inchesToFeetInches(OGPowers(1))
-    OGSTLTBRKT.Value = Utilities.inchesToFeetInches(OGPowers(2))
-    OGSTLTDL.Value = Utilities.inchesToFeetInches(OGPowers(3))
+    OGLWSTPWR.value = Utilities.inchesToFeetInches(OGPowers(1))
+    OGSTLTBRKT.value = Utilities.inchesToFeetInches(OGPowers(2))
+    OGSTLTDL.value = Utilities.inchesToFeetInches(OGPowers(3))
     
-    Call createLabel(LWSTPWR.Value, UtilityMidspanClearance.name, CLEARANCE_WIRE_COLOR, CLEARANCE_WIRE_TEXT_COLOR, "SZV Clearance Att. Ht. " & LWSTPWRClearance & " Lowest Clearance Midspan In Span " & UtilityMidspanClearance.text, True)
-    Call createBoundryLabel(LWSTPWR.Value, "Lowest Power", CLEARANCE_WIRE_COLOR, 6, " ")
-    Call createBoundryLabel(STLTBRKT.Value, "Lowest Streetlight", STREETLIGHT_COLOR, 6, " ")
-    Call createBoundryLabel(STLTDL.Value, "Lowest Streetlight DL", STREETLIGHT_DRIPLOOP_COLOR, 6, " ")
+    Call createLabel(LWSTPWR.value, UtilityMidspanClearance.name, CLEARANCE_WIRE_COLOR, CLEARANCE_WIRE_TEXT_COLOR, "SZV Clearance Att. Ht. " & LWSTPWRClearance & " Lowest Clearance Midspan In Span " & UtilityMidspanClearance.text, True)
+    Call createBoundryLabel(LWSTPWR.value, "Lowest Power", CLEARANCE_WIRE_COLOR, 6, " ")
+    Call createBoundryLabel(STLTBRKT.value, "Lowest Streetlight", STREETLIGHT_COLOR, 6, " ")
+    Call createBoundryLabel(STLTDL.value, "Lowest Streetlight DL", STREETLIGHT_DRIPLOOP_COLOR, 6, " ")
     
     Set boltHoles = New Collection
     Set uniqueHeights = New Scripting.Dictionary
@@ -121,8 +121,8 @@ Public Sub Initialize(sheet_ As Worksheet, powers_ As Collection, OGPowers_ As C
         automateMidspan.Add wep, False
     Next wep
     
-    If IgnoreBolt_ Then IgnoreBolt.Value = True
-    If Bonded_ Then Bonded.Value = True
+    If IgnoreBolt_ Then IgnoreBolt.value = True
+    If Bonded_ Then Bonded.value = True
     
     Call IgnoreBolt_Change
     
@@ -148,10 +148,10 @@ Private Sub spanFill()
     
     If Not applicant Is Nothing Then
         If applicant.midspans.exists(spanNumber) Then
-            Height0.Value = Utilities.inchesToFeetInches(applicant.height)
-            Mod0.Value = Utilities.inchesToFeetInches(applicant.modification)
-            Midspan0.Value = Utilities.inchesToFeetInches(applicant.midspans(spanNumber))
-            MidspanMod0.Value = Utilities.inchesToFeetInches(moddedMidspans(spanNumber))
+            Height0.value = Utilities.inchesToFeetInches(applicant.height)
+            Mod0.value = Utilities.inchesToFeetInches(applicant.modification)
+            Midspan0.value = Utilities.inchesToFeetInches(applicant.midspans(spanNumber))
+            MidspanMod0.value = Utilities.inchesToFeetInches(moddedMidspans(spanNumber))
             If applicant.adjacentHeights.exists(spanNumber) Then
                 If applicant.adjacentHeights(spanNumber).count > 0 Then
                     OtherOwner0.caption = "Applicant"
@@ -168,9 +168,9 @@ Private Sub spanFill()
     For Each wire In wires
         If wire.midspans.exists(spanNumber) Then
             Controls("Owner" & i).caption = wire.owner
-            Controls("Height" & i).Value = Utilities.inchesToFeetInches(wire.height)
-            Controls("Mod" & i).Value = Utilities.inchesToFeetInches(wire.modification)
-            Controls("Midspan" & i).Value = Utilities.inchesToFeetInches(wire.midspans(spanNumber))
+            Controls("Height" & i).value = Utilities.inchesToFeetInches(wire.height)
+            Controls("Mod" & i).value = Utilities.inchesToFeetInches(wire.modification)
+            Controls("Midspan" & i).value = Utilities.inchesToFeetInches(wire.midspans(spanNumber))
             If wire.adjacentHeights.exists(spanNumber) Then
                 If wire.adjacentHeights(spanNumber).count > 0 Then
                     Controls("OtherOwner" & i).caption = wire.owner
@@ -190,7 +190,7 @@ Private Sub spanFill()
     Call Mod0_Change
     
     If Not applicant Is Nothing And moddedMidspans.exists(spanNumber) Then
-        If MidspanMod0.Value <> moddedMidspans(spanNumber) Then MidspanMod0.Value = Utilities.inchesToFeetInches(moddedMidspans(spanNumber))
+        If MidspanMod0.value <> moddedMidspans(spanNumber) Then MidspanMod0.value = Utilities.inchesToFeetInches(moddedMidspans(spanNumber))
     End If
     
     Call Mod1_Change
@@ -219,9 +219,9 @@ Private Sub spanFill()
     
     Application.EnableEvents = True
     
-    Previous = AutoApplicant.Value
-    AutoApplicant.Value = automateMidspan(spanNumber)
-    If AutoApplicant.Value Then Call automateApplicantMidspan
+    Previous = AutoApplicant.value
+    AutoApplicant.value = automateMidspan(spanNumber)
+    If AutoApplicant.value Then Call automateApplicantMidspan
     
     done = True
     
@@ -312,11 +312,11 @@ Private Sub createLabel(ByVal height As String, ByVal name As String, ByVal colo
     inches = Utilities.convertToInches(height)
     If Not inches > 0 Then Exit Sub
     
-    Dim lbl As MSForms.Label
+    Dim lbl As MSForms.label
     Set lbl = Controls.Add("Forms.Label.1", name & "Label", True)
     
     With lbl
-        .Width = Pole2.Left - Pole1.Left - Pole2.Width
+        .width = Pole2.Left - Pole1.Left - Pole2.width
         .height = 10
         .BackColor = color
         .caption = midspan
@@ -328,7 +328,7 @@ Private Sub createLabel(ByVal height As String, ByVal name As String, ByVal colo
         .BorderColor = RGB(0, 0, 0)
     End With
     
-    lbl.Move Pole1.Left + Pole1.Width, Pole1.top + Pole1.height - inches
+    lbl.Move Pole1.Left + Pole1.width, Pole1.top + Pole1.height - inches
     
     If Not exclude Then objects.Add lbl
 End Sub
@@ -364,11 +364,11 @@ Private Sub createBoundryLabel(ByVal height As String, ByVal name As String, ByV
     inches = Utilities.convertToInches(height)
     If Not inches > 0 Then Exit Sub
     
-    Dim lbl As MSForms.Label
+    Dim lbl As MSForms.label
     Set lbl = Controls.Add("Forms.Label.1", name & "Boundry", True)
     
     With lbl
-        .Width = Pole1.Width
+        .width = Pole1.width
         .height = IIf(size <> 0, size, 8)
         .BackColor = color
         .TextAlign = fmTextAlignCenter
@@ -429,8 +429,8 @@ Private Function checkViolations(Optional report As Boolean) As String
     stltbrktClearanceInches = Utilities.convertToInches(STLTBRKT.text)
     STLTDLClearanceInches = Utilities.convertToInches(STLTDL.text)
     
-    If Not utilityMidspanClearanceInches > 0 Or IgnoreClearance.Value Then utilityMidspanClearanceInches = 9999
-    If Not utilityClearanceInches > 0 Or IgnoreClearance.Value Then utilityClearanceInches = 9999
+    If Not utilityMidspanClearanceInches > 0 Or IgnoreClearance.value Then utilityMidspanClearanceInches = 9999
+    If Not utilityClearanceInches > 0 Or IgnoreClearance.value Then utilityClearanceInches = 9999
     If Not stltbrktClearanceInches > 0 Then stltbrktClearanceInches = 9999
     If Not STLTDLClearanceInches > 0 Then stltbrktClearanceInches = 9999
     
@@ -468,11 +468,11 @@ Private Function checkViolations(Optional report As Boolean) As String
             violates = True
             violationsReport = violationsReport & "Wire" & i + IIf(applicantSpan, 1, 0) & " 40"" safety zone violation" & vbLf
         End If
-        If Abs(inchesOne - stltbrktClearanceInches) < 40 And Not Bonded.Value Then
+        If Abs(inchesOne - stltbrktClearanceInches) < 40 And Not Bonded.value Then
             violates = True
             violationsReport = violationsReport & "Wire" & i + IIf(applicantSpan, 1, 0) & " 40"" unbonded streetlight separation" & vbLf
         End If
-        If Abs(inchesOne - stltbrktClearanceInches) < 4 And Bonded.Value Then
+        If Abs(inchesOne - stltbrktClearanceInches) < 4 And Bonded.value Then
             violates = True
             violationsReport = violationsReport & "Wire" & i + IIf(applicantSpan, 1, 0) & " 4"" bonded streetlight separation" & vbLf
         End If
@@ -484,7 +484,7 @@ Private Function checkViolations(Optional report As Boolean) As String
             violates = True
             violationsReport = violationsReport & "Wire" & i + IIf(applicantSpan, 1, 0) & " 30"" midspan separation vioaltion" & vbLf
         End If
-        If Not IgnoreBolt.Value Then
+        If Not IgnoreBolt.value Then
             boltHoleViolation = False
             For Each heightInches In uniqueHeights
                 If heightInches <> inchesOne Then
@@ -578,7 +578,7 @@ Private Function LabelExistsInUserForm(labelName As String) As Boolean
     LabelExistsInUserForm = False
 
     For Each ctrl In Controls
-        If TypeOf ctrl Is MSForms.Label Then
+        If TypeOf ctrl Is MSForms.label Then
             If ctrl.name = labelName Then
                 LabelExistsInUserForm = True
                 Exit Function
@@ -591,7 +591,7 @@ Private Sub AutoApplicant_Change()
     
     On Error Resume Next
 
-    If AutoApplicant.Value Then
+    If AutoApplicant.value Then
         automateMidspan(spanNumber) = True
         Call automateApplicantMidspan
     Else
@@ -649,7 +649,7 @@ End Sub
 Private Sub IgnoreBolt_Change()
     If done Then Call checkViolations
     For Each Object In boltHoles
-        Object.visible = Not IgnoreBolt.Value
+        Object.visible = Not IgnoreBolt.value
     Next Object
 End Sub
 
@@ -984,25 +984,25 @@ End Sub
 
 Private Sub STLTBRKT_Change()
     If Not Me.ActiveControl Is Me.STLTBRKT Then
-        STLTBRKTClearance.text = Utilities.inchesToFeetInches(Utilities.convertToInches(STLTBRKT.text) - IIf(Bonded.Value, 4, 40))
-        If TrimDL Then STLTDL.Value = Utilities.inchesToFeetInches(Utilities.convertToInches(STLTBRKT) - 1)
+        STLTBRKTClearance.text = Utilities.inchesToFeetInches(Utilities.convertToInches(STLTBRKT.text) - IIf(Bonded.value, 4, 40))
+        If TrimDL Then STLTDL.value = Utilities.inchesToFeetInches(Utilities.convertToInches(STLTBRKT) - 1)
     End If
 End Sub
 
 Private Sub STLTBRKT_KeyDown(ByVal keyCode As MSForms.ReturnInteger, ByVal shift As Integer)
     If keyCode = vbKeyReturn Then
-        STLTBRKTClearance.text = Utilities.inchesToFeetInches(Utilities.convertToInches(STLTBRKT.text) - IIf(Bonded.Value, 4, 40))
+        STLTBRKTClearance.text = Utilities.inchesToFeetInches(Utilities.convertToInches(STLTBRKT.text) - IIf(Bonded.value, 4, 40))
     End If
 End Sub
 
 Private Sub STLTBRKT_Exit(ByVal Cancel As MSForms.ReturnBoolean)
     If Not isClosing Then
-        STLTBRKTClearance.text = Utilities.inchesToFeetInches(Utilities.convertToInches(STLTBRKT.text) - IIf(Bonded.Value, 4, 40))
+        STLTBRKTClearance.text = Utilities.inchesToFeetInches(Utilities.convertToInches(STLTBRKT.text) - IIf(Bonded.value, 4, 40))
     End If
 End Sub
 
 Private Sub Bonded_Click()
-    STLTBRKTClearance.text = Utilities.inchesToFeetInches(Utilities.convertToInches(STLTBRKT.text) - IIf(Bonded.Value, 4, 40))
+    STLTBRKTClearance.text = Utilities.inchesToFeetInches(Utilities.convertToInches(STLTBRKT.text) - IIf(Bonded.value, 4, 40))
 End Sub
 
 Private Sub STLTBRKTClearance_Change()
@@ -1014,7 +1014,7 @@ Private Sub STLTDL_Change()
     If Not Me.ActiveControl Is Me.STLTDL Then
         STLTDLClearance.text = Utilities.inchesToFeetInches(Utilities.convertToInches(STLTDL.text) - 12)
     End If
-    If TrimDL Then STLTDL.Value = Utilities.inchesToFeetInches(Utilities.convertToInches(STLTBRKT) - 1)
+    If TrimDL Then STLTDL.value = Utilities.inchesToFeetInches(Utilities.convertToInches(STLTBRKT) - 1)
 End Sub
 
 Private Sub STLTDL_KeyDown(ByVal keyCode As MSForms.ReturnInteger, ByVal shift As Integer)
@@ -1056,7 +1056,7 @@ Private Sub Mod0_Change()
         End If
         If done Then Call updateLabel(Mod0.text, Mod0.name, "Att. Ht.  " & Mod0.text & "  " & Owner0.caption & "  MS  " & MidspanMod0.text)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1081,7 +1081,7 @@ Private Sub Mod0_KeyDown(ByVal keyCode As MSForms.ReturnInteger, ByVal shift As 
         End If
         If done Then Call updateLabel(Mod0.text, Mod0.name, "Att. Ht.  " & Mod0.text & "  " & Owner0.caption & "  MS  " & MidspanMod0.text)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1105,7 +1105,7 @@ Private Sub Mod0_Exit(ByVal Cancel As MSForms.ReturnBoolean)
         End If
         If done Then Call updateLabel(Mod0.text, Mod0.name, "Att. Ht.  " & Mod0.text & "  " & Owner0.caption & "  MS  " & MidspanMod0.text)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
     enterDone = True
 End Sub
@@ -1115,7 +1115,7 @@ Private Sub MidspanMod0_Change()
         Call updateLabel(Mod0.text, Mod0.name, "Att. Ht.  " & Mod0.text & "  " & Owner0.caption & "  MS  " & MidspanMod0.text)
         If done Then Call checkViolations
         If done And moddedMidspans.exists(spanNumber) And Utilities.convertToInches(MidspanMod0.text) > 0 Then moddedMidspans(spanNumber) = Utilities.convertToInches(MidspanMod0.text)
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1125,7 +1125,7 @@ Private Sub MidspanMod0_KeyDown(ByVal keyCode As MSForms.ReturnInteger, ByVal sh
         Call updateLabel(Mod0.text, Mod0.name, "Att. Ht.  " & Mod0.text & "  " & Owner0.caption & "  MS  " & MidspanMod0.text)
         If done Then Call checkViolations
         If done And moddedMidspans.exists(spanNumber) And Utilities.convertToInches(MidspanMod0.text) > 0 Then moddedMidspans(spanNumber) = Utilities.convertToInches(MidspanMod0.text)
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1134,7 +1134,7 @@ Private Sub MidspanMod0_Exit(ByVal Cancel As MSForms.ReturnBoolean)
         Call updateLabel(Mod0.text, Mod0.name, "Att. Ht.  " & Mod0.text & "  " & Owner0.caption & "  MS  " & MidspanMod0.text)
         If done Then Call checkViolations
         If done And moddedMidspans.exists(spanNumber) And Utilities.convertToInches(MidspanMod0.text) > 0 Then moddedMidspans(spanNumber) = Utilities.convertToInches(MidspanMod0.text)
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
     enterDone = True
 End Sub
@@ -1144,7 +1144,7 @@ Private Sub Mod1_Change()
         Call updateMidspan(1)
         If done Then Call updateLabel(Mod1.text, Mod1.name, "Att. Ht.  " & Mod1.text & "  " & Owner1.caption & "  MS  " & MidspanMod1.text, 1)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1153,7 +1153,7 @@ Private Sub Mod1_KeyDown(ByVal keyCode As MSForms.ReturnInteger, ByVal shift As 
         Call updateMidspan(1)
         If done Then Call updateLabel(Mod1.text, Mod1.name, "Att. Ht.  " & Mod1.text & "  " & Owner1.caption & "  MS  " & MidspanMod1.text, 1)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1162,7 +1162,7 @@ Private Sub Mod1_Exit(ByVal Cancel As MSForms.ReturnBoolean)
         Call updateMidspan(1)
         If done Then Call updateLabel(Mod1.text, Mod1.name, "Att. Ht.  " & Mod1.text & "  " & Owner1.caption & "  MS  " & MidspanMod1.text, 1)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1171,7 +1171,7 @@ Private Sub Mod2_Change()
         Call updateMidspan(2)
         If done Then Call updateLabel(Mod2.text, Mod2.name, "Att. Ht.  " & Mod2.text & "  " & Owner2.caption & "  MS  " & MidspanMod2.text, 2)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1180,7 +1180,7 @@ Private Sub Mod2_KeyDown(ByVal keyCode As MSForms.ReturnInteger, ByVal shift As 
         Call updateMidspan(2)
         If done Then Call updateLabel(Mod2.text, Mod2.name, "Att. Ht.  " & Mod2.text & "  " & Owner2.caption & "  MS  " & MidspanMod2.text, 2)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1189,7 +1189,7 @@ Private Sub Mod2_Exit(ByVal Cancel As MSForms.ReturnBoolean)
         Call updateMidspan(2)
         If done Then Call updateLabel(Mod2.text, Mod2.name, "Att. Ht.  " & Mod2.text & "  " & Owner2.caption & "  MS  " & MidspanMod2.text, 2)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1198,7 +1198,7 @@ Private Sub Mod3_Change()
         Call updateMidspan(3)
         If done Then Call updateLabel(Mod3.text, Mod3.name, "Att. Ht.  " & Mod3.text & "  " & Owner3.caption & "  MS  " & MidspanMod3.text, 3)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1207,7 +1207,7 @@ Private Sub Mod3_KeyDown(ByVal keyCode As MSForms.ReturnInteger, ByVal shift As 
         Call updateMidspan(3)
         If done Then Call updateLabel(Mod3.text, Mod3.name, "Att. Ht.  " & Mod3.text & "  " & Owner3.caption & "  MS  " & MidspanMod3.text, 3)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1216,7 +1216,7 @@ Private Sub Mod3_Exit(ByVal Cancel As MSForms.ReturnBoolean)
         Call updateMidspan(3)
         If done Then Call updateLabel(Mod3.text, Mod3.name, "Att. Ht.  " & Mod3.text & "  " & Owner3.caption & "  MS  " & MidspanMod3.text, 3)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1225,7 +1225,7 @@ Private Sub Mod4_Change()
         Call updateMidspan(4)
         If done Then Call updateLabel(Mod4.text, Mod4.name, "Att. Ht.  " & Mod4.text & "  " & Owner4.caption & "  MS  " & MidspanMod4.text, 4)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1234,7 +1234,7 @@ Private Sub Mod4_KeyDown(ByVal keyCode As MSForms.ReturnInteger, ByVal shift As 
         Call updateMidspan(4)
         If done Then Call updateLabel(Mod4.text, Mod4.name, "Att. Ht.  " & Mod4.text & "  " & Owner4.caption & "  MS  " & MidspanMod4.text, 4)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1243,7 +1243,7 @@ Private Sub Mod4_Exit(ByVal Cancel As MSForms.ReturnBoolean)
         Call updateMidspan(4)
         If done Then Call updateLabel(Mod4.text, Mod4.name, "Att. Ht.  " & Mod4.text & "  " & Owner4.caption & "  MS  " & MidspanMod4.text, 4)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1252,7 +1252,7 @@ Private Sub Mod5_Change()
         Call updateMidspan(5)
         If done Then Call updateLabel(Mod5.text, Mod5.name, "Att. Ht.  " & Mod5.text & "  " & Owner5.caption & "  MS  " & MidspanMod5.text, 5)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1261,7 +1261,7 @@ Private Sub Mod5_KeyDown(ByVal keyCode As MSForms.ReturnInteger, ByVal shift As 
         Call updateMidspan(5)
         If done Then Call updateLabel(Mod5.text, Mod5.name, "Att. Ht.  " & Mod5.text & "  " & Owner5.caption & "  MS  " & MidspanMod5.text, 5)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1270,7 +1270,7 @@ Private Sub Mod5_Exit(ByVal Cancel As MSForms.ReturnBoolean)
         Call updateMidspan(5)
         If done Then Call updateLabel(Mod5.text, Mod5.name, "Att. Ht.  " & Mod5.text & "  " & Owner5.caption & "  MS  " & MidspanMod5.text, 5)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1279,7 +1279,7 @@ Private Sub Mod6_Change()
         Call updateMidspan(6)
         If done Then Call updateLabel(Mod6.text, Mod6.name, "Att. Ht.  " & Mod6.text & "  " & Owner6.caption & "  MS  " & MidspanMod6.text, 6)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1288,7 +1288,7 @@ Private Sub Mod6_KeyDown(ByVal keyCode As MSForms.ReturnInteger, ByVal shift As 
         Call updateMidspan(6)
         If done Then Call updateLabel(Mod6.text, Mod6.name, "Att. Ht.  " & Mod6.text & "  " & Owner6.caption & "  MS  " & MidspanMod6.text, 6)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1297,7 +1297,7 @@ Private Sub Mod6_Exit(ByVal Cancel As MSForms.ReturnBoolean)
         Call updateMidspan(6)
         If done Then Call updateLabel(Mod6.text, Mod6.name, "Att. Ht.  " & Mod6.text & "  " & Owner6.caption & "  MS  " & MidspanMod6.text, 6)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1306,7 +1306,7 @@ Private Sub Mod7_Change()
         Call updateMidspan(7)
         If done Then Call updateLabel(Mod7.text, Mod7.name, "Att. Ht.  " & Mod7.text & "  " & Owner7.caption & "  MS  " & MidspanMod7.text, 7)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1315,7 +1315,7 @@ Private Sub Mod7_KeyDown(ByVal keyCode As MSForms.ReturnInteger, ByVal shift As 
         Call updateMidspan(7)
         If done Then Call updateLabel(Mod7.text, Mod7.name, "Att. Ht.  " & Mod7.text & "  " & Owner7.caption & "  MS  " & MidspanMod7.text, 7)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1324,7 +1324,7 @@ Private Sub Mod7_Exit(ByVal Cancel As MSForms.ReturnBoolean)
         Call updateMidspan(7)
         If done Then Call updateLabel(Mod7.text, Mod7.name, "Att. Ht.  " & Mod7.text & "  " & Owner7.caption & "  MS  " & MidspanMod7.text, 7)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1333,7 +1333,7 @@ Private Sub Mod8_Change()
         Call updateMidspan(8)
         If done Then Call updateLabel(Mod8.text, Mod8.name, "Att. Ht.  " & Mod8.text & "  " & Owner8.caption & "  MS  " & MidspanMod8.text, 8)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1342,7 +1342,7 @@ Private Sub Mod8_KeyDown(ByVal keyCode As MSForms.ReturnInteger, ByVal shift As 
         Call updateMidspan(8)
         If done Then Call updateLabel(Mod8.text, Mod8.name, "Att. Ht.  " & Mod8.text & "  " & Owner8.caption & "  MS  " & MidspanMod8.text, 8)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1351,7 +1351,7 @@ Private Sub Mod8_Exit(ByVal Cancel As MSForms.ReturnBoolean)
         Call updateMidspan(8)
         If done Then Call updateLabel(Mod8.text, Mod8.name, "Att. Ht.  " & Mod8.text & "  " & Owner8.caption & "  MS  " & MidspanMod8.text, 8)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1360,7 +1360,7 @@ Private Sub Mod9_Change()
         Call updateMidspan(9)
         If done Then Call updateLabel(Mod9.text, Mod9.name, "Att. Ht.  " & Mod9.text & "  " & Owner9.caption & "  MS  " & MidspanMod9.text, 9)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1369,7 +1369,7 @@ Private Sub Mod9_KeyDown(ByVal keyCode As MSForms.ReturnInteger, ByVal shift As 
         Call updateMidspan(9)
         If done Then Call updateLabel(Mod9.text, Mod9.name, "Att. Ht.  " & Mod9.text & "  " & Owner9.caption & "  MS  " & MidspanMod9.text, 9)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1378,7 +1378,7 @@ Private Sub Mod9_Exit(ByVal Cancel As MSForms.ReturnBoolean)
         Call updateMidspan(9)
         If done Then Call updateLabel(Mod9.text, Mod9.name, "Att. Ht.  " & Mod9.text & "  " & Owner9.caption & "  MS  " & MidspanMod9.text, 9)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1387,7 +1387,7 @@ Private Sub Mod10_Change()
         Call updateMidspan(10)
         If done Then Call updateLabel(Mod10.text, Mod10.name, "Att. Ht.  " & Mod10.text & "  " & Owner10.caption & "  MS  " & MidspanMod10.text, 10)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1396,7 +1396,7 @@ Private Sub Mod10_KeyDown(ByVal keyCode As MSForms.ReturnInteger, ByVal shift As
         Call updateMidspan(10)
         If done Then Call updateLabel(Mod10.text, Mod10.name, "Att. Ht.  " & Mod10.text & "  " & Owner10.caption & "  MS  " & MidspanMod10.text, 10)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1405,7 +1405,7 @@ Private Sub Mod10_Exit(ByVal Cancel As MSForms.ReturnBoolean)
         Call updateMidspan(10)
         If done Then Call updateLabel(Mod10.text, Mod10.name, "Att. Ht.  " & Mod10.text & "  " & Owner10.caption & "  MS  " & MidspanMod10.text, 10)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1414,7 +1414,7 @@ Private Sub Mod11_Change()
         Call updateMidspan(11)
         If done Then Call updateLabel(Mod11.text, Mod11.name, "Att. Ht.  " & Mod11.text & "  " & Owner11.caption & "  MS  " & MidspanMod11.text, 11)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1423,7 +1423,7 @@ Private Sub Mod11_KeyDown(ByVal keyCode As MSForms.ReturnInteger, ByVal shift As
         Call updateMidspan(11)
         If done Then Call updateLabel(Mod11.text, Mod11.name, "Att. Ht.  " & Mod11.text & "  " & Owner11.caption & "  MS  " & MidspanMod11.text, 11)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1432,7 +1432,7 @@ Private Sub Mod11_Exit(ByVal Cancel As MSForms.ReturnBoolean)
         Call updateMidspan(11)
         If done Then Call updateLabel(Mod11.text, Mod11.name, "Att. Ht.  " & Mod11.text & "  " & Owner11.caption & "  MS  " & MidspanMod11.text, 11)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1441,7 +1441,7 @@ Private Sub Mod12_Change()
         Call updateMidspan(12)
         If done Then Call updateLabel(Mod12.text, Mod12.name, "Att. Ht.  " & Mod12.text & "  " & Owner12.caption & "  MS  " & MidspanMod12.text, 12)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1450,7 +1450,7 @@ Private Sub Mod12_KeyDown(ByVal keyCode As MSForms.ReturnInteger, ByVal shift As
         Call updateMidspan(12)
         If done Then Call updateLabel(Mod12.text, Mod12.name, "Att. Ht.  " & Mod12.text & "  " & Owner12.caption & "  MS  " & MidspanMod12.text, 12)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
@@ -1459,13 +1459,13 @@ Private Sub Mod12_Exit(ByVal Cancel As MSForms.ReturnBoolean)
         Call updateMidspan(12)
         If done Then Call updateLabel(Mod12.text, Mod12.name, "Att. Ht.  " & Mod12.text & "  " & Owner12.caption & "  MS  " & MidspanMod12.text, 12)
         If done Then Call checkViolations
-        If done And AutoApplicant.Value Then Call automateApplicantMidspan
+        If done And AutoApplicant.value Then Call automateApplicantMidspan
     End If
 End Sub
 
 Private Sub TrimDL_Click()
-    If TrimDL Then STLTDL.Value = Utilities.inchesToFeetInches(Utilities.convertToInches(STLTBRKT) - 1)
-    If Not TrimDL Then STLTDL.Value = OGSTLTDL.Value
+    If TrimDL Then STLTDL.value = Utilities.inchesToFeetInches(Utilities.convertToInches(STLTBRKT) - 1)
+    If Not TrimDL Then STLTDL.value = OGSTLTDL.value
 End Sub
 
 Private Sub UpdateMods_Click()
@@ -1489,14 +1489,14 @@ Private Sub UpdateMods_Click()
             If sheet.Range("CMRF1") <> Utilities.inchesToFeetInches(applicant.modification) Then sheet.Range("CMRF1") = Utilities.inchesToFeetInches(applicant.modification)
         Else
             If sheet.Range("CMRF1") <> "OL @ " & Utilities.inchesToFeetInches(applicant.modification) Then sheet.Range("CMRF1") = "OL @ " & Utilities.inchesToFeetInches(applicant.modification)
-            Set modCell = findModCell(sheet, applicant.height, applicant.owner, True)
-            If Not modCell Is Nothing Then
-                If Utilities.convertToInches(modCell.text) < 1 And applicant.modification <> applicant.height Then modCell.Value = Utilities.inchesToFeetInches(applicant.modification)
-                If Utilities.convertToInches(modCell.text) > 0 And applicant.modification > 0 And Utilities.convertToInches(modCell.text) <> applicant.modification Then
+            Set modcell = findModCell(sheet, applicant.height, applicant.owner, True)
+            If Not modcell Is Nothing Then
+                If Utilities.convertToInches(modcell.text) < 1 And applicant.modification <> applicant.height Then modcell.value = Utilities.inchesToFeetInches(applicant.modification)
+                If Utilities.convertToInches(modcell.text) > 0 And applicant.modification > 0 And Utilities.convertToInches(modcell.text) <> applicant.modification Then
                     If Utilities.convertToInches(applicant.modification) <> Utilities.convertToInches(applicant.height) Then
-                        modCell.Value = Utilities.inchesToFeetInches(applicant.modification)
+                        modcell.value = Utilities.inchesToFeetInches(applicant.modification)
                     Else
-                        modCell.Value = ""
+                        modcell.value = ""
                     End If
                 End If
             End If
@@ -1510,23 +1510,23 @@ Private Sub UpdateMods_Click()
         End With
         polesChanged = ""
         For Each midspanSlot In applicant.midspans
-            If regex.test(weps(midspanSlot)) Then
+            If regex.Test(weps(midspanSlot)) Then
                 Set matches = regex.Execute(weps(midspanSlot))
                 Dim direction As String: direction = ThisWorkbook.RemoveParentheses(Trim(matches(0)))
                 If SheetExists(direction) Then
                     Set otherSheet = Utilities.GetPDS(direction)
                     
-                    If InStr(otherSheet.Range("CMRF2").Value, "@P" & sheet.Range("POLENUM")) > 0 Then
+                    If InStr(otherSheet.Range("CMRF2").value, "@P" & sheet.Range("POLENUM")) > 0 Then
                         answer = MsgBox("Do you want to update the value of midspans on pole " & direction, vbYesNoCancel + vbQuestion, "Confirmation")
                         If answer = vbYes Then
                             Dim lines() As String
-                            lines = Split(otherSheet.Range("CMRF2").Value, vbLf)
+                            lines = Split(otherSheet.Range("CMRF2").value, vbLf)
                             For i = LBound(lines) To UBound(lines)
                                 If InStr(lines(i), " @P" & sheet.Range("POLENUM")) > 0 Then
                                     lines(i) = Utilities.inchesToFeetInches(moddedMidspans(midspanSlot)) & " @P" & sheet.Range("POLENUM")
                                 End If
                             Next i
-                            otherSheet.Range("CMRF2").Value = Join(lines, vbLf)
+                            otherSheet.Range("CMRF2").value = Join(lines, vbLf)
                             If polesChanged <> "" Then polesChanged = polesChanged & ", "
                             polesChanged = polesChanged & direction
                         End If
@@ -1536,7 +1536,7 @@ Private Sub UpdateMods_Click()
                     End If
                 Else
                     If direction <> "N" And direction <> "E" And direction <> "S" And direction <> "W" And direction <> "NE" And direction <> "SE" And direction <> "SW" And direction <> "NW" Then direction = "@P" & direction
-                    If Trim(Replace(sheet.Range("TOPOLE" & midspanSlot).OFFSET(1, 0), "-", "")) <> "" Then
+                    If Trim(Replace(sheet.Range("TOPOLE" & midspanSlot).offSet(1, 0), "-", "")) <> "" Then
                         If midspanText <> "" Then midspanText = midspanText & vbLf
                         midspanText = midspanText & Utilities.inchesToFeetInches(moddedMidspans(midspanSlot)) & " " & direction
                     End If
@@ -1547,12 +1547,12 @@ Private Sub UpdateMods_Click()
         If sheet.Range("CMRF2") <> midspanText Then sheet.Range("CMRF2") = midspanText
         
         For Each wire In wires
-            Set modCell = findModCell(sheet, wire.height, wire.owner, True)
-            If Not modCell Is Nothing Then
+            Set modcell = findModCell(sheet, wire.height, wire.owner, True)
+            If Not modcell Is Nothing Then
                 If wire.modification <> wire.height Then
-                    modCell.Value = Utilities.inchesToFeetInches(wire.modification)
+                    modcell.value = Utilities.inchesToFeetInches(wire.modification)
                 Else
-                    modCell.Value = Utilities.inchesToFeetInches(wire.height)
+                    modcell.value = Utilities.inchesToFeetInches(wire.height)
                 End If
             End If
         Next wire
@@ -1560,39 +1560,39 @@ Private Sub UpdateMods_Click()
         If LWSTPWR.text <> "" And powers.count > 0 Then
             If LWSTPWR.text <> powers(1) Then
                 newPower = ""
-                If sheet.Range("LWSTPWR").Value <> "" Then newPower = Split(sheet.Range("LWSTPWR").Value, vbLf)(0)
+                If sheet.Range("LWSTPWR").value <> "" Then newPower = Split(sheet.Range("LWSTPWR").value, vbLf)(0)
                 If newPower <> "" Then newPower = newPower & vbLf
-                sheet.Range("LWSTPWR").Value = newPower & LWSTPWR.text
+                sheet.Range("LWSTPWR").value = newPower & LWSTPWR.text
             End If
         End If
         
         If STLTBRKT.text <> "" And STLTBRKT.text <> "N/A" And powers.count > 1 Then
             If STLTBRKT.text <> powers(2) Then
                 newPower = ""
-                If sheet.Range("STLTBRKT").Value <> "" Then newPower = Split(sheet.Range("STLTBRKT").Value, vbLf)(0)
+                If sheet.Range("STLTBRKT").value <> "" Then newPower = Split(sheet.Range("STLTBRKT").value, vbLf)(0)
                 If newPower <> "" Then newPower = newPower & vbLf
-                sheet.Range("STLTBRKT").Value = newPower & STLTBRKT.text
+                sheet.Range("STLTBRKT").value = newPower & STLTBRKT.text
             End If
         End If
         
         If STLTDL.text <> "" And STLTDL.text <> "N/A" And powers.count > 2 Then
             If STLTDL.text <> powers(3) Then
                 newPower = ""
-                If sheet.Range("STLTDL").Value <> "" Then newPower = Split(sheet.Range("STLTDL").Value, vbLf)(0)
+                If sheet.Range("STLTDL").value <> "" Then newPower = Split(sheet.Range("STLTDL").value, vbLf)(0)
                 If newPower <> "" Then newPower = newPower & vbLf
-                sheet.Range("STLTDL").Value = newPower & STLTDL.text
+                sheet.Range("STLTDL").value = newPower & STLTDL.text
             End If
         End If
         
         For Each clearanceMidspan In weps
             If clearanceMidspan > 0 Then
                 If clearanceMidspans.exists(clearanceMidspan) Then
-                    If sheet.Range("CMMIDSPAN" & clearanceMidspan).OFFSET(-2, 0).Value <> "" Then
-                        If Split(sheet.Range("CMMIDSPAN" & clearanceMidspan).OFFSET(-2, 0).Value, vbLf)(0) <> Utilities.inchesToFeetInches(clearanceMidspans(clearanceMidspan) - 30) Then
+                    If sheet.Range("CMMIDSPAN" & clearanceMidspan).offSet(-2, 0).value <> "" Then
+                        If Split(sheet.Range("CMMIDSPAN" & clearanceMidspan).offSet(-2, 0).value, vbLf)(0) <> Utilities.inchesToFeetInches(clearanceMidspans(clearanceMidspan) - 30) Then
                             newPower = ""
-                            newPower = Split(sheet.Range("CMMIDSPAN" & clearanceMidspan).OFFSET(-2, 0).Value, vbLf)(0)
+                            newPower = Split(sheet.Range("CMMIDSPAN" & clearanceMidspan).offSet(-2, 0).value, vbLf)(0)
                             If newPower <> "" Then newPower = newPower & vbLf
-                            sheet.Range("CMMIDSPAN" & clearanceMidspan).OFFSET(-2, 0).Value = newPower & Utilities.inchesToFeetInches(clearanceMidspans(clearanceMidspan) - 30)
+                            sheet.Range("CMMIDSPAN" & clearanceMidspan).offSet(-2, 0).value = newPower & Utilities.inchesToFeetInches(clearanceMidspans(clearanceMidspan) - 30)
                         End If
                     End If
                 End If
@@ -1622,7 +1622,7 @@ End Sub
 
 Private Sub UtilityMidspanClearance_Change()
     Call updateLabel(LWSTPWR.text, UtilityMidspanClearance.name, "SZV Clearance Att. Ht. " & LWSTPWRClearance & " Lowest Clearance Midspan In Span " & UtilityMidspanClearance.text)
-    If done Then clearanceMidspans(spanNumber) = Utilities.convertToInches(UtilityMidspan.Value)
+    If done Then clearanceMidspans(spanNumber) = Utilities.convertToInches(UtilityMidspan.value)
     If done Then Call checkViolations
 End Sub
 
