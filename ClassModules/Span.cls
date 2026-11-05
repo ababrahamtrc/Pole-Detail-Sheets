@@ -15,12 +15,15 @@ Public spanSlot As Integer
 Public houseNumber As String
 Public otherPole As String
 Public treeWork As Boolean
+Public clearance As String
 Public wires As Collection
 Public utilWires As Collection
 Public commWires  As Collection
 Public utilComponents As Collection
 Public commComponents  As Collection
 Public spanGuys As Collection
+Public drops As Collection
+Public services As Collection
 Public lowestPowerWire As wire
 
 Private Sub Class_Initialize()
@@ -29,6 +32,9 @@ Private Sub Class_Initialize()
     Set commComponents = New Collection
     Set utilWires = New Collection
     Set commWires = New Collection
+    Set spanGuys = New Collection
+    Set drops = New Collection
+    Set services = New Collection
     
     Set lowestPowerWires = New Scripting.Dictionary
     For i = 1 To 12
