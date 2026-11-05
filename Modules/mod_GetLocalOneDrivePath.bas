@@ -1327,7 +1327,7 @@ NextFolder:
 
 DecodeUTF8: 'UTF-8 must be transcoded to UTF-16 manually in VBA
     Const raiseErrors As Boolean = False 'Raise error if invalid UTF-8 is found?
-    Dim o As Long, P As Long, q As Long
+    Dim o As Long, p As Long, q As Long
     Static numBytesOfCodePoints(0 To 255) As Byte
     Static mask(2 To 4) As Long
     Static minCp(2 To 4) As Long
@@ -1345,7 +1345,7 @@ DecodeUTF8: 'UTF-8 must be transcoded to UTF-16 manually in VBA
     Dim currByte As Byte
     utf8 = sUtf8
     ReDim utf16(0 To (UBound(utf8) - LBound(utf8) + 1) * 2)
-    P = 0
+    p = 0
     o = LBound(utf8)
     Do While o <= UBound(utf8)
         codepoint = utf8(o)
@@ -1354,8 +1354,8 @@ DecodeUTF8: 'UTF-8 must be transcoded to UTF-16 manually in VBA
             If raiseErrors Then Err.Raise 5
             GoTo insertErrChar
         ElseIf numBytesOfCodePoint = 1 Then
-            utf16(P) = codepoint
-            P = P + 2
+            utf16(p) = codepoint
+            p = p + 2
         ElseIf o + numBytesOfCodePoint - 1 > UBound(utf8) Then
             If raiseErrors Then Err.Raise 5
             GoTo insertErrChar
@@ -1376,47 +1376,47 @@ DecodeUTF8: 'UTF-8 must be transcoded to UTF-16 manually in VBA
                 If raiseErrors Then Err.Raise 5
                 GoTo insertErrChar
             ElseIf codepoint < &HD800& Then
-                utf16(P) = CByte(codepoint And &HFF&)
-                utf16(P + 1) = CByte(codepoint \ &H100&)
-                P = P + 2
+                utf16(p) = CByte(codepoint And &HFF&)
+                utf16(p + 1) = CByte(codepoint \ &H100&)
+                p = p + 2
             ElseIf codepoint < &HE000& Then
                 If raiseErrors Then Err.Raise 5
                 GoTo insertErrChar
             ElseIf codepoint < &H10000 Then
                 If codepoint = &HFEFF& Then GoTo nextCp '(BOM - will be ignored)
-                utf16(P) = codepoint And &HFF&
-                utf16(P + 1) = codepoint \ &H100&
-                P = P + 2
+                utf16(p) = codepoint And &HFF&
+                utf16(p + 1) = codepoint \ &H100&
+                p = p + 2
             ElseIf codepoint < &H110000 Then 'Calculate surrogate pair
                 m = codepoint - &H10000
                 Dim loSurrogate As Long: loSurrogate = &HDC00& Or (m And &H3FF)
                 Dim hiSurrogate As Long: hiSurrogate = &HD800& Or (m \ &H400&)
-                utf16(P) = hiSurrogate And &HFF&
-                utf16(P + 1) = hiSurrogate \ &H100&
-                utf16(P + 2) = loSurrogate And &HFF&
-                utf16(P + 3) = loSurrogate \ &H100&
-                P = P + 4
+                utf16(p) = hiSurrogate And &HFF&
+                utf16(p + 1) = hiSurrogate \ &H100&
+                utf16(p + 2) = loSurrogate And &HFF&
+                utf16(p + 3) = loSurrogate \ &H100&
+                p = p + 4
             Else
                 If raiseErrors Then Err.Raise 5
-insertErrChar:  utf16(P) = &HFD
-                utf16(P + 1) = &HFF
-                P = P + 2
+insertErrChar:  utf16(p) = &HFD
+                utf16(p + 1) = &HFF
+                p = p + 2
                 If numBytesOfCodePoint = 0 Then numBytesOfCodePoint = 1
             End If
         End If
 nextCp: o = o + numBytesOfCodePoint 'Move to the next UTF-8 codepoint
     Loop
-    sUtf16 = MidB$(utf16, 1, P)
+    sUtf16 = MidB$(utf16, 1, p)
     Return
 
 DecodeANSI: 'Code for decoding ANSI string manually:
     ansi = sAnsi
-    P = UBound(ansi) - LBound(ansi) + 1
-    If P > 0 Then
-        ReDim utf16(0 To P * 2 - 1): q = 0
-        For P = LBound(ansi) To UBound(ansi)
-            utf16(q) = ansi(P): q = q + 2
-        Next P
+    p = UBound(ansi) - LBound(ansi) + 1
+    If p > 0 Then
+        ReDim utf16(0 To p * 2 - 1): q = 0
+        For p = LBound(ansi) To UBound(ansi)
+            utf16(q) = ansi(p): q = q + 2
+        Next p
         sUtf16 = utf16
     Else
         sUtf16 = vbNullString
