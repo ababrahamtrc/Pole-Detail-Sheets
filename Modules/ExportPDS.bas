@@ -30,7 +30,7 @@ Sub ExportAllPDS()
     Dim sheetTotal As Integer: sheetTotal = 0
     For Each sheet In ThisWorkbook.sheets
         If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" Then
-            If sheet.Cells(2, 2).Value = "Notification:" Then
+            If sheet.cells(2, 2).value = "Notification:" Then
                 sheetTotal = sheetTotal + 1
                 sheet.Activate
                 sheet.Range("A1").Select
@@ -47,7 +47,7 @@ Sub ExportAllPDS()
     Dim fileName As String
     Dim fullPath As String
     For Each sheet In ThisWorkbook.sheets
-        If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" And sheet.Cells(2, 2).Value = "Notification:" Then
+        If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" And sheet.cells(2, 2).value = "Notification:" Then
             fullPath = "": fileName = ""
             If sheet.Range("DL") <> "" And project.mode = "SYSTEM IMPROVEMENT" Then
                 fileName = "PDS LOC " & fixIllegalCharacters(sheet.Range("DL"))
@@ -63,6 +63,7 @@ Sub ExportAllPDS()
             Next wb
             
             Set tempWb = ActiveWorkbook
+            Call addSensitivityLabel(tempWb)
             
             tempWb.SaveAs fileName:=fullPath, FileFormat:=xlOpenXMLWorkbook
             tempWb.Close savechanges:=True
@@ -102,7 +103,7 @@ Sub ExportSinglePDS()
     Call LogMessage.SendLogMessage("ExportSinglePDS")
     
     Set sheet = Application.ActiveSheet()
-    If sheet.name = "4 Spans" Or sheet.name = "8 Spans" Or sheet.name = "12 Spans" Or sheet.Cells(2, 2).Value <> "Notification:" Then
+    If sheet.name = "4 Spans" Or sheet.name = "8 Spans" Or sheet.name = "12 Spans" Or sheet.cells(2, 2).value <> "Notification:" Then
         MsgBox "You need to have a pole detail sheet active to run this script."
         Application.ScreenUpdating = True
         Application.EnableEvents = True
@@ -137,7 +138,7 @@ Sub ExportSinglePDS()
     Dim tempWb As Workbook
     Dim fileName As String
     Dim fullPath As String
-    If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" And sheet.Cells(2, 2).Value = "Notification:" Then
+    If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" And sheet.cells(2, 2).value = "Notification:" Then
         If sheet.Range("DL") <> "" And project.mode = "SYSTEM IMPROVEMENT" Then
             fileName = "PDS LOC " & fixIllegalCharacters(sheet.Range("DL"))
         Else
