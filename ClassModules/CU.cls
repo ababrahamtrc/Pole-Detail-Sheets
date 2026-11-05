@@ -16,15 +16,15 @@ Public parentInstance As Integer
 Public childCode As String
 Public childQty As Integer
 
-Public Function Equals(other As cu)
-    If other Is Nothing Then
+Public Function Equals(Other As cu)
+    If Other Is Nothing Then
         Equals = False
     Else
-        Equals = (Me.code = other.code) And _
-                 (Me.action = other.action) And _
-                 (Me.parentCU = other.parentCU) And _
-                 (Me.parentInstance = other.parentInstance) And _
-                 (Me.childCode = other.childCode)
+        Equals = (Me.code = Other.code) And _
+                 (Me.action = Other.action) And _
+                 (Me.parentCU = Other.parentCU) And _
+                 (Me.parentInstance = Other.parentInstance) And _
+                 (Me.childCode = Other.childCode)
     End If
 End Function
 
