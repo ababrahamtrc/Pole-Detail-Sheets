@@ -21,7 +21,7 @@ Sub Initialize(ByRef locationTLMs_ As Scripting.Dictionary)
     Set locationTLMs = locationTLMs_
     
     Me.StartUpPosition = 0
-    Me.Left = Application.Left + (0.5 * Application.Width) - (0.5 * Me.Width)
+    Me.Left = Application.Left + (0.5 * Application.width) - (0.5 * Me.width)
     Me.top = Application.top + (0.5 * Application.height) - (0.5 * Me.height)
     
     If locationTLMs.count > 0 Then
@@ -42,25 +42,25 @@ Sub Initialize(ByRef locationTLMs_ As Scripting.Dictionary)
         With newBox
             .Left = TextBox1.Left + (col * colUnitHeight)
             .top = TextBox1.top + (ROW * rowUnitHeight)
-            .Width = TextBox1.Width
+            .width = TextBox1.width
             .height = TextBox1.height
             .text = Utilities.JoinCollection(tlms, ",")
         End With
         
-        Dim newLabel1 As MSForms.Label: Set newLabel1 = Me.Controls.Add("Forms.Label.1", "TLM" & i, True)
+        Dim newLabel1 As MSForms.label: Set newLabel1 = Me.Controls.Add("Forms.Label.1", "TLM" & i, True)
         With newLabel1
             .Left = TLM1.Left + (col * colUnitHeight)
             .top = TLM1.top + (ROW * rowUnitHeight)
-            .Width = TLM1.Width
+            .width = TLM1.width
             .height = TLM1.height
             .caption = "TLM"
         End With
         
-        Dim newLabel2 As MSForms.Label: Set newLabel2 = Me.Controls.Add("Forms.Label.1", "LOC" & i, True)
+        Dim newLabel2 As MSForms.label: Set newLabel2 = Me.Controls.Add("Forms.Label.1", "LOC" & i, True)
         With newLabel2
             .Left = LOC1.Left + (col * colUnitHeight)
             .top = LOC1.top + (ROW * rowUnitHeight)
-            .Width = LOC1.Width
+            .width = LOC1.width
             .height = LOC1.height
             .caption = "LOC " & location
         End With
