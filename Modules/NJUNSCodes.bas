@@ -9,11 +9,11 @@ Public Sub generateNJUNSCodes()
     Dim project As project: Set project = New project
     Call project.extractFromSheets
     
-    controlWs.Range("NJUNSCODES").OFFSET(0, 0).Value = "Place(Check NJUNS)"
-    controlWs.Range("NJUNSCODES").OFFSET(0, 1).Value = project.township
+    controlWs.Range("NJUNSCODES").offSet(0, 0).value = "Place(Check NJUNS)"
+    controlWs.Range("NJUNSCODES").offSet(0, 1).value = project.township
     
-    controlWs.Range("NJUNSCODES").OFFSET(1, 0).Value = "Applicant(" & project.applicant & ")"
-    controlWs.Range("NJUNSCODES").OFFSET(1, 1).Value = getNJUNSNameMapping(project, project.applicant)
+    controlWs.Range("NJUNSCODES").offSet(1, 0).value = "Applicant(" & project.applicant & ")"
+    controlWs.Range("NJUNSCODES").offSet(1, 1).value = getNJUNSNameMapping(project, project.applicant)
     
     Dim pole As pole
     For Each pole In project.poles
@@ -32,8 +32,8 @@ Public Sub generateNJUNSCodes()
     
     Dim i As Integer: i = 2
     For Each company In companies
-        controlWs.Range("NJUNSCODES").OFFSET(i, 0).Value = company & "(" & companies(company) & ")"
-        controlWs.Range("NJUNSCODES").OFFSET(i, 1).Value = getNJUNSNameMapping(project, company)
+        controlWs.Range("NJUNSCODES").offSet(i, 0).value = company & "(" & companies(company) & ")"
+        controlWs.Range("NJUNSCODES").offSet(i, 1).value = getNJUNSNameMapping(project, company)
         i = i + 1
     Next company
     
@@ -47,7 +47,7 @@ Public Sub clearNJUNSCodes()
     
     Dim startCell As Range: Set startCell = controlWs.Range("NJUNSCODES")
     
-    controlWs.Range(startCell, startCell.OFFSET(26, 1)).ClearContents
+    controlWs.Range(startCell, startCell.offSet(26, 1)).ClearContents
     
     controlWs.Protect _
         Password:="", _
@@ -97,6 +97,7 @@ Private Sub InitializeNJUNSNameCorrecting()
     NJUNSCodes("AT&TBAY") = "ATT109"
     NJUNSCodes("AT&TBENZIE") = "ATT110"
     NJUNSCodes("AT&TBERRIEN") = "ATT111"
+    NJUNSCodes("AT&TCALHOUN") = "ATT113"
     NJUNSCodes("AT&TCHEBOYGAN") = "ATT116"
     NJUNSCodes("AT&TCHIPPEWA") = "ATT117"
     NJUNSCodes("AT&TCLARE") = "ATT118"
@@ -145,5 +146,8 @@ Private Sub InitializeNJUNSNameCorrecting()
     NJUNSCodes("MWFN") = "MWFNCE"
     NJUNSCodes("MDOT") = "BAYTSC"
     NJUNSCodes("MICHIGANDOT") = "BAYTSC"
+    NJUNSCodes("GISD") = "GISDCE"
+    NJUNSCodes("NEXTGNETWORK") = "CRWNMI"
+    NJUNSCodes("CROWNCASTLE") = "CRWNMI"
 End Sub
 
