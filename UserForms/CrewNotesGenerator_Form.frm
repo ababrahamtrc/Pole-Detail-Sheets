@@ -46,9 +46,9 @@ Public Sub Initialize(sheet As Worksheet)
     Set pds = sheet
     Set pole = New pole
     Call pole.extractFromSheet(sheet)
-    Me.MultiPage1.Value = 0
+    Me.MultiPage1.value = 0
     Me.StartUpPosition = 0
-    Me.Left = Application.Left + (0.5 * Application.Width) - (0.5 * Me.Width)
+    Me.Left = Application.Left + (0.5 * Application.width) - (0.5 * Me.width)
     Me.top = Application.top + (0.5 * Application.height) - (0.5 * Me.height)
     
     Set figuresUsed = New Scripting.Dictionary
@@ -207,51 +207,51 @@ Public Sub Initialize(sheet As Worksheet)
     Dim name As Variant
     
     For i = 0 To 50
-        If pds.Range("CMOWNER").OFFSET(i, 0).Interior.color = 16777215 Then Exit For
-        If pds.Range("CMOWNER").OFFSET(i, 0) = "" Then Exit For
-        If pds.Range("CMOWNER").OFFSET(i, 0).text = "Clearance Requirement" Then Exit For
-        If InStr(pds.Range("CMSIZE").OFFSET(i, 0).text, """") > 0 Then
-            owner = Replace(pds.Range("CMOWNER").OFFSET(i, 0).text, " SVC", "")
+        If pds.Range("CMOWNER").offSet(i, 0).Interior.color = 16777215 Then Exit For
+        If pds.Range("CMOWNER").offSet(i, 0) = "" Then Exit For
+        If pds.Range("CMOWNER").offSet(i, 0).text = "Clearance Requirement" Then Exit For
+        If InStr(pds.Range("CMSIZE").offSet(i, 0).text, """") > 0 Then
+            owner = Replace(pds.Range("CMOWNER").offSet(i, 0).text, " SVC", "")
             If Not comms.exists(owner) Then comms.Add owner, Nothing
         End If
     Next i
     
     For i = 0 To 50
-        If pds.Range("UTTYPE").OFFSET(i, 0).Interior.color = 16777215 Then Exit For
-        If pds.Range("UTTYPE").OFFSET(i, 0) = "" Then Exit For
-        If pds.Range("UTTYPE").OFFSET(i, 0).text = "STLT. BOTTOM BRKT." Then Exit For
-        If InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "NEUT") > 0 Then neutBool = True
-        If InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "SEC") > 0 Then secBool = True
-        If InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "OW") > 0 Then owBool = True
-        If InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "RISER") > 0 Then riserBool = True
-        If InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "DG") > 0 And InStr(pds.Range("UTSIZE").OFFSET(i, 0).text, "11K") Then dg11KCount = dg11KCount + 1
-        If InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "DG") > 0 And InStr(pds.Range("UTSIZE").OFFSET(i, 0).text, "20K") Then dg20KCount = dg20KCount + 1
-        If InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "SVC") > 0 Then
+        If pds.Range("UTTYPE").offSet(i, 0).Interior.color = 16777215 Then Exit For
+        If pds.Range("UTTYPE").offSet(i, 0) = "" Then Exit For
+        If pds.Range("UTTYPE").offSet(i, 0).text = "STLT. BOTTOM BRKT." Then Exit For
+        If InStr(pds.Range("UTTYPE").offSet(i, 0).text, "NEUT") > 0 Then neutBool = True
+        If InStr(pds.Range("UTTYPE").offSet(i, 0).text, "SEC") > 0 Then secBool = True
+        If InStr(pds.Range("UTTYPE").offSet(i, 0).text, "OW") > 0 Then owBool = True
+        If InStr(pds.Range("UTTYPE").offSet(i, 0).text, "RISER") > 0 Then riserBool = True
+        If InStr(pds.Range("UTTYPE").offSet(i, 0).text, "DG") > 0 And InStr(pds.Range("UTSIZE").offSet(i, 0).text, "11K") Then dg11KCount = dg11KCount + 1
+        If InStr(pds.Range("UTTYPE").offSet(i, 0).text, "DG") > 0 And InStr(pds.Range("UTSIZE").offSet(i, 0).text, "20K") Then dg20KCount = dg20KCount + 1
+        If InStr(pds.Range("UTTYPE").offSet(i, 0).text, "SVC") > 0 Then
             For j = 1 To 12
                 For Each name In pds.names
                     If name.name = "'" & pds.name & "'" & "!" & "TOPOLE" & j Then
-                        If Trim(Replace(pds.Range("UTMIDSPAN" & j).OFFSET(i, 0), "-", "")) <> "" Then
+                        If Trim(Replace(pds.Range("UTMIDSPAN" & j).offSet(i, 0), "-", "")) <> "" Then
                             ohsCount = ohsCount + 1
                         End If
                     End If
                 Next name
             Next j
         End If
-        If InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "SPG") > 0 Then
+        If InStr(pds.Range("UTTYPE").offSet(i, 0).text, "SPG") > 0 Then
             For j = 1 To 12
                 For Each name In pds.names
                     If name.name = "'" & pds.name & "'" & "!" & "TOPOLE" & j Then
-                        If Trim(Replace(pds.Range("UTMIDSPAN" & j).OFFSET(i, 0), "-", "")) <> "" And InStr(pds.Range("UTSIZE").OFFSET(i, 0).text, "11K") Then spg11KCount = spg11KCount + 1
-                        If Trim(Replace(pds.Range("UTMIDSPAN" & j).OFFSET(i, 0), "-", "")) <> "" And InStr(pds.Range("UTSIZE").OFFSET(i, 0).text, "20K") Then spg20KCount = spg20KCount + 1
+                        If Trim(Replace(pds.Range("UTMIDSPAN" & j).offSet(i, 0), "-", "")) <> "" And InStr(pds.Range("UTSIZE").offSet(i, 0).text, "11K") Then spg11KCount = spg11KCount + 1
+                        If Trim(Replace(pds.Range("UTMIDSPAN" & j).offSet(i, 0), "-", "")) <> "" And InStr(pds.Range("UTSIZE").offSet(i, 0).text, "20K") Then spg20KCount = spg20KCount + 1
                     End If
                 Next name
             Next j
         End If
-        If InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "OW") > 0 Or InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "SEC") > 0 Or InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "NEUT") > 0 Then
+        If InStr(pds.Range("UTTYPE").offSet(i, 0).text, "OW") > 0 Or InStr(pds.Range("UTTYPE").offSet(i, 0).text, "SEC") > 0 Or InStr(pds.Range("UTTYPE").offSet(i, 0).text, "NEUT") > 0 Then
             For j = 1 To 12
                 For Each name In pds.names
                     If name.name = "'" & pds.name & "'" & "!" & "TOPOLE" & j Then
-                        If Trim(Replace(pds.Range("UTMIDSPAN" & j).OFFSET(i, 0), "-", "")) <> "" Then snC = snC + 1
+                        If Trim(Replace(pds.Range("UTMIDSPAN" & j).offSet(i, 0), "-", "")) <> "" Then snC = snC + 1
                     End If
                 Next name
             Next j
@@ -259,13 +259,13 @@ Public Sub Initialize(sheet As Worksheet)
     Next i
     
     For i = 0 To 3
-        If InStr(pds.Range("DESC").OFFSET(i, 0).Value, "3") > 0 Then priC = priC + (3 * (CountCharInString(pds.Range("DIRECTION").OFFSET(i, 0), "/") + 1))
-        If InStr(pds.Range("DESC").OFFSET(i, 0).Value, "2") > 0 Then priC = priC + (2 * (CountCharInString(pds.Range("DIRECTION").OFFSET(i, 0), "/") + 1))
-        If InStr(pds.Range("DESC").OFFSET(i, 0).Value, "1") > 0 Then priC = priC + (CountCharInString(pds.Range("DIRECTION").OFFSET(i, 0), "/") + 1)
+        If InStr(pds.Range("DESC").offSet(i, 0).value, "3") > 0 Then priC = priC + (3 * (CountCharInString(pds.Range("DIRECTION").offSet(i, 0), "/") + 1))
+        If InStr(pds.Range("DESC").offSet(i, 0).value, "2") > 0 Then priC = priC + (2 * (CountCharInString(pds.Range("DIRECTION").offSet(i, 0), "/") + 1))
+        If InStr(pds.Range("DESC").offSet(i, 0).value, "1") > 0 Then priC = priC + (CountCharInString(pds.Range("DIRECTION").offSet(i, 0), "/") + 1)
     Next i
     
-    UAP.Value = priC
-    UASN.Value = snC
+    UAP.value = priC
+    UASN.value = snC
     
     If RPPSIZE = "" And priC > 0 Then RPPSIZE = 40
     
@@ -284,284 +284,284 @@ Private Function CountCharInString(ByVal targetString As String, ByVal charToFin
 End Function
 
 Private Sub BAFIG_Click()
-    If PSV.Value = "" And BAFIG.Value Then PSV.Value = "4'0"""
+    If PSV.value = "" And BAFIG.value Then PSV.value = "4'0"""
 End Sub
 
 Private Sub BSL_Click()
-    BSLRFW.visible = BSL.Value
-    RPBSL.Value = BSL.Value
-    RPBSLRFW.visible = RPP.Value And BSL.Value
-    SLRFWL.visible = RPP.Value And BSL.Value
-    RFWL2.visible = BSL.Value
+    BSLRFW.visible = BSL.value
+    RPBSL.value = BSL.value
+    RPBSLRFW.visible = RPP.value And BSL.value
+    SLRFWL.visible = RPP.value And BSL.value
+    RFWL2.visible = BSL.value
 End Sub
 
 Private Sub BSLRFW_Change()
-    RPBSLRFW.Value = BSLRFW.Value
+    RPBSLRFW.value = BSLRFW.value
 End Sub
 
 Private Sub MHT1_Change()
-    If MHT1.Value = "RP" Then
-        MH1.Value = mhRP1
-        MHC1.Value = previousValueRPMHC1
-    ElseIf MHT1.Value = "IN" Then
-        MH1.Value = mhIN1
-        MHC1.Value = previousValueINMHC1
-    ElseIf MHT1.Value = "RM" Then
-        MH1.Value = mhRM1
-        MHC1.Value = previousValueRMMHC1
+    If MHT1.value = "RP" Then
+        MH1.value = mhRP1
+        MHC1.value = previousValueRPMHC1
+    ElseIf MHT1.value = "IN" Then
+        MH1.value = mhIN1
+        MHC1.value = previousValueINMHC1
+    ElseIf MHT1.value = "RM" Then
+        MH1.value = mhRM1
+        MHC1.value = previousValueRMMHC1
     End If
 End Sub
 
 Private Sub MH1_Click()
-    MHC1.visible = MH1.Value
-    If MHT1.Value = "RP" Then
-        If mhRP1 <> MH1.Value Then mhRP1 = MH1.Value
-    ElseIf MHT1.Value = "IN" Then
-        If mhIN1 <> MH1.Value Then mhIN1 = MH1.Value
-    ElseIf MHT1.Value = "RM" Then
-        If mhRM1 <> MH1.Value Then mhRM1 = MH1.Value
+    MHC1.visible = MH1.value
+    If MHT1.value = "RP" Then
+        If mhRP1 <> MH1.value Then mhRP1 = MH1.value
+    ElseIf MHT1.value = "IN" Then
+        If mhIN1 <> MH1.value Then mhIN1 = MH1.value
+    ElseIf MHT1.value = "RM" Then
+        If mhRM1 <> MH1.value Then mhRM1 = MH1.value
     End If
 End Sub
 
 Private Sub MHC1_Change()
-    If MHT1.Value = "RP" Then
-        previousValueRPMHC1 = MHC1.Value
-    ElseIf MHT1.Value = "IN" Then
-        previousValueINMHC1 = MHC1.Value
-    ElseIf MHT1.Value = "RM" Then
-        previousValueRMMHC1 = MHC1.Value
+    If MHT1.value = "RP" Then
+        previousValueRPMHC1 = MHC1.value
+    ElseIf MHT1.value = "IN" Then
+        previousValueINMHC1 = MHC1.value
+    ElseIf MHT1.value = "RM" Then
+        previousValueRMMHC1 = MHC1.value
     End If
 End Sub
 
 Private Sub MHT2_Change()
-    If MHT2.Value = "RP" Then
-        MH2.Value = mhRP2
-        MHC2.Value = previousValueRPMHC2
-    ElseIf MHT2.Value = "IN" Then
-        MH2.Value = mhIN2
-        MHC2.Value = previousValueINMHC2
-    ElseIf MHT2.Value = "RM" Then
-        MH2.Value = mhRM2
-        MHC2.Value = previousValueRMMHC2
+    If MHT2.value = "RP" Then
+        MH2.value = mhRP2
+        MHC2.value = previousValueRPMHC2
+    ElseIf MHT2.value = "IN" Then
+        MH2.value = mhIN2
+        MHC2.value = previousValueINMHC2
+    ElseIf MHT2.value = "RM" Then
+        MH2.value = mhRM2
+        MHC2.value = previousValueRMMHC2
     End If
 End Sub
 
 Private Sub MH2_Click()
-    MHC2.visible = MH2.Value
-    If MHT2.Value = "RP" Then
-        If mhRP2 <> MH2.Value Then mhRP2 = MH2.Value
-    ElseIf MHT2.Value = "IN" Then
-        If mhIN2 <> MH2.Value Then mhIN2 = MH2.Value
-    ElseIf MHT2.Value = "RM" Then
-        If mhRM2 <> MH2.Value Then mhRM2 = MH2.Value
+    MHC2.visible = MH2.value
+    If MHT2.value = "RP" Then
+        If mhRP2 <> MH2.value Then mhRP2 = MH2.value
+    ElseIf MHT2.value = "IN" Then
+        If mhIN2 <> MH2.value Then mhIN2 = MH2.value
+    ElseIf MHT2.value = "RM" Then
+        If mhRM2 <> MH2.value Then mhRM2 = MH2.value
     End If
 End Sub
 
 Private Sub MHC2_Change()
-    If MHT2.Value = "RP" Then
-        previousValueRPMHC2 = MHC2.Value
-    ElseIf MHT2.Value = "IN" Then
-        previousValueINMHC2 = MHC2.Value
-    ElseIf MHT2.Value = "RM" Then
-        previousValueRMMHC2 = MHC2.Value
+    If MHT2.value = "RP" Then
+        previousValueRPMHC2 = MHC2.value
+    ElseIf MHT2.value = "IN" Then
+        previousValueINMHC2 = MHC2.value
+    ElseIf MHT2.value = "RM" Then
+        previousValueRMMHC2 = MHC2.value
     End If
 End Sub
 
 Private Sub FUT1_Change()
-    If FUT1.Value = "RP" Then
-        FU1.Value = fuRP1
-        FUC1.Value = PreviousValueRPFUC1
-    ElseIf FUT1.Value = "IN" Then
-        FU1.Value = fuIN1
-        FUC1.Value = PreviousValueINFUC1
-    ElseIf FUT1.Value = "RM" Then
-        FU1.Value = fuRM1
-        FUC1.Value = PreviousValueRMFUC1
+    If FUT1.value = "RP" Then
+        FU1.value = fuRP1
+        FUC1.value = PreviousValueRPFUC1
+    ElseIf FUT1.value = "IN" Then
+        FU1.value = fuIN1
+        FUC1.value = PreviousValueINFUC1
+    ElseIf FUT1.value = "RM" Then
+        FU1.value = fuRM1
+        FUC1.value = PreviousValueRMFUC1
     End If
 End Sub
 
 Private Sub FU1_Click()
-    FUC1.visible = FU1.Value
-    If FUT1.Value = "RP" Then
-        If fuRP1 <> FU1.Value Then fuRP1 = FU1.Value
-    ElseIf FUT1.Value = "IN" Then
-        If fuIN1 <> FU1.Value Then fuIN1 = FU1.Value
-    ElseIf FUT1.Value = "RM" Then
-        If fuRM1 <> FU1.Value Then fuRM1 = FU1.Value
+    FUC1.visible = FU1.value
+    If FUT1.value = "RP" Then
+        If fuRP1 <> FU1.value Then fuRP1 = FU1.value
+    ElseIf FUT1.value = "IN" Then
+        If fuIN1 <> FU1.value Then fuIN1 = FU1.value
+    ElseIf FUT1.value = "RM" Then
+        If fuRM1 <> FU1.value Then fuRM1 = FU1.value
     End If
 End Sub
 
 Private Sub FUC1_Change()
-    If FUT1.Value = "RP" Then
-        PreviousValueRPFUC1 = FUC1.Value
-    ElseIf FUT1.Value = "IN" Then
-        PreviousValueINFUC1 = FUC1.Value
-    ElseIf FUT1.Value = "RM" Then
-        PreviousValueRMFUC1 = FUC1.Value
+    If FUT1.value = "RP" Then
+        PreviousValueRPFUC1 = FUC1.value
+    ElseIf FUT1.value = "IN" Then
+        PreviousValueINFUC1 = FUC1.value
+    ElseIf FUT1.value = "RM" Then
+        PreviousValueRMFUC1 = FUC1.value
     End If
 End Sub
 
 Private Sub FUT2_Change()
-    If FUT2.Value = "RP" Then
-        FU2.Value = fuRP2
-        FUC2.Value = PreviousValueRPFUC2
-    ElseIf FUT2.Value = "IN" Then
-        FU2.Value = fuIN2
-        FUC2.Value = PreviousValueINFUC2
-    ElseIf FUT2.Value = "RM" Then
-        FU2.Value = fuRM2
-        FUC2.Value = PreviousValueRMFUC2
+    If FUT2.value = "RP" Then
+        FU2.value = fuRP2
+        FUC2.value = PreviousValueRPFUC2
+    ElseIf FUT2.value = "IN" Then
+        FU2.value = fuIN2
+        FUC2.value = PreviousValueINFUC2
+    ElseIf FUT2.value = "RM" Then
+        FU2.value = fuRM2
+        FUC2.value = PreviousValueRMFUC2
     End If
 End Sub
 
 Private Sub FU2_Click()
-    FUC2.visible = FU2.Value
-    If FUT2.Value = "RP" Then
-        If fuRP2 <> FU2.Value Then fuRP2 = FU2.Value
-    ElseIf FUT2.Value = "IN" Then
-        If fuIN2 <> FU2.Value Then fuIN2 = FU2.Value
-    ElseIf FUT2.Value = "RM" Then
-        If fuRM2 <> FU2.Value Then fuRM2 = FU2.Value
+    FUC2.visible = FU2.value
+    If FUT2.value = "RP" Then
+        If fuRP2 <> FU2.value Then fuRP2 = FU2.value
+    ElseIf FUT2.value = "IN" Then
+        If fuIN2 <> FU2.value Then fuIN2 = FU2.value
+    ElseIf FUT2.value = "RM" Then
+        If fuRM2 <> FU2.value Then fuRM2 = FU2.value
     End If
 End Sub
 
 Private Sub FUC2_Change()
-    If FUT2.Value = "RP" Then
-        PreviousValueRPFUC2 = FUC2.Value
-    ElseIf FUT2.Value = "IN" Then
-        PreviousValueINFUC2 = FUC2.Value
-    ElseIf FUT2.Value = "RM" Then
-        PreviousValueRMFUC2 = FUC2.Value
+    If FUT2.value = "RP" Then
+        PreviousValueRPFUC2 = FUC2.value
+    ElseIf FUT2.value = "IN" Then
+        PreviousValueINFUC2 = FUC2.value
+    ElseIf FUT2.value = "RM" Then
+        PreviousValueRMFUC2 = FUC2.value
     End If
 End Sub
 
 Private Sub FUT3_Change()
-    If FUT3.Value = "RP" Then
-        FU3.Value = fuRP3
-        FUC3.Value = PreviousValueRPFUC3
-    ElseIf FUT3.Value = "IN" Then
-        FU3.Value = fuIN3
-        FUC3.Value = PreviousValueINFUC3
-    ElseIf FUT3.Value = "RM" Then
-        FU3.Value = fuRM3
-        FUC3.Value = PreviousValueRMFUC3
+    If FUT3.value = "RP" Then
+        FU3.value = fuRP3
+        FUC3.value = PreviousValueRPFUC3
+    ElseIf FUT3.value = "IN" Then
+        FU3.value = fuIN3
+        FUC3.value = PreviousValueINFUC3
+    ElseIf FUT3.value = "RM" Then
+        FU3.value = fuRM3
+        FUC3.value = PreviousValueRMFUC3
     End If
 End Sub
 
 Private Sub FU3_Click()
-    FUC3.visible = FU3.Value
-    If FUT3.Value = "RP" Then
-        If fuRP3 <> FU3.Value Then fuRP3 = FU3.Value
-    ElseIf FUT3.Value = "IN" Then
-        If fuIN3 <> FU3.Value Then fuIN3 = FU3.Value
-    ElseIf FUT3.Value = "RM" Then
-        If fuRM3 <> FU3.Value Then fuRM3 = FU3.Value
+    FUC3.visible = FU3.value
+    If FUT3.value = "RP" Then
+        If fuRP3 <> FU3.value Then fuRP3 = FU3.value
+    ElseIf FUT3.value = "IN" Then
+        If fuIN3 <> FU3.value Then fuIN3 = FU3.value
+    ElseIf FUT3.value = "RM" Then
+        If fuRM3 <> FU3.value Then fuRM3 = FU3.value
     End If
 End Sub
 
 Private Sub FUC3_Change()
-    If FUT3.Value = "RP" Then
-        PreviousValueRPFUC3 = FUC3.Value
-    ElseIf FUT3.Value = "IN" Then
-        PreviousValueINFUC3 = FUC3.Value
-    ElseIf FUT3.Value = "RM" Then
-        PreviousValueRMFUC3 = FUC3.Value
+    If FUT3.value = "RP" Then
+        PreviousValueRPFUC3 = FUC3.value
+    ElseIf FUT3.value = "IN" Then
+        PreviousValueINFUC3 = FUC3.value
+    ElseIf FUT3.value = "RM" Then
+        PreviousValueRMFUC3 = FUC3.value
     End If
 End Sub
 
 Private Sub IA11_Change()
-    If IA11.Value = "RS" Then
+    If IA11.value = "RS" Then
         IA12.list = Array("11K")
         IA12.ListIndex = 0
-    ElseIf IA11.Value = "RT" Then
+    ElseIf IA11.value = "RT" Then
         IA12.list = Array("(2)11K", "20K")
         IA12.ListIndex = 0
-    ElseIf IA11.Value = "STE" Then
+    ElseIf IA11.value = "STE" Then
         IA12.list = Array("(3)11K", "20K + 11K", "(2)20K")
         IA12.ListIndex = 0
     End If
 End Sub
 
 Private Sub IA21_Change()
-    If IA21.Value = "RS" Then
+    If IA21.value = "RS" Then
         IA22.list = Array("11K")
         IA22.ListIndex = 0
-    ElseIf IA21.Value = "RT" Then
+    ElseIf IA21.value = "RT" Then
         IA22.list = Array("(2)11K", "20K")
         IA22.ListIndex = 0
-    ElseIf IA21.Value = "STE" Then
+    ElseIf IA21.value = "STE" Then
         IA22.list = Array("(3)11K", "20K + 11K", "(2)20K")
         IA22.ListIndex = 0
     End If
 End Sub
 
 Private Sub IA31_Change()
-    If IA31.Value = "RS" Then
+    If IA31.value = "RS" Then
         IA32.list = Array("11K")
         IA32.ListIndex = 0
-    ElseIf IA31.Value = "RT" Then
+    ElseIf IA31.value = "RT" Then
         IA32.list = Array("(2)11K", "20K")
         IA32.ListIndex = 0
-    ElseIf IA31.Value = "STE" Then
+    ElseIf IA31.value = "STE" Then
         IA32.list = Array("(3)11K", "20K + 11K", "(2)20K")
         IA32.ListIndex = 0
     End If
 End Sub
 
 Private Sub EA11_Change()
-    RA11.Value = EA11.Value
-    If EA11.Value = "RS" Then
+    RA11.value = EA11.value
+    If EA11.value = "RS" Then
         EA12.list = Array("11K")
         EA12.ListIndex = 0
-    ElseIf EA11.Value = "RT" Then
+    ElseIf EA11.value = "RT" Then
         EA12.list = Array("(2)11K", "20K")
         EA12.ListIndex = 0
-    ElseIf EA11.Value = "STE" Then
+    ElseIf EA11.value = "STE" Then
         EA12.list = Array("(3)11K", "20K + 11K", "(2)20K")
         EA12.ListIndex = 0
     End If
 End Sub
 
 Private Sub EA21_Change()
-    If EA21.Value = "RS" Then
+    If EA21.value = "RS" Then
         EA22.list = Array("11K")
         EA22.ListIndex = 0
-    ElseIf EA21.Value = "RT" Then
+    ElseIf EA21.value = "RT" Then
         EA22.list = Array("(2)11K", "20K")
         EA22.ListIndex = 0
-    ElseIf EA21.Value = "STE" Then
+    ElseIf EA21.value = "STE" Then
         EA22.list = Array("(3)11K", "20K + 11K", "(2)20K")
         EA22.ListIndex = 0
     End If
-    RA21.Value = EA21.Value
+    RA21.value = EA21.value
 End Sub
 
 Private Sub EA31_Change()
-    If EA31.Value = "RS" Then
+    If EA31.value = "RS" Then
         EA32.list = Array("11K")
         EA32.ListIndex = 0
-    ElseIf EA31.Value = "RT" Then
+    ElseIf EA31.value = "RT" Then
         EA32.list = Array("(2)11K", "20K")
         EA32.ListIndex = 0
-    ElseIf EA31.Value = "STE" Then
+    ElseIf EA31.value = "STE" Then
         EA32.list = Array("(3)11K", "20K + 11K", "(2)20K")
         EA32.ListIndex = 0
     End If
-    RA31.Value = EA31.Value
+    RA31.value = EA31.value
 End Sub
 
 Private Sub EA41_Change()
-    If EA41.Value = "RS" Then
+    If EA41.value = "RS" Then
         EA42.list = Array("11K")
         EA42.ListIndex = 0
-    ElseIf EA41.Value = "RT" Then
+    ElseIf EA41.value = "RT" Then
         EA42.list = Array("(2)11K", "20K")
         EA42.ListIndex = 0
-    ElseIf EA41.Value = "STE" Then
+    ElseIf EA41.value = "STE" Then
         EA42.list = Array("(3)11K", "20K + 11K", "(2)20K")
         EA42.ListIndex = 0
     End If
-    RA41.Value = EA41.Value
+    RA41.value = EA41.value
 End Sub
 
 Private Sub PSV_Change()
@@ -569,76 +569,76 @@ Private Sub PSV_Change()
 End Sub
 
 Private Sub RA11_Change()
-    If RA11.Value = "RS" Then
+    If RA11.value = "RS" Then
         RA12.list = Array("11K")
         RA12.ListIndex = 0
-    ElseIf RA11.Value = "RT" Then
+    ElseIf RA11.value = "RT" Then
         RA12.list = Array("(2)11K", "20K")
         RA12.ListIndex = 0
-    ElseIf RA11.Value = "STE" Then
+    ElseIf RA11.value = "STE" Then
         RA12.list = Array("(3)11K", "20K + 11K", "(2)20K")
         RA12.ListIndex = 0
     End If
 End Sub
 
 Private Sub RA21_Change()
-    If RA21.Value = "RS" Then
+    If RA21.value = "RS" Then
         RA22.list = Array("11K")
         RA22.ListIndex = 0
-    ElseIf RA21.Value = "RT" Then
+    ElseIf RA21.value = "RT" Then
         RA22.list = Array("(2)11K", "20K")
         RA22.ListIndex = 0
-    ElseIf RA21.Value = "STE" Then
+    ElseIf RA21.value = "STE" Then
         RA22.list = Array("(3)11K", "20K + 11K", "(2)20K")
         RA22.ListIndex = 0
     End If
 End Sub
 
 Private Sub RA31_Change()
-    If RA31.Value = "RS" Then
+    If RA31.value = "RS" Then
         RA32.list = Array("11K")
         RA32.ListIndex = 0
-    ElseIf RA31.Value = "RT" Then
+    ElseIf RA31.value = "RT" Then
         RA32.list = Array("(2)11K", "20K")
         RA32.ListIndex = 0
-    ElseIf RA31.Value = "STE" Then
+    ElseIf RA31.value = "STE" Then
         RA32.list = Array("(3)11K", "20K + 11K", "(2)20K")
         RA32.ListIndex = 0
     End If
 End Sub
 
 Private Sub RA41_Change()
-    If RA41.Value = "RS" Then
+    If RA41.value = "RS" Then
         RA42.list = Array("11K")
         RA42.ListIndex = 0
-    ElseIf RA41.Value = "RT" Then
+    ElseIf RA41.value = "RT" Then
         RA42.list = Array("(2)11K", "20K")
         RA42.ListIndex = 0
-    ElseIf RA41.Value = "STE" Then
+    ElseIf RA41.value = "STE" Then
         RA42.list = Array("(3)11K", "20K + 11K", "(2)20K")
         RA42.ListIndex = 0
     End If
 End Sub
 
 Private Sub EA12_Change()
-    RA12.Value = EA12.Value
+    RA12.value = EA12.value
 End Sub
 
 Private Sub EA22_Change()
-    RA22.Value = EA22.Value
+    RA22.value = EA22.value
 End Sub
 
 Private Sub EA32_Change()
-    RA32.Value = EA32.Value
+    RA32.value = EA32.value
 End Sub
 
 Private Sub EA42_Change()
-    RA42.Value = EA42.Value
+    RA42.value = EA42.value
 End Sub
 
 Private Sub IAC_Change()
     For i = 1 To 3
-        If CInt(IAC.Value) >= i Then
+        If CInt(IAC.value) >= i Then
             Me.Controls("IA" & i & "1").visible = True
             Me.Controls("IA" & i & "2").visible = True
             Me.Controls("IA" & i & "3").visible = True
@@ -669,81 +669,81 @@ Private Sub IAC_Change()
 End Sub
 
 Private Sub OWSPAN1_Change()
-    OWSIZE1.visible = OWSPAN1.Value <> ""
-    OWNEWSIZE1.visible = OWSPAN1.Value <> ""
-    OWLENGTH1.visible = OWSPAN1.Value <> ""
-    OW1L2.visible = OWSPAN1.Value <> ""
-    OW1L3.visible = OWSPAN1.Value <> ""
-    OW1L4.visible = OWSPAN1.Value <> ""
-    If OWSPAN1.Value <> "" Then
-        OWSIZE1.Value = getOpenWireSizeFromSpan(OWSPAN1.Value)
-        Set cell = pds.UsedRange.Find(what:=OWSPAN1.Value, LookIn:=xlValues, lookat:=xlWhole, MatchCase:=True)
+    OWSIZE1.visible = OWSPAN1.value <> ""
+    OWNEWSIZE1.visible = OWSPAN1.value <> ""
+    OWLENGTH1.visible = OWSPAN1.value <> ""
+    OW1L2.visible = OWSPAN1.value <> ""
+    OW1L3.visible = OWSPAN1.value <> ""
+    OW1L4.visible = OWSPAN1.value <> ""
+    If OWSPAN1.value <> "" Then
+        OWSIZE1.value = getOpenWireSizeFromSpan(OWSPAN1.value)
+        Set cell = pds.UsedRange.Find(What:=OWSPAN1.value, LookIn:=xlValues, LookAt:=xlWhole, MatchCase:=True)
         If Not cell Is Nothing Then
-            OWLENGTH1.Value = Round(Utilities.OnlyNumbers(cell.OFFSET(-1, 0).Value), 0) & "'"
+            OWLENGTH1.value = Round(Utilities.OnlyNumbers(cell.offSet(-1, 0).value), 0) & "'"
         End If
     End If
 End Sub
 
 Private Sub OWSPAN2_Change()
-    OWSIZE2.visible = OWSPAN2.Value <> ""
-    OWNEWSIZE2.visible = OWSPAN2.Value <> ""
-    OWLENGTH2.visible = OWSPAN2.Value <> ""
-    OW2L2.visible = OWSPAN2.Value <> ""
-    OW2L3.visible = OWSPAN2.Value <> ""
-    OW2L4.visible = OWSPAN2.Value <> ""
-    If OWSPAN2.Value <> "" Then
-        OWSIZE2.Value = getOpenWireSizeFromSpan(OWSPAN2.Value)
-        Set cell = pds.UsedRange.Find(what:=OWSPAN2.Value, LookIn:=xlValues, lookat:=xlWhole, MatchCase:=True)
+    OWSIZE2.visible = OWSPAN2.value <> ""
+    OWNEWSIZE2.visible = OWSPAN2.value <> ""
+    OWLENGTH2.visible = OWSPAN2.value <> ""
+    OW2L2.visible = OWSPAN2.value <> ""
+    OW2L3.visible = OWSPAN2.value <> ""
+    OW2L4.visible = OWSPAN2.value <> ""
+    If OWSPAN2.value <> "" Then
+        OWSIZE2.value = getOpenWireSizeFromSpan(OWSPAN2.value)
+        Set cell = pds.UsedRange.Find(What:=OWSPAN2.value, LookIn:=xlValues, LookAt:=xlWhole, MatchCase:=True)
         If Not cell Is Nothing Then
-            OWLENGTH2.Value = Round(Utilities.OnlyNumbers(cell.OFFSET(-1, 0).Value), 0) & "'"
+            OWLENGTH2.value = Round(Utilities.OnlyNumbers(cell.offSet(-1, 0).value), 0) & "'"
         End If
     End If
 End Sub
 
 Private Sub OWSPAN3_Change()
-    OWSIZE3.visible = OWSPAN3.Value <> ""
-    OWNEWSIZE3.visible = OWSPAN3.Value <> ""
-    OWLENGTH3.visible = OWSPAN3.Value <> ""
-    OW3L2.visible = OWSPAN3.Value <> ""
-    OW3L3.visible = OWSPAN3.Value <> ""
-    OW3L4.visible = OWSPAN3.Value <> ""
-    If OWSPAN3.Value <> "" Then
-        OWSIZE3.Value = getOpenWireSizeFromSpan(OWSPAN3.Value)
-        Set cell = pds.UsedRange.Find(what:=OWSPAN3.Value, LookIn:=xlValues, lookat:=xlWhole, MatchCase:=True)
+    OWSIZE3.visible = OWSPAN3.value <> ""
+    OWNEWSIZE3.visible = OWSPAN3.value <> ""
+    OWLENGTH3.visible = OWSPAN3.value <> ""
+    OW3L2.visible = OWSPAN3.value <> ""
+    OW3L3.visible = OWSPAN3.value <> ""
+    OW3L4.visible = OWSPAN3.value <> ""
+    If OWSPAN3.value <> "" Then
+        OWSIZE3.value = getOpenWireSizeFromSpan(OWSPAN3.value)
+        Set cell = pds.UsedRange.Find(What:=OWSPAN3.value, LookIn:=xlValues, LookAt:=xlWhole, MatchCase:=True)
         If Not cell Is Nothing Then
-            OWLENGTH3.Value = Round(Utilities.OnlyNumbers(cell.OFFSET(-1, 0).Value), 0) & "'"
+            OWLENGTH3.value = Round(Utilities.OnlyNumbers(cell.offSet(-1, 0).value), 0) & "'"
         End If
     End If
 End Sub
 
 Private Sub OWSPAN4_Change()
-    OWSIZE4.visible = OWSPAN4.Value <> ""
-    OWNEWSIZE4.visible = OWSPAN4.Value <> ""
-    OWLENGTH4.visible = OWSPAN4.Value <> ""
-    OW4L2.visible = OWSPAN4.Value <> ""
-    OW4L3.visible = OWSPAN4.Value <> ""
-    OW4L4.visible = OWSPAN4.Value <> ""
-    If OWSPAN4.Value <> "" Then
-        OWSIZE4.Value = getOpenWireSizeFromSpan(OWSPAN4.Value)
-        Set cell = pds.UsedRange.Find(what:=OWSPAN4.Value, LookIn:=xlValues, lookat:=xlWhole, MatchCase:=True)
+    OWSIZE4.visible = OWSPAN4.value <> ""
+    OWNEWSIZE4.visible = OWSPAN4.value <> ""
+    OWLENGTH4.visible = OWSPAN4.value <> ""
+    OW4L2.visible = OWSPAN4.value <> ""
+    OW4L3.visible = OWSPAN4.value <> ""
+    OW4L4.visible = OWSPAN4.value <> ""
+    If OWSPAN4.value <> "" Then
+        OWSIZE4.value = getOpenWireSizeFromSpan(OWSPAN4.value)
+        Set cell = pds.UsedRange.Find(What:=OWSPAN4.value, LookIn:=xlValues, LookAt:=xlWhole, MatchCase:=True)
         If Not cell Is Nothing Then
-            OWLENGTH4.Value = Round(Utilities.OnlyNumbers(cell.OFFSET(-1, 0).Value), 0) & "'"
+            OWLENGTH4.value = Round(Utilities.OnlyNumbers(cell.offSet(-1, 0).value), 0) & "'"
         End If
     End If
 End Sub
 
 Private Sub OWSPAN5_Change()
-    OWSIZE5.visible = OWSPAN5.Value <> ""
-    OWNEWSIZE5.visible = OWSPAN5.Value <> ""
-    OWLENGTH5.visible = OWSPAN5.Value <> ""
-    OW5L2.visible = OWSPAN5.Value <> ""
-    OW5L3.visible = OWSPAN5.Value <> ""
-    OW5L4.visible = OWSPAN5.Value <> ""
-    If OWSPAN5.Value <> "" Then
-        OWSIZE5.Value = getOpenWireSizeFromSpan(OWSPAN5.Value)
-        Set cell = pds.UsedRange.Find(what:=OWSPAN5.Value, LookIn:=xlValues, lookat:=xlWhole, MatchCase:=True)
+    OWSIZE5.visible = OWSPAN5.value <> ""
+    OWNEWSIZE5.visible = OWSPAN5.value <> ""
+    OWLENGTH5.visible = OWSPAN5.value <> ""
+    OW5L2.visible = OWSPAN5.value <> ""
+    OW5L3.visible = OWSPAN5.value <> ""
+    OW5L4.visible = OWSPAN5.value <> ""
+    If OWSPAN5.value <> "" Then
+        OWSIZE5.value = getOpenWireSizeFromSpan(OWSPAN5.value)
+        Set cell = pds.UsedRange.Find(What:=OWSPAN5.value, LookIn:=xlValues, LookAt:=xlWhole, MatchCase:=True)
         If Not cell Is Nothing Then
-            OWLENGTH5.Value = Round(Utilities.OnlyNumbers(cell.OFFSET(-1, 0).Value), 0) & "'"
+            OWLENGTH5.value = Round(Utilities.OnlyNumbers(cell.offSet(-1, 0).value), 0) & "'"
         End If
     End If
 End Sub
@@ -755,7 +755,7 @@ Private Function getOpenWireSizeFromSpan(Span As String) As String
     For i = 1 To 12
         For Each name In pds.names
             If name.name = "'" & pds.name & "'" & "!" & "TOPOLE" & i Then
-                If pds.Range("TOPOLE" & i).Value = Span Then found = i
+                If pds.Range("TOPOLE" & i).value = Span Then found = i
                 Exit For
             End If
         Next name
@@ -763,12 +763,12 @@ Private Function getOpenWireSizeFromSpan(Span As String) As String
     Next i
     
     For i = 0 To 50
-        If pds.Range("UTTYPE").OFFSET(i, 0).Interior.color = 16777215 Then Exit For
-        If pds.Range("UTTYPE").OFFSET(i, 0) = "" Then Exit For
-        If pds.Range("UTTYPE").OFFSET(i, 0).text = "STLT. BOTTOM BRKT." Then Exit For
-        If InStr(pds.Range("UTTYPE").OFFSET(i, 0).text, "OW") > 0 Then
-            If Trim(Replace(pds.Range("UTMIDSPAN" & found).OFFSET(i, 0).Value, "-", "")) <> "" Then
-                openWireSizes = openWireSizes & ExtractNumbers(pds.Range("UTSIZE").OFFSET(i, 0).Value) & "-"
+        If pds.Range("UTTYPE").offSet(i, 0).Interior.color = 16777215 Then Exit For
+        If pds.Range("UTTYPE").offSet(i, 0) = "" Then Exit For
+        If pds.Range("UTTYPE").offSet(i, 0).text = "STLT. BOTTOM BRKT." Then Exit For
+        If InStr(pds.Range("UTTYPE").offSet(i, 0).text, "OW") > 0 Then
+            If Trim(Replace(pds.Range("UTMIDSPAN" & found).offSet(i, 0).value, "-", "")) <> "" Then
+                openWireSizes = openWireSizes & ExtractNumbers(pds.Range("UTSIZE").offSet(i, 0).value) & "-"
             End If
         End If
     Next i
@@ -779,13 +779,13 @@ Private Function getOpenWireSizeFromSpan(Span As String) As String
     
 End Function
 
-Private Function ExtractNumbers(ByVal InputString As String) As String
+Private Function ExtractNumbers(ByVal inputString As String) As String
     Dim i As Long
     Dim NumericString As String
 
-    For i = 1 To Len(InputString)
-        If IsNumeric(Mid(InputString, i, 1)) Then
-            NumericString = NumericString & Mid(InputString, i, 1)
+    For i = 1 To Len(inputString)
+        If IsNumeric(Mid(inputString, i, 1)) Then
+            NumericString = NumericString & Mid(inputString, i, 1)
         End If
     Next i
 
@@ -793,660 +793,660 @@ Private Function ExtractNumbers(ByVal InputString As String) As String
 End Function
 
 Private Sub PRIT1_Change()
-    If PRIT1.Value = "RP" Then
-        PRI1.Value = priRP1
-        PRIC1.Value = PreviousValueRPPRIC1
-    ElseIf PRIT1.Value = "IN" Then
-        PRI1.Value = priIN1
-        PRIC1.Value = PreviousValueINPRIC1
-    ElseIf PRIT1.Value = "RM" Then
-        PRI1.Value = priRM1
-        PRIC1.Value = PreviousValueRMPRIC1
+    If PRIT1.value = "RP" Then
+        PRI1.value = priRP1
+        PRIC1.value = PreviousValueRPPRIC1
+    ElseIf PRIT1.value = "IN" Then
+        PRI1.value = priIN1
+        PRIC1.value = PreviousValueINPRIC1
+    ElseIf PRIT1.value = "RM" Then
+        PRI1.value = priRM1
+        PRIC1.value = PreviousValueRMPRIC1
     End If
 End Sub
 
 Private Sub PRI1_Click()
-    PRIC1.visible = PRI1.Value
+    PRIC1.visible = PRI1.value
     
-    If PRIT1.Value = "RP" Then
-        If priRP1 <> PRI1.Value Then
-            priRP1 = PRI1.Value
-            If PRI1.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC1.Value) * 2)
+    If PRIT1.value = "RP" Then
+        If priRP1 <> PRI1.value Then
+            priRP1 = PRI1.value
+            If PRI1.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC1.value) * 2)
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC1.Value) * 2)
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC1.value) * 2)
             End If
         End If
-    ElseIf PRIT1.Value = "IN" Then
-        If priIN1 <> PRI1.Value Then
-            priIN1 = PRI1.Value
-            If PRI1.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC1.Value))
+    ElseIf PRIT1.value = "IN" Then
+        If priIN1 <> PRI1.value Then
+            priIN1 = PRI1.value
+            If PRI1.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC1.value))
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC1.Value))
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC1.value))
             End If
         End If
-    ElseIf PRIT1.Value = "RM" Then
-        If priRM1 <> PRI1.Value Then
-            priRM1 = PRI1.Value
-            If PRI1.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC1.Value))
+    ElseIf PRIT1.value = "RM" Then
+        If priRM1 <> PRI1.value Then
+            priRM1 = PRI1.value
+            If PRI1.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC1.value))
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC1.Value))
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC1.value))
             End If
         End If
     End If
 End Sub
 
 Private Sub PRIC1_Change()
-    If PRIT1.Value = "RP" Then
-        If PreviousValueRPPRIC1 <> PRIC1.Value Then
-            UAP.Value = CDbl(UAP.Value) - (2 * (PRIC1.Value - PreviousValueRPPRIC1))
-            PreviousValueRPPRIC1 = PRIC1.Value
+    If PRIT1.value = "RP" Then
+        If PreviousValueRPPRIC1 <> PRIC1.value Then
+            UAP.value = CDbl(UAP.value) - (2 * (PRIC1.value - PreviousValueRPPRIC1))
+            PreviousValueRPPRIC1 = PRIC1.value
         End If
-    ElseIf PRIT1.Value = "IN" Then
-        If PreviousValueINPRIC1 <> PRIC1.Value Then
-            UAP.Value = CDbl(UAP.Value) - (PRIC1.Value - PreviousValueINPRIC1)
-            PreviousValueINPRIC1 = PRIC1.Value
+    ElseIf PRIT1.value = "IN" Then
+        If PreviousValueINPRIC1 <> PRIC1.value Then
+            UAP.value = CDbl(UAP.value) - (PRIC1.value - PreviousValueINPRIC1)
+            PreviousValueINPRIC1 = PRIC1.value
         End If
-    ElseIf PRIT1.Value = "RM" Then
-        If PreviousValueRMPRIC1 <> PRIC1.Value Then
-            UAP.Value = CDbl(UAP.Value) - (PRIC1.Value - PreviousValueRMPRIC1)
-            PreviousValueRMPRIC1 = PRIC1.Value
+    ElseIf PRIT1.value = "RM" Then
+        If PreviousValueRMPRIC1 <> PRIC1.value Then
+            UAP.value = CDbl(UAP.value) - (PRIC1.value - PreviousValueRMPRIC1)
+            PreviousValueRMPRIC1 = PRIC1.value
         End If
     End If
 End Sub
 
 Private Sub PRIT2_Change()
-    If PRIT2.Value = "RP" Then
-        PRI2.Value = priRP2
-        PRIC2.Value = PreviousValueRPPRIC2
-    ElseIf PRIT2.Value = "IN" Then
-        PRI2.Value = priIN2
-        PRIC2.Value = PreviousValueINPRIC2
-    ElseIf PRIT2.Value = "RM" Then
-        PRI2.Value = priRM2
-        PRIC2.Value = PreviousValueRMPRIC2
+    If PRIT2.value = "RP" Then
+        PRI2.value = priRP2
+        PRIC2.value = PreviousValueRPPRIC2
+    ElseIf PRIT2.value = "IN" Then
+        PRI2.value = priIN2
+        PRIC2.value = PreviousValueINPRIC2
+    ElseIf PRIT2.value = "RM" Then
+        PRI2.value = priRM2
+        PRIC2.value = PreviousValueRMPRIC2
     End If
 End Sub
 
 Private Sub PRI2_Click()
-    PRIC2.visible = PRI2.Value
+    PRIC2.visible = PRI2.value
     
-    If PRIT2.Value = "RP" Then
-        If priRP2 <> PRI2.Value Then
-            priRP2 = PRI2.Value
-            If PRI2.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC2.Value) * 2)
+    If PRIT2.value = "RP" Then
+        If priRP2 <> PRI2.value Then
+            priRP2 = PRI2.value
+            If PRI2.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC2.value) * 2)
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC2.Value) * 2)
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC2.value) * 2)
             End If
         End If
-    ElseIf PRIT2.Value = "IN" Then
-        If priIN2 <> PRI2.Value Then
-            priIN2 = PRI2.Value
-            If PRI2.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC2.Value))
+    ElseIf PRIT2.value = "IN" Then
+        If priIN2 <> PRI2.value Then
+            priIN2 = PRI2.value
+            If PRI2.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC2.value))
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC2.Value))
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC2.value))
             End If
         End If
-    ElseIf PRIT2.Value = "RM" Then
-        If priRM2 <> PRI2.Value Then
-            priRM2 = PRI2.Value
-            If PRI2.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC2.Value))
+    ElseIf PRIT2.value = "RM" Then
+        If priRM2 <> PRI2.value Then
+            priRM2 = PRI2.value
+            If PRI2.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC2.value))
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC2.Value))
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC2.value))
             End If
         End If
     End If
 End Sub
 
 Private Sub PRIC2_Change()
-    If PRIT2.Value = "RP" Then
-        If PreviousValueRPPRIC2 <> PRIC2.Value Then
-            UAP.Value = CDbl(UAP.Value) - (2 * (PRIC2.Value - PreviousValueRPPRIC2))
-            PreviousValueRPPRIC2 = PRIC2.Value
+    If PRIT2.value = "RP" Then
+        If PreviousValueRPPRIC2 <> PRIC2.value Then
+            UAP.value = CDbl(UAP.value) - (2 * (PRIC2.value - PreviousValueRPPRIC2))
+            PreviousValueRPPRIC2 = PRIC2.value
         End If
-    ElseIf PRIT2.Value = "IN" Then
-        If PreviousValueINPRIC2 <> PRIC2.Value Then
-            UAP.Value = CDbl(UAP.Value) - (PRIC2.Value - PreviousValueINPRIC2)
-            PreviousValueINPRIC2 = PRIC2.Value
+    ElseIf PRIT2.value = "IN" Then
+        If PreviousValueINPRIC2 <> PRIC2.value Then
+            UAP.value = CDbl(UAP.value) - (PRIC2.value - PreviousValueINPRIC2)
+            PreviousValueINPRIC2 = PRIC2.value
         End If
-    ElseIf PRIT2.Value = "RM" Then
-        If PreviousValueRMPRIC2 <> PRIC2.Value Then
-            UAP.Value = CDbl(UAP.Value) - (PRIC2.Value - PreviousValueRMPRIC2)
-            PreviousValueRMPRIC2 = PRIC2.Value
+    ElseIf PRIT2.value = "RM" Then
+        If PreviousValueRMPRIC2 <> PRIC2.value Then
+            UAP.value = CDbl(UAP.value) - (PRIC2.value - PreviousValueRMPRIC2)
+            PreviousValueRMPRIC2 = PRIC2.value
         End If
     End If
 End Sub
 
 Private Sub PRIT3_Change()
-    If PRIT3.Value = "RP" Then
-        PRI3.Value = priRP3
-        PRIC3.Value = PreviousValueRPPRIC3
-    ElseIf PRIT3.Value = "IN" Then
-        PRI3.Value = priIN3
-        PRIC3.Value = PreviousValueINPRIC3
-    ElseIf PRIT3.Value = "RM" Then
-        PRI3.Value = priRM3
-        PRIC3.Value = PreviousValueRMPRIC3
+    If PRIT3.value = "RP" Then
+        PRI3.value = priRP3
+        PRIC3.value = PreviousValueRPPRIC3
+    ElseIf PRIT3.value = "IN" Then
+        PRI3.value = priIN3
+        PRIC3.value = PreviousValueINPRIC3
+    ElseIf PRIT3.value = "RM" Then
+        PRI3.value = priRM3
+        PRIC3.value = PreviousValueRMPRIC3
     End If
 End Sub
 
 Private Sub PRI3_Click()
-    PRIC3.visible = PRI3.Value
+    PRIC3.visible = PRI3.value
     
-    If PRIT3.Value = "RP" Then
-        If priRP3 <> PRI3.Value Then
-            priRP3 = PRI3.Value
-            If PRI3.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC3.Value) * 2)
+    If PRIT3.value = "RP" Then
+        If priRP3 <> PRI3.value Then
+            priRP3 = PRI3.value
+            If PRI3.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC3.value) * 2)
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC3.Value) * 2)
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC3.value) * 2)
             End If
         End If
-    ElseIf PRIT3.Value = "IN" Then
-        If priIN3 <> PRI3.Value Then
-            priIN3 = PRI3.Value
-            If PRI3.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC3.Value))
+    ElseIf PRIT3.value = "IN" Then
+        If priIN3 <> PRI3.value Then
+            priIN3 = PRI3.value
+            If PRI3.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC3.value))
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC3.Value))
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC3.value))
             End If
         End If
-    ElseIf PRIT3.Value = "RM" Then
-        If priRM3 <> PRI3.Value Then
-            priRM3 = PRI3.Value
-            If PRI3.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC3.Value))
+    ElseIf PRIT3.value = "RM" Then
+        If priRM3 <> PRI3.value Then
+            priRM3 = PRI3.value
+            If PRI3.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC3.value))
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC3.Value))
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC3.value))
             End If
         End If
     End If
 End Sub
 
 Private Sub PRIC3_Change()
-    If PRIT3.Value = "RP" Then
-        If PreviousValueRPPRIC3 <> PRIC3.Value Then
-            UAP.Value = CDbl(UAP.Value) - (2 * (PRIC3.Value - PreviousValueRPPRIC3))
-            PreviousValueRPPRIC3 = PRIC3.Value
+    If PRIT3.value = "RP" Then
+        If PreviousValueRPPRIC3 <> PRIC3.value Then
+            UAP.value = CDbl(UAP.value) - (2 * (PRIC3.value - PreviousValueRPPRIC3))
+            PreviousValueRPPRIC3 = PRIC3.value
         End If
-    ElseIf PRIT3.Value = "IN" Then
-        If PreviousValueINPRIC3 <> PRIC3.Value Then
-            UAP.Value = CDbl(UAP.Value) - (PRIC3.Value - PreviousValueINPRIC3)
-            PreviousValueINPRIC3 = PRIC3.Value
+    ElseIf PRIT3.value = "IN" Then
+        If PreviousValueINPRIC3 <> PRIC3.value Then
+            UAP.value = CDbl(UAP.value) - (PRIC3.value - PreviousValueINPRIC3)
+            PreviousValueINPRIC3 = PRIC3.value
         End If
-    ElseIf PRIT3.Value = "RM" Then
-        If PreviousValueRMPRIC3 <> PRIC3.Value Then
-            UAP.Value = CDbl(UAP.Value) - (PRIC3.Value - PreviousValueRMPRIC3)
-            PreviousValueRMPRIC3 = PRIC3.Value
+    ElseIf PRIT3.value = "RM" Then
+        If PreviousValueRMPRIC3 <> PRIC3.value Then
+            UAP.value = CDbl(UAP.value) - (PRIC3.value - PreviousValueRMPRIC3)
+            PreviousValueRMPRIC3 = PRIC3.value
         End If
     End If
 End Sub
 
 Private Sub PRIT4_Change()
-    If PRIT4.Value = "RP" Then
-        PRI4.Value = priRP4
-        PRIC4.Value = PreviousValueRPPRIC4
-    ElseIf PRIT4.Value = "IN" Then
-        PRI4.Value = priIN4
-        PRIC4.Value = PreviousValueINPRIC4
-    ElseIf PRIT4.Value = "RM" Then
-        PRI4.Value = priRM4
-        PRIC4.Value = PreviousValueRMPRIC4
+    If PRIT4.value = "RP" Then
+        PRI4.value = priRP4
+        PRIC4.value = PreviousValueRPPRIC4
+    ElseIf PRIT4.value = "IN" Then
+        PRI4.value = priIN4
+        PRIC4.value = PreviousValueINPRIC4
+    ElseIf PRIT4.value = "RM" Then
+        PRI4.value = priRM4
+        PRIC4.value = PreviousValueRMPRIC4
     End If
 End Sub
 
 Private Sub PRI4_Click()
-    PRIC4.visible = PRI4.Value
+    PRIC4.visible = PRI4.value
     
-    If PRIT4.Value = "RP" Then
-        If priRP4 <> PRI4.Value Then
-            priRP4 = PRI4.Value
-            If PRI4.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC4.Value) * 2)
+    If PRIT4.value = "RP" Then
+        If priRP4 <> PRI4.value Then
+            priRP4 = PRI4.value
+            If PRI4.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC4.value) * 2)
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC4.Value) * 2)
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC4.value) * 2)
             End If
         End If
-    ElseIf PRIT4.Value = "IN" Then
-        If priIN4 <> PRI4.Value Then
-            priIN4 = PRI4.Value
-            If PRI4.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC4.Value))
+    ElseIf PRIT4.value = "IN" Then
+        If priIN4 <> PRI4.value Then
+            priIN4 = PRI4.value
+            If PRI4.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC4.value))
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC4.Value))
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC4.value))
             End If
         End If
-    ElseIf PRIT4.Value = "RM" Then
-        If priRM4 <> PRI4.Value Then
-            priRM4 = PRI4.Value
-            If PRI4.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC4.Value))
+    ElseIf PRIT4.value = "RM" Then
+        If priRM4 <> PRI4.value Then
+            priRM4 = PRI4.value
+            If PRI4.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC4.value))
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC4.Value))
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC4.value))
             End If
         End If
     End If
 End Sub
 
 Private Sub PRIC4_Change()
-    If PRIT4.Value = "RP" Then
-        If PreviousValueRPPRIC4 <> PRIC4.Value Then
-            UAP.Value = CDbl(UAP.Value) - (2 * (PRIC4.Value - PreviousValueRPPRIC4))
-            PreviousValueRPPRIC4 = PRIC4.Value
+    If PRIT4.value = "RP" Then
+        If PreviousValueRPPRIC4 <> PRIC4.value Then
+            UAP.value = CDbl(UAP.value) - (2 * (PRIC4.value - PreviousValueRPPRIC4))
+            PreviousValueRPPRIC4 = PRIC4.value
         End If
-    ElseIf PRIT4.Value = "IN" Then
-        If PreviousValueINPRIC4 <> PRIC4.Value Then
-            UAP.Value = CDbl(UAP.Value) - (PRIC4.Value - PreviousValueINPRIC4)
-            PreviousValueINPRIC4 = PRIC4.Value
+    ElseIf PRIT4.value = "IN" Then
+        If PreviousValueINPRIC4 <> PRIC4.value Then
+            UAP.value = CDbl(UAP.value) - (PRIC4.value - PreviousValueINPRIC4)
+            PreviousValueINPRIC4 = PRIC4.value
         End If
-    ElseIf PRIT4.Value = "RM" Then
-        If PreviousValueRMPRIC4 <> PRIC4.Value Then
-            UAP.Value = CDbl(UAP.Value) - (PRIC4.Value - PreviousValueRMPRIC4)
-            PreviousValueRMPRIC4 = PRIC4.Value
+    ElseIf PRIT4.value = "RM" Then
+        If PreviousValueRMPRIC4 <> PRIC4.value Then
+            UAP.value = CDbl(UAP.value) - (PRIC4.value - PreviousValueRMPRIC4)
+            PreviousValueRMPRIC4 = PRIC4.value
         End If
     End If
 End Sub
 
 Private Sub PRIT5_Change()
-    If PRIT5.Value = "RP" Then
-        PRI5.Value = priRP5
-        PRIC5.Value = PreviousValueRPPRIC5
-    ElseIf PRIT5.Value = "IN" Then
-        PRI5.Value = priIN5
-        PRIC5.Value = PreviousValueINPRIC5
-    ElseIf PRIT5.Value = "RM" Then
-        PRI5.Value = priRM5
-        PRIC5.Value = PreviousValueRMPRIC5
+    If PRIT5.value = "RP" Then
+        PRI5.value = priRP5
+        PRIC5.value = PreviousValueRPPRIC5
+    ElseIf PRIT5.value = "IN" Then
+        PRI5.value = priIN5
+        PRIC5.value = PreviousValueINPRIC5
+    ElseIf PRIT5.value = "RM" Then
+        PRI5.value = priRM5
+        PRIC5.value = PreviousValueRMPRIC5
     End If
 End Sub
 
 Private Sub PRI5_Click()
-    PRIC5.visible = PRI5.Value
+    PRIC5.visible = PRI5.value
     
-    If PRIT5.Value = "RP" Then
-        If priRP5 <> PRI5.Value Then
-            priRP5 = PRI5.Value
-            If PRI5.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC5.Value) * 2)
+    If PRIT5.value = "RP" Then
+        If priRP5 <> PRI5.value Then
+            priRP5 = PRI5.value
+            If PRI5.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC5.value) * 2)
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC5.Value) * 2)
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC5.value) * 2)
             End If
         End If
-    ElseIf PRIT5.Value = "IN" Then
-        If priIN5 <> PRI5.Value Then
-            priIN5 = PRI5.Value
-            If PRI5.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC5.Value))
+    ElseIf PRIT5.value = "IN" Then
+        If priIN5 <> PRI5.value Then
+            priIN5 = PRI5.value
+            If PRI5.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC5.value))
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC5.Value))
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC5.value))
             End If
         End If
-    ElseIf PRIT5.Value = "RM" Then
-        If priRM5 <> PRI5.Value Then
-            priRM5 = PRI5.Value
-            If PRI5.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC5.Value))
+    ElseIf PRIT5.value = "RM" Then
+        If priRM5 <> PRI5.value Then
+            priRM5 = PRI5.value
+            If PRI5.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC5.value))
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC5.Value))
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC5.value))
             End If
         End If
     End If
 End Sub
 
 Private Sub PRIC5_Change()
-    If PRIT5.Value = "RP" Then
-        If PreviousValueRPPRIC5 <> PRIC5.Value Then
-            UAP.Value = CDbl(UAP.Value) - (2 * (PRIC5.Value - PreviousValueRPPRIC5))
-            PreviousValueRPPRIC5 = PRIC5.Value
+    If PRIT5.value = "RP" Then
+        If PreviousValueRPPRIC5 <> PRIC5.value Then
+            UAP.value = CDbl(UAP.value) - (2 * (PRIC5.value - PreviousValueRPPRIC5))
+            PreviousValueRPPRIC5 = PRIC5.value
         End If
-    ElseIf PRIT5.Value = "IN" Then
-        If PreviousValueINPRIC5 <> PRIC5.Value Then
-            UAP.Value = CDbl(UAP.Value) - (PRIC5.Value - PreviousValueINPRIC5)
-            PreviousValueINPRIC5 = PRIC5.Value
+    ElseIf PRIT5.value = "IN" Then
+        If PreviousValueINPRIC5 <> PRIC5.value Then
+            UAP.value = CDbl(UAP.value) - (PRIC5.value - PreviousValueINPRIC5)
+            PreviousValueINPRIC5 = PRIC5.value
         End If
-    ElseIf PRIT5.Value = "RM" Then
-        If PreviousValueRMPRIC5 <> PRIC5.Value Then
-            UAP.Value = CDbl(UAP.Value) - (PRIC5.Value - PreviousValueRMPRIC5)
-            PreviousValueRMPRIC5 = PRIC5.Value
+    ElseIf PRIT5.value = "RM" Then
+        If PreviousValueRMPRIC5 <> PRIC5.value Then
+            UAP.value = CDbl(UAP.value) - (PRIC5.value - PreviousValueRMPRIC5)
+            PreviousValueRMPRIC5 = PRIC5.value
         End If
     End If
 End Sub
 
 Private Sub PRIT6_Change()
-    If PRIT6.Value = "RP" Then
-        PRI6.Value = priRP6
-        PRIC6.Value = PreviousValueRPPRIC6
-    ElseIf PRIT6.Value = "IN" Then
-        PRI6.Value = priIN6
-        PRIC6.Value = PreviousValueINPRIC6
-    ElseIf PRIT6.Value = "RM" Then
-        PRI6.Value = priRM6
-        PRIC6.Value = PreviousValueRMPRIC6
+    If PRIT6.value = "RP" Then
+        PRI6.value = priRP6
+        PRIC6.value = PreviousValueRPPRIC6
+    ElseIf PRIT6.value = "IN" Then
+        PRI6.value = priIN6
+        PRIC6.value = PreviousValueINPRIC6
+    ElseIf PRIT6.value = "RM" Then
+        PRI6.value = priRM6
+        PRIC6.value = PreviousValueRMPRIC6
     End If
 End Sub
 
 Private Sub PRI6_Click()
-    PRIC6.visible = PRI6.Value
+    PRIC6.visible = PRI6.value
     
-    If PRIT6.Value = "RP" Then
-        If priRP6 <> PRI6.Value Then
-            priRP6 = PRI6.Value
-            If PRI6.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC6.Value))
+    If PRIT6.value = "RP" Then
+        If priRP6 <> PRI6.value Then
+            priRP6 = PRI6.value
+            If PRI6.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC6.value))
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC6.Value))
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC6.value))
             End If
         End If
-    ElseIf PRIT6.Value = "IN" Then
-        If priIN6 <> PRI6.Value Then
-            priIN6 = PRI6.Value
-            If PRI6.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC6.Value) * 0.5)
+    ElseIf PRIT6.value = "IN" Then
+        If priIN6 <> PRI6.value Then
+            priIN6 = PRI6.value
+            If PRI6.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC6.value) * 0.5)
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC6.Value) * 0.5)
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC6.value) * 0.5)
             End If
         End If
-    ElseIf PRIT6.Value = "RM" Then
-        If priRM6 <> PRI6.Value Then
-            priRM6 = PRI6.Value
-            If PRI6.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC6.Value) * 0.5)
+    ElseIf PRIT6.value = "RM" Then
+        If priRM6 <> PRI6.value Then
+            priRM6 = PRI6.value
+            If PRI6.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC6.value) * 0.5)
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC6.Value) * 0.5)
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC6.value) * 0.5)
             End If
         End If
     End If
 End Sub
 
 Private Sub PRIC6_Change()
-    If PRIT6.Value = "RP" Then
-        If PreviousValueRPPRIC6 <> PRIC6.Value Then
-            UAP.Value = CDbl(UAP.Value) - (PRIC6.Value - PreviousValueRPPRIC6)
-            PreviousValueRPPRIC6 = PRIC6.Value
+    If PRIT6.value = "RP" Then
+        If PreviousValueRPPRIC6 <> PRIC6.value Then
+            UAP.value = CDbl(UAP.value) - (PRIC6.value - PreviousValueRPPRIC6)
+            PreviousValueRPPRIC6 = PRIC6.value
         End If
-    ElseIf PRIT6.Value = "IN" Then
-        If PreviousValueINPRIC6 <> PRIC6.Value Then
-            UAP.Value = CDbl(UAP.Value) - (0.5 * (PRIC6.Value - PreviousValueINPRIC6))
-            PreviousValueINPRIC6 = PRIC6.Value
+    ElseIf PRIT6.value = "IN" Then
+        If PreviousValueINPRIC6 <> PRIC6.value Then
+            UAP.value = CDbl(UAP.value) - (0.5 * (PRIC6.value - PreviousValueINPRIC6))
+            PreviousValueINPRIC6 = PRIC6.value
         End If
-    ElseIf PRIT6.Value = "RM" Then
-        If PreviousValueRMPRIC6 <> PRIC6.Value Then
-            UAP.Value = CDbl(UAP.Value) - (0.5 * (PRIC6.Value - PreviousValueRMPRIC6))
-            PreviousValueRMPRIC6 = PRIC6.Value
+    ElseIf PRIT6.value = "RM" Then
+        If PreviousValueRMPRIC6 <> PRIC6.value Then
+            UAP.value = CDbl(UAP.value) - (0.5 * (PRIC6.value - PreviousValueRMPRIC6))
+            PreviousValueRMPRIC6 = PRIC6.value
         End If
     End If
 End Sub
 
 Private Sub PRIT7_Change()
-    If PRIT7.Value = "RP" Then
-        PRI7.Value = priRP7
-        PRIC7.Value = PreviousValueRPPRIC7
-    ElseIf PRIT7.Value = "IN" Then
-        PRI7.Value = priIN7
-        PRIC7.Value = PreviousValueINPRIC7
-    ElseIf PRIT7.Value = "RM" Then
-        PRI7.Value = priRM7
-        PRIC7.Value = PreviousValueRMPRIC7
+    If PRIT7.value = "RP" Then
+        PRI7.value = priRP7
+        PRIC7.value = PreviousValueRPPRIC7
+    ElseIf PRIT7.value = "IN" Then
+        PRI7.value = priIN7
+        PRIC7.value = PreviousValueINPRIC7
+    ElseIf PRIT7.value = "RM" Then
+        PRI7.value = priRM7
+        PRIC7.value = PreviousValueRMPRIC7
     End If
 End Sub
 
 Private Sub PRI7_Click()
-    PRIC7.visible = PRI7.Value
+    PRIC7.visible = PRI7.value
     
-    If PRIT7.Value = "RP" Then
-        If priRP7 <> PRI7.Value Then
-            priRP7 = PRI7.Value
-            If PRI7.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC7.Value) * 2)
+    If PRIT7.value = "RP" Then
+        If priRP7 <> PRI7.value Then
+            priRP7 = PRI7.value
+            If PRI7.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC7.value) * 2)
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC7.Value) * 2)
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC7.value) * 2)
             End If
         End If
-    ElseIf PRIT7.Value = "IN" Then
-        If priIN7 <> PRI7.Value Then
-            priIN7 = PRI7.Value
-            If PRI7.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC7.Value))
+    ElseIf PRIT7.value = "IN" Then
+        If priIN7 <> PRI7.value Then
+            priIN7 = PRI7.value
+            If PRI7.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC7.value))
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC7.Value))
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC7.value))
             End If
         End If
-    ElseIf PRIT7.Value = "RM" Then
-        If priRM7 <> PRI7.Value Then
-            priRM7 = PRI7.Value
-            If PRI7.Value Then
-                UAP.Value = CDbl(UAP.Value) - (CInt(PRIC7.Value))
+    ElseIf PRIT7.value = "RM" Then
+        If priRM7 <> PRI7.value Then
+            priRM7 = PRI7.value
+            If PRI7.value Then
+                UAP.value = CDbl(UAP.value) - (CInt(PRIC7.value))
             Else
-                UAP.Value = CDbl(UAP.Value) + (CInt(PRIC7.Value))
+                UAP.value = CDbl(UAP.value) + (CInt(PRIC7.value))
             End If
         End If
     End If
 End Sub
 
 Private Sub PRIC7_Change()
-    If PRIT7.Value = "RP" Then
-        If PreviousValueRPPRIC7 <> PRIC7.Value Then
-            UAP.Value = CDbl(UAP.Value) - (2 * (PRIC7.Value - PreviousValueRPPRIC7))
-            PreviousValueRPPRIC7 = PRIC7.Value
+    If PRIT7.value = "RP" Then
+        If PreviousValueRPPRIC7 <> PRIC7.value Then
+            UAP.value = CDbl(UAP.value) - (2 * (PRIC7.value - PreviousValueRPPRIC7))
+            PreviousValueRPPRIC7 = PRIC7.value
         End If
-    ElseIf PRIT7.Value = "IN" Then
-        If PreviousValueINPRIC7 <> PRIC7.Value Then
-            UAP.Value = CDbl(UAP.Value) - (PRIC7.Value - PreviousValueINPRIC7)
-            PreviousValueINPRIC7 = PRIC7.Value
+    ElseIf PRIT7.value = "IN" Then
+        If PreviousValueINPRIC7 <> PRIC7.value Then
+            UAP.value = CDbl(UAP.value) - (PRIC7.value - PreviousValueINPRIC7)
+            PreviousValueINPRIC7 = PRIC7.value
         End If
-    ElseIf PRIT7.Value = "RM" Then
-        If PreviousValueRMPRIC7 <> PRIC7.Value Then
-            UAP.Value = CDbl(UAP.Value) - (PRIC7.Value - PreviousValueRMPRIC7)
-            PreviousValueRMPRIC7 = PRIC7.Value
+    ElseIf PRIT7.value = "RM" Then
+        If PreviousValueRMPRIC7 <> PRIC7.value Then
+            UAP.value = CDbl(UAP.value) - (PRIC7.value - PreviousValueRMPRIC7)
+            PreviousValueRMPRIC7 = PRIC7.value
         End If
     End If
 End Sub
 
 Private Sub REC1_Click()
-    RECA1.visible = REC1.Value
-    RECO1.visible = REC1.Value
+    RECA1.visible = REC1.value
+    RECO1.visible = REC1.value
     
-    If REC1.Value Then
-        UASN.Value = CInt(UASN.Value) - (CInt(RECA1.Value) * 6)
+    If REC1.value Then
+        UASN.value = CInt(UASN.value) - (CInt(RECA1.value) * 6)
     Else
-        UASN.Value = CInt(UASN.Value) + (CInt(RECA1.Value) * 6)
+        UASN.value = CInt(UASN.value) + (CInt(RECA1.value) * 6)
     End If
 End Sub
 
 Private Sub REC2_Click()
-    RECA2.visible = REC2.Value
-    RECO2.visible = REC2.Value
+    RECA2.visible = REC2.value
+    RECO2.visible = REC2.value
     
-    If REC2.Value Then
-        UASN.Value = CInt(UASN.Value) - (CInt(RECA2.Value) * 3)
+    If REC2.value Then
+        UASN.value = CInt(UASN.value) - (CInt(RECA2.value) * 3)
     Else
-        UASN.Value = CInt(UASN.Value) + (CInt(RECA2.Value) * 3)
+        UASN.value = CInt(UASN.value) + (CInt(RECA2.value) * 3)
     End If
 End Sub
 
 Private Sub REC3_Click()
-    RECA3.visible = REC3.Value
-    RECO3.visible = REC3.Value
+    RECA3.visible = REC3.value
+    RECO3.visible = REC3.value
     
-    If REC3.Value Then
-        UASN.Value = CInt(UASN.Value) - (CInt(RECA3.Value) * 6)
+    If REC3.value Then
+        UASN.value = CInt(UASN.value) - (CInt(RECA3.value) * 6)
     Else
-        UASN.Value = CInt(UASN.Value) + (CInt(RECA3.Value) * 6)
+        UASN.value = CInt(UASN.value) + (CInt(RECA3.value) * 6)
     End If
 End Sub
 
 Private Sub REC4_Click()
-    RECA4.visible = REC4.Value
-    RECO4.visible = REC4.Value
+    RECA4.visible = REC4.value
+    RECO4.visible = REC4.value
     
-    If REC4.Value Then
-        UASN.Value = CInt(UASN.Value) - (CInt(RECA4.Value) * 6)
+    If REC4.value Then
+        UASN.value = CInt(UASN.value) - (CInt(RECA4.value) * 6)
     Else
-        UASN.Value = CInt(UASN.Value) + (CInt(RECA4.Value) * 6)
+        UASN.value = CInt(UASN.value) + (CInt(RECA4.value) * 6)
     End If
 End Sub
 
 Private Sub RECA1_Change()
-    If REC1.Value Then
-        If PreviousValueRECA1 <> RECA1.Value Then
-            UASN.Value = CDbl(UASN.Value) - ((RECA1.Value - PreviousValueRECA1) * 6)
-            PreviousValueRECA1 = RECA1.Value
+    If REC1.value Then
+        If PreviousValueRECA1 <> RECA1.value Then
+            UASN.value = CDbl(UASN.value) - ((RECA1.value - PreviousValueRECA1) * 6)
+            PreviousValueRECA1 = RECA1.value
         End If
     End If
 End Sub
 
 Private Sub RECA2_Change()
-    If REC2.Value Then
-        If PreviousValueRECA2 <> RECA2.Value Then
-            UASN.Value = CDbl(UASN.Value) - ((RECA2.Value - PreviousValueRECA2) * 3)
-            PreviousValueRECA2 = RECA2.Value
+    If REC2.value Then
+        If PreviousValueRECA2 <> RECA2.value Then
+            UASN.value = CDbl(UASN.value) - ((RECA2.value - PreviousValueRECA2) * 3)
+            PreviousValueRECA2 = RECA2.value
         End If
     End If
 End Sub
 
 Private Sub RECA3_Change()
-    If REC3.Value Then
-        If PreviousValueRECA3 <> RECA3.Value Then
-            UASN.Value = CDbl(UASN.Value) - ((RECA3.Value - PreviousValueRECA3) * 6)
-            PreviousValueRECA3 = RECA3.Value
+    If REC3.value Then
+        If PreviousValueRECA3 <> RECA3.value Then
+            UASN.value = CDbl(UASN.value) - ((RECA3.value - PreviousValueRECA3) * 6)
+            PreviousValueRECA3 = RECA3.value
         End If
     End If
 End Sub
 
 Private Sub RECA4_Change()
-    If REC4.Value Then
-        If PreviousValueRECA4 <> RECA4.Value Then
-            UASN.Value = CDbl(UASN.Value) - ((RECA4.Value - PreviousValueRECA4) * 6)
-            PreviousValueRECA4 = RECA4.Value
+    If REC4.value Then
+        If PreviousValueRECA4 <> RECA4.value Then
+            UASN.value = CDbl(UASN.value) - ((RECA4.value - PreviousValueRECA4) * 6)
+            PreviousValueRECA4 = RECA4.value
         End If
     End If
 End Sub
 
 Private Sub RPBSL_Click()
-    BSL.Value = RPBSL.Value
-    RPBSLRFW.visible = BSL.Value
-    BSLRFW.visible = BSL.Value
-    SLRFWL.visible = BSL.Value
+    BSL.value = RPBSL.value
+    RPBSLRFW.visible = BSL.value
+    BSLRFW.visible = BSL.value
+    SLRFWL.visible = BSL.value
 End Sub
 
 Private Sub RPBSLRFW_Change()
-    BSLRFW.Value = RPBSLRFW.Value
+    BSLRFW.value = RPBSLRFW.value
 End Sub
 
 Private Sub RPP_Click()
-    MHL.visible = RPP.Value
-    MH1.visible = RPP.Value
-    MHC1.visible = MH1.Value And RPP.Value
-    MHT1.visible = RPP.Value
-    MH2.visible = RPP.Value
-    MHC2.visible = MH2.Value And RPP.Value
-    MHT2.visible = RPP.Value
-    RPPSIZE.visible = RPP.Value
-    RPPCLASS.visible = RPP.Value
-    RPPRFW.visible = RPP.Value
-    RDST.visible = RPP.Value
-    RDSV.visible = RPP.Value
-    DGFV.visible = RPP.Value And RPDG.Value
-    DGFL.visible = RPP.Value And RPDG.Value
-    RPSWB.visible = RPP.Value And RPDG.Value
-    DSL.visible = RPP.Value
-    DSV.visible = RPP.Value
-    PSL.visible = RPP.Value
-    PSV.visible = RPP.Value
-    BAFIG.visible = RPP.Value
-    FIGL.visible = priBool And RPP.Value
-    FIG.visible = priBool And RPP.Value
-    TRT.visible = RPP.Value
-    RPT.visible = RPP.Value
-    RPR.visible = RPP.Value
-    TRSL.visible = RPP.Value
-    SLM1.visible = RPP.Value And TRSL
-    SLM2.visible = RPP.Value And TRSL
-    SLM3.Value = SLM1.Value And RPP.Value
-    SLM4.Value = SLM2.Value And RPP.Value
-    TRSPG.visible = RPP.Value
-    RPR.visible = RPP.Value
-    RPDG.visible = RPP.Value
-    TRSIZE.visible = RPP.Value And (TRT.Value Or RPT.Value)
-    TRRPSIZE.visible = RPP.Value And RPT.Value
-    STLTBTMBRKT.visible = RPP.Value And TRSL.Value
-    COLA.visible = RPP.Value And (TRT.Value Or RPT.Value)
-    TRLETTER.visible = RPP.Value And (TRT.Value Or RPT.Value)
-    RPBSL.visible = RPP.Value
-    RPBSLRFW.visible = RPP.Value And RPBSL.Value
-    CETL.visible = RPP.Value
-    CETV.visible = RPP.Value
-    UAPL.visible = RPP.Value
-    UAP.visible = RPP.Value
-    FUT1.visible = RPP.Value
-    FUT2.visible = RPP.Value
-    FUT3.visible = RPP.Value
-    PRIT1.visible = RPP.Value
-    PRIT2.visible = RPP.Value
-    PRIT3.visible = RPP.Value
-    PRIT4.visible = RPP.Value
-    PRIT5.visible = RPP.Value
-    PRIT6.visible = RPP.Value
-    PRIT7.visible = RPP.Value
-    PRI1.visible = RPP.Value
-    PRI2.visible = RPP.Value
-    PRI3.visible = RPP.Value
-    PRI4.visible = RPP.Value
-    PRI5.visible = RPP.Value
-    PRI6.visible = RPP.Value
-    PRI7.visible = RPP.Value
-    PRIC1.visible = PRI1.Value And RPP.Value
-    PRIC2.visible = PRI2.Value And RPP.Value
-    PRIC3.visible = PRI3.Value And RPP.Value
-    PRIC4.visible = PRI4.Value And RPP.Value
-    PRIC5.visible = PRI5.Value And RPP.Value
-    PRIC6.visible = PRI6.Value And RPP.Value
-    PRIC7.visible = PRI7.Value And RPP.Value
-    USNL.visible = RPP.Value
-    UASN.visible = RPP.Value
-    USNL2.visible = RPP.Value
-    UASN2.visible = RPP.Value
-    SNT1.visible = RPP.Value
-    SNT2.visible = RPP.Value
-    SNT3.visible = RPP.Value
-    SNT4.visible = RPP.Value
-    SNT5.visible = RPP.Value
-    SNT6.visible = RPP.Value
-    SNT7.visible = RPP.Value
-    SN1.visible = RPP.Value
-    SN2.visible = RPP.Value
-    SN3.visible = RPP.Value
-    SN4.visible = RPP.Value
-    SN5.visible = RPP.Value
-    SN6.visible = RPP.Value
-    SN7.visible = RPP.Value
-    SNC1.visible = SN1.Value And RPP.Value
-    SNC2.visible = SN2.Value And RPP.Value
-    SNC3.visible = SN3.Value And RPP.Value
-    SNC4.visible = SN4.Value And RPP.Value
-    SNC5.visible = SN5.Value And RPP.Value
-    SNC6.visible = SN6.Value And RPP.Value
-    SNC7.visible = SN7.Value And RPP.Value
-    FUL.visible = RPP.Value
-    FU1.visible = RPP.Value
-    FU2.visible = RPP.Value
-    FU3.visible = RPP.Value
-    FUC1.visible = FU1.Value And RPP.Value
-    FUC2.visible = FU2.Value And RPP.Value
-    FUC3.visible = FU3.Value And RPP.Value
-    NPL.visible = RPP.Value
-    RFWL.visible = RPP.Value
-    XRL.visible = RPP.Value And RPT.Value
-    XSL.visible = RPP.Value And (TRT.Value Or RPT.Value)
-    CLL.visible = RPP.Value And (TRT.Value Or RPT.Value)
-    XDL.visible = RPP.Value And (TRT.Value Or RPT.Value)
-    SLL.visible = RPP.Value And TRSL.Value
-    SLRFWL.visible = RPP.Value And RPBSL.Value
+    MHL.visible = RPP.value
+    MH1.visible = RPP.value
+    MHC1.visible = MH1.value And RPP.value
+    MHT1.visible = RPP.value
+    MH2.visible = RPP.value
+    MHC2.visible = MH2.value And RPP.value
+    MHT2.visible = RPP.value
+    RPPSIZE.visible = RPP.value
+    RPPCLASS.visible = RPP.value
+    RPPRFW.visible = RPP.value
+    RDST.visible = RPP.value
+    RDSV.visible = RPP.value
+    DGFV.visible = RPP.value And RPDG.value
+    DGFL.visible = RPP.value And RPDG.value
+    RPSWB.visible = RPP.value And RPDG.value
+    DSL.visible = RPP.value
+    DSV.visible = RPP.value
+    PSL.visible = RPP.value
+    PSV.visible = RPP.value
+    BAFIG.visible = RPP.value
+    FIGL.visible = priBool And RPP.value
+    FIG.visible = priBool And RPP.value
+    TRT.visible = RPP.value
+    RPT.visible = RPP.value
+    RPR.visible = RPP.value
+    TRSL.visible = RPP.value
+    SLM1.visible = RPP.value And TRSL
+    SLM2.visible = RPP.value And TRSL
+    SLM3.value = SLM1.value And RPP.value
+    SLM4.value = SLM2.value And RPP.value
+    TRSPG.visible = RPP.value
+    RPR.visible = RPP.value
+    RPDG.visible = RPP.value
+    TRSIZE.visible = RPP.value And (TRT.value Or RPT.value)
+    TRRPSIZE.visible = RPP.value And RPT.value
+    STLTBTMBRKT.visible = RPP.value And TRSL.value
+    COLA.visible = RPP.value And (TRT.value Or RPT.value)
+    TRLETTER.visible = RPP.value And (TRT.value Or RPT.value)
+    RPBSL.visible = RPP.value
+    RPBSLRFW.visible = RPP.value And RPBSL.value
+    CETL.visible = RPP.value
+    CETV.visible = RPP.value
+    UAPL.visible = RPP.value
+    UAP.visible = RPP.value
+    FUT1.visible = RPP.value
+    FUT2.visible = RPP.value
+    FUT3.visible = RPP.value
+    PRIT1.visible = RPP.value
+    PRIT2.visible = RPP.value
+    PRIT3.visible = RPP.value
+    PRIT4.visible = RPP.value
+    PRIT5.visible = RPP.value
+    PRIT6.visible = RPP.value
+    PRIT7.visible = RPP.value
+    PRI1.visible = RPP.value
+    PRI2.visible = RPP.value
+    PRI3.visible = RPP.value
+    PRI4.visible = RPP.value
+    PRI5.visible = RPP.value
+    PRI6.visible = RPP.value
+    PRI7.visible = RPP.value
+    PRIC1.visible = PRI1.value And RPP.value
+    PRIC2.visible = PRI2.value And RPP.value
+    PRIC3.visible = PRI3.value And RPP.value
+    PRIC4.visible = PRI4.value And RPP.value
+    PRIC5.visible = PRI5.value And RPP.value
+    PRIC6.visible = PRI6.value And RPP.value
+    PRIC7.visible = PRI7.value And RPP.value
+    USNL.visible = RPP.value
+    UASN.visible = RPP.value
+    USNL2.visible = RPP.value
+    UASN2.visible = RPP.value
+    SNT1.visible = RPP.value
+    SNT2.visible = RPP.value
+    SNT3.visible = RPP.value
+    SNT4.visible = RPP.value
+    SNT5.visible = RPP.value
+    SNT6.visible = RPP.value
+    SNT7.visible = RPP.value
+    SN1.visible = RPP.value
+    SN2.visible = RPP.value
+    SN3.visible = RPP.value
+    SN4.visible = RPP.value
+    SN5.visible = RPP.value
+    SN6.visible = RPP.value
+    SN7.visible = RPP.value
+    SNC1.visible = SN1.value And RPP.value
+    SNC2.visible = SN2.value And RPP.value
+    SNC3.visible = SN3.value And RPP.value
+    SNC4.visible = SN4.value And RPP.value
+    SNC5.visible = SN5.value And RPP.value
+    SNC6.visible = SN6.value And RPP.value
+    SNC7.visible = SN7.value And RPP.value
+    FUL.visible = RPP.value
+    FU1.visible = RPP.value
+    FU2.visible = RPP.value
+    FU3.visible = RPP.value
+    FUC1.visible = FU1.value And RPP.value
+    FUC2.visible = FU2.value And RPP.value
+    FUC3.visible = FU3.value And RPP.value
+    NPL.visible = RPP.value
+    RFWL.visible = RPP.value
+    XRL.visible = RPP.value And RPT.value
+    XSL.visible = RPP.value And (TRT.value Or RPT.value)
+    CLL.visible = RPP.value And (TRT.value Or RPT.value)
+    XDL.visible = RPP.value And (TRT.value Or RPT.value)
+    SLL.visible = RPP.value And TRSL.value
+    SLRFWL.visible = RPP.value And RPBSL.value
 End Sub
 
 Private Sub RPPSIZE_Change()
@@ -1455,17 +1455,17 @@ End Sub
 
 Private Sub determineRecDSpace()
     If pole.primaries.count > 0 Then
-        If RPPSIZE.Value >= 50 Then
-            If TRT.Value Or RPT.Value Then
-                RDSV.caption = "[" & Utilities.inchesToFeetInches(((((RPPSIZE * 0.9) - 2) - 32) * 12) - 11 - IIf(Utilities.convertToInches(PSV.Value) > 0, Utilities.convertToInches(PSV.Value), 0)) & "]"
+        If RPPSIZE.value >= 50 Then
+            If TRT.value Or RPT.value Then
+                RDSV.caption = "[" & Utilities.inchesToFeetInches(((((RPPSIZE * 0.9) - 2) - 32) * 12) - 11 - IIf(Utilities.convertToInches(PSV.value) > 0, Utilities.convertToInches(PSV.value), 0)) & "]"
                 If Utilities.convertToInches(RDSV.caption) < 60 Then RDSV.caption = "[5'0""]"
             Else
-                RDSV.caption = "[" & Utilities.inchesToFeetInches(((((RPPSIZE * 0.9) - 2) - 35) * 12) - 11 - IIf(Utilities.convertToInches(PSV.Value) > 0, Utilities.convertToInches(PSV.Value), 0)) & "]"
+                RDSV.caption = "[" & Utilities.inchesToFeetInches(((((RPPSIZE * 0.9) - 2) - 35) * 12) - 11 - IIf(Utilities.convertToInches(PSV.value) > 0, Utilities.convertToInches(PSV.value), 0)) & "]"
                 If Utilities.convertToInches(RDSV.caption) < 60 Then RDSV.caption = "[5'0""]"
             End If
         Else
-            If TRT.Value Or RPT.Value Then
-                If InStr(TRLETTER.Value, "C") = 1 Then
+            If TRT.value Or RPT.value Then
+                If InStr(TRLETTER.value, "C") = 1 Then
                     RDSV.caption = "[7'8""]"
                 Else
                     RDSV.caption = "[7'6""]"
@@ -1478,14 +1478,14 @@ Private Sub determineRecDSpace()
 End Sub
 
 Private Sub RSL_Click()
-    RSLD.visible = RSL.Value
-    RSLRFW.visible = RSL.Value
-    RFWL4.visible = RSL.Value
+    RSLD.visible = RSL.value
+    RSLRFW.visible = RSL.value
+    RFWL4.visible = RSL.value
 End Sub
 
 Private Sub RSPANS_Change()
     
-    If RSPANS.Value >= 1 Then
+    If RSPANS.value >= 1 Then
         OWSPAN1.visible = True
         OW1L1.visible = True
     Else
@@ -1493,7 +1493,7 @@ Private Sub RSPANS_Change()
         OW1L1.visible = False
     End If
     
-    If RSPANS.Value >= 2 Then
+    If RSPANS.value >= 2 Then
         OWSPAN2.visible = True
         OW2L1.visible = True
     Else
@@ -1501,7 +1501,7 @@ Private Sub RSPANS_Change()
         OW2L1.visible = False
     End If
     
-    If RSPANS.Value >= 3 Then
+    If RSPANS.value >= 3 Then
         OWSPAN3.visible = True
         OW3L1.visible = True
     Else
@@ -1509,7 +1509,7 @@ Private Sub RSPANS_Change()
         OW3L1.visible = False
     End If
     
-    If RSPANS.Value >= 4 Then
+    If RSPANS.value >= 4 Then
         OWSPAN4.visible = True
         OW4L1.visible = True
     Else
@@ -1517,7 +1517,7 @@ Private Sub RSPANS_Change()
         OW4L1.visible = False
     End If
     
-    If RSPANS.Value >= 5 Then
+    If RSPANS.value >= 5 Then
         OWSPAN5.visible = True
         OW5L1.visible = True
     Else
@@ -1525,72 +1525,72 @@ Private Sub RSPANS_Change()
         OW5L1.visible = False
     End If
     
-    OWSIZE1.visible = OWSPAN1.Value <> "" And OWSPAN1.visible
-    OWNEWSIZE1.visible = OWSPAN1.Value <> "" And OWSPAN1.visible
-    OWLENGTH1.visible = OWSPAN1.Value <> "" And OWSPAN1.visible
-    OW1L2.visible = OWSPAN1.Value <> "" And OWSPAN1.visible
-    OW1L3.visible = OWSPAN1.Value <> "" And OWSPAN1.visible
-    OW1L4.visible = OWSPAN1.Value <> "" And OWSPAN1.visible
+    OWSIZE1.visible = OWSPAN1.value <> "" And OWSPAN1.visible
+    OWNEWSIZE1.visible = OWSPAN1.value <> "" And OWSPAN1.visible
+    OWLENGTH1.visible = OWSPAN1.value <> "" And OWSPAN1.visible
+    OW1L2.visible = OWSPAN1.value <> "" And OWSPAN1.visible
+    OW1L3.visible = OWSPAN1.value <> "" And OWSPAN1.visible
+    OW1L4.visible = OWSPAN1.value <> "" And OWSPAN1.visible
     
-    OWSIZE2.visible = OWSPAN2.Value <> "" And OWSPAN2.visible
-    OWNEWSIZE2.visible = OWSPAN2.Value <> "" And OWSPAN2.visible
-    OWLENGTH2.visible = OWSPAN2.Value <> "" And OWSPAN2.visible
-    OW2L2.visible = OWSPAN2.Value <> "" And OWSPAN2.visible
-    OW2L3.visible = OWSPAN2.Value <> "" And OWSPAN2.visible
-    OW2L4.visible = OWSPAN2.Value <> "" And OWSPAN2.visible
+    OWSIZE2.visible = OWSPAN2.value <> "" And OWSPAN2.visible
+    OWNEWSIZE2.visible = OWSPAN2.value <> "" And OWSPAN2.visible
+    OWLENGTH2.visible = OWSPAN2.value <> "" And OWSPAN2.visible
+    OW2L2.visible = OWSPAN2.value <> "" And OWSPAN2.visible
+    OW2L3.visible = OWSPAN2.value <> "" And OWSPAN2.visible
+    OW2L4.visible = OWSPAN2.value <> "" And OWSPAN2.visible
     
-    OWSIZE3.visible = OWSPAN3.Value <> "" And OWSPAN3.visible
-    OWNEWSIZE3.visible = OWSPAN3.Value <> "" And OWSPAN3.visible
-    OWLENGTH3.visible = OWSPAN3.Value <> "" And OWSPAN3.visible
-    OW3L2.visible = OWSPAN3.Value <> "" And OWSPAN3.visible
-    OW3L3.visible = OWSPAN3.Value <> "" And OWSPAN3.visible
-    OW3L4.visible = OWSPAN3.Value <> "" And OWSPAN3.visible
+    OWSIZE3.visible = OWSPAN3.value <> "" And OWSPAN3.visible
+    OWNEWSIZE3.visible = OWSPAN3.value <> "" And OWSPAN3.visible
+    OWLENGTH3.visible = OWSPAN3.value <> "" And OWSPAN3.visible
+    OW3L2.visible = OWSPAN3.value <> "" And OWSPAN3.visible
+    OW3L3.visible = OWSPAN3.value <> "" And OWSPAN3.visible
+    OW3L4.visible = OWSPAN3.value <> "" And OWSPAN3.visible
     
-    OWSIZE4.visible = OWSPAN4.Value <> "" And OWSPAN4.visible
-    OWNEWSIZE4.visible = OWSPAN4.Value <> "" And OWSPAN4.visible
-    OWLENGTH4.visible = OWSPAN4.Value <> "" And OWSPAN4.visible
-    OW4L2.visible = OWSPAN4.Value <> "" And OWSPAN4.visible
-    OW4L3.visible = OWSPAN4.Value <> "" And OWSPAN4.visible
-    OW4L4.visible = OWSPAN4.Value <> "" And OWSPAN4.visible
+    OWSIZE4.visible = OWSPAN4.value <> "" And OWSPAN4.visible
+    OWNEWSIZE4.visible = OWSPAN4.value <> "" And OWSPAN4.visible
+    OWLENGTH4.visible = OWSPAN4.value <> "" And OWSPAN4.visible
+    OW4L2.visible = OWSPAN4.value <> "" And OWSPAN4.visible
+    OW4L3.visible = OWSPAN4.value <> "" And OWSPAN4.visible
+    OW4L4.visible = OWSPAN4.value <> "" And OWSPAN4.visible
     
-    OWSIZE5.visible = OWSPAN5.Value <> "" And OWSPAN5.visible
-    OWNEWSIZE5.visible = OWSPAN5.Value <> "" And OWSPAN5.visible
-    OWLENGTH5.visible = OWSPAN5.Value <> "" And OWSPAN5.visible
-    OW5L2.visible = OWSPAN5.Value <> "" And OWSPAN5.visible
-    OW5L3.visible = OWSPAN5.Value <> "" And OWSPAN5.visible
-    OW5L4.visible = OWSPAN5.Value <> "" And OWSPAN5.visible
+    OWSIZE5.visible = OWSPAN5.value <> "" And OWSPAN5.visible
+    OWNEWSIZE5.visible = OWSPAN5.value <> "" And OWSPAN5.visible
+    OWLENGTH5.visible = OWSPAN5.value <> "" And OWSPAN5.visible
+    OW5L2.visible = OWSPAN5.value <> "" And OWSPAN5.visible
+    OW5L3.visible = OWSPAN5.value <> "" And OWSPAN5.visible
+    OW5L4.visible = OWSPAN5.value <> "" And OWSPAN5.visible
     
 End Sub
 
 Private Sub SLDL_Click()
-    SLDLRFW.visible = SLDL.Value
-    RFWL3.visible = SLDL.Value
+    SLDLRFW.visible = SLDL.value
+    RFWL3.visible = SLDL.value
 End Sub
 
 Private Sub SLM1_Click()
-    If RPP.Value Then SLM3.Value = SLM1.Value
+    If RPP.value Then SLM3.value = SLM1.value
 End Sub
 
 Private Sub SLM2_Click()
-    If RPP.Value Then SLM4.Value = SLM2.Value
+    If RPP.value Then SLM4.value = SLM2.value
 End Sub
 
 Private Sub SLM3_Click()
-    SLM1.Value = SLM3.Value
+    SLM1.value = SLM3.value
 End Sub
 
 Private Sub SLM4_Click()
-    SLM2.Value = SLM4.Value
+    SLM2.value = SLM4.value
 End Sub
 
 Private Sub TRSL_Click()
-    SLL.visible = RPP.Value And TRSL.Value
-    STLTBTMBRKT.visible = RPP.Value And TRSL.Value
+    SLL.visible = RPP.value And TRSL.value
+    STLTBTMBRKT.visible = RPP.value And TRSL.value
 End Sub
 
 Private Sub TSDL_Click()
-    TSDLRFW.visible = TSDL.Value
-    RFWL1.visible = TSDL.Value
+    TSDLRFW.visible = TSDL.value
+    RFWL1.visible = TSDL.value
 End Sub
 
 Private Sub CommandButton1_Click()
@@ -1607,7 +1607,7 @@ Private Sub CommandButton1_Click()
     Set commTransfers = New Collection
 
     Call generateDownguysSection
-    If RPP.Value Then Call generateReplacePoleSection
+    If RPP.value Then Call generateReplacePoleSection
     Call generateReconductorSection
     Call generateBasicSection
     Call generateNotesSection
@@ -1639,7 +1639,7 @@ Private Sub CommandButton1_Click()
         DataObj.PutInClipboard
     
         If Trim(pds.Range("ALTONE")) = "" Then
-            pds.Range("ALTONE").Value = crewNotes
+            pds.Range("ALTONE").value = crewNotes
             Call Figures.getSheetFigures(pds)
         End If
     
@@ -1653,31 +1653,31 @@ End Sub
 Private Function findErrors() As String
     Errors = ""
     
-    If RPP.Value And PSV.Value = "" And BAFIG.Value Then
+    If RPP.value And PSV.value = "" And BAFIG.value Then
         Errors = Errors & "Error: P space shouldn't be blank if there's a buckarm on the pole." & vbLf
     End If
     
-    If RPP.Value And pole.commWires.count > CInt(CETV.Value) And Not RPPNOTE1.Value Then
+    If RPP.value And pole.commWires.count > CInt(CETV.value) And Not RPPNOTE1.value Then
         Errors = Errors & "Error: Not all comms accounted for on pole replace, either have CE transfer more comms or add top pole note." & vbLf
     End If
     
-    If RPP.Value And priBool And DSV.Value = "" Then
+    If RPP.value And priBool And DSV.value = "" Then
         Errors = Errors & "Error: D space shouldn't be blank if there's primary on the pole." & vbLf
     End If
     
-    If Not RPPNOTE2.Value And RPP.Value And (TRT.Value Or RPT) Then
+    If Not RPPNOTE2.value And RPP.value And (TRT.value Or RPT) Then
         Errors = Errors & "Error: Outage note not selected, outage needs to be selected when replacing a pole with a transformer." & vbLf
-    ElseIf RPP.Value And (ohsCount > 0) And Not RPPNOTE2.Value Then
+    ElseIf RPP.value And (ohsCount > 0) And Not RPPNOTE2.value Then
         Errors = Errors & "Error: Outage note not selected, outage needs to be selected when replacing services." & vbLf
-    ElseIf Not RPPNOTE2.Value And (REC1.Value Or REC2.Value Or REC3.Value Or REC4.Value Or (OWSPAN1.Value <> "" And OWSPAN1.visible) Or (OWSPAN2.Value <> "" And OWSPAN2.visible) Or (OWSPAN3.Value <> "" And OWSPAN3.visible) Or (OWSPAN4.Value <> "" And OWSPAN4.visible) Or (OWSPAN5.Value <> "" And OWSPAN5.visible)) Then
+    ElseIf Not RPPNOTE2.value And (REC1.value Or REC2.value Or REC3.value Or REC4.value Or (OWSPAN1.value <> "" And OWSPAN1.visible) Or (OWSPAN2.value <> "" And OWSPAN2.visible) Or (OWSPAN3.value <> "" And OWSPAN3.visible) Or (OWSPAN4.value <> "" And OWSPAN4.visible) Or (OWSPAN5.value <> "" And OWSPAN5.visible)) Then
         Errors = Errors & "Error: Outage note not selected, outage needs to be selected when reconductoring." & vbLf
     End If
     
-    If RPP.Value And (TRT.Value Or RPT.Value) And COLA.Value = "" Then
+    If RPP.value And (TRT.value Or RPT.value) And COLA.value = "" Then
         Errors = Errors & "Error: If transfering or replacing transformer, CO/LA configuration needs to be chosen. Choose Other if nothing fits." & vbLf
     End If
     
-    If RPP.Value And TRSL.Value And STLTBTMBRKT.Value = "" Then
+    If RPP.value And TRSL.value And STLTBTMBRKT.value = "" Then
         Errors = Errors & "Error: If transfering streetlight, streetlight attach height needs to be filled in." & vbLf
     End If
     
@@ -1687,31 +1687,31 @@ End Function
 Private Function findWarnings() As String
     warnings = ""
     
-    If TSDL.Value And Not RPPNOTE2.Value Then
+    If TSDL.value And Not RPPNOTE2.value Then
         warnings = warnings & "Warning: Outage required not selected when trimming driploop." & vbLf
     End If
     
-    If RPP.Value And PSV.Value = "" And Not BAFIG.Value Then
+    If RPP.value And PSV.value = "" And Not BAFIG.value Then
         warnings = warnings & "Warning: P space is blank, make sure there's no P space needed on this pole." & vbLf
     End If
     
-    If RPP.Value And priBool And Not (FU1.Value Or FU2.Value Or FU3.Value) Then
+    If RPP.value And priBool And Not (FU1.value Or FU2.value Or FU3.value) Then
         warnings = warnings & "Warning: Make sure the pole doesn't need any framing hardware replaced." & vbLf
     End If
     
-    If RPP.Value And UAP <> 0 Then
+    If RPP.value And UAP <> 0 Then
         warnings = warnings & "Warning: Unaccounted Primary should be 0 to account for all primary spans." & vbLf
     End If
     
-    If RPP.Value And UASN <> 0 Then
+    If RPP.value And UASN <> 0 Then
         warnings = warnings & "Warning: Unaccounted OW/Sec/Neut should be 0 to account for all OW/Sec/Neut spans." & vbLf
     End If
     
-    If RPP.Value And ohsCount = 0 And (TRT.Value Or RPT.Value Or secBool Or owBool) And Not RPPNOTE2.Value Then
+    If RPP.value And ohsCount = 0 And (TRT.value Or RPT.value Or secBool Or owBool) And Not RPPNOTE2.value Then
         warnings = warnings & "Warning: Outage note not selected, check if the transformer/secondaries power a house or streetlight." & vbLf
     End If
     
-    If RPP.Value And Not RPPNOTE3.Value And Not RPPNOTE4.Value Then
+    If RPP.value And Not RPPNOTE3.value And Not RPPNOTE4.value Then
         warnings = warnings & "Warning: Make sure there's no tree or brush work required to replace this pole." & vbLf
     End If
     
@@ -1728,11 +1728,11 @@ Private Sub generateReplacePoleSection()
         poleHeight = Trim(pds.Range("HEIGHT")) & poleHeight
     End If
     
-    replacePoleSection = replacePoleSection & poleHeight & pds.Range("CLASS") & "/" & RPPSIZE.Value & "-" & RPPCLASS.Value & " " & Replace(RPPRFW.Value, "OTHER", "[REASON FOR WORK]") & vbLf
-    If Trim(PSV.Value) <> "N/A" And Trim(PSV.Value) <> "" Then replacePoleSection = replacePoleSection & "P = " & Trim(PSV.Value) & vbLf
+    replacePoleSection = replacePoleSection & poleHeight & pds.Range("CLASS") & "/" & RPPSIZE.value & "-" & RPPCLASS.value & " " & Replace(RPPRFW.value, "OTHER", "[REASON FOR WORK]") & vbLf
+    If Trim(PSV.value) <> "N/A" And Trim(PSV.value) <> "" Then replacePoleSection = replacePoleSection & "P = " & Trim(PSV.value) & vbLf
     If RDSV.caption <> "" Then
-        If Trim(DSV.Value) <> "N/A" And Trim(DSV.Value) <> "" And Trim(DSV.Value) <> "[X']" Then
-            replacePoleSection = replacePoleSection & "D = " & Trim(DSV.Value) & vbLf
+        If Trim(DSV.value) <> "N/A" And Trim(DSV.value) <> "" And Trim(DSV.value) <> "[X']" Then
+            replacePoleSection = replacePoleSection & "D = " & Trim(DSV.value) & vbLf
         Else
             replacePoleSection = replacePoleSection & "D = " & RDSV.caption & vbLf
         End If
@@ -1744,40 +1744,40 @@ Private Sub generateReplacePoleSection()
             replacePoleSection = replacePoleSection & Split(FIG.text, ",")(0) & vbLf
         End If
     End If
-    If BAFIG.Value Then replacePoleSection = replacePoleSection & "FIGURE 23-229-1" & vbLf
+    If BAFIG.value Then replacePoleSection = replacePoleSection & "FIGURE 23-229-1" & vbLf
     
     
     Dim insulators As String: insulators = "[XP-FG]"
     If pole.primaries.count = 0 Then insulators = "[XP]"
-    If RPDG.Value Then
+    If RPDG.value Then
         If dg11KCount - replace11kCount > 0 Or dg20KCount - replace20kCount > 0 Then
             If dg11KCount - replace11kCount > 0 Then
-                replacePoleSection = replacePoleSection & IIf(dg11KCount - replace11kCount > 1, "(" & dg11KCount - replace11kCount & ")", "") & "11K-" & insulators & " GUY STRAND" & IIf(RPPSIZE.Value > poleHeight, " AND EXTEND TO NEW HEIGHT", "") & vbLf
+                replacePoleSection = replacePoleSection & IIf(dg11KCount - replace11kCount > 1, "(" & dg11KCount - replace11kCount & ")", "") & "11K-" & insulators & " GUY STRAND" & IIf(RPPSIZE.value > poleHeight, " AND EXTEND TO NEW HEIGHT", "") & vbLf
             End If
             If dg20KCount - replace20kCount > 0 Then
-                replacePoleSection = replacePoleSection & IIf(dg20KCount - replace20kCount > 1, "(" & dg20KCount - replace20kCount & ")", "") & "20K-" & insulators & " GUY STRAND" & IIf(RPPSIZE.Value > poleHeight, " AND EXTEND TO NEW HEIGHT", "") & vbLf
+                replacePoleSection = replacePoleSection & IIf(dg20KCount - replace20kCount > 1, "(" & dg20KCount - replace20kCount & ")", "") & "20K-" & insulators & " GUY STRAND" & IIf(RPPSIZE.value > poleHeight, " AND EXTEND TO NEW HEIGHT", "") & vbLf
             End If
-            If Me.Controls("DGFV").Value = "" Or Me.Controls("DGFV" & i).Value = "OTHER" Then
+            If Me.Controls("DGFV").value = "" Or Me.Controls("DGFV" & i).value = "OTHER" Then
                 replacePoleSection = replacePoleSection & "FIGURE [INSERT DOWNGUY FIGURE]" & vbLf
             Else
-                replacePoleSection = replacePoleSection & Split(Me.Controls("DGFV").Value, ",")(0) & vbLf
+                replacePoleSection = replacePoleSection & Split(Me.Controls("DGFV").value, ",")(0) & vbLf
             End If
         End If
-        If RPSWB.Value Then
+        If RPSWB.value Then
             replacePoleSection = replacePoleSection & "SIDEWALK BRACE" & vbLf
             replacePoleSection = replacePoleSection & "FIGURE 22-450-1" & vbLf
         End If
     End If
     
-    If RPT.Value Then
-        If UCase(TRSIZE.Value) <> UCase(TRRPSIZE.Value) Then
-            replacePoleSection = replacePoleSection & UCase(TRSIZE.Value) & "/" & UCase(TRRPSIZE.Value) & " TRANSFORMER"
-        ElseIf UCase(TRSIZE.Value) = UCase(TRRPSIZE.Value) Then
-            replacePoleSection = replacePoleSection & UCase(TRRPSIZE.Value) & " TRANSFORMER"
+    If RPT.value Then
+        If UCase(TRSIZE.value) <> UCase(TRRPSIZE.value) Then
+            replacePoleSection = replacePoleSection & UCase(TRSIZE.value) & "/" & UCase(TRRPSIZE.value) & " TRANSFORMER"
+        ElseIf UCase(TRSIZE.value) = UCase(TRRPSIZE.value) Then
+            replacePoleSection = replacePoleSection & UCase(TRRPSIZE.value) & " TRANSFORMER"
         End If
-        If RPPSIZE.Value >= 50 Then replacePoleSection = replacePoleSection & " [@35'0""]"
+        If RPPSIZE.value >= 50 Then replacePoleSection = replacePoleSection & " [@35'0""]"
         replacePoleSection = replacePoleSection & vbLf
-        If COLA.ListIndex = 0 Or COLA.Value = "" Then
+        If COLA.ListIndex = 0 Or COLA.value = "" Then
             replacePoleSection = replacePoleSection & "[INSERT CO/LA INFO]" & vbLf
         ElseIf COLA.ListIndex = 1 Then
             replacePoleSection = replacePoleSection & "CO/LA ON SA TO LCOM" & vbLf
@@ -1795,15 +1795,15 @@ Private Sub generateReplacePoleSection()
             replacePoleSection = replacePoleSection & "CO ON SA TO LCOM" & vbLf
             replacePoleSection = replacePoleSection & "LA ON TRANSFORMER" & vbLf
         End If
-        If TRLETTER.Value = "3 PHASE" Then
+        If TRLETTER.value = "3 PHASE" Then
             replacePoleSection = replacePoleSection & "FIGURE 26-301-1" & vbLf
         Else
-            replacePoleSection = replacePoleSection & "FIGURE 26-101-1 DETAIL " & IIf(Trim(TRLETTER.text) = "", "[A/B/C/D]", Left(TRLETTER.Value, 1)) & vbLf
+            replacePoleSection = replacePoleSection & "FIGURE 26-101-1 DETAIL " & IIf(Trim(TRLETTER.text) = "", "[A/B/C/D]", Left(TRLETTER.value, 1)) & vbLf
         End If
     End If
     
-    If RPR.Value Then
-        If TRT.Value Or RPT.Value Then
+    If RPR.value Then
+        If TRT.value Or RPT.value Then
             replacePoleSection = replacePoleSection & "[X]/C-[XX] AL SVC [OR SECONDARY] RISER & EXTEND MOLDING TO 12"" BELOW BOTTOM OF TRANSFORMER" & vbLf
             replacePoleSection = replacePoleSection & "FIGURE 63-20-1" & vbLf
         Else
@@ -1972,13 +1972,13 @@ Private Sub generateReplacePoleSection()
     
     i = 0
     For Each key In comms
-        If i >= CInt(CETV.Value) Then Exit For
+        If i >= CInt(CETV.value) Then Exit For
         For j = 1 To 8
-            If UCase(Trim(pds.Range("COMM" & j).Value)) = UCase(Trim(key)) Then
-                If pds.Range("COMM" & j).OFFSET(2, 0).OFFSET(0, 1).Value <> "" Then
-                    transferNotes = transferNotes & key & " @" & pds.Range("COMM" & j).OFFSET(2, 0).OFFSET(0, 1).Value & vbLf
+            If UCase(Trim(pds.Range("COMM" & j).value)) = UCase(Trim(key)) Then
+                If pds.Range("COMM" & j).offSet(2, 0).offSet(0, 1).value <> "" Then
+                    transferNotes = transferNotes & key & " @" & pds.Range("COMM" & j).offSet(2, 0).offSet(0, 1).value & vbLf
                 Else
-                    transferNotes = transferNotes & key & " @" & pds.Range("COMM" & j).OFFSET(2, 0).Value & vbLf
+                    transferNotes = transferNotes & key & " @" & pds.Range("COMM" & j).offSet(2, 0).value & vbLf
                 End If
                 commTransfers.Add key
                 Exit For
@@ -1987,11 +1987,11 @@ Private Sub generateReplacePoleSection()
         i = i + 1
     Next key
     
-    If TRSL.Value Then
-        transferNotes = transferNotes & "STREETLIGHT BOTTOM BRACKET @" & STLTBTMBRKT.Value & vbLf
+    If TRSL.value Then
+        transferNotes = transferNotes & "STREETLIGHT BOTTOM BRACKET @" & STLTBTMBRKT.value & vbLf
         transferNotes = transferNotes & "FIGURE 43-116-1" & vbLf
     End If
-    If TRSPG.Value Then
+    If TRSPG.value Then
         If spg11KCount > 0 Or spg20KCount > 0 Then
             If spg11KCount > 0 Then
                 transferNotes = transferNotes & IIf(spg11KCount > 1, "(" & spg11KCount & ")", "") & "11K SPAN GUY" & vbLf
@@ -2002,11 +2002,11 @@ Private Sub generateReplacePoleSection()
             transferNotes = transferNotes & "FIGURE 22-420-1" & vbLf
         End If
     End If
-    If TRT.Value Then
-        transferNotes = transferNotes & UCase(TRSIZE.Value) & " TRANSFORMER"
-        If RPPSIZE.Value >= 50 Then transferNotes = transferNotes & " [@35'0""]"
+    If TRT.value Then
+        transferNotes = transferNotes & UCase(TRSIZE.value) & " TRANSFORMER"
+        If RPPSIZE.value >= 50 Then transferNotes = transferNotes & " [@35'0""]"
         transferNotes = transferNotes & vbLf
-        If COLA.ListIndex = 0 Or COLA.Value = "" Then
+        If COLA.ListIndex = 0 Or COLA.value = "" Then
             transferNotes = transferNotes & "[INSERT CO/LA INFO]" & vbLf
         ElseIf COLA.ListIndex = 1 Then
             transferNotes = transferNotes & "CO/LA ON SA TO LCOM" & vbLf
@@ -2024,10 +2024,10 @@ Private Sub generateReplacePoleSection()
             transferNotes = transferNotes & "CO ON SA TO LCOM" & vbLf
             transferNotes = transferNotes & "LA ON TRANSFORMER" & vbLf
         End If
-        If TRLETTER.Value = "3 PHASE" Then
+        If TRLETTER.value = "3 PHASE" Then
             transferNotes = transferNotes & "FIGURE 26-301-1" & vbLf
         Else
-            transferNotes = transferNotes & "FIGURE 26-101-1 DETAIL " & IIf(Trim(TRLETTER.text) = "", "[A/B/C/D]", Left(TRLETTER.Value, 1)) & vbLf
+            transferNotes = transferNotes & "FIGURE 26-101-1 DETAIL " & IIf(Trim(TRLETTER.text) = "", "[A/B/C/D]", Left(TRLETTER.value, 1)) & vbLf
         End If
     End If
     
@@ -2134,34 +2134,34 @@ Private Function secondaryFigures(hardware As Variant) As String
 End Function
 
 Private Sub generateReconductorSection()
-    If OWSPAN1.Value <> "" And OWSPAN1.visible Then
+    If OWSPAN1.value <> "" And OWSPAN1.visible Then
         direction = getDirection(OWSPAN1)
-        replaceNotes = replaceNotes & OWLENGTH1.Value & " " & OWSIZE1.Value & " OPEN WIRE / " & OWNEWSIZE1.Value & " SECONDARY " & direction & vbLf
+        replaceNotes = replaceNotes & OWLENGTH1.value & " " & OWSIZE1.value & " OPEN WIRE / " & OWNEWSIZE1.value & " SECONDARY " & direction & vbLf
     End If
     
-    If OWSPAN2.Value <> "" And OWSPAN2.visible Then
+    If OWSPAN2.value <> "" And OWSPAN2.visible Then
         direction = getDirection(OWSPAN2)
-        replaceNotes = replaceNotes & OWLENGTH2.Value & " " & OWSIZE2.Value & " OPEN WIRE / " & OWNEWSIZE2.Value & " SECONDARY " & direction & vbLf
+        replaceNotes = replaceNotes & OWLENGTH2.value & " " & OWSIZE2.value & " OPEN WIRE / " & OWNEWSIZE2.value & " SECONDARY " & direction & vbLf
     End If
     
-    If OWSPAN3.Value <> "" And OWSPAN3.visible Then
+    If OWSPAN3.value <> "" And OWSPAN3.visible Then
         direction = getDirection(OWSPAN3)
-        replaceNotes = replaceNotes & OWLENGTH3.Value & " " & OWSIZE3.Value & " OPEN WIRE / " & OWNEWSIZE3.Value & " SECONDARY " & direction & vbLf
+        replaceNotes = replaceNotes & OWLENGTH3.value & " " & OWSIZE3.value & " OPEN WIRE / " & OWNEWSIZE3.value & " SECONDARY " & direction & vbLf
     End If
     
-    If OWSPAN4.Value <> "" And OWSPAN4.visible Then
+    If OWSPAN4.value <> "" And OWSPAN4.visible Then
         direction = getDirection(OWSPAN4)
-        replaceNotes = replaceNotes & OWLENGTH4.Value & " " & OWSIZE4.Value & " OPEN WIRE / " & OWNEWSIZE4.Value & " SECONDARY " & direction & vbLf
+        replaceNotes = replaceNotes & OWLENGTH4.value & " " & OWSIZE4.value & " OPEN WIRE / " & OWNEWSIZE4.value & " SECONDARY " & direction & vbLf
     End If
     
-    If OWSPAN5.Value <> "" And OWSPAN5.visible Then
+    If OWSPAN5.value <> "" And OWSPAN5.visible Then
         direction = getDirection(OWSPAN5)
-        replaceNotes = replaceNotes & OWLENGTH5.Value & " " & OWSIZE5.Value & " OPEN WIRE / " & OWNEWSIZE5.Value & " SECONDARY " & direction & vbLf
+        replaceNotes = replaceNotes & OWLENGTH5.value & " " & OWSIZE5.value & " OPEN WIRE / " & OWNEWSIZE5.value & " SECONDARY " & direction & vbLf
     End If
     
-    If REC1.Value Then
-        replaceNotes = replaceNotes & "(" & 3 * RECA1.Value & ")WR/" & IIf(RECA1.Value > 1, "(" & RECA1.Value & ")", "")
-        If RECO1.Value Then
+    If REC1.value Then
+        replaceNotes = replaceNotes & "(" & 3 * RECA1.value & ")WR/" & IIf(RECA1.value > 1, "(" & RECA1.value & ")", "")
+        If RECO1.value Then
             replaceNotes = replaceNotes & "TANGENT CLAMP" & vbLf
             replaceNotes = replaceNotes & secondaryFigures("TANGENT CLAMP")
         Else
@@ -2170,9 +2170,9 @@ Private Sub generateReconductorSection()
         End If
     End If
     
-    If REC2.Value Then
-        replaceNotes = replaceNotes & "(" & 3 * RECA2.Value & ")OPEN WIRE DEADEND/" & IIf(RECA2.Value > 1, "(" & RECA2.Value & ")", "")
-        If RECO2.Value Then
+    If REC2.value Then
+        replaceNotes = replaceNotes & "(" & 3 * RECA2.value & ")OPEN WIRE DEADEND/" & IIf(RECA2.value > 1, "(" & RECA2.value & ")", "")
+        If RECO2.value Then
             replaceNotes = replaceNotes & "SECONDARY AWAC DEADEND" & vbLf
             replaceNotes = replaceNotes & secondaryFigures("SECONDARY AWAC DEADEND")
         Else
@@ -2181,9 +2181,9 @@ Private Sub generateReconductorSection()
         End If
     End If
     
-    If REC3.Value Then
-        replaceNotes = replaceNotes & "(" & 3 * RECA3.Value & ")WR/" & "(" & 3 * RECA3.Value & ")OPEN WIRE DEADEND" & IIf(RECA3.Value > 1, "(" & RECA3.Value & ")", "")
-        If RECO3.Value Then
+    If REC3.value Then
+        replaceNotes = replaceNotes & "(" & 3 * RECA3.value & ")WR/" & "(" & 3 * RECA3.value & ")OPEN WIRE DEADEND" & IIf(RECA3.value > 1, "(" & RECA3.value & ")", "")
+        If RECO3.value Then
             replaceNotes = replaceNotes & "+ SECONDARY AWAC DEADEND" & vbLf
             replaceNotes = replaceNotes & secondaryFigures("SECONDARY AWAC DEADEND")
         Else
@@ -2192,9 +2192,9 @@ Private Sub generateReconductorSection()
         End If
     End If
     
-    If REC4.Value Then
-        replaceNotes = replaceNotes & "(" & 6 * RECA4.Value & ")OPEN WIRE DEADEND/" & IIf(RECA4.Value > 1, "(" & RECA4.Value & ")", "")
-        If RECO4.Value Then
+    If REC4.value Then
+        replaceNotes = replaceNotes & "(" & 6 * RECA4.value & ")OPEN WIRE DEADEND/" & IIf(RECA4.value > 1, "(" & RECA4.value & ")", "")
+        If RECO4.value Then
             replaceNotes = replaceNotes & "TANGENT CLAMP" & vbLf
             replaceNotes = replaceNotes & secondaryFigures("TANGENT CLAMP")
         Else
@@ -2203,7 +2203,7 @@ Private Sub generateReconductorSection()
         End If
     End If
     
-    If REC1.Value Or REC2.Value Or REC3.Value Or REC4.Value Or (OWSPAN1.Value <> "" And OWSPAN1.visible) Or (OWSPAN2.Value <> "" And OWSPAN2.visible) Or (OWSPAN3.Value <> "" And OWSPAN3.visible) Or (OWSPAN4.Value <> "" And OWSPAN4.visible) Or (OWSPAN5.Value <> "" And OWSPAN5.visible) Then
+    If REC1.value Or REC2.value Or REC3.value Or REC4.value Or (OWSPAN1.value <> "" And OWSPAN1.visible) Or (OWSPAN2.value <> "" And OWSPAN2.visible) Or (OWSPAN3.value <> "" And OWSPAN3.visible) Or (OWSPAN4.value <> "" And OWSPAN4.visible) Or (OWSPAN5.value <> "" And OWSPAN5.visible) Then
         replaceNotes = replaceNotes & "TO REPLACE OPEN WIRE" & vbLf
     End If
     
@@ -2247,31 +2247,31 @@ Private Function getDirection(Span As String) As String
 End Function
 
 Private Sub generateBasicSection()
-    If BSL.Value Then
-        installNotes = installNotes & "BOND STREETLIGHT BRACKET TO NEUTRAL " & Replace(BSLRFW.Value, "OTHER", "[REASON FOR WORK]") & vbLf
+    If BSL.value Then
+        installNotes = installNotes & "BOND STREETLIGHT BRACKET TO NEUTRAL " & Replace(BSLRFW.value, "OTHER", "[REASON FOR WORK]") & vbLf
         installNotes = installNotes & "FIGURE 42-105-1" & vbLf
     End If
     
-    If SLM3.Value Then
+    If SLM3.value Then
         replaceNotes = replaceNotes & "STREETLIGHT MOLDING" & vbLf
     End If
     
-    If SLM4.Value Then
+    If SLM4.value Then
         installNotes = installNotes & "STREETLIGHT MOLDING" & vbLf
     End If
     
-    If TSDL.Value Then
-        transferNotes = transferNotes & "TRIM SECONDARY DRIPLOOP TO 4"" BELOW SECONDARY ATTACHMENT HEIGHT " & Replace(TSDLRFW.Value, "OTHER", "[REASON FOR WORK]") & vbLf
+    If TSDL.value Then
+        transferNotes = transferNotes & "TRIM SECONDARY DRIPLOOP TO 4"" BELOW SECONDARY ATTACHMENT HEIGHT " & Replace(TSDLRFW.value, "OTHER", "[REASON FOR WORK]") & vbLf
     End If
     
-    If RSL.Value Then
-        transferNotes = transferNotes & "RAISE STREETLIGHT BRACKET " & RSLD.Value & " " & Replace(RSLRFW.Value, "OTHER", "[REASON FOR WORK]") & vbLf
+    If RSL.value Then
+        transferNotes = transferNotes & "RAISE STREETLIGHT BRACKET " & RSLD.value & " " & Replace(RSLRFW.value, "OTHER", "[REASON FOR WORK]") & vbLf
         transferNotes = transferNotes & "FIGURE 43-116-1" & vbLf
     End If
     
-    If SLDL.Value Then
+    If SLDL.value Then
         transferNotes = transferNotes & "TRIM STREETLIGHT DRIP LOOP TO 1"" BELOW STREETLIGHT BRACKET" & vbLf
-        transferNotes = transferNotes & Replace(SLDLRFW.Value, "OTHER", "[REASON FOR WORK]") & vbLf
+        transferNotes = transferNotes & Replace(SLDLRFW.value, "OTHER", "[REASON FOR WORK]") & vbLf
     End If
 End Sub
 
@@ -2287,28 +2287,28 @@ Private Sub generateNotesSection()
         End If
     Next i
 
-    If RPPNOTE1.Value Then
+    If RPPNOTE1.value Then
         notes = notes & "NOTE: TOP POLE ABOVE COMMS, TOPPED POLE TO BE REMOVED AT A LATER DATE" & vbLf
     End If
-    If RPPNOTE2.Value Then
+    If RPPNOTE2.value Then
         notes = notes & "NOTE: OUTAGE REQUIRED, SCHEDULING TO NOTIFY" & vbLf
     End If
-    If RPPNOTE3.Value Then
+    If RPPNOTE3.value Then
         notes = notes & "NOTE: TREE WORK REQUIRED" & vbLf
     End If
-    If RPPNOTE4.Value Then
+    If RPPNOTE4.value Then
         notes = notes & "NOTE: BRUSH WORK REQUIRED" & vbLf
     End If
-    If RPPNOTE5.Value Then
+    If RPPNOTE5.value Then
         notes = notes & "NOTE: POLE LOCATED IN ACTIVE FARMFIELD" & vbLf
     End If
-    If RPPNOTE6.Value Then
+    If RPPNOTE6.value Then
         notes = notes & "NOTE: FENCE REMOVAL REQUIRED" & vbLf
     End If
-    If RPPNOTE7.Value Then
+    If RPPNOTE7.value Then
         notes = notes & "NOTE: BACKYARD MACHINE REQUIRED" & vbLf
     End If
-    If RPPNOTE8.Value Then
+    If RPPNOTE8.value Then
         notes = notes & "NOTE: [INSERT POLE ACCESS NOTES]" & vbLf
     End If
 End Sub
@@ -2317,45 +2317,45 @@ Private Sub generateDownguysSection()
     Dim insulators As String: insulators = "[XP-FG]"
     If pole.primaries.count = 0 Then insulators = "[XP]"
     For i = 1 To 3
-        If Me.Controls("IA" & i & "1").Value <> "" And Me.Controls("IA" & i & "1").visible Then
-            If Me.Controls("IA" & i & "1").Value = "RS" Then
-                installNotes = installNotes & "11K-" & insulators & "-" & IIf(Me.Controls("IA" & i & "3").Value = "", [lead], Me.Controls("IA" & i & "3").Value) & "-RS " & IIf(Me.Controls("IA" & i & "4").Value = "", "[DIRECTION]", Me.Controls("IA" & i & "4").Value) & vbLf
-            ElseIf Me.Controls("IA" & i & "1").Value = "RT" Then
-                If Me.Controls("IA" & i & "2").Value = "20K" Then
-                    installNotes = installNotes & "20K-" & insulators & "-" & IIf(Me.Controls("IA" & i & "3").Value = "", [lead], Me.Controls("IA" & i & "3").Value) & "-RT " & IIf(Me.Controls("IA" & i & "4").Value = "", "[DIRECTION]", Me.Controls("IA" & i & "4").Value) & vbLf
-                ElseIf Me.Controls("IA" & i & "2").Value = "(2)11K" Then
-                    installNotes = installNotes & "11K-" & insulators & "-" & IIf(Me.Controls("IA" & i & "3").Value = "", [lead], Me.Controls("IA" & i & "3").Value) & "-RT " & IIf(Me.Controls("IA" & i & "4").Value = "", "[DIRECTION]", Me.Controls("IA" & i & "4").Value) & vbLf
+        If Me.Controls("IA" & i & "1").value <> "" And Me.Controls("IA" & i & "1").visible Then
+            If Me.Controls("IA" & i & "1").value = "RS" Then
+                installNotes = installNotes & "11K-" & insulators & "-" & IIf(Me.Controls("IA" & i & "3").value = "", [lead], Me.Controls("IA" & i & "3").value) & "-RS " & IIf(Me.Controls("IA" & i & "4").value = "", "[DIRECTION]", Me.Controls("IA" & i & "4").value) & vbLf
+            ElseIf Me.Controls("IA" & i & "1").value = "RT" Then
+                If Me.Controls("IA" & i & "2").value = "20K" Then
+                    installNotes = installNotes & "20K-" & insulators & "-" & IIf(Me.Controls("IA" & i & "3").value = "", [lead], Me.Controls("IA" & i & "3").value) & "-RT " & IIf(Me.Controls("IA" & i & "4").value = "", "[DIRECTION]", Me.Controls("IA" & i & "4").value) & vbLf
+                ElseIf Me.Controls("IA" & i & "2").value = "(2)11K" Then
+                    installNotes = installNotes & "11K-" & insulators & "-" & IIf(Me.Controls("IA" & i & "3").value = "", [lead], Me.Controls("IA" & i & "3").value) & "-RT " & IIf(Me.Controls("IA" & i & "4").value = "", "[DIRECTION]", Me.Controls("IA" & i & "4").value) & vbLf
                     installNotes = installNotes & "11K-" & insulators & vbLf
                 End If
-            ElseIf Me.Controls("IA" & i & "1").Value = "STE" Then
-                If Me.Controls("IA" & i & "2").Value = "20K + 11K" Then
-                    installNotes = installNotes & "20K-" & insulators & "-" & IIf(Me.Controls("IA" & i & "3").Value = "", [lead], Me.Controls("IA" & i & "3").Value) & "-STE " & IIf(Me.Controls("IA" & i & "4").Value = "", "[DIRECTION]", Me.Controls("IA" & i & "4").Value) & vbLf
+            ElseIf Me.Controls("IA" & i & "1").value = "STE" Then
+                If Me.Controls("IA" & i & "2").value = "20K + 11K" Then
+                    installNotes = installNotes & "20K-" & insulators & "-" & IIf(Me.Controls("IA" & i & "3").value = "", [lead], Me.Controls("IA" & i & "3").value) & "-STE " & IIf(Me.Controls("IA" & i & "4").value = "", "[DIRECTION]", Me.Controls("IA" & i & "4").value) & vbLf
                     installNotes = installNotes & "11K-" & insulators & vbLf
-                ElseIf Me.Controls("IA" & i & "2").Value = "(3)11K" Then
-                    installNotes = installNotes & "11K-" & insulators & "-" & IIf(Me.Controls("IA" & i & "3").Value = "", [lead], Me.Controls("IA" & i & "3").Value) & "-STE " & IIf(Me.Controls("IA" & i & "4").Value = "", "[DIRECTION]", Me.Controls("IA" & i & "4").Value) & vbLf
+                ElseIf Me.Controls("IA" & i & "2").value = "(3)11K" Then
+                    installNotes = installNotes & "11K-" & insulators & "-" & IIf(Me.Controls("IA" & i & "3").value = "", [lead], Me.Controls("IA" & i & "3").value) & "-STE " & IIf(Me.Controls("IA" & i & "4").value = "", "[DIRECTION]", Me.Controls("IA" & i & "4").value) & vbLf
                     installNotes = installNotes & "11K-" & insulators & vbLf
                     installNotes = installNotes & "11K-" & insulators & vbLf
-                ElseIf Me.Controls("IA" & i & "2").Value = "(2)20K" Then
-                    installNotes = installNotes & "20K-" & insulators & "-" & IIf(Me.Controls("IA" & i & "3").Value = "", [lead], Me.Controls("IA" & i & "3").Value) & "-STE " & IIf(Me.Controls("IA" & i & "4").Value = "", "[DIRECTION]", Me.Controls("IA" & i & "4").Value) & vbLf
+                ElseIf Me.Controls("IA" & i & "2").value = "(2)20K" Then
+                    installNotes = installNotes & "20K-" & insulators & "-" & IIf(Me.Controls("IA" & i & "3").value = "", [lead], Me.Controls("IA" & i & "3").value) & "-STE " & IIf(Me.Controls("IA" & i & "4").value = "", "[DIRECTION]", Me.Controls("IA" & i & "4").value) & vbLf
                     installNotes = installNotes & "20K-" & insulators & vbLf
                 End If
             End If
             
-            If Me.Controls("IA" & i & "5").Value Then
+            If Me.Controls("IA" & i & "5").value Then
                 installNotes = installNotes & "SIDEWALK BRACE" & vbLf
                 installNotes = installNotes & "FIGURE 22-450-1" & vbLf
             End If
 
-            If Me.Controls("IGRFW" & i).Value = "" Or Me.Controls("IGRFW" & i).Value = "OTHER" Then
+            If Me.Controls("IGRFW" & i).value = "" Or Me.Controls("IGRFW" & i).value = "OTHER" Then
                 installNotes = installNotes & "[REASON FOR WORK]" & vbLf
             Else
                 installNotes = installNotes & Me.Controls("IGRFW" & i) & vbLf
             End If
             
-            If Me.Controls("IGFIG" & i).Value = "" Or Me.Controls("IGFIG" & i).Value = "OTHER" Then
+            If Me.Controls("IGFIG" & i).value = "" Or Me.Controls("IGFIG" & i).value = "OTHER" Then
                 installNotes = installNotes & "FIGURE [INSERT DOWNGUY FIGURE]" & vbLf
             Else
-                installNotes = installNotes & Split(Me.Controls("IGFIG" & i).Value, ",")(0) & vbLf
+                installNotes = installNotes & Split(Me.Controls("IGFIG" & i).value, ",")(0) & vbLf
             End If
         End If
     Next i
@@ -2368,63 +2368,63 @@ Private Sub generateDownguysSection()
         rLine1 = ""
         rLine2 = ""
         rLine3 = ""
-        If Me.Controls("EA" & i & "1").Value <> Me.Controls("RA" & i & "1").Value Or Me.Controls("EA" & i & "2").Value <> Me.Controls("RA" & i & "2").Value Or Me.Controls("EA" & i & "3").Value <> Me.Controls("RA" & i & "3").Value Then
-            If Me.Controls("EA" & i & "1").Value <> "" Then
-                If Me.Controls("EA" & i & "1").Value = "RS" Then
-                    eLine1 = "11K-" & insulators & "-" & IIf(Me.Controls("EA" & i & "3").Value = "", [lead], Me.Controls("EA" & i & "3").Value) & "-RS"
+        If Me.Controls("EA" & i & "1").value <> Me.Controls("RA" & i & "1").value Or Me.Controls("EA" & i & "2").value <> Me.Controls("RA" & i & "2").value Or Me.Controls("EA" & i & "3").value <> Me.Controls("RA" & i & "3").value Then
+            If Me.Controls("EA" & i & "1").value <> "" Then
+                If Me.Controls("EA" & i & "1").value = "RS" Then
+                    eLine1 = "11K-" & insulators & "-" & IIf(Me.Controls("EA" & i & "3").value = "", [lead], Me.Controls("EA" & i & "3").value) & "-RS"
                     replace11kCount = replace11kCount + 1
-                ElseIf Me.Controls("EA" & i & "1").Value = "RT" Then
-                    If Me.Controls("EA" & i & "2").Value = "20K" Then
-                        eLine1 = "20K-" & insulators & "-" & IIf(Me.Controls("EA" & i & "3").Value = "", [lead], Me.Controls("EA" & i & "3").Value) & "-RT"
+                ElseIf Me.Controls("EA" & i & "1").value = "RT" Then
+                    If Me.Controls("EA" & i & "2").value = "20K" Then
+                        eLine1 = "20K-" & insulators & "-" & IIf(Me.Controls("EA" & i & "3").value = "", [lead], Me.Controls("EA" & i & "3").value) & "-RT"
                         replace20kCount = replace20kCount + 1
-                    ElseIf Me.Controls("EA" & i & "2").Value = "(2)11K" Then
-                        eLine1 = "11K-" & insulators & "-" & IIf(Me.Controls("EA" & i & "3").Value = "", [lead], Me.Controls("EA" & i & "3").Value) & "-RT"
+                    ElseIf Me.Controls("EA" & i & "2").value = "(2)11K" Then
+                        eLine1 = "11K-" & insulators & "-" & IIf(Me.Controls("EA" & i & "3").value = "", [lead], Me.Controls("EA" & i & "3").value) & "-RT"
                         eLine2 = "11K-" & insulators
                         replace11kCount = replace11kCount + 2
                     End If
-                ElseIf Me.Controls("EA" & i & "1").Value = "STE" Then
-                    If Me.Controls("EA" & i & "2").Value = "20K + 11K" Then
-                        eLine1 = "20K-" & insulators & "-" & IIf(Me.Controls("EA" & i & "3").Value = "", [lead], Me.Controls("EA" & i & "3").Value) & "-STE"
+                ElseIf Me.Controls("EA" & i & "1").value = "STE" Then
+                    If Me.Controls("EA" & i & "2").value = "20K + 11K" Then
+                        eLine1 = "20K-" & insulators & "-" & IIf(Me.Controls("EA" & i & "3").value = "", [lead], Me.Controls("EA" & i & "3").value) & "-STE"
                         eLine2 = "11K-" & insulators
                         replace20kCount = replace20kCount + 1
                         replace11kCount = replace11kCount + 1
-                    ElseIf Me.Controls("EA" & i & "2").Value = "(3)11K" Then
-                        eLine1 = "11K-" & insulators & "-" & IIf(Me.Controls("EA" & i & "3").Value = "", [lead], Me.Controls("EA" & i & "3").Value) & "-STE"
+                    ElseIf Me.Controls("EA" & i & "2").value = "(3)11K" Then
+                        eLine1 = "11K-" & insulators & "-" & IIf(Me.Controls("EA" & i & "3").value = "", [lead], Me.Controls("EA" & i & "3").value) & "-STE"
                         eLine2 = "11K-" & insulators
                         eLine3 = "11K-" & insulators
                         replace11kCount = replace11kCount + 3
-                    ElseIf Me.Controls("EA" & i & "2").Value = "(2)20K" Then
-                        eLine1 = "20K-" & insulators & "-" & IIf(Me.Controls("EA" & i & "3").Value = "", [lead], Me.Controls("EA" & i & "3").Value) & "-STE"
+                    ElseIf Me.Controls("EA" & i & "2").value = "(2)20K" Then
+                        eLine1 = "20K-" & insulators & "-" & IIf(Me.Controls("EA" & i & "3").value = "", [lead], Me.Controls("EA" & i & "3").value) & "-STE"
                         eLine2 = "20K-" & insulators
                         replace20kCount = replace20kCount + 2
                     End If
                 End If
             End If
-            If Me.Controls("RA" & i & "1").Value <> "" Then
-                If Me.Controls("RA" & i & "1").Value = "RS" Then
-                    rLine1 = "11K-" & insulators & "-" & IIf(Me.Controls("RA" & i & "3").Value = "", [lead], Me.Controls("RA" & i & "3").Value) & "-RS"
-                ElseIf Me.Controls("RA" & i & "1").Value = "RT" Then
-                    If Me.Controls("RA" & i & "2").Value = "20K" Then
-                        rLine1 = "20K-" & insulators & "-" & IIf(Me.Controls("RA" & i & "3").Value = "", [lead], Me.Controls("RA" & i & "3").Value) & "-RT"
-                    ElseIf Me.Controls("RA" & i & "2").Value = "(2)11K" Then
-                        rLine1 = "11K-" & insulators & "-" & IIf(Me.Controls("RA" & i & "3").Value = "", [lead], Me.Controls("RA" & i & "3").Value) & "-RT"
+            If Me.Controls("RA" & i & "1").value <> "" Then
+                If Me.Controls("RA" & i & "1").value = "RS" Then
+                    rLine1 = "11K-" & insulators & "-" & IIf(Me.Controls("RA" & i & "3").value = "", [lead], Me.Controls("RA" & i & "3").value) & "-RS"
+                ElseIf Me.Controls("RA" & i & "1").value = "RT" Then
+                    If Me.Controls("RA" & i & "2").value = "20K" Then
+                        rLine1 = "20K-" & insulators & "-" & IIf(Me.Controls("RA" & i & "3").value = "", [lead], Me.Controls("RA" & i & "3").value) & "-RT"
+                    ElseIf Me.Controls("RA" & i & "2").value = "(2)11K" Then
+                        rLine1 = "11K-" & insulators & "-" & IIf(Me.Controls("RA" & i & "3").value = "", [lead], Me.Controls("RA" & i & "3").value) & "-RT"
                         rLine2 = "11K-" & insulators
                     End If
-                ElseIf Me.Controls("RA" & i & "1").Value = "STE" Then
-                    If Me.Controls("RA" & i & "2").Value = "20K + 11K" Then
-                        rLine1 = "20K-" & insulators & "-" & IIf(Me.Controls("RA" & i & "3").Value = "", [lead], Me.Controls("RA" & i & "3").Value) & "-STE"
+                ElseIf Me.Controls("RA" & i & "1").value = "STE" Then
+                    If Me.Controls("RA" & i & "2").value = "20K + 11K" Then
+                        rLine1 = "20K-" & insulators & "-" & IIf(Me.Controls("RA" & i & "3").value = "", [lead], Me.Controls("RA" & i & "3").value) & "-STE"
                         rLine2 = "11K-" & insulators
-                    ElseIf Me.Controls("RA" & i & "2").Value = "(3)11K" Then
-                        rLine1 = "11K-" & insulators & "-" & IIf(Me.Controls("RA" & i & "3").Value = "", [lead], Me.Controls("RA" & i & "3").Value) & "-STE"
+                    ElseIf Me.Controls("RA" & i & "2").value = "(3)11K" Then
+                        rLine1 = "11K-" & insulators & "-" & IIf(Me.Controls("RA" & i & "3").value = "", [lead], Me.Controls("RA" & i & "3").value) & "-STE"
                         rLine2 = "11K-" & insulators
                         rLine3 = "11K-" & insulators
-                    ElseIf Me.Controls("RA" & i & "2").Value = "(2)20K" Then
-                        rLine1 = "20K-" & insulators & "-" & IIf(Me.Controls("RA" & i & "3").Value = "", [lead], Me.Controls("RA" & i & "3").Value) & "-STE"
+                    ElseIf Me.Controls("RA" & i & "2").value = "(2)20K" Then
+                        rLine1 = "20K-" & insulators & "-" & IIf(Me.Controls("RA" & i & "3").value = "", [lead], Me.Controls("RA" & i & "3").value) & "-STE"
                         rLine2 = "20K-" & insulators
                     End If
                 End If
             End If
-            replaceNotes = replaceNotes & eLine1 & " / " & rLine1 & " " & IIf(Me.Controls("EA" & i & "4").Value = "", "[DIRECTION]", Me.Controls("EA" & i & "4").Value) & vbLf
+            replaceNotes = replaceNotes & eLine1 & " / " & rLine1 & " " & IIf(Me.Controls("EA" & i & "4").value = "", "[DIRECTION]", Me.Controls("EA" & i & "4").value) & vbLf
             If eLine2 <> "" Or rLine2 <> "" Then
                 replaceNotes = replaceNotes & eLine2 & Space((Len(eLine1) * 2) - Len(eLine2) - 4) & rLine2 & vbLf
             End If
@@ -2432,16 +2432,16 @@ Private Sub generateDownguysSection()
                 replaceNotes = replaceNotes & eLine3 & Space((Len(eLine1) * 2) - Len(eLine3) - 4) & rLine3 & vbLf
             End If
             
-            If Me.Controls("DGRFW" & i).Value = "" Or Me.Controls("DGRFW" & i).Value = "OTHER" Then
+            If Me.Controls("DGRFW" & i).value = "" Or Me.Controls("DGRFW" & i).value = "OTHER" Then
                 replaceNotes = replaceNotes & "[REASON FOR WORK]" & vbLf
             Else
                 replaceNotes = replaceNotes & Me.Controls("DGRFW" & i) & vbLf
             End If
             
-            If Me.Controls("DGFIG" & i).Value = "" Or Me.Controls("DGFIG" & i).Value = "OTHER" Then
+            If Me.Controls("DGFIG" & i).value = "" Or Me.Controls("DGFIG" & i).value = "OTHER" Then
                 replaceNotes = replaceNotes & "FIGURE [INSERT DOWNGUY FIGURE]" & vbLf
             Else
-                replaceNotes = replaceNotes & Split(Me.Controls("DGFIG" & i).Value, ",")(0) & vbLf
+                replaceNotes = replaceNotes & Split(Me.Controls("DGFIG" & i).value, ",")(0) & vbLf
             End If
         End If
     Next i
@@ -2470,28 +2470,28 @@ Private Sub Initialize_ReplacePole()
     RPPSIZE.list = Array("35", "40", "45", "50", "55", "60", "65", "70")
     RPPCLASS.list = Array("1", "2", "3", "4")
     If InStr(pds.Range("HEIGHT"), "(") > 0 Then
-        If RPPSIZE.Value = "" Then
+        If RPPSIZE.value = "" Then
             tempHeight = Left(Trim(pds.Range("HEIGHT")), InStr(Trim(pds.Range("HEIGHT")), "(") - 1)
             If IsNumeric(tempHeight) And tempHeight < "35" Then tempHeight = "35"
-            RPPSIZE.Value = tempHeight
+            RPPSIZE.value = tempHeight
         ElseIf CInt(Left(Trim(pds.Range("HEIGHT")), InStr(Trim(pds.Range("HEIGHT")), "(") - 1)) > 40 Then
-            RPPSIZE.Value = Left(Trim(pds.Range("HEIGHT")), InStr(Trim(pds.Range("HEIGHT")), "(") - 1)
+            RPPSIZE.value = Left(Trim(pds.Range("HEIGHT")), InStr(Trim(pds.Range("HEIGHT")), "(") - 1)
         End If
     Else
-        If RPPSIZE.Value = "" Then
-            RPPSIZE.Value = Trim(pds.Range("HEIGHT"))
+        If RPPSIZE.value = "" Then
+            RPPSIZE.value = Trim(pds.Range("HEIGHT"))
         ElseIf CInt(Trim(pds.Range("HEIGHT"))) > 40 Then
-            RPPSIZE.Value = Trim(pds.Range("HEIGHT"))
+            RPPSIZE.value = Trim(pds.Range("HEIGHT"))
         End If
     End If
-    If pds.Range("SECONLY").Value = True Then
-        RPPCLASS.Value = 4
-        DSV.Value = "N/A"
-        PSV.Value = "N/A"
-    ElseIf InStr(pds.Range("DESC"), "3") > 0 Or InStr(pds.Range("DESC").OFFSET(1, 0), "3") > 0 Or InStr(pds.Range("DESC").OFFSET(2, 0), "3") > 0 Or InStr(pds.Range("DESC").OFFSET(3, 0), "3") > 0 Then
-        RPPCLASS.Value = 2
+    If pds.Range("SECONLY").value = True Then
+        RPPCLASS.value = 4
+        DSV.value = "N/A"
+        PSV.value = "N/A"
+    ElseIf InStr(pds.Range("DESC"), "3") > 0 Or InStr(pds.Range("DESC").offSet(1, 0), "3") > 0 Or InStr(pds.Range("DESC").offSet(2, 0), "3") > 0 Or InStr(pds.Range("DESC").offSet(3, 0), "3") > 0 Then
+        RPPCLASS.value = 2
     Else
-        RPPCLASS.Value = 3
+        RPPCLASS.value = 3
     End If
     
     RPPRFW.list = Array("OTHER", "TO CORRECT POLE LOADING FAILURE @[XX]% [AS-IS/WITH APPLICANT]", "TO CORRECT POLE DETERIORATION", "DUE TO FAILED HAMMER TEST", "TO ALLOW COMMS TO CORRECT VIOLATIONS", "TO MAKE ROOM FOR APPLICANT")
@@ -2510,31 +2510,31 @@ Private Sub Initialize_ReplacePole()
     TRRPSIZE.list = Array("10kVA", "25kVA", "50kVA", "75kVA", "100kVA")
     
     If pds.Range("EQUIPMENT") = "XFMR" Or pds.Range("EQUIPMENT") = "TRANSFORMER" Then
-        TRT.Value = True
-        TRSIZE.Value = Replace(pds.Range("EQUIPMENTSIZE"), " ", "")
-        TRRPSIZE.Value = Replace(pds.Range("EQUIPMENTSIZE"), " ", "")
+        TRT.value = True
+        TRSIZE.value = Replace(pds.Range("EQUIPMENTSIZE"), " ", "")
+        TRRPSIZE.value = Replace(pds.Range("EQUIPMENTSIZE"), " ", "")
     End If
     
-    If Trim(pds.Range("STLTBRKT").Value) <> "N/A" And Trim(pds.Range("STLTBRKT").Value) <> "" Then
-        TRSL.Value = True
-        STLTBTMBRKT.Value = Trim(Split(pds.Range("STLTBRKT").Value, vbLf)(0))
-        If pds.Range("MBSM").OFFSET(0, 1).Value = "YES" Then
-            SLM2.Value = True
-        ElseIf pds.Range("MBSM").OFFSET(0, 1).Value = "NO" Then
-            SLM1.Value = True
+    If Trim(pds.Range("STLTBRKT").value) <> "N/A" And Trim(pds.Range("STLTBRKT").value) <> "" Then
+        TRSL.value = True
+        STLTBTMBRKT.value = Trim(Split(pds.Range("STLTBRKT").value, vbLf)(0))
+        If pds.Range("MBSM").offSet(0, 1).value = "YES" Then
+            SLM2.value = True
+        ElseIf pds.Range("MBSM").offSet(0, 1).value = "NO" Then
+            SLM1.value = True
         End If
     End If
     
     If riserBool Then
-        RPR.Value = True
+        RPR.value = True
     End If
     
     If dg11KCount > 0 Or dg20KCount > 0 Then
-        RPDG.Value = True
+        RPDG.value = True
     End If
     
     If spg11KCount > 0 Or spg20KCount > 0 Then
-        TRSPG.Value = True
+        TRSPG.value = True
     End If
     
     MHT1.list = Array("RP", "IN", "RM")
@@ -2625,15 +2625,15 @@ Private Sub Initialize_Reconductor()
     For i = 1 To 12
         For Each name In pds.names
             If name.name = "'" & pds.name & "'" & "!" & "TOPOLE" & i Then
-                If Trim(Replace(pds.Range("TOPOLE" & i).Value, "-", "")) <> "" Then
+                If Trim(Replace(pds.Range("TOPOLE" & i).value, "-", "")) <> "" Then
                     For j = 1 To 50
-                        If pds.Range("UTTYPE").OFFSET(j, 0).Interior.color = 16777215 Then Exit For
-                        If pds.Range("UTTYPE").OFFSET(j, 0) = "" Then Exit For
-                        If pds.Range("UTTYPE").OFFSET(j, 0).text = "STLT. BOTTOM BRKT." Then Exit For
-                        If InStr(pds.Range("UTTYPE").OFFSET(j, 0).text, "OW") > 0 Then
-                            If Trim(Replace(pds.Range("UTMIDSPAN" & i).OFFSET(j, 0).Value, "-", "")) <> "" Then
+                        If pds.Range("UTTYPE").offSet(j, 0).Interior.color = 16777215 Then Exit For
+                        If pds.Range("UTTYPE").offSet(j, 0) = "" Then Exit For
+                        If pds.Range("UTTYPE").offSet(j, 0).text = "STLT. BOTTOM BRKT." Then Exit For
+                        If InStr(pds.Range("UTTYPE").offSet(j, 0).text, "OW") > 0 Then
+                            If Trim(Replace(pds.Range("UTMIDSPAN" & i).offSet(j, 0).value, "-", "")) <> "" Then
                                 ReDim Preserve spanAray(UBound(spanAray) + 1)
-                                spanAray(UBound(spanAray)) = Trim(pds.Range("TOPOLE" & i).Value)
+                                spanAray(UBound(spanAray)) = Trim(pds.Range("TOPOLE" & i).value)
                                 Exit For
                             End If
                         End If
@@ -2691,11 +2691,11 @@ Private Sub Initialize_Downguys()
     
     anchorCount = 0
     For i = 0 To 10
-        If pds.Range("ANCHOROWNER").OFFSET(i, 0).Value = "Consumers Energy" Then
+        If InStr(CStr(pds.Range("ANCHOROWNER").offSet(i, 0).value), "Consumers Energy") > 0 Then
             anchorCount = anchorCount + 1
-            Me.Controls("EA" & anchorCount & 3).Value = pds.Range("ANCHOROWNER").OFFSET(i, 0).OFFSET(0, 1).Value
-            Me.Controls("RA" & anchorCount & 3).Value = pds.Range("ANCHOROWNER").OFFSET(i, 0).OFFSET(0, 1).Value
-            Me.Controls("EA" & anchorCount & 4).Value = getDirection(pds.Range("ANCHOROWNER").OFFSET(i, 0).OFFSET(0, 1).OFFSET(0, 1).Value)
+            Me.Controls("EA" & anchorCount & 3).value = pds.Range("ANCHOROWNER").offSet(i, 0).offSet(0, 1).value
+            Me.Controls("RA" & anchorCount & 3).value = pds.Range("ANCHOROWNER").offSet(i, 0).offSet(0, 1).value
+            Me.Controls("EA" & anchorCount & 4).value = getDirection(pds.Range("ANCHOROWNER").offSet(i, 0).offSet(0, 1).offSet(0, 1).value)
             For j = 1 To 4
                 Me.Controls("DGFIG" & anchorCount).visible = True
                 Me.Controls("DGRFW" & anchorCount).visible = True
@@ -2787,456 +2787,456 @@ Private Sub Initialize_Downguys()
 End Sub
 
 Private Sub SNT1_Change()
-    If SNT1.Value = "RP" Then
-        SN1.Value = snRP1
-        SNC1.Value = PreviousValueRPSNC1
-    ElseIf SNT1.Value = "IN" Then
-        SN1.Value = snIN1
-        SNC1.Value = PreviousValueINSNC1
-    ElseIf SNT1.Value = "RM" Then
-        SN1.Value = snRM1
-        SNC1.Value = PreviousValueRMSNC1
+    If SNT1.value = "RP" Then
+        SN1.value = snRP1
+        SNC1.value = PreviousValueRPSNC1
+    ElseIf SNT1.value = "IN" Then
+        SN1.value = snIN1
+        SNC1.value = PreviousValueINSNC1
+    ElseIf SNT1.value = "RM" Then
+        SN1.value = snRM1
+        SNC1.value = PreviousValueRMSNC1
     End If
 End Sub
 
 Private Sub SN1_Click()
-    SNC1.visible = SN1.Value
+    SNC1.visible = SN1.value
     
-    If SNT1.Value = "RP" Then
-        If snRP1 <> SN1.Value Then
-            snRP1 = SN1.Value
-            If SN1.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC1.Value) * 2)
+    If SNT1.value = "RP" Then
+        If snRP1 <> SN1.value Then
+            snRP1 = SN1.value
+            If SN1.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC1.value) * 2)
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC1.Value) * 2)
+                UASN.value = CDbl(UASN.value) + (CInt(SNC1.value) * 2)
             End If
         End If
-    ElseIf SNT1.Value = "IN" Then
-        If snIN1 <> SN1.Value Then
-            snIN1 = SN1.Value
-            If SN1.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC1.Value))
+    ElseIf SNT1.value = "IN" Then
+        If snIN1 <> SN1.value Then
+            snIN1 = SN1.value
+            If SN1.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC1.value))
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC1.Value))
+                UASN.value = CDbl(UASN.value) + (CInt(SNC1.value))
             End If
         End If
-    ElseIf SNT1.Value = "RM" Then
-        If snRM1 <> SN1.Value Then
-            snRM1 = SN1.Value
-            If SN1.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC1.Value))
+    ElseIf SNT1.value = "RM" Then
+        If snRM1 <> SN1.value Then
+            snRM1 = SN1.value
+            If SN1.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC1.value))
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC1.Value))
+                UASN.value = CDbl(UASN.value) + (CInt(SNC1.value))
             End If
         End If
     End If
 End Sub
 
 Private Sub SNC1_Change()
-    If SNT1.Value = "RP" Then
-        If PreviousValueRPSNC1 <> SNC1.Value Then
-            UASN.Value = CDbl(UASN.Value) - (2 * (SNC1.Value - PreviousValueRPSNC1))
-            PreviousValueRPSNC1 = SNC1.Value
+    If SNT1.value = "RP" Then
+        If PreviousValueRPSNC1 <> SNC1.value Then
+            UASN.value = CDbl(UASN.value) - (2 * (SNC1.value - PreviousValueRPSNC1))
+            PreviousValueRPSNC1 = SNC1.value
         End If
-    ElseIf SNT1.Value = "IN" Then
-        If PreviousValueINSNC1 <> SNC1.Value Then
-            UASN.Value = CDbl(UASN.Value) - (SNC1.Value - PreviousValueINSNC1)
-            PreviousValueINSNC1 = SNC1.Value
+    ElseIf SNT1.value = "IN" Then
+        If PreviousValueINSNC1 <> SNC1.value Then
+            UASN.value = CDbl(UASN.value) - (SNC1.value - PreviousValueINSNC1)
+            PreviousValueINSNC1 = SNC1.value
         End If
-    ElseIf SNT1.Value = "RM" Then
-        If PreviousValueRMSNC1 <> SNC1.Value Then
-            UASN.Value = CDbl(UASN.Value) - (SNC1.Value - PreviousValueRMSNC1)
-            PreviousValueRMSNC1 = SNC1.Value
+    ElseIf SNT1.value = "RM" Then
+        If PreviousValueRMSNC1 <> SNC1.value Then
+            UASN.value = CDbl(UASN.value) - (SNC1.value - PreviousValueRMSNC1)
+            PreviousValueRMSNC1 = SNC1.value
         End If
     End If
 End Sub
 
 Private Sub SNT2_Change()
-    If SNT2.Value = "RP" Then
-        SN2.Value = snRP2
-        SNC2.Value = PreviousValueRPSNC2
-    ElseIf SNT2.Value = "IN" Then
-        SN2.Value = snIN2
-        SNC2.Value = PreviousValueINSNC2
-    ElseIf SNT2.Value = "RM" Then
-        SN2.Value = snRM2
-        SNC2.Value = PreviousValueRMSNC2
+    If SNT2.value = "RP" Then
+        SN2.value = snRP2
+        SNC2.value = PreviousValueRPSNC2
+    ElseIf SNT2.value = "IN" Then
+        SN2.value = snIN2
+        SNC2.value = PreviousValueINSNC2
+    ElseIf SNT2.value = "RM" Then
+        SN2.value = snRM2
+        SNC2.value = PreviousValueRMSNC2
     End If
 End Sub
 
 Private Sub SN2_Click()
-    SNC2.visible = SN2.Value
+    SNC2.visible = SN2.value
     
-    If SNT2.Value = "RP" Then
-        If snRP2 <> SN2.Value Then
-            snRP2 = SN2.Value
-            If SN2.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC2.Value) * 2)
+    If SNT2.value = "RP" Then
+        If snRP2 <> SN2.value Then
+            snRP2 = SN2.value
+            If SN2.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC2.value) * 2)
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC2.Value) * 2)
+                UASN.value = CDbl(UASN.value) + (CInt(SNC2.value) * 2)
             End If
         End If
-    ElseIf SNT2.Value = "IN" Then
-        If snIN2 <> SN2.Value Then
-            snIN2 = SN2.Value
-            If SN2.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC2.Value))
+    ElseIf SNT2.value = "IN" Then
+        If snIN2 <> SN2.value Then
+            snIN2 = SN2.value
+            If SN2.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC2.value))
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC2.Value))
+                UASN.value = CDbl(UASN.value) + (CInt(SNC2.value))
             End If
         End If
-    ElseIf SNT2.Value = "RM" Then
-        If snRM2 <> SN2.Value Then
-            snRM2 = SN2.Value
-            If SN2.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC2.Value))
+    ElseIf SNT2.value = "RM" Then
+        If snRM2 <> SN2.value Then
+            snRM2 = SN2.value
+            If SN2.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC2.value))
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC2.Value))
+                UASN.value = CDbl(UASN.value) + (CInt(SNC2.value))
             End If
         End If
     End If
 End Sub
 
 Private Sub SNC2_Change()
-    If SNT2.Value = "RP" Then
-        If PreviousValueRPSNC2 <> SNC2.Value Then
-            UASN.Value = CDbl(UASN.Value) - (2 * (SNC2.Value - PreviousValueRPSNC2))
-            PreviousValueRPSNC2 = SNC2.Value
+    If SNT2.value = "RP" Then
+        If PreviousValueRPSNC2 <> SNC2.value Then
+            UASN.value = CDbl(UASN.value) - (2 * (SNC2.value - PreviousValueRPSNC2))
+            PreviousValueRPSNC2 = SNC2.value
         End If
-    ElseIf SNT2.Value = "IN" Then
-        If PreviousValueINSNC2 <> SNC2.Value Then
-            UASN.Value = CDbl(UASN.Value) - (SNC2.Value - PreviousValueINSNC2)
-            PreviousValueINSNC2 = SNC2.Value
+    ElseIf SNT2.value = "IN" Then
+        If PreviousValueINSNC2 <> SNC2.value Then
+            UASN.value = CDbl(UASN.value) - (SNC2.value - PreviousValueINSNC2)
+            PreviousValueINSNC2 = SNC2.value
         End If
-    ElseIf SNT2.Value = "RM" Then
-        If PreviousValueRMSNC2 <> SNC2.Value Then
-            UASN.Value = CDbl(UASN.Value) - (SNC2.Value - PreviousValueRMSNC2)
-            PreviousValueRMSNC2 = SNC2.Value
+    ElseIf SNT2.value = "RM" Then
+        If PreviousValueRMSNC2 <> SNC2.value Then
+            UASN.value = CDbl(UASN.value) - (SNC2.value - PreviousValueRMSNC2)
+            PreviousValueRMSNC2 = SNC2.value
         End If
     End If
 End Sub
 
 Private Sub SNT3_Change()
-    If SNT3.Value = "RP" Then
-        SN3.Value = snRP3
-        SNC3.Value = PreviousValueRPSNC3
-    ElseIf SNT3.Value = "IN" Then
-        SN3.Value = snIN3
-        SNC3.Value = PreviousValueINSNC3
-    ElseIf SNT3.Value = "RM" Then
-        SN3.Value = snRM3
-        SNC3.Value = PreviousValueRMSNC3
+    If SNT3.value = "RP" Then
+        SN3.value = snRP3
+        SNC3.value = PreviousValueRPSNC3
+    ElseIf SNT3.value = "IN" Then
+        SN3.value = snIN3
+        SNC3.value = PreviousValueINSNC3
+    ElseIf SNT3.value = "RM" Then
+        SN3.value = snRM3
+        SNC3.value = PreviousValueRMSNC3
     End If
 End Sub
 
 Private Sub SN3_Click()
-    SNC3.visible = SN3.Value
+    SNC3.visible = SN3.value
     
-    If SNT3.Value = "RP" Then
-        If snRP3 <> SN3.Value Then
-            snRP3 = SN3.Value
-            If SN3.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC3.Value) * 2)
+    If SNT3.value = "RP" Then
+        If snRP3 <> SN3.value Then
+            snRP3 = SN3.value
+            If SN3.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC3.value) * 2)
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC3.Value) * 2)
+                UASN.value = CDbl(UASN.value) + (CInt(SNC3.value) * 2)
             End If
         End If
-    ElseIf SNT3.Value = "IN" Then
-        If snIN3 <> SN3.Value Then
-            snIN3 = SN3.Value
-            If SN3.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC3.Value))
+    ElseIf SNT3.value = "IN" Then
+        If snIN3 <> SN3.value Then
+            snIN3 = SN3.value
+            If SN3.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC3.value))
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC3.Value))
+                UASN.value = CDbl(UASN.value) + (CInt(SNC3.value))
             End If
         End If
-    ElseIf SNT3.Value = "RM" Then
-        If snRM3 <> SN3.Value Then
-            snRM3 = SN3.Value
-            If SN3.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC3.Value))
+    ElseIf SNT3.value = "RM" Then
+        If snRM3 <> SN3.value Then
+            snRM3 = SN3.value
+            If SN3.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC3.value))
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC3.Value))
+                UASN.value = CDbl(UASN.value) + (CInt(SNC3.value))
             End If
         End If
     End If
 End Sub
 
 Private Sub SNC3_Change()
-    If SNT3.Value = "RP" Then
-        If PreviousValueRPSNC3 <> SNC3.Value Then
-            UASN.Value = CDbl(UASN.Value) - (2 * (SNC3.Value - PreviousValueRPSNC3))
-            PreviousValueRPSNC3 = SNC3.Value
+    If SNT3.value = "RP" Then
+        If PreviousValueRPSNC3 <> SNC3.value Then
+            UASN.value = CDbl(UASN.value) - (2 * (SNC3.value - PreviousValueRPSNC3))
+            PreviousValueRPSNC3 = SNC3.value
         End If
-    ElseIf SNT3.Value = "IN" Then
-        If PreviousValueINSNC3 <> SNC3.Value Then
-            UASN.Value = CDbl(UASN.Value) - (SNC3.Value - PreviousValueINSNC3)
-            PreviousValueINSNC3 = SNC3.Value
+    ElseIf SNT3.value = "IN" Then
+        If PreviousValueINSNC3 <> SNC3.value Then
+            UASN.value = CDbl(UASN.value) - (SNC3.value - PreviousValueINSNC3)
+            PreviousValueINSNC3 = SNC3.value
         End If
-    ElseIf SNT3.Value = "RM" Then
-        If PreviousValueRMSNC3 <> SNC3.Value Then
-            UASN.Value = CDbl(UASN.Value) - (SNC3.Value - PreviousValueRMSNC3)
-            PreviousValueRMSNC3 = SNC3.Value
+    ElseIf SNT3.value = "RM" Then
+        If PreviousValueRMSNC3 <> SNC3.value Then
+            UASN.value = CDbl(UASN.value) - (SNC3.value - PreviousValueRMSNC3)
+            PreviousValueRMSNC3 = SNC3.value
         End If
     End If
 End Sub
 
 Private Sub SNT4_Change()
-    If SNT4.Value = "RP" Then
-        SN4.Value = snRP4
-        SNC4.Value = PreviousValueRPSNC4
-    ElseIf SNT4.Value = "IN" Then
-        SN4.Value = snIN4
-        SNC4.Value = PreviousValueINSNC4
-    ElseIf SNT4.Value = "RM" Then
-        SN4.Value = snRM4
-        SNC4.Value = PreviousValueRMSNC4
+    If SNT4.value = "RP" Then
+        SN4.value = snRP4
+        SNC4.value = PreviousValueRPSNC4
+    ElseIf SNT4.value = "IN" Then
+        SN4.value = snIN4
+        SNC4.value = PreviousValueINSNC4
+    ElseIf SNT4.value = "RM" Then
+        SN4.value = snRM4
+        SNC4.value = PreviousValueRMSNC4
     End If
 End Sub
 
 Private Sub SN4_Click()
-    SNC4.visible = SN4.Value
+    SNC4.visible = SN4.value
     
-    If SNT4.Value = "RP" Then
-        If snRP4 <> SN4.Value Then
-            snRP4 = SN4.Value
-            If SN4.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC4.Value))
+    If SNT4.value = "RP" Then
+        If snRP4 <> SN4.value Then
+            snRP4 = SN4.value
+            If SN4.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC4.value))
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC4.Value))
+                UASN.value = CDbl(UASN.value) + (CInt(SNC4.value))
             End If
         End If
-    ElseIf SNT4.Value = "IN" Then
-        If snIN4 <> SN4.Value Then
-            snIN4 = SN4.Value
-            If SN4.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC4.Value) * 0.5)
+    ElseIf SNT4.value = "IN" Then
+        If snIN4 <> SN4.value Then
+            snIN4 = SN4.value
+            If SN4.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC4.value) * 0.5)
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC4.Value) * 0.5)
+                UASN.value = CDbl(UASN.value) + (CInt(SNC4.value) * 0.5)
             End If
         End If
-    ElseIf SNT4.Value = "RM" Then
-        If snRM4 <> SN4.Value Then
-            snRM4 = SN4.Value
-            If SN4.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC4.Value) * 0.5)
+    ElseIf SNT4.value = "RM" Then
+        If snRM4 <> SN4.value Then
+            snRM4 = SN4.value
+            If SN4.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC4.value) * 0.5)
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC4.Value) * 0.5)
+                UASN.value = CDbl(UASN.value) + (CInt(SNC4.value) * 0.5)
             End If
         End If
     End If
 End Sub
 
 Private Sub SNC4_Change()
-    If SNT4.Value = "RP" Then
-        If PreviousValueRPSNC4 <> SNC4.Value Then
-            UASN.Value = CDbl(UASN.Value) - (SNC4.Value - PreviousValueRPSNC4)
-            PreviousValueRPSNC4 = SNC4.Value
+    If SNT4.value = "RP" Then
+        If PreviousValueRPSNC4 <> SNC4.value Then
+            UASN.value = CDbl(UASN.value) - (SNC4.value - PreviousValueRPSNC4)
+            PreviousValueRPSNC4 = SNC4.value
         End If
-    ElseIf SNT4.Value = "IN" Then
-        If PreviousValueINSNC4 <> SNC4.Value Then
-            UASN.Value = CDbl(UASN.Value) - (0.5 * (SNC4.Value - PreviousValueINSNC4))
-            PreviousValueINSNC4 = SNC4.Value
+    ElseIf SNT4.value = "IN" Then
+        If PreviousValueINSNC4 <> SNC4.value Then
+            UASN.value = CDbl(UASN.value) - (0.5 * (SNC4.value - PreviousValueINSNC4))
+            PreviousValueINSNC4 = SNC4.value
         End If
-    ElseIf SNT4.Value = "RM" Then
-        If PreviousValueRMSNC4 <> SNC4.Value Then
-            UASN.Value = CDbl(UASN.Value) - (0.5 * (SNC4.Value - PreviousValueRMSNC4))
-            PreviousValueRMSNC4 = SNC4.Value
+    ElseIf SNT4.value = "RM" Then
+        If PreviousValueRMSNC4 <> SNC4.value Then
+            UASN.value = CDbl(UASN.value) - (0.5 * (SNC4.value - PreviousValueRMSNC4))
+            PreviousValueRMSNC4 = SNC4.value
         End If
     End If
 End Sub
 
 Private Sub SNT5_Change()
-    If SNT5.Value = "RP" Then
-        SN5.Value = snRP5
-        SNC5.Value = PreviousValueRPSNC5
-    ElseIf SNT5.Value = "IN" Then
-        SN5.Value = snIN5
-        SNC5.Value = PreviousValueINSNC5
-    ElseIf SNT5.Value = "RM" Then
-        SN5.Value = snRM5
-        SNC5.Value = PreviousValueRMSNC5
+    If SNT5.value = "RP" Then
+        SN5.value = snRP5
+        SNC5.value = PreviousValueRPSNC5
+    ElseIf SNT5.value = "IN" Then
+        SN5.value = snIN5
+        SNC5.value = PreviousValueINSNC5
+    ElseIf SNT5.value = "RM" Then
+        SN5.value = snRM5
+        SNC5.value = PreviousValueRMSNC5
     End If
 End Sub
 
 Private Sub SN5_Click()
-    SNC5.visible = SN5.Value
+    SNC5.visible = SN5.value
     
-    If SNT5.Value = "RP" Then
-        If snRP5 <> SN5.Value Then
-            snRP5 = SN5.Value
-            If SN5.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC5.Value))
+    If SNT5.value = "RP" Then
+        If snRP5 <> SN5.value Then
+            snRP5 = SN5.value
+            If SN5.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC5.value))
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC5.Value))
+                UASN.value = CDbl(UASN.value) + (CInt(SNC5.value))
             End If
         End If
-    ElseIf SNT5.Value = "IN" Then
-        If snIN5 <> SN5.Value Then
-            snIN5 = SN5.Value
-            If SN5.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC5.Value) * 0.5)
+    ElseIf SNT5.value = "IN" Then
+        If snIN5 <> SN5.value Then
+            snIN5 = SN5.value
+            If SN5.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC5.value) * 0.5)
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC5.Value) * 0.5)
+                UASN.value = CDbl(UASN.value) + (CInt(SNC5.value) * 0.5)
             End If
         End If
-    ElseIf SNT5.Value = "RM" Then
-        If snRM5 <> SN5.Value Then
-            snRM5 = SN5.Value
-            If SN5.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC5.Value) * 0.5)
+    ElseIf SNT5.value = "RM" Then
+        If snRM5 <> SN5.value Then
+            snRM5 = SN5.value
+            If SN5.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC5.value) * 0.5)
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC5.Value) * 0.5)
+                UASN.value = CDbl(UASN.value) + (CInt(SNC5.value) * 0.5)
             End If
         End If
     End If
 End Sub
 
 Private Sub SNC5_Change()
-    If SNT5.Value = "RP" Then
-        If PreviousValueRPSNC5 <> SNC5.Value Then
-            UASN.Value = CDbl(UASN.Value) - (SNC5.Value - PreviousValueRPSNC5)
-            PreviousValueRPSNC5 = SNC5.Value
+    If SNT5.value = "RP" Then
+        If PreviousValueRPSNC5 <> SNC5.value Then
+            UASN.value = CDbl(UASN.value) - (SNC5.value - PreviousValueRPSNC5)
+            PreviousValueRPSNC5 = SNC5.value
         End If
-    ElseIf SNT5.Value = "IN" Then
-        If PreviousValueINSNC5 <> SNC5.Value Then
-            UASN.Value = CDbl(UASN.Value) - (0.5 * (SNC5.Value - PreviousValueINSNC5))
-            PreviousValueINSNC5 = SNC5.Value
+    ElseIf SNT5.value = "IN" Then
+        If PreviousValueINSNC5 <> SNC5.value Then
+            UASN.value = CDbl(UASN.value) - (0.5 * (SNC5.value - PreviousValueINSNC5))
+            PreviousValueINSNC5 = SNC5.value
         End If
-    ElseIf SNT5.Value = "RM" Then
-        If PreviousValueRMSNC5 <> SNC5.Value Then
-            UASN.Value = CDbl(UASN.Value) - (0.5 * (SNC5.Value - PreviousValueRMSNC5))
-            PreviousValueRMSNC5 = SNC5.Value
+    ElseIf SNT5.value = "RM" Then
+        If PreviousValueRMSNC5 <> SNC5.value Then
+            UASN.value = CDbl(UASN.value) - (0.5 * (SNC5.value - PreviousValueRMSNC5))
+            PreviousValueRMSNC5 = SNC5.value
         End If
     End If
 End Sub
 
 Private Sub SNT6_Change()
-    If SNT6.Value = "RP" Then
-        SN6.Value = snRP6
-        SNC6.Value = PreviousValueRPSNC6
-    ElseIf SNT6.Value = "IN" Then
-        SN6.Value = snIN6
-        SNC6.Value = PreviousValueINSNC6
-    ElseIf SNT6.Value = "RM" Then
-        SN6.Value = snRM6
-        SNC6.Value = PreviousValueRMSNC6
+    If SNT6.value = "RP" Then
+        SN6.value = snRP6
+        SNC6.value = PreviousValueRPSNC6
+    ElseIf SNT6.value = "IN" Then
+        SN6.value = snIN6
+        SNC6.value = PreviousValueINSNC6
+    ElseIf SNT6.value = "RM" Then
+        SN6.value = snRM6
+        SNC6.value = PreviousValueRMSNC6
     End If
 End Sub
 
 Private Sub SN6_Click()
-    SNC6.visible = SN6.Value
+    SNC6.visible = SN6.value
     
-    If SNT6.Value = "RP" Then
-        If snRP6 <> SN6.Value Then
-            snRP6 = SN6.Value
-            If SN6.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC6.Value))
+    If SNT6.value = "RP" Then
+        If snRP6 <> SN6.value Then
+            snRP6 = SN6.value
+            If SN6.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC6.value))
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC6.Value))
+                UASN.value = CDbl(UASN.value) + (CInt(SNC6.value))
             End If
         End If
-    ElseIf SNT6.Value = "IN" Then
-        If snIN6 <> SN6.Value Then
-            snIN6 = SN6.Value
-            If SN6.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC6.Value) * 0.5)
+    ElseIf SNT6.value = "IN" Then
+        If snIN6 <> SN6.value Then
+            snIN6 = SN6.value
+            If SN6.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC6.value) * 0.5)
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC6.Value) * 0.5)
+                UASN.value = CDbl(UASN.value) + (CInt(SNC6.value) * 0.5)
             End If
         End If
-    ElseIf SNT6.Value = "RM" Then
-        If snRM6 <> SN6.Value Then
-            snRM6 = SN6.Value
-            If SN6.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC6.Value) * 0.5)
+    ElseIf SNT6.value = "RM" Then
+        If snRM6 <> SN6.value Then
+            snRM6 = SN6.value
+            If SN6.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC6.value) * 0.5)
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC6.Value) * 0.5)
+                UASN.value = CDbl(UASN.value) + (CInt(SNC6.value) * 0.5)
             End If
         End If
     End If
 End Sub
 
 Private Sub SNC6_Change()
-    If SNT6.Value = "RP" Then
-        If PreviousValueRPSNC6 <> SNC6.Value Then
-            UASN.Value = CDbl(UASN.Value) - (SNC6.Value - PreviousValueRPSNC6)
-            PreviousValueRPSNC6 = SNC6.Value
+    If SNT6.value = "RP" Then
+        If PreviousValueRPSNC6 <> SNC6.value Then
+            UASN.value = CDbl(UASN.value) - (SNC6.value - PreviousValueRPSNC6)
+            PreviousValueRPSNC6 = SNC6.value
         End If
-    ElseIf SNT6.Value = "IN" Then
-        If PreviousValueINSNC6 <> SNC6.Value Then
-            UASN.Value = CDbl(UASN.Value) - (0.5 * (SNC6.Value - PreviousValueINSNC6))
-            PreviousValueINSNC6 = SNC6.Value
+    ElseIf SNT6.value = "IN" Then
+        If PreviousValueINSNC6 <> SNC6.value Then
+            UASN.value = CDbl(UASN.value) - (0.5 * (SNC6.value - PreviousValueINSNC6))
+            PreviousValueINSNC6 = SNC6.value
         End If
-    ElseIf SNT6.Value = "RM" Then
-        If PreviousValueRMSNC6 <> SNC6.Value Then
-            UASN.Value = CDbl(UASN.Value) - (0.5 * (SNC6.Value - PreviousValueRMSNC6))
-            PreviousValueRMSNC6 = SNC6.Value
+    ElseIf SNT6.value = "RM" Then
+        If PreviousValueRMSNC6 <> SNC6.value Then
+            UASN.value = CDbl(UASN.value) - (0.5 * (SNC6.value - PreviousValueRMSNC6))
+            PreviousValueRMSNC6 = SNC6.value
         End If
     End If
 End Sub
 
 Private Sub SNT7_Change()
-    If SNT7.Value = "RP" Then
-        SN7.Value = snRP7
-        SNC7.Value = PreviousValueRPSNC7
-    ElseIf SNT7.Value = "IN" Then
-        SN7.Value = snIN7
-        SNC7.Value = PreviousValueINSNC7
-    ElseIf SNT7.Value = "RM" Then
-        SN7.Value = snRM7
-        SNC7.Value = PreviousValueRMSNC7
+    If SNT7.value = "RP" Then
+        SN7.value = snRP7
+        SNC7.value = PreviousValueRPSNC7
+    ElseIf SNT7.value = "IN" Then
+        SN7.value = snIN7
+        SNC7.value = PreviousValueINSNC7
+    ElseIf SNT7.value = "RM" Then
+        SN7.value = snRM7
+        SNC7.value = PreviousValueRMSNC7
     End If
 End Sub
 
 Private Sub SN7_Click()
-    SNC7.visible = SN7.Value
+    SNC7.visible = SN7.value
     
-    If SNT7.Value = "RP" Then
-        If snRP7 <> SN7.Value Then
-            snRP7 = SN7.Value
-            If SN7.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC7.Value) * 2)
+    If SNT7.value = "RP" Then
+        If snRP7 <> SN7.value Then
+            snRP7 = SN7.value
+            If SN7.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC7.value) * 2)
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC7.Value) * 2)
+                UASN.value = CDbl(UASN.value) + (CInt(SNC7.value) * 2)
             End If
         End If
-    ElseIf SNT7.Value = "IN" Then
-        If snIN7 <> SN7.Value Then
-            snIN7 = SN7.Value
-            If SN7.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC7.Value))
+    ElseIf SNT7.value = "IN" Then
+        If snIN7 <> SN7.value Then
+            snIN7 = SN7.value
+            If SN7.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC7.value))
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC7.Value))
+                UASN.value = CDbl(UASN.value) + (CInt(SNC7.value))
             End If
         End If
-    ElseIf SNT7.Value = "RM" Then
-        If snRM7 <> SN7.Value Then
-            snRM7 = SN7.Value
-            If SN7.Value Then
-                UASN.Value = CDbl(UASN.Value) - (CInt(SNC7.Value))
+    ElseIf SNT7.value = "RM" Then
+        If snRM7 <> SN7.value Then
+            snRM7 = SN7.value
+            If SN7.value Then
+                UASN.value = CDbl(UASN.value) - (CInt(SNC7.value))
             Else
-                UASN.Value = CDbl(UASN.Value) + (CInt(SNC7.Value))
+                UASN.value = CDbl(UASN.value) + (CInt(SNC7.value))
             End If
         End If
     End If
 End Sub
 
 Private Sub SNC7_Change()
-    If SNT7.Value = "RP" Then
-        If PreviousValueRPSNC7 <> SNC7.Value Then
-            UASN.Value = CDbl(UASN.Value) - (2 * (SNC7.Value - PreviousValueRPSNC7))
-            PreviousValueRPSNC7 = SNC7.Value
+    If SNT7.value = "RP" Then
+        If PreviousValueRPSNC7 <> SNC7.value Then
+            UASN.value = CDbl(UASN.value) - (2 * (SNC7.value - PreviousValueRPSNC7))
+            PreviousValueRPSNC7 = SNC7.value
         End If
-    ElseIf SNT7.Value = "IN" Then
-        If PreviousValueINSNC7 <> SNC7.Value Then
-            UASN.Value = CDbl(UASN.Value) - (SNC7.Value - PreviousValueINSNC7)
-            PreviousValueINSNC7 = SNC7.Value
+    ElseIf SNT7.value = "IN" Then
+        If PreviousValueINSNC7 <> SNC7.value Then
+            UASN.value = CDbl(UASN.value) - (SNC7.value - PreviousValueINSNC7)
+            PreviousValueINSNC7 = SNC7.value
         End If
-    ElseIf SNT7.Value = "RM" Then
-        If PreviousValueRMSNC7 <> SNC7.Value Then
-            UASN.Value = CDbl(UASN.Value) - (SNC7.Value - PreviousValueRMSNC7)
-            PreviousValueRMSNC7 = SNC7.Value
+    ElseIf SNT7.value = "RM" Then
+        If PreviousValueRMSNC7 <> SNC7.value Then
+            UASN.value = CDbl(UASN.value) - (SNC7.value - PreviousValueRMSNC7)
+            PreviousValueRMSNC7 = SNC7.value
         End If
     End If
 End Sub
@@ -3246,29 +3246,29 @@ Private Sub TRLETTER_Change()
 End Sub
 
 Private Sub TRT_Click()
-    If TRT.Value And RPT.Value Then RPT.Value = False
-    XSL.visible = RPP.Value And (TRT.Value Or RPT.Value)
-    TRSIZE.visible = RPP.Value And (TRT.Value Or RPT.Value)
-    CLL.visible = RPP.Value And (TRT.Value Or RPT.Value)
-    COLA.visible = RPP.Value And (TRT.Value Or RPT.Value)
-    XDL.visible = RPP.Value And (TRT.Value Or RPT.Value)
-    TRLETTER.visible = RPP.Value And (TRT.Value Or RPT.Value)
+    If TRT.value And RPT.value Then RPT.value = False
+    XSL.visible = RPP.value And (TRT.value Or RPT.value)
+    TRSIZE.visible = RPP.value And (TRT.value Or RPT.value)
+    CLL.visible = RPP.value And (TRT.value Or RPT.value)
+    COLA.visible = RPP.value And (TRT.value Or RPT.value)
+    XDL.visible = RPP.value And (TRT.value Or RPT.value)
+    TRLETTER.visible = RPP.value And (TRT.value Or RPT.value)
     Call determineRecDSpace
 End Sub
 
 Private Sub RPT_Click()
-    If RPT.Value And TRT.Value Then TRT.Value = False
-    XSL.visible = RPP.Value And (TRT.Value Or RPT.Value)
-    TRSIZE.visible = TRT.Value Or RPT.Value
-    XRL.visible = RPP.Value And RPT.Value
-    TRRPSIZE.visible = RPP.Value And RPT.Value
-    CLL.visible = RPP.Value And (TRT.Value Or RPT.Value)
-    COLA.visible = RPP.Value And (TRT.Value Or RPT.Value)
-    XDL.visible = RPP.Value And (TRT.Value Or RPT.Value)
-    TRLETTER.visible = RPP.Value And (TRT.Value Or RPT.Value)
+    If RPT.value And TRT.value Then TRT.value = False
+    XSL.visible = RPP.value And (TRT.value Or RPT.value)
+    TRSIZE.visible = TRT.value Or RPT.value
+    XRL.visible = RPP.value And RPT.value
+    TRRPSIZE.visible = RPP.value And RPT.value
+    CLL.visible = RPP.value And (TRT.value Or RPT.value)
+    COLA.visible = RPP.value And (TRT.value Or RPT.value)
+    XDL.visible = RPP.value And (TRT.value Or RPT.value)
+    TRLETTER.visible = RPP.value And (TRT.value Or RPT.value)
     Call determineRecDSpace
 End Sub
 
 Private Sub UASN_Change()
-    UASN2.Value = UASN.Value
+    UASN2.value = UASN.value
 End Sub
