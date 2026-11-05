@@ -3,7 +3,7 @@ Public Sub createNJUNS()
         Call LogMessage.SendLogMessage("createNJUNS")
         
         Set sheet = Application.ActiveSheet
-        If sheet.name = "4 Spans" Or sheet.name = "8 Spans" Or sheet.name = "12 Spans" Or sheet.Cells(2, 2).Value <> "Notification:" Then
+        If sheet.name = "4 Spans" Or sheet.name = "8 Spans" Or sheet.name = "12 Spans" Or sheet.cells(2, 2).value <> "Notification:" Then
             MsgBox "You need to have a pole detail sheet active to run this script."
             Exit Sub
         End If
@@ -20,29 +20,29 @@ Public Function moveComms(ByVal index As Long, ByVal comms As Collection, ByVal 
         Exit Function
     End If
     
-    Dim Comm As Comm
-    Set Comm = comms(index)
+    Dim comm As comm
+    Set comm = comms(index)
     
     Dim drops As String
-    If Comm.drops Then
+    If comm.drops Then
         drops = " and attach drops to mainline "
     End If
     
-    movement = Comm.owner & vbCrLf
-    If Comm.modification = "" Then Comm.modification = Comm.height
+    movement = comm.owner & vbCrLf
+    If comm.modification = "" Then comm.modification = comm.height
     If movements(index) = "Raise" Or movements(index) = "Lower" Then
-        If Comm.Bracket Then
+        If comm.Bracket Then
             movement = movement & "to remove [from] standoff bracket and attach to pole to correct illegal attachment violation. "
         End If
-        If Comm.Boxed Then
+        If comm.Boxed Then
             movement = movement & "to correct boxing violation. "
         End If
     End If
     If movements(index) = "Lower" Then
-        If Comm.Mainline Then
-            movement = movement & "Lower" & Comm.orientation & " mainline a minimum of " & findDifference(Comm.height, Comm.modification) & " on the pole" & IIf(Comm.drops, drops, " ") & "to " & Comm.reasonForMovement
+        If comm.Mainline Then
+            movement = movement & "Lower" & comm.orientation & " mainline a minimum of " & findDifference(comm.height, comm.modification) & " on the pole" & IIf(comm.drops, drops, " ") & "to " & comm.reasonForMovement
         Else
-            movement = movement & "Lower drop a minimum of " & findDifference(Comm.height, Comm.modification) & " on the pole" & IIf(Comm.drops, drops, " ") & "to " & Comm.reasonForMovement
+            movement = movement & "Lower drop a minimum of " & findDifference(comm.height, comm.modification) & " on the pole" & IIf(comm.drops, drops, " ") & "to " & comm.reasonForMovement
         End If
         If (index + 1 > comms.count) Then
             movement = movement & "Maintain minimum " & IIf(Not applicant Or ApplyAbove, "15'6""", "16'0""") & " midspan ground clearance." & vbCrLf
@@ -50,10 +50,10 @@ Public Function moveComms(ByVal index As Long, ByVal comms As Collection, ByVal 
             movement = movement & "Maintain minimum 12"" comm separation on the pole and 6"" separation at the midspan above " & IIf(comms(index + 1).owner = comms(index).owner, "other " & comms(index + 1).owner & " mainline", comms(index + 1).owner) & "." & vbCrLf
         End If
     ElseIf movements(index) = "Raise" Then
-        If Comm.Mainline Then
-            movement = movement & "Raise" & Comm.orientation & " mainline a minimum of " & findDifference(Comm.height, Comm.modification) & " on the pole" & IIf(Comm.drops, drops, " ") & "to " & Comm.reasonForMovement
+        If comm.Mainline Then
+            movement = movement & "Raise" & comm.orientation & " mainline a minimum of " & findDifference(comm.height, comm.modification) & " on the pole" & IIf(comm.drops, drops, " ") & "to " & comm.reasonForMovement
         Else
-            movement = movement & "Raise drop a minimum of " & findDifference(Comm.height, Comm.modification) & " on the pole" & IIf(Comm.drops, drops, " ") & "to " & Comm.reasonForMovement
+            movement = movement & "Raise drop a minimum of " & findDifference(comm.height, comm.modification) & " on the pole" & IIf(comm.drops, drops, " ") & "to " & comm.reasonForMovement
         End If
         If (index = 1) Then
             movement = movement & "Maintain minimum " & IIf(applicant And ApplyAbove, "52""", "40""") & " pole separation and " & IIf(applicant And ApplyAbove, "36""", "30""") & " midspan separation below lowest power." & vbCrLf
@@ -61,7 +61,7 @@ Public Function moveComms(ByVal index As Long, ByVal comms As Collection, ByVal 
             movement = movement & "Maintain minimum 12"" comm separation on the pole and 6"" separation at the midspan below " & IIf(comms(index - 1).owner = comms(index).owner, "other " & comms(index - 1).owner & " mainline", comms(index - 1).owner) & "." & vbCrLf
         End If
     ElseIf movements(index) = "Attach" Then
-        movement = movement & "Attach" & Comm.orientation & " mainline to pole. "
+        movement = movement & "Attach" & comm.orientation & " mainline to pole. "
         If (index = 1) Then
             movement = movement & "Maintain minimum " & IIf(applicant And ApplyAbove, "52""", "40""") & " pole separation and " & IIf(applicant And ApplyAbove, "36""", "30""") & " midspan separation below lowest power. "
         End If
@@ -71,28 +71,28 @@ Public Function moveComms(ByVal index As Long, ByVal comms As Collection, ByVal 
         movement = movement & "Maintain minimum " & Utilities.inchesToFeetInches(((movements.count - index) * 6) + 186 + IIf(Not applicant Or ApplyAbove, 0, 6)) & " midspan ground clearance." & vbCrLf
     End If
     If movements(index) = "Raise" Or movements(index) = "Lower" Then
-        Dim othercomm As Comm
+        Dim othercomm As comm
         For Each othercomm In comms
-            If Not Comm.Equals(othercomm) And Comm.Mainline And othercomm.Mainline And Not othercomm.NotAttached Then
-                If Utilities.convertToInches(Comm.height) < convertToInches(othercomm.height) And Utilities.convertToInches(Comm.modification) > Utilities.convertToInches(othercomm.modification) Then
+            If Not comm.Equals(othercomm) And comm.Mainline And othercomm.Mainline And Not othercomm.NotAttached Then
+                If Utilities.convertToInches(comm.height) < convertToInches(othercomm.height) And Utilities.convertToInches(comm.modification) > Utilities.convertToInches(othercomm.modification) Then
                     movement = Left(movement, Len(movement) - 2) & " Coordinate with " & othercomm.owner & " to change attach orientation." & vbCrLf
-                ElseIf Utilities.convertToInches(Comm.height) > convertToInches(othercomm.height) And Utilities.convertToInches(Comm.modification) < Utilities.convertToInches(othercomm.modification) Then
+                ElseIf Utilities.convertToInches(comm.height) > convertToInches(othercomm.height) And Utilities.convertToInches(comm.modification) < Utilities.convertToInches(othercomm.modification) Then
                     movement = Left(movement, Len(movement) - 2) & " Coordinate with " & othercomm.owner & " to change attach orientation." & vbCrLf
                 End If
             End If
         Next othercomm
     End If
     
-    If movement = Comm.owner & vbCrLf And Comm.drops Then
-        movement = movement & "Attach drops to mainline to " & Comm.reasonForMovement & vbCrLf
+    If movement = comm.owner & vbCrLf And comm.drops Then
+        movement = movement & "Attach drops to mainline to " & comm.reasonForMovement & vbCrLf
     End If
     
-    If Comm.Bracket And (movements(index) <> "Raise" And movements(index) <> "Lower") Then
+    If comm.Bracket And (movements(index) <> "Raise" And movements(index) <> "Lower") Then
         If Right(movement, 3) = "." & vbCrLf Then
             movement = Left(movement, Len(movement) - 2) & " "
         End If
         movement = movement & "to remove [from] standoff bracket and attach to pole to correct illegal attachment violation. "
-        If Comm.Boxed Then
+        If comm.Boxed Then
             movement = movement & "to correct boxing violation. "
         End If
         If (index < comms.count) Then
@@ -100,7 +100,7 @@ Public Function moveComms(ByVal index As Long, ByVal comms As Collection, ByVal 
         Else
             movement = movement & "Maintain minimum " & IIf(Not applicant Or ApplyAbove, "15'6""", "16'0""") & " midspan ground clearance." & vbCrLf
         End If
-    ElseIf Comm.Boxed And (movements(index) <> "Raise" And movements(index) <> "Lower") Then
+    ElseIf comm.Boxed And (movements(index) <> "Raise" And movements(index) <> "Lower") Then
         If Right(movement, 3) = "." & vbCrLf Then
             movement = Left(movement, Len(movement) - 2) & " "
         End If
@@ -112,29 +112,29 @@ Public Function moveComms(ByVal index As Long, ByVal comms As Collection, ByVal 
         End If
     End If
     
-    If Comm.UpgradeGuy Then
+    If comm.UpgradeGuy Then
         If Right(movement, 3) = "." & vbCrLf Then
             movement = Left(movement, Len(movement) - 2) & " "
         End If
         movement = movement & "Replace 6M guy with 10M guy to correct pole loading failure." & vbCrLf
     End If
     
-    If Comm.InstallAnchor Then
+    If comm.InstallAnchor Then
         If Right(movement, 3) = "." & vbCrLf Then
             movement = Left(movement, Len(movement) - 2) & " "
         End If
-        movement = movement & "Install [6M/10M] guy/anchor " & IIf(Comm.NextAnchor > 0, Comm.NextAnchor & "'", "[INSERT ANCHOR DISTANCE]") & " to the [DIRECTION] to support unsupported [span/angle]. Maintain a minimum 3' anchor separation and 5' pole separation. Do not cross other down guys." & vbCrLf
+        movement = movement & "Install [6M/10M] guy/anchor " & IIf(comm.NextAnchor > 0, comm.NextAnchor & "'", "[INSERT ANCHOR DISTANCE]") & " to the [DIRECTION] to support unsupported [span/angle]. Maintain a minimum 3' anchor separation and 5' pole separation. Do not cross other down guys." & vbCrLf
     End If
     
-    If Comm.MoveAnchor Then
-        If Comm.NextAnchor <> Comm.PreviousAnchor Then
+    If comm.MoveAnchor Then
+        If comm.NextAnchor <> comm.PreviousAnchor Then
             If Right(movement, 3) = "." & vbCrLf Then
                 movement = Left(movement, Len(movement) - 2) & " "
             End If
-            If Comm.NextAnchor > Comm.PreviousAnchor Then
-                movement = movement & "Extend guy/anchor to a minimum of " & Comm.NextAnchor & "' away from the pole to " & Comm.reasonForAnchorMovement & "Maintain a minimum 3' anchor separation. Do not cross other down guys." & vbCrLf
-            ElseIf Comm.NextAnchor < Comm.PreviousAnchor Then
-                movement = movement & "Retract guy/anchor to a maximum of " & Comm.NextAnchor & "' away from the pole to " & Comm.reasonForAnchorMovement & "Maintain a minimum 3' anchor separation and 5' pole separation. Do not cross other down guys." & vbCrLf
+            If comm.NextAnchor > comm.PreviousAnchor Then
+                movement = movement & "Extend guy/anchor to a minimum of " & comm.NextAnchor & "' away from the pole to " & comm.reasonForAnchorMovement & "Maintain a minimum 3' anchor separation. Do not cross other down guys." & vbCrLf
+            ElseIf comm.NextAnchor < comm.PreviousAnchor Then
+                movement = movement & "Retract guy/anchor to a maximum of " & comm.NextAnchor & "' away from the pole to " & comm.reasonForAnchorMovement & "Maintain a minimum 3' anchor separation and 5' pole separation. Do not cross other down guys." & vbCrLf
             End If
         End If
     End If
@@ -151,7 +151,7 @@ Public Function moveComms(ByVal index As Long, ByVal comms As Collection, ByVal 
         Else
             moveComms = moveComms(index + 1, comms, movements, applicant, ApplyAbove) & movement & vbCrLf
         End If
-    ElseIf movements(index) = "Nothing" And movement <> Comm.owner & vbCrLf Then
+    ElseIf movements(index) = "Nothing" And movement <> comm.owner & vbCrLf Then
         moveComms = movement & vbCrLf & moveComms(index + 1, comms, movements, applicant, ApplyAbove)
     ElseIf movements(index) = "Nothing" Then
         moveComms = moveComms(index + 1, comms, movements, applicant, ApplyAbove)
@@ -184,53 +184,53 @@ Public Function topPole(ByVal comms As Collection, applicant As Boolean, ApplyAb
     Dim previousOwner As String
     previousOwner = ""
     For i = 1 To comms.count
-        Dim Comm As Comm
-        Set Comm = comms(i)
+        Dim comm As comm
+        Set comm = comms(i)
         Dim drops As String
-        If Comm.drops Then
+        If comm.drops Then
             drops = " and attach drops to mainline "
         End If
         If i = 1 Then
             If applicant Then
                 If ApplyAbove Then
-                    movement = movement & Comm.owner & vbCrLf & "To transfer" & Comm.orientation & " mainline to new pole" & IIf(Comm.drops, drops, " ") & "with a minimum 52"" safety zone separation on the pole and 36"" separation at the midspan below lowest power. Maintain minimum " & clearanceDict(comms.count) & " midspan ground clearance." & vbCrLf
+                    movement = movement & comm.owner & vbCrLf & "To transfer" & comm.orientation & " mainline to new pole" & IIf(comm.drops, drops, " ") & "with a minimum 52"" safety zone separation on the pole and 36"" separation at the midspan below lowest power. Maintain minimum " & clearanceDict(comms.count) & " midspan ground clearance." & vbCrLf
                 Else
-                    movement = movement & Comm.owner & vbCrLf & "To transfer" & Comm.orientation & " mainline to new pole" & IIf(Comm.drops, drops, " ") & "with a minimum 40"" safety zone separation on the pole and 30"" separation at the midspan below lowest power. Maintain minimum " & clearanceDict(comms.count + 1) & " midspan ground clearance." & vbCrLf
+                    movement = movement & comm.owner & vbCrLf & "To transfer" & comm.orientation & " mainline to new pole" & IIf(comm.drops, drops, " ") & "with a minimum 40"" safety zone separation on the pole and 30"" separation at the midspan below lowest power. Maintain minimum " & clearanceDict(comms.count + 1) & " midspan ground clearance." & vbCrLf
                 End If
-                previousOwner = Comm.owner
+                previousOwner = comm.owner
             Else
-                movement = movement & Comm.owner & vbCrLf & "To transfer" & Comm.orientation & " mainline to new pole" & IIf(Comm.drops, drops, " ") & "with a minimum 40"" safety zone separation on the pole and 30"" separation at the midspan below lowest power. Maintain minimum " & clearanceDict(comms.count - i + IIf(applicant And Not ApplyAbove, 2, 1)) & " midspan ground clearance." & vbCrLf
-                previousOwner = Comm.owner
+                movement = movement & comm.owner & vbCrLf & "To transfer" & comm.orientation & " mainline to new pole" & IIf(comm.drops, drops, " ") & "with a minimum 40"" safety zone separation on the pole and 30"" separation at the midspan below lowest power. Maintain minimum " & clearanceDict(comms.count - i + IIf(applicant And Not ApplyAbove, 2, 1)) & " midspan ground clearance." & vbCrLf
+                previousOwner = comm.owner
             End If
         Else
-            movement = movement & Comm.owner & vbCrLf & "To transfer" & Comm.orientation & " mainline to new pole" & IIf(Comm.drops, drops, " ") & "with a minimum 12"" comm separation on the pole and 6"" separation at the midspan below " & IIf(previousOwner = Comm.owner, "other " & Comm.owner & " mainline", previousOwner) & ". Maintain minimum " & clearanceDict(comms.count - i + IIf(applicant And Not ApplyAbove, 2, 1)) & " midspan ground clearance." & vbCrLf
-            previousOwner = Comm.owner
+            movement = movement & comm.owner & vbCrLf & "To transfer" & comm.orientation & " mainline to new pole" & IIf(comm.drops, drops, " ") & "with a minimum 12"" comm separation on the pole and 6"" separation at the midspan below " & IIf(previousOwner = comm.owner, "other " & comm.owner & " mainline", previousOwner) & ". Maintain minimum " & clearanceDict(comms.count - i + IIf(applicant And Not ApplyAbove, 2, 1)) & " midspan ground clearance." & vbCrLf
+            previousOwner = comm.owner
         End If
-        If Not Comm.Mainline Then
+        If Not comm.Mainline Then
             movement = Replace(movement, "mainline", "drops")
         End If
         
-        If Comm.UpgradeGuy Then
+        If comm.UpgradeGuy Then
             If Right(movement, 3) = "." & vbCrLf Then
                 movement = Left(movement, Len(movement) - 2) & " "
             End If
         movement = movement & " Replace 6M guy with 10M guy to correct pole loading failure." & vbCrLf
         End If
     
-        If Comm.MoveAnchor Then
-            If Comm.NextAnchor <> Comm.PreviousAnchor Then
+        If comm.MoveAnchor Then
+            If comm.NextAnchor <> comm.PreviousAnchor Then
                 If Right(movement, 3) = "." & vbCrLf Then
                     movement = Left(movement, Len(movement) - 2) & " "
                 End If
-                If Comm.NextAnchor > Comm.PreviousAnchor Then
-                    movement = movement & "Extend guy/anchor to a minimum of " & Comm.NextAnchor & "' away from the pole to " & Comm.reasonForAnchorMovement & "Maintain a minimum 3' anchor separation. Do not cross other down guys." & vbCrLf
-                ElseIf Comm.NextAnchor < Comm.PreviousAnchor Then
-                    movement = movement & "Retract guy/anchor to a maximum of " & Comm.NextAnchor & "' away from the pole to " & Comm.reasonForAnchorMovement & "Maintain a minimum 3' anchor separation and 5' pole separation. Do not cross other down guys." & vbCrLf
+                If comm.NextAnchor > comm.PreviousAnchor Then
+                    movement = movement & "Extend guy/anchor to a minimum of " & comm.NextAnchor & "' away from the pole to " & comm.reasonForAnchorMovement & "Maintain a minimum 3' anchor separation. Do not cross other down guys." & vbCrLf
+                ElseIf comm.NextAnchor < comm.PreviousAnchor Then
+                    movement = movement & "Retract guy/anchor to a maximum of " & comm.NextAnchor & "' away from the pole to " & comm.reasonForAnchorMovement & "Maintain a minimum 3' anchor separation and 5' pole separation. Do not cross other down guys." & vbCrLf
                 End If
             End If
         End If
         
-        If Comm.InstallAnchor Then
+        If comm.InstallAnchor Then
             If Right(movement, 3) = "." & vbCrLf Then
                 movement = Left(movement, Len(movement) - 2) & " "
             End If
