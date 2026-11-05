@@ -36,11 +36,11 @@ Sub ImportApplication()
     Dim applicationWs As Worksheet: Set applicationWs = applicationWb.sheets(1)
     
     Dim i As Integer
-    Dim applicationWsLastRow As Integer: applicationWsLastRow = applicationWs.Cells(applicationWs.Rows.count, "A").End(xlUp).ROW
-    Dim applicationWsLastCol As Integer: applicationWsLastCol = applicationWs.Cells(1, applicationWs.Columns.count).End(xlToLeft).Column
+    Dim applicationWsLastRow As Integer: applicationWsLastRow = applicationWs.cells(applicationWs.Rows.count, "A").End(xlUp).ROW
+    Dim applicationWsLastCol As Integer: applicationWsLastCol = applicationWs.cells(1, applicationWs.Columns.count).End(xlToLeft).column
     Dim applicationWsHeaders As Scripting.Dictionary: Set applicationWsHeaders = New Scripting.Dictionary
     For i = 1 To applicationWsLastCol
-        header = Trim(applicationWs.Cells(1, i).Value)
+        header = Trim(applicationWs.cells(1, i).value)
         If header <> "" Then
             applicationWsHeaders(header) = i
         End If
@@ -53,74 +53,74 @@ Sub ImportApplication()
     Call clearApp
     
     For i = 2 To applicationWsLastRow
-        sheetName = CStr(applicationWs.Cells(i, applicationWsHeaders("POLE NUMBER")))
-        toPoleSheetName = CStr(applicationWs.Cells(i, applicationWsHeaders("TO POLE")))
+        sheetName = CStr(applicationWs.cells(i, applicationWsHeaders("POLE NUMBER")))
+        toPoleSheetName = CStr(applicationWs.cells(i, applicationWsHeaders("TO POLE")))
         Dim added As Boolean
         If SheetExists(sheetName) Then
             Set sheet = Utilities.GetPDS(sheetName)
         
             If applicationWsHeaders.exists("PROPOSED ATT. HEIGHT") Then
-                sheet.Range("PROPOSEDHEIGHT").Value = CleanFeetInches(applicationWs.Cells(i, applicationWsHeaders("PROPOSED ATT. HEIGHT")))
+                sheet.Range("PROPOSEDHEIGHT").value = CleanFeetInches(applicationWs.cells(i, applicationWsHeaders("PROPOSED ATT. HEIGHT")))
             End If
             If (applicationWsHeaders.exists("OL ATT. HEIGHT")) Then
-                If UCase(applicationWs.Cells(i, applicationWsHeaders("OL ATT. HEIGHT")).Value) <> "NA" And UCase(applicationWs.Cells(i, applicationWsHeaders("OL ATT. HEIGHT")).Value) <> "N/A" And Trim(applicationWs.Cells(i, applicationWsHeaders("OL ATT. HEIGHT")).Value) <> "" Then
-                    sheet.Range("PROPOSEDHEIGHT").Value = sheet.Range("PROPOSEDHEIGHT").Value & " OL"
+                If UCase(applicationWs.cells(i, applicationWsHeaders("OL ATT. HEIGHT")).value) <> "NA" And UCase(applicationWs.cells(i, applicationWsHeaders("OL ATT. HEIGHT")).value) <> "N/A" And Trim(applicationWs.cells(i, applicationWsHeaders("OL ATT. HEIGHT")).value) <> "" Then
+                    sheet.Range("PROPOSEDHEIGHT").value = sheet.Range("PROPOSEDHEIGHT").value & " OL"
                 End If
             End If
             If (applicationWsHeaders.exists("GUY SIZE")) Then
-                If (UCase(applicationWs.Cells(i, applicationWsHeaders("GUY SIZE"))) <> "NA" And UCase(applicationWs.Cells(i, applicationWsHeaders("GUY SIZE"))) <> "N/A") Then
-                    sheet.Range("NEWAPPSIZE").Value = applicationWs.Cells(i, applicationWsHeaders("GUY SIZE"))
+                If (UCase(applicationWs.cells(i, applicationWsHeaders("GUY SIZE"))) <> "NA" And UCase(applicationWs.cells(i, applicationWsHeaders("GUY SIZE"))) <> "N/A") Then
+                    sheet.Range("NEWAPPSIZE").value = applicationWs.cells(i, applicationWsHeaders("GUY SIZE"))
                 End If
             End If
             If (applicationWsHeaders.exists("GUY LEAD")) Then
-                If (UCase(applicationWs.Cells(i, applicationWsHeaders("GUY LEAD"))) <> "NA" And UCase(applicationWs.Cells(i, applicationWsHeaders("GUY LEAD"))) <> "N/A") Then
-                    sheet.Range("NEWAPPLEAD").Value = applicationWs.Cells(i, applicationWsHeaders("GUY LEAD"))
+                If (UCase(applicationWs.cells(i, applicationWsHeaders("GUY LEAD"))) <> "NA" And UCase(applicationWs.cells(i, applicationWsHeaders("GUY LEAD"))) <> "N/A") Then
+                    sheet.Range("NEWAPPLEAD").value = applicationWs.cells(i, applicationWsHeaders("GUY LEAD"))
                 End If
             End If
             If (applicationWsHeaders.exists("GUY DIRECTION")) Then
-                If (UCase(applicationWs.Cells(i, applicationWsHeaders("GUY DIRECTION"))) <> "NA" And UCase(applicationWs.Cells(i, applicationWsHeaders("GUY DIRECTION"))) <> "N/A") Then
-                    sheet.Range("NEWAPPDIR").Value = applicationWs.Cells(i, applicationWsHeaders("GUY DIRECTION"))
+                If (UCase(applicationWs.cells(i, applicationWsHeaders("GUY DIRECTION"))) <> "NA" And UCase(applicationWs.cells(i, applicationWsHeaders("GUY DIRECTION"))) <> "N/A") Then
+                    sheet.Range("NEWAPPDIR").value = applicationWs.cells(i, applicationWsHeaders("GUY DIRECTION"))
                 End If
             End If
             
             If applicationWsHeaders.exists("EXISTING DIAMETER") Then
-                sheet.Range("EXISTINGDIAMETER").Value = applicationWs.Cells(i, applicationWsHeaders("EXISTING DIAMETER"))
+                sheet.Range("EXISTINGDIAMETER").value = applicationWs.cells(i, applicationWsHeaders("EXISTING DIAMETER"))
             End If
             If applicationWsHeaders.exists("DIAMETER") Then
-                sheet.Range("PROPOSEDDIAMETER").Value = applicationWs.Cells(i, applicationWsHeaders("DIAMETER"))
+                sheet.Range("PROPOSEDDIAMETER").value = applicationWs.cells(i, applicationWsHeaders("DIAMETER"))
             End If
             
             If applicationWsHeaders.exists("ADDITIONAL SPANS") Then
-                If applicationWs.Cells(i, applicationWsHeaders("ADDITIONAL SPANS")).Value <> "" Then
-                    If InStr(sheet.Range("NOTES").Value, "ADDITIONAL SPANS: " & applicationWs.Cells(i, applicationWsHeaders("ADDITIONAL SPANS"))) = 0 Then
-                        If sheet.Range("NOTES").Value <> "" Then
-                            sheet.Range("NOTES").Value = sheet.Range("NOTES").Value & vbLf
+                If applicationWs.cells(i, applicationWsHeaders("ADDITIONAL SPANS")).value <> "" Then
+                    If InStr(sheet.Range("NOTES").value, "ADDITIONAL SPANS: " & applicationWs.cells(i, applicationWsHeaders("ADDITIONAL SPANS"))) = 0 Then
+                        If sheet.Range("NOTES").value <> "" Then
+                            sheet.Range("NOTES").value = sheet.Range("NOTES").value & vbLf
                         End If
-                        sheet.Range("NOTES").Value = sheet.Range("NOTES").Value & "ADDITIONAL SPANS: " & applicationWs.Cells(i, applicationWsHeaders("ADDITIONAL SPANS"))
+                        sheet.Range("NOTES").value = sheet.Range("NOTES").value & "ADDITIONAL SPANS: " & applicationWs.cells(i, applicationWsHeaders("ADDITIONAL SPANS"))
                     End If
                 End If
             End If
             
             If applicationWsHeaders.exists("COMMENTS") Then
-                If applicationWs.Cells(i, applicationWsHeaders("COMMENTS")).Value <> "" Then
-                    If InStr(sheet.Range("NOTES").Value, applicationWs.Cells(i, applicationWsHeaders("COMMENTS"))) = 0 Then
-                        If sheet.Range("NOTES").Value <> "" Then
-                            sheet.Range("NOTES").Value = sheet.Range("NOTES").Value & vbLf
+                If applicationWs.cells(i, applicationWsHeaders("COMMENTS")).value <> "" Then
+                    If InStr(sheet.Range("NOTES").value, applicationWs.cells(i, applicationWsHeaders("COMMENTS"))) = 0 Then
+                        If sheet.Range("NOTES").value <> "" Then
+                            sheet.Range("NOTES").value = sheet.Range("NOTES").value & vbLf
                         End If
-                        sheet.Range("NOTES").Value = sheet.Range("NOTES").Value & "APPLICANT COMMENTS: " & applicationWs.Cells(i, applicationWsHeaders("COMMENTS"))
+                        sheet.Range("NOTES").value = sheet.Range("NOTES").value & "APPLICANT COMMENTS: " & applicationWs.cells(i, applicationWsHeaders("COMMENTS"))
                     End If
                 End If
             End If
             
             For j = 2 To applicationWsLastRow
-                If sheetName = CStr(applicationWs.Cells(j, applicationWsHeaders("TO POLE"))) Then
-                    fromPoleSheetName = CStr(applicationWs.Cells(j, applicationWsHeaders("POLE NUMBER")))
+                If sheetName = CStr(applicationWs.cells(j, applicationWsHeaders("TO POLE"))) Then
+                    fromPoleSheetName = CStr(applicationWs.cells(j, applicationWsHeaders("POLE NUMBER")))
                     For k = 1 To 12
                         If Utilities.RangeExists(sheet, "TOPOLE" & k) Then
-                            fromPoleNumber = ThisWorkbook.RemoveParentheses(sheet.Range("TOPOLE" & k).Value)
+                            fromPoleNumber = ThisWorkbook.RemoveParentheses(sheet.Range("TOPOLE" & k).value)
                             If CStr(fromPoleNumber) = CStr(fromPoleSheetName) Then
-                                sheet.Range("TOPOLE" & k).OFFSET(1, 0).Value = CleanFeetInches(applicationWs.Cells(j, applicationWsHeaders("MIDSPAN")))
-                                sheet.Range("TOPOLE" & k).OFFSET(2, 0).Value = applicationWs.Cells(j, applicationWsHeaders("TENSION"))
+                                sheet.Range("TOPOLE" & k).offSet(1, 0).value = CleanFeetInches(applicationWs.cells(j, applicationWsHeaders("MIDSPAN")))
+                                sheet.Range("TOPOLE" & k).offSet(2, 0).value = applicationWs.cells(j, applicationWsHeaders("TENSION"))
                                 Exit For
                             End If
                         Else
@@ -133,10 +133,10 @@ Sub ImportApplication()
             added = False
             For j = 1 To 12
                 If Utilities.RangeExists(sheet, "TOPOLE" & j) Then
-                    toPoleNumber = ThisWorkbook.RemoveParentheses(sheet.Range("TOPOLE" & j).Value)
+                    toPoleNumber = ThisWorkbook.RemoveParentheses(sheet.Range("TOPOLE" & j).value)
                     If CStr(toPoleNumber) = CStr(toPoleSheetName) Then
-                        sheet.Range("TOPOLE" & j).OFFSET(1, 0).Value = CleanFeetInches(applicationWs.Cells(i, applicationWsHeaders("MIDSPAN")))
-                        sheet.Range("TOPOLE" & j).OFFSET(2, 0).Value = applicationWs.Cells(i, applicationWsHeaders("TENSION"))
+                        sheet.Range("TOPOLE" & j).offSet(1, 0).value = CleanFeetInches(applicationWs.cells(i, applicationWsHeaders("MIDSPAN")))
+                        sheet.Range("TOPOLE" & j).offSet(2, 0).value = applicationWs.cells(i, applicationWsHeaders("TENSION"))
                         added = True
                         Exit For
                     End If
@@ -148,11 +148,11 @@ Sub ImportApplication()
             If Not added Then
                 For j = 1 To 12
                     If Utilities.RangeExists(sheet, "TOPOLE" & j) Then
-                        toPoleNumber = ThisWorkbook.RemoveParentheses(sheet.Range("TOPOLE" & j).Value)
-                        If sheet.Range("TOPOLE" & j).OFFSET(1, 0).Value = "" Then
+                        toPoleNumber = ThisWorkbook.RemoveParentheses(sheet.Range("TOPOLE" & j).value)
+                        If sheet.Range("TOPOLE" & j).offSet(1, 0).value = "" Then
                             If Not Utilities.SheetExists(CStr(toPoleNumber)) Or Not Utilities.RangeExists(sheet, "TOPOLE" & j + 1) Then
-                                sheet.Range("TOPOLE" & j).OFFSET(1, 0).Value = CleanFeetInches(applicationWs.Cells(i, applicationWsHeaders("MIDSPAN"))) & " (GUESS)"
-                                sheet.Range("TOPOLE" & j).OFFSET(2, 0).Value = applicationWs.Cells(i, applicationWsHeaders("TENSION"))
+                                sheet.Range("TOPOLE" & j).offSet(1, 0).value = CleanFeetInches(applicationWs.cells(i, applicationWsHeaders("MIDSPAN"))) & " (GUESS)"
+                                sheet.Range("TOPOLE" & j).offSet(2, 0).value = applicationWs.cells(i, applicationWsHeaders("TENSION"))
                                 Exit For
                             End If
                         End If
@@ -179,21 +179,21 @@ Private Sub clearApp()
         If Utilities.IsPDS(sheet) Then
             For i = 1 To 12
                 If Utilities.RangeExists(sheet, "TOPOLE" & i) Then
-                    sheet.Range("TOPOLE" & i).OFFSET(1, 0).Value = ""
-                    sheet.Range("TOPOLE" & i).OFFSET(2, 0).Value = ""
+                    sheet.Range("TOPOLE" & i).offSet(1, 0).value = ""
+                    sheet.Range("TOPOLE" & i).offSet(2, 0).value = ""
                 Else
                     Exit For
                 End If
             Next i
-            sheet.Range("NEWAPPSIZE").Value = ""
-            sheet.Range("NEWAPPSIZE").OFFSET(1, 0).Value = ""
-            sheet.Range("NEWAPPLEAD").Value = ""
-            sheet.Range("NEWAPPLEAD").OFFSET(1, 0).Value = ""
-            sheet.Range("NEWAPPDIR").Value = ""
-            sheet.Range("NEWAPPDIR").OFFSET(1, 0).Value = ""
-            sheet.Range("PROPOSEDHEIGHT").Value = ""
-            sheet.Range("PROPOSEDDIAMETER").Value = ""
-            sheet.Range("EXISTINGDIAMETER").Value = ""
+            sheet.Range("NEWAPPSIZE").value = ""
+            sheet.Range("NEWAPPSIZE").offSet(1, 0).value = ""
+            sheet.Range("NEWAPPLEAD").value = ""
+            sheet.Range("NEWAPPLEAD").offSet(1, 0).value = ""
+            sheet.Range("NEWAPPDIR").value = ""
+            sheet.Range("NEWAPPDIR").offSet(1, 0).value = ""
+            sheet.Range("PROPOSEDHEIGHT").value = ""
+            sheet.Range("PROPOSEDDIAMETER").value = ""
+            sheet.Range("EXISTINGDIAMETER").value = ""
         End If
     Next sheet
 End Sub
@@ -207,7 +207,7 @@ Private Function CleanFeetInches(inputStr As String) As String
         ' Match optional space + foot symbol + optional space + optional dash + optional space + inch digits + optional inch symbol
         .Pattern = "(\d+)\s*['’`]\s*[-]?\s*(\d+)\s*(?:[""”]|''){0,1}"
     End With
-    If regex.test(inputStr) Then
+    If regex.Test(inputStr) Then
         CleanFeetInches = regex.Replace(inputStr, "$1'$2""")
     Else
         CleanFeetInches = inputStr
