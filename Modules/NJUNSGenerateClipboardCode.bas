@@ -17,18 +17,18 @@ Public Sub ExportAllNJUNS()
     
     If project.mode = "SYSTEM IMPROVEMENT" Then
         If ThisWorkbook.sheets("Control").Range("NAME") <> "" Then
-            contactName = """" & ThisWorkbook.sheets("Control").Range("NAME").Value & """"
+            contactName = """" & ThisWorkbook.sheets("Control").Range("NAME").value & """"
         Else
             contactName = "document.querySelector('.v-label.v-widget.c-user-select-label.v-label-c-user-select-label.v-label-undef-w').textContent.split(' [')[0]"
         End If
         If ThisWorkbook.sheets("Control").Range("PHONE") <> "" Then
-            contactNumber = """" & ThisWorkbook.sheets("Control").Range("PHONE").Value & """"
+            contactNumber = """" & ThisWorkbook.sheets("Control").Range("PHONE").value & """"
         Else
             contactNumber = InputBox("Enter your phone number:", "User Input")
-            ThisWorkbook.sheets("Control").Range("PHONE").Value = contactNumber
+            ThisWorkbook.sheets("Control").Range("PHONE").value = contactNumber
         End If
         If ThisWorkbook.sheets("Control").Range("EMAIL") <> "" Then
-            contactEmail = """" & ThisWorkbook.sheets("Control").Range("EMAIL").Value & """"
+            contactEmail = """" & ThisWorkbook.sheets("Control").Range("EMAIL").value & """"
         Else
             contactEmail = "document.querySelector('.v-label.v-widget.c-user-select-label.v-label-c-user-select-label.v-label-undef-w').textContent.split(' [')[1].slice(0,-1)"
         End If
@@ -114,10 +114,10 @@ Public Sub ExportSingleNJUNS()
     If project.mode = "SYSTEM IMPROVEMENT" Then
         contactName = "document.querySelector('.v-label.v-widget.c-user-select-label.v-label-c-user-select-label.v-label-undef-w').textContent.split(' [')[0]"
         If ThisWorkbook.sheets("Control").Range("PHONE") <> "" Then
-            contactNumber = """" & ThisWorkbook.sheets("Control").Range("PHONE").Value & """"
+            contactNumber = """" & ThisWorkbook.sheets("Control").Range("PHONE").value & """"
         Else
             contactNumber = InputBox("Enter your phone number:", "User Input")
-            ThisWorkbook.sheets("Control").Range("PHONE").Value = contactNumber
+            ThisWorkbook.sheets("Control").Range("PHONE").value = contactNumber
         End If
         contactEmail = "document.querySelector('.v-label.v-widget.c-user-select-label.v-label-c-user-select-label.v-label-undef-w').textContent.split(' [')[1].slice(0,-1)"
     Else
@@ -234,12 +234,12 @@ Private Function getSelectProjectTabCode(project As project) As String
     
     copiedCode = copiedCode & vbLf & "navigated = false;"
     copiedCode = copiedCode & vbLf & "while(true) {"
-    copiedCode = copiedCode & vbLf & "if (!findElementByText('.v-tabsheet-tabitemcell','" & project.Notification & "')) throw new Error(""Project tab Doesn't Exist. Please create the project and have the project tab open."");"
-    copiedCode = copiedCode & vbLf & "if (findElementByText('.v-tabsheet-tabitemcell','" & project.Notification & "').ariaSelected === 'true') break;"
+    copiedCode = copiedCode & vbLf & "if (!findElementByText('.v-tabsheet-tabitemcell','" & project.notification & "')) throw new Error(""Project tab Doesn't Exist. Please create the project and have the project tab open."");"
+    copiedCode = copiedCode & vbLf & "if (findElementByText('.v-tabsheet-tabitemcell','" & project.notification & "').ariaSelected === 'true') break;"
 
-    copiedCode = copiedCode & vbLf & "realClick(findElementByText('.v-tabsheet-tabitemcell', '" & project.Notification & "'));"
+    copiedCode = copiedCode & vbLf & "realClick(findElementByText('.v-tabsheet-tabitemcell', '" & project.notification & "'));"
     copiedCode = copiedCode & vbLf & "navigated = true;"
-    copiedCode = copiedCode & vbLf & "if (findElementByText('.v-tabsheet-tabitemcell','" & project.Notification & "').ariaSelected === 'true') break;"
+    copiedCode = copiedCode & vbLf & "if (findElementByText('.v-tabsheet-tabitemcell','" & project.notification & "').ariaSelected === 'true') break;"
     
     copiedCode = copiedCode & vbLf & "if (document.querySelector('.v-tabsheet-scrollerPrev-disabled')) {"
     copiedCode = copiedCode & vbLf & "throw new Error(""Can't find job"");"
@@ -278,7 +278,7 @@ End Function
 Private Function wrapCode(project As project, copiedCode As String) As String
     
     On Error Resume Next
-    copiedCode = "let notification = " & project.Notification & ";" & vbLf & ThisWorkbook.Worksheets("NJUNSCode").Cells(1, 1) & vbLf & "try {" & vbLf & "while(true) {" & vbLf & copiedCode & vbLf & "break;" & vbLf & "}" & vbLf & "}"
+    copiedCode = "let notification = " & project.notification & ";" & vbLf & ThisWorkbook.Worksheets("NJUNSCode").cells(1, 1) & vbLf & "try {" & vbLf & "while(true) {" & vbLf & copiedCode & vbLf & "break;" & vbLf & "}" & vbLf & "}"
     On Error GoTo 0
     
     alertMsg = "Something went wrong while generating tickets or execution was cancelled. Upload the generated CSV in your downloads folder into the pole detail sheets control file and rexport NJUNS to avoid recreating tickets already generated."
@@ -289,9 +289,16 @@ Private Function wrapCode(project As project, copiedCode As String) As String
     copiedCode = copiedCode & vbLf & "}"
     
     copiedCode = copiedCode & "finally {"
-    If save Then copiedCode = copiedCode & vbLf & "if (pdfList.length > 0 && cancelled) alert('" & alertMsg & "')"
     copiedCode = copiedCode & vbLf & "btn.remove()"
-    If save Then copiedCode = copiedCode & vbLf & "await downloadAllPdfs();"
+    If save Then
+        copiedCode = copiedCode & vbLf & "try {"
+        copiedCode = copiedCode & vbLf & "if (pdfList.length > 0) {"
+        copiedCode = copiedCode & vbLf & "await downloadAllPdfs();"
+        copiedCode = copiedCode & vbLf & "}"
+        copiedCode = copiedCode & vbLf & "} catch (downloadError) {"
+        copiedCode = copiedCode & vbLf & "console.error('Unable to download previously generated tickets:', downloadError);"
+        copiedCode = copiedCode & vbLf & "}"
+    End If
     copiedCode = copiedCode & vbLf & "}"
     
     wrapCode = copiedCode
@@ -299,15 +306,15 @@ End Function
 
 Private Function checkCodes() As Boolean
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
-    If controlWs.Range("NJUNSCODES").Value = "" Then Call NJUNSCodes.generateNJUNSCodes
+    If controlWs.Range("NJUNSCODES").value = "" Then Call NJUNSCodes.generateNJUNSCodes
     Dim codeRange As Range: Set codeRange = controlWs.Range("NJUNSCODES").EntireColumn
-    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).ROW
-    Set codeRange = controlWs.Range(controlWs.Cells(3, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
+    lastRow = controlWs.cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").column).End(xlUp).ROW
+    Set codeRange = controlWs.Range(controlWs.cells(3, controlWs.Range("NJUNSCODES").column), controlWs.cells(lastRow, controlWs.Range("NJUNSCODES").column))
     
     Dim cell As Range
     For Each cell In codeRange
-        If cell.Value <> "" And InStr(cell.Value, "Applicant") = 0 Then
-            If cell.OFFSET(0, 1).Value = "" Then
+        If cell.value <> "" And InStr(cell.value, "Applicant") = 0 Then
+            If cell.offSet(0, 1).value = "" Then
                 MsgBox ("Missing values in the control page for NJUNS codes, these need to be all filled in first")
                 checkCodes = False
                 Exit Function
@@ -321,10 +328,10 @@ Private Function getSheetNJUNSCode(project As project, pole As pole, Optional pr
     Dim copiedCode As String
     
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
-    If controlWs.Range("NJUNSCODES").Value = "" Then Call NJUNSCodes.generateNJUNSCodes
+    If controlWs.Range("NJUNSCODES").value = "" Then Call NJUNSCodes.generateNJUNSCodes
     Dim codeRange As Range: Set codeRange = controlWs.Range("NJUNSCODES").EntireColumn
-    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).ROW
-    Set codeRange = controlWs.Range(controlWs.Cells(3, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
+    lastRow = controlWs.cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").column).End(xlUp).ROW
+    Set codeRange = controlWs.Range(controlWs.cells(3, controlWs.Range("NJUNSCODES").column), controlWs.cells(lastRow, controlWs.Range("NJUNSCODES").column))
     
     If pole.njunsSteps.count = 0 Then
         Exit Function
@@ -348,7 +355,7 @@ Private Function getSheetNJUNSCode(project As project, pole As pole, Optional pr
     End If
     
     Dim njunsRemarks As String
-    njunsRemarks = "Notification: " & project.Notification & " Permit: " & project.permit & "\n"
+    njunsRemarks = "Notification: " & project.notification & " Permit: " & project.Permit & "\n"
     If ticketType = "Violation (VIO)" Then
         njunsRemarks = njunsRemarks & "Corrective Violation "
     Else
@@ -413,7 +420,7 @@ Private Function getSheetNJUNSCode(project As project, pole As pole, Optional pr
     copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelectorAll("".v-textfield.v-widget.v-has-width"")[8], " & contactName & ");"
     copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelectorAll("".v-textfield.v-widget.v-has-width"")[9], " & contactNumber & ");"
     copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelectorAll("".v-textfield.v-widget.v-has-width"")[10],  " & contactEmail & ");"
-    copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelectorAll("".v-textfield.v-widget.v-has-width"")[11],  """ & project.Notification & """);"
+    copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelectorAll("".v-textfield.v-widget.v-has-width"")[11],  """ & project.notification & """);"
     copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelector("".v-textarea.v-widget.v-has-width""), """ & njunsRemarks & """);"
     copiedCode = copiedCode & vbLf & "await selectDropDownOption(document.querySelector("".v-filterselect-input""), ""3"");"
     
@@ -440,7 +447,7 @@ Private Function getSheetNJUNSCode(project As project, pole As pole, Optional pr
             If stepCounter = 1 Or stepCounter = pole.njunsSteps.count Then
                 If company <> "CONSUMERS" Then
                     If stepCounter = 1 Then
-                        copiedCode = copiedCode & vbLf & "await generateStep(consumersCode, ""Consumers to complete required work."", ""SET POLE"", """ & project.Notification & """);"
+                        copiedCode = copiedCode & vbLf & "await generateStep(consumersCode, ""Consumers to complete required work."", ""SET POLE"", """ & project.notification & """);"
                         previousSteps.Add "Consumers to complete required work."
                     End If
                 Else
@@ -455,15 +462,15 @@ Private Function getSheetNJUNSCode(project As project, pole As pole, Optional pr
         
         copiedCode = copiedCode & vbLf & "if(cancelled) break;"
         If company = "CONSUMERS" Then
-            copiedCode = copiedCode & vbLf & "await generateStep(consumersCode, """ & remarks & """, """ & stepType & """, """ & project.Notification & """);"
+            copiedCode = copiedCode & vbLf & "await generateStep(consumersCode, """ & remarks & """, """ & stepType & """, """ & project.notification & """);"
         Else
-            copiedCode = copiedCode & vbLf & "await generateStep(""" & njunsCode & """, """ & remarks & """, """ & stepType & """, """ & project.Notification & """);"
+            copiedCode = copiedCode & vbLf & "await generateStep(""" & njunsCode & """, """ & remarks & """, """ & stepType & """, """ & project.notification & """);"
         End If
         previousSteps.Add remarks
     
         If company <> "CONSUMERS" And stepCounter = pole.njunsSteps.count And InStr(pole.njunsTicket, "PT") = 1 Then
             copiedCode = copiedCode & vbLf & "if(cancelled) break;"
-            copiedCode = copiedCode & vbLf & "await generateStep(consumersCode, ""Consumers after comms transfer to new pole, pull topped pole."", ""PULL POLE"", """ & project.Notification & """);"
+            copiedCode = copiedCode & vbLf & "await generateStep(consumersCode, ""Consumers after comms transfer to new pole, pull topped pole."", ""PULL POLE"", """ & project.notification & """);"
             copiedCode = copiedCode & vbLf & "if(cancelled) break;"
             previousSteps.Add "Consumers after comms transfer to new pole, pull topped pole."
         End If
@@ -494,9 +501,9 @@ Private Function getSheetNJUNSCode(project As project, pole As pole, Optional pr
         copiedCode = copiedCode & vbLf & "pdfList.push({"
             copiedCode = copiedCode & vbLf & "url: download ? await getPDFURL() : null,"
             If project.mode = "SYSTEM IMPROVEMENT" Then
-                copiedCode = copiedCode & vbLf & "filename: `" & project.Notification & " - " & "NJUNS LOC " & pole.location & " " & NJUNSType & "${ticketNumber}`,"
+                copiedCode = copiedCode & vbLf & "filename: `" & project.notification & " - " & "NJUNS LOC " & pole.location & " " & NJUNSType & "${ticketNumber}`,"
             Else
-                copiedCode = copiedCode & vbLf & "filename: `" & project.Notification & " - " & "${ticketNumber} - " & NJUNSType & " NJUNS`,"
+                copiedCode = copiedCode & vbLf & "filename: `" & project.notification & " - " & "${ticketNumber} - " & NJUNSType & " NJUNS`,"
             End If
             copiedCode = copiedCode & vbLf & "poleNumber: """ & pole.poleNumber & ""","
             copiedCode = copiedCode & vbLf & "ticketNumber: ticketNumber"
@@ -510,10 +517,10 @@ Private Function getDuplicateSheetNJUNSCode(project As project, pole As pole) As
     Dim copiedCode As String
     
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
-    If controlWs.Range("NJUNSCODES").Value = "" Then Call NJUNSCodes.generateNJUNSCodes
+    If controlWs.Range("NJUNSCODES").value = "" Then Call NJUNSCodes.generateNJUNSCodes
     Dim codeRange As Range: Set codeRange = controlWs.Range("NJUNSCODES").EntireColumn
-    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).ROW
-    Set codeRange = controlWs.Range(controlWs.Cells(3, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
+    lastRow = controlWs.cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").column).End(xlUp).ROW
+    Set codeRange = controlWs.Range(controlWs.cells(3, controlWs.Range("NJUNSCODES").column), controlWs.cells(lastRow, controlWs.Range("NJUNSCODES").column))
     
     If pole.njunsSteps.count = 0 Then
         Exit Function
@@ -535,7 +542,7 @@ Private Function getDuplicateSheetNJUNSCode(project As project, pole As pole) As
     End If
     
     Dim njunsRemarks As String
-    njunsRemarks = "Notification: " & project.Notification & " Permit: " & project.permit & "\n"
+    njunsRemarks = "Notification: " & project.notification & " Permit: " & project.Permit & "\n"
     If ticketType = "Violation (VIO)" Then
         njunsRemarks = njunsRemarks & "Corrective Violation "
     Else
@@ -593,9 +600,9 @@ Private Function getDuplicateSheetNJUNSCode(project As project, pole As pole) As
         copiedCode = copiedCode & vbLf & "pdfList.push({"
             copiedCode = copiedCode & vbLf & "url: download ? await getPDFURL() : null,"
             If project.mode = "SYSTEM IMPROVEMENT" Then
-                copiedCode = copiedCode & vbLf & "filename: `" & project.Notification & " - " & "NJUNS LOC " & pole.location & " " & NJUNSType & "${ticketNumber}`,"
+                copiedCode = copiedCode & vbLf & "filename: `" & project.notification & " - " & "NJUNS LOC " & pole.location & " " & NJUNSType & "${ticketNumber}`,"
             Else
-                copiedCode = copiedCode & vbLf & "filename: `" & project.Notification & " - " & "${ticketNumber} - " & NJUNSType & " NJUNS`,"
+                copiedCode = copiedCode & vbLf & "filename: `" & project.notification & " - " & "${ticketNumber} - " & NJUNSType & " NJUNS`,"
             End If
             copiedCode = copiedCode & vbLf & "poleNumber: """ & pole.poleNumber & ""","
             copiedCode = copiedCode & vbLf & "ticketNumber: ticketNumber"
@@ -611,10 +618,10 @@ Private Function getAlmostDuplicateSheetNJUNSCode(project As project, pole As po
     Dim copiedCode As String
     
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
-    If controlWs.Range("NJUNSCODES").Value = "" Then Call NJUNSCodes.generateNJUNSCodes
+    If controlWs.Range("NJUNSCODES").value = "" Then Call NJUNSCodes.generateNJUNSCodes
     Dim codeRange As Range: Set codeRange = controlWs.Range("NJUNSCODES").EntireColumn
-    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).ROW
-    Set codeRange = controlWs.Range(controlWs.Cells(3, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
+    lastRow = controlWs.cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").column).End(xlUp).ROW
+    Set codeRange = controlWs.Range(controlWs.cells(3, controlWs.Range("NJUNSCODES").column), controlWs.cells(lastRow, controlWs.Range("NJUNSCODES").column))
     
     If pole.njunsSteps.count = 0 Then
         Exit Function
@@ -636,7 +643,7 @@ Private Function getAlmostDuplicateSheetNJUNSCode(project As project, pole As po
     End If
     
     Dim njunsRemarks As String
-    njunsRemarks = "Notification: " & project.Notification & " Permit: " & project.permit & "\n"
+    njunsRemarks = "Notification: " & project.notification & " Permit: " & project.Permit & "\n"
     If ticketType = "Violation (VIO)" Then
         njunsRemarks = njunsRemarks & "Corrective Violation "
     Else
@@ -655,7 +662,7 @@ Private Function getAlmostDuplicateSheetNJUNSCode(project As project, pole As po
     copiedCode = copiedCode & vbLf & "if(cancelled) break;"
     
     copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelector("".v-textarea.v-widget.v-has-width""), """ & njunsRemarks & """);"
-    Dim OFFSET As Integer
+    Dim offSet As Integer
     Dim steps As Collection: Set steps = New Collection
     For i = 0 To pole.njunsSteps.count - 1
         step = pole.njunsSteps(i + 1)
@@ -669,15 +676,15 @@ Private Function getAlmostDuplicateSheetNJUNSCode(project As project, pole As po
                         copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelectorAll('.v-textarea.v-widget.v-has-width')[1], 'Consumers to complete required work.');"
                         copiedCode = copiedCode & vbLf & "await clickButton('.v-button.v-widget.primary', 'Create');"
                     End If
-                    OFFSET = 1
+                    offSet = 1
                     steps.Add "Consumers to complete required work."
                 End If
             End If
         End If
         step = Replace(step, vbLf, "\n")
         step = Replace(step, """", "\""")
-        If previousSteps(i + 1 + OFFSET) <> step Then
-            copiedCode = copiedCode & vbLf & "await realClick(document.querySelectorAll('.v-grid-row.v-grid-row-has-data')[" & i + OFFSET & "]);"
+        If previousSteps(i + 1 + offSet) <> step Then
+            copiedCode = copiedCode & vbLf & "await realClick(document.querySelectorAll('.v-grid-row.v-grid-row-has-data')[" & i + offSet & "]);"
             copiedCode = copiedCode & vbLf & "await clickButton('.v-button.v-widget.icon', 'Edit');"
             copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelectorAll('.v-textarea.v-widget.v-has-width')[1], """ & step & """);"
             copiedCode = copiedCode & vbLf & "await clickButton('.v-button.v-widget.primary', 'Create');"
@@ -686,8 +693,8 @@ Private Function getAlmostDuplicateSheetNJUNSCode(project As project, pole As po
         If NJUNSType = "PT" Then
             If i = pole.njunsSteps.count - 1 Then
                 If company <> "CE" And company <> "CONSUMERS" Then
-                    If previousSteps(i + 1 + OFFSET) <> "Consumers after comms transfer to new pole, pull topped pole." Then
-                        copiedCode = copiedCode & vbLf & "await realClick(document.querySelectorAll('.v-grid-row.v-grid-row-has-data')[" & i + OFFSET & "]);"
+                    If previousSteps(i + 1 + offSet) <> "Consumers after comms transfer to new pole, pull topped pole." Then
+                        copiedCode = copiedCode & vbLf & "await realClick(document.querySelectorAll('.v-grid-row.v-grid-row-has-data')[" & i + offSet & "]);"
                         copiedCode = copiedCode & vbLf & "await clickButton('.v-button.v-widget.icon', 'Edit');"
                         copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelectorAll('.v-textarea.v-widget.v-has-width')[1], 'Consumers after comms transfer to new pole, pull topped pole.');"
                         copiedCode = copiedCode & vbLf & "await clickButton('.v-button.v-widget.primary', 'Create');"
@@ -735,9 +742,9 @@ Private Function getAlmostDuplicateSheetNJUNSCode(project As project, pole As po
         copiedCode = copiedCode & vbLf & "pdfList.push({"
             copiedCode = copiedCode & vbLf & "url: download ? await getPDFURL() : null,"
             If project.mode = "SYSTEM IMPROVEMENT" Then
-                copiedCode = copiedCode & vbLf & "filename: `" & project.Notification & " - " & "NJUNS LOC " & pole.location & " " & NJUNSType & "${ticketNumber}`,"
+                copiedCode = copiedCode & vbLf & "filename: `" & project.notification & " - " & "NJUNS LOC " & pole.location & " " & NJUNSType & "${ticketNumber}`,"
             Else
-                copiedCode = copiedCode & vbLf & "filename: `" & project.Notification & " - " & "${ticketNumber} - " & NJUNSType & " NJUNS`,"
+                copiedCode = copiedCode & vbLf & "filename: `" & project.notification & " - " & "${ticketNumber} - " & NJUNSType & " NJUNS`,"
             End If
             copiedCode = copiedCode & vbLf & "poleNumber: """ & pole.poleNumber & ""","
             copiedCode = copiedCode & vbLf & "ticketNumber: ticketNumber"
@@ -750,8 +757,8 @@ End Function
 Private Function findNJUNSCode(ByVal company As String) As String
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
     Dim codeRange As Range: Set codeRange = controlWs.Range("NJUNSCODES").EntireColumn
-    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).ROW
-    Set codeRange = controlWs.Range(controlWs.Cells(controlWs.Range("NJUNSCODES").ROW, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
+    lastRow = controlWs.cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").column).End(xlUp).ROW
+    Set codeRange = controlWs.Range(controlWs.cells(controlWs.Range("NJUNSCODES").ROW, controlWs.Range("NJUNSCODES").column), controlWs.cells(lastRow, controlWs.Range("NJUNSCODES").column))
 
     company = UCase(Replace(company, " ", ""))
     company = Replace(company, ":", "")
@@ -759,9 +766,9 @@ Private Function findNJUNSCode(ByVal company As String) As String
 
     Dim cell As Range
     For Each cell In codeRange
-        If isEmpty(cell.Value) Then Exit For
-        If InStr(1, CStr(cell.Value), company, vbTextCompare) = 1 Then
-            findNJUNSCode = UCase(cell.OFFSET(0, 1).Value)
+        If isEmpty(cell.value) Then Exit For
+        If InStr(1, CStr(cell.value), company, vbTextCompare) = 1 Then
+            findNJUNSCode = UCase(cell.offSet(0, 1).value)
             Exit Function
         End If
     Next cell
@@ -780,10 +787,10 @@ Public Sub ExportUpdateAllNJUNS()
     If project.mode = "SYSTEM IMPROVEMENT" Then
         contactName = "document.querySelector('.v-label.v-widget.c-user-select-label.v-label-c-user-select-label.v-label-undef-w').textContent.split(' [')[0]"
         If ThisWorkbook.sheets("Control").Range("PHONE") <> "" Then
-            contactNumber = """" & ThisWorkbook.sheets("Control").Range("PHONE").Value & """"
+            contactNumber = """" & ThisWorkbook.sheets("Control").Range("PHONE").value & """"
         Else
             contactNumber = InputBox("Enter your phone number:", "User Input")
-            ThisWorkbook.sheets("Control").Range("PHONE").Value = contactNumber
+            ThisWorkbook.sheets("Control").Range("PHONE").value = contactNumber
         End If
         contactEmail = "document.querySelector('.v-label.v-widget.c-user-select-label.v-label-c-user-select-label.v-label-undef-w').textContent.split(' [')[1].slice(0,-1)"
     Else
@@ -835,10 +842,10 @@ Private Function getUpdateSheetNJUNSCode(project As project, pole As pole) As St
     Dim copiedCode As String
     
     Dim controlWs As Worksheet: Set controlWs = ThisWorkbook.sheets("Control")
-    If controlWs.Range("NJUNSCODES").Value = "" Then Call NJUNSCodes.generateNJUNSCodes
+    If controlWs.Range("NJUNSCODES").value = "" Then Call NJUNSCodes.generateNJUNSCodes
     Dim codeRange As Range: Set codeRange = controlWs.Range("NJUNSCODES").EntireColumn
-    lastRow = controlWs.Cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").Column).End(xlUp).ROW
-    Set codeRange = controlWs.Range(controlWs.Cells(3, controlWs.Range("NJUNSCODES").Column), controlWs.Cells(lastRow, controlWs.Range("NJUNSCODES").Column))
+    lastRow = controlWs.cells(controlWs.Rows.count, controlWs.Range("NJUNSCODES").column).End(xlUp).ROW
+    Set codeRange = controlWs.Range(controlWs.cells(3, controlWs.Range("NJUNSCODES").column), controlWs.cells(lastRow, controlWs.Range("NJUNSCODES").column))
     
     If pole.njunsSteps.count = 0 Then
         Exit Function
@@ -925,11 +932,11 @@ Private Function getUpdateSheetNJUNSCode(project As project, pole As pole) As St
     
     copiedCode = copiedCode & vbLf & "await clickButton("".v-captiontext"", ""Details"");"
     
-    njunsRemarks = "Updated " & Format(Date, "mm/dd/yyyy") & "\nNotification: " & project.Notification & " Permit: " & project.permit & "\n"
+    njunsRemarks = "Updated " & Format(Date, "mm/dd/yyyy") & "\nNotification: " & project.notification & " Permit: " & project.Permit & "\n"
     copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelectorAll("".v-textfield.v-widget.v-has-width"")[8], " & contactName & ");"
     copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelectorAll("".v-textfield.v-widget.v-has-width"")[9], " & contactNumber & ");"
     copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelectorAll("".v-textfield.v-widget.v-has-width"")[10], " & contactEmail & ");"
-    copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelectorAll("".v-textfield.v-widget.v-has-width"")[12], """ & project.Notification & """);"
+    copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelectorAll("".v-textfield.v-widget.v-has-width"")[12], """ & project.notification & """);"
     copiedCode = copiedCode & vbLf & "setTextFieldValue(document.querySelector("".v-textarea.v-widget.v-has-width""), """ & njunsRemarks & """ + document.querySelector("".v-textarea.v-widget.v-has-width"").value);"
     copiedCode = copiedCode & vbLf & "await selectDropDownOption(document.querySelector("".v-filterselect-input""), ""3"");"
     
@@ -968,7 +975,7 @@ Private Function getUpdateSheetNJUNSCode(project As project, pole As pole) As St
             If stepCounter = 1 Or stepCounter = pole.njunsSteps.count Then
                 If company <> "CONSUMERS" Then
                     If stepCounter = 1 Then
-                        copiedCode = copiedCode & vbLf & "await generateStep(consumersCode, ""Consumers to complete required work."", ""SET POLE"", """ & project.Notification & """);"
+                        copiedCode = copiedCode & vbLf & "await generateStep(consumersCode, ""Consumers to complete required work."", ""SET POLE"", """ & project.notification & """);"
                    End If
                 Else
                     If stepCounter = 1 Then
@@ -982,14 +989,14 @@ Private Function getUpdateSheetNJUNSCode(project As project, pole As pole) As St
         
         copiedCode = copiedCode & vbLf & "if(cancelled) break;"
         If company = "CONSUMERS" Then
-            copiedCode = copiedCode & vbLf & "await generateStep(consumersCode, """ & remarks & """, """ & stepType & """, """ & project.Notification & """);"
+            copiedCode = copiedCode & vbLf & "await generateStep(consumersCode, """ & remarks & """, """ & stepType & """, """ & project.notification & """);"
         Else
-            copiedCode = copiedCode & vbLf & "await generateStep(""" & njunsCode & """, """ & remarks & """, """ & stepType & """, """ & project.Notification & """);"
+            copiedCode = copiedCode & vbLf & "await generateStep(""" & njunsCode & """, """ & remarks & """, """ & stepType & """, """ & project.notification & """);"
         End If
     
         If company <> "CONSUMERS" And stepCounter = pole.njunsSteps.count And InStr(pole.njunsTicket, "PT") = 1 Then
             copiedCode = copiedCode & vbLf & "if(cancelled) break;"
-            copiedCode = copiedCode & vbLf & "await generateStep(consumersCode, ""Consumers after comms transfer to new pole, pull topped pole."", ""PULL POLE"", """ & project.Notification & """);"
+            copiedCode = copiedCode & vbLf & "await generateStep(consumersCode, ""Consumers after comms transfer to new pole, pull topped pole."", ""PULL POLE"", """ & project.notification & """);"
             copiedCode = copiedCode & vbLf & "if(cancelled) break;"
         End If
     Next step
@@ -1055,9 +1062,9 @@ Private Function getUpdateSheetNJUNSCode(project As project, pole As pole) As St
         copiedCode = copiedCode & vbLf & "pdfList.push({"
             copiedCode = copiedCode & vbLf & "url: download ? await getPDFURL() : null,"
             If project.mode = "SYSTEM IMPROVEMENT" Then
-                copiedCode = copiedCode & vbLf & "filename: `" & project.Notification & " - " & "NJUNS LOC " & pole.location & " " & NJUNSType & "${ticketNumber}`,"
+                copiedCode = copiedCode & vbLf & "filename: `" & project.notification & " - " & "NJUNS LOC " & pole.location & " " & NJUNSType & "${ticketNumber}`,"
             Else
-                copiedCode = copiedCode & vbLf & "filename: `" & project.Notification & " - " & "${ticketNumber} - " & NJUNSType & " NJUNS`,"
+                copiedCode = copiedCode & vbLf & "filename: `" & project.notification & " - " & "${ticketNumber} - " & NJUNSType & " NJUNS`,"
             End If
             copiedCode = copiedCode & vbLf & "poleNumber: """ & pole.poleNumber & ""","
             copiedCode = copiedCode & vbLf & "ticketNumber: ticketNumber"
@@ -1087,7 +1094,7 @@ Public Sub DownloadAllTickets()
     For Each pole In project.poles
         idDictString = idDictString & vbLf & "['" & pole.existingCEID & "']: '" & pole.poleNumber & "',"
         latLongDictString = latLongDictString & vbLf & "['" & Application.WorksheetFunction.RoundUp(pole.latitude, 6) & Application.WorksheetFunction.RoundUp(pole.longitude, 6) & "']: '" & pole.poleNumber & "',"
-        locationDictString = locationDictString & vbLf & "['" & pole.poleNumber & "']: '" & pole.poleNumber & "',"
+        locationDictString = locationDictString & vbLf & "['" & pole.poleNumber & "']: '" & pole.location & "',"
     Next pole
     If InStr(idDictString, ",") > 0 Then idDictString = Left(idDictString, Len(idDictString) - 1)
     If InStr(latLongDictString, ",") > 0 Then latLongDictString = Left(latLongDictString, Len(latLongDictString) - 1)
@@ -1139,9 +1146,9 @@ Public Sub DownloadAllTickets()
     copiedCode = copiedCode & vbLf & "pdfList.push({"
         copiedCode = copiedCode & vbLf & "url: download ? await getPDFURL() : null,"
         If project.mode = "SYSTEM IMPROVEMENT" Then
-            copiedCode = copiedCode & vbLf & "filename: `" & project.Notification & " - " & "NJUNS LOC ${locationDict[poleNumber]} ${ticketType}${ticketNumber}`,"
+            copiedCode = copiedCode & vbLf & "filename: `" & project.notification & " - " & "NJUNS LOC ${locationDict[poleNumber]} ${ticketType}${ticketNumber}`,"
         Else
-            copiedCode = copiedCode & vbLf & "filename: `" & project.Notification & " - " & "${ticketNumber} - ${ticketType} NJUNS`,"
+            copiedCode = copiedCode & vbLf & "filename: `" & project.notification & " - " & "${ticketNumber} - ${ticketType} NJUNS`,"
         End If
         copiedCode = copiedCode & vbLf & "poleNumber: poleNumber,"
         copiedCode = copiedCode & vbLf & "ticketNumber: ticketNumber"
@@ -1158,3 +1165,4 @@ Public Sub DownloadAllTickets()
      
     MsgBox ("Copied code to clipboard to downloadf all tickets. Go to NJUNS website and press f12 to paste code into console on the project tab for the project you wish to download the tickets of.")
 End Sub
+
