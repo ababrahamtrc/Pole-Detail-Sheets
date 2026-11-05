@@ -21,7 +21,7 @@ Public Sub Initialize()
     
     ComboBox2.list = Array("4", "8", "12")
     Me.StartUpPosition = 0
-    Me.Left = Application.Left + (0.5 * Application.Width) - (0.5 * Me.Width)
+    Me.Left = Application.Left + (0.5 * Application.width) - (0.5 * Me.width)
     Me.top = Application.top + (0.5 * Application.height) - (0.5 * Me.height)
     
     Set project = New project
@@ -39,7 +39,7 @@ Public Sub Initialize()
 End Sub
 
 Private Sub CommandButton1_Click()
-    Dim pole As pole: Set pole = project.findPole(GenerateSinglePDS_Form.ComboBox1.Value)
+    Dim pole As pole: Set pole = project.findPole(GenerateSinglePDS_Form.ComboBox1.value)
     
     If Not pole Is Nothing Then
         If Not Utilities.SheetExists(pole.poleNumber) Then
@@ -48,7 +48,7 @@ Private Sub CommandButton1_Click()
             Application.DisplayAlerts = False
         
             project.extractImportDataFormat
-            Call pole.createSheet(project, GenerateSinglePDS_Form.ComboBox2.Value)
+            Call pole.createSheet(project, GenerateSinglePDS_Form.ComboBox2.value)
             
             Application.EnableEvents = True
             Application.ScreenUpdating = True
