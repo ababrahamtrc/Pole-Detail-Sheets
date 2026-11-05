@@ -7,73 +7,71 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
-Private Sub Workbook_SheetChange(ByVal sh As Object, ByVal Target As Range)
+Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
     On Error Resume Next
     
     Application.EnableEvents = True
     
-    If sh.name <> "4 Spans" And sh.name <> "8 Spans" And sh.name <> "12 Spans" Then
-        If sh.Cells(2, 2).Value = "Notification:" Then
-            If Not Intersect(Target, sh.Range("DL")) Is Nothing Or Not Intersect(Target, sh.Range("SUMSHEET9")) Is Nothing Or Not Intersect(Target, sh.Range("SUMSHEET8")) Is Nothing Or Not Intersect(Target, sh.Range("SUMSHEET4")) Is Nothing Or Not Intersect(Target, sh.Range("SUMSHEET1")) Is Nothing Or Not Intersect(Target, sh.Range("SUMSHEET7")) Is Nothing Then
-                Call decideTabColor(sh)
-            ElseIf Not Intersect(Target, sh.Range("SUMSHEET3")) Is Nothing Or Not Intersect(Target, sh.Range("SUMSHEET6")) Is Nothing Then
-                If sh.Range("SUMSHEET3").Value Then
-                    If sh.Range("SUMSHEET6") Then
-                        sh.Range("SUMSHEET11").Value = "1" & Chr(44) & "2" & Chr(44) & "3"
+    If Sh.name <> "4 Spans" And Sh.name <> "8 Spans" And Sh.name <> "12 Spans" Then
+        If Sh.cells(2, 2).value = "Notification:" Then
+            If Not Intersect(Target, Sh.Range("DL")) Is Nothing Or Not Intersect(Target, Sh.Range("SUMSHEET9")) Is Nothing Or Not Intersect(Target, Sh.Range("SUMSHEET8")) Is Nothing Or Not Intersect(Target, Sh.Range("SUMSHEET4")) Is Nothing Or Not Intersect(Target, Sh.Range("SUMSHEET1")) Is Nothing Or Not Intersect(Target, Sh.Range("SUMSHEET7")) Is Nothing Or Not Intersect(Target, Sh.Range("NJUNS")) Is Nothing Then
+                Call decideTabColor(Sh)
+            ElseIf Not Intersect(Target, Sh.Range("SUMSHEET3")) Is Nothing Or Not Intersect(Target, Sh.Range("SUMSHEET6")) Is Nothing Then
+                If Sh.Range("SUMSHEET3").value Then
+                    If Sh.Range("SUMSHEET6") Then
+                        Sh.Range("SUMSHEET11").value = "1" & Chr(44) & "2" & Chr(44) & "3"
                     Else
-                        sh.Range("SUMSHEET11").Value = "1" & Chr(44) & "2"
+                        Sh.Range("SUMSHEET11").value = "1" & Chr(44) & "2"
                     End If
-                ElseIf sh.Range("SUMSHEET6") Then
-                    sh.Range("SUMSHEET11").Value = "1" & Chr(44) & "3"
+                ElseIf Sh.Range("SUMSHEET6") Then
+                    Sh.Range("SUMSHEET11").value = "1" & Chr(44) & "3"
                 Else
-                    sh.Range("SUMSHEET11").Value = ""
+                    Sh.Range("SUMSHEET11").value = ""
                 End If
+            End If
+        End If
+    End If
+    
+    If Sh.name = "Control" Then
+        If Not Intersect(Target, Sh.Range("MODE")) Is Nothing Then
+            If Sh.Range("MODE") = "MAKE READY" Then
+                ThisWorkbook.sheets("MKR SAP").visible = True
+                ThisWorkbook.sheets("SI SAP").visible = False
+            ElseIf Sh.Range("MODE") = "SYSTEM IMPROVEMENT" Then
+                ThisWorkbook.sheets("MKR SAP").visible = False
+                ThisWorkbook.sheets("SI SAP").visible = True
             End If
         End If
     End If
 End Sub
 
-Public Sub decideTabColor(sh As Worksheet)
+Public Sub decideTabColor(Sh As Worksheet)
     On Error Resume Next
-
-    If Trim(sh.Range("DL")) <> "" And ThisWorkbook.sheets("Control").Range("COLOR1").OFFSET(0, 1).Interior.ColorIndex <> xlNone Then
-        If sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR1").OFFSET(0, 1).Interior.color Then sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR1").OFFSET(0, 1).Interior.color
-        If sh.name <> Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")" Then sh.name = Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")"
-    ElseIf sh.Range("SUMSHEET9") = True And ThisWorkbook.sheets("Control").Range("COLOR2").OFFSET(0, 1).Interior.ColorIndex <> xlNone Then
-        If sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR2").OFFSET(0, 1).Interior.color Then sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR2").OFFSET(0, 1).Interior.color
-        If Trim(sh.Range("DL")) <> "" Then
-            If sh.name <> Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")" Then sh.name = Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")"
-        Else
-            If sh.name <> Trim(sh.Range("POLENUM")) Then sh.name = Trim(sh.Range("POLENUM"))
-        End If
-    ElseIf sh.Range("SUMSHEET8") = True And ThisWorkbook.sheets("Control").Range("COLOR3").OFFSET(0, 1).Interior.ColorIndex <> xlNone Then
-        If sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR3").OFFSET(0, 1).Interior.color Then sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR3").OFFSET(0, 1).Interior.color
-        If Trim(sh.Range("DL")) <> "" Then
-            If sh.name <> Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")" Then sh.name = Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")"
-        Else
-            If sh.name <> Trim(sh.Range("POLENUM")) Then sh.name = Trim(sh.Range("POLENUM"))
-        End If
-    ElseIf sh.Range("SUMSHEET4") = True And ThisWorkbook.sheets("Control").Range("COLOR4").OFFSET(0, 1).Interior.ColorIndex <> xlNone Then
-        If sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR4").OFFSET(0, 1).Interior.color Then sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR4").OFFSET(0, 1).Interior.color
-        If Trim(sh.Range("DL")) <> "" Then
-            If sh.name <> Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")" Then sh.name = Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")"
-        Else
-            If sh.name <> Trim(sh.Range("POLENUM")) Then sh.name = Trim(sh.Range("POLENUM"))
-        End If
-    ElseIf (sh.Range("SUMSHEET1") = True Or sh.Range("SUMSHEET7") = True) And ThisWorkbook.sheets("Control").Range("COLOR5").OFFSET(0, 1).Interior.ColorIndex <> xlNone Then
-        If sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR5").OFFSET(0, 1).Interior.color Then sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR5").OFFSET(0, 1).Interior.color
-        If Trim(sh.Range("DL")) <> "" Then
-            If sh.name <> Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")" Then sh.name = Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")"
-        Else
-            If sh.name <> Trim(sh.Range("POLENUM")) Then sh.name = Trim(sh.Range("POLENUM"))
-        End If
+    
+    If Trim(Sh.Range("DL")) <> "" Then
+        If Sh.name <> Trim(Sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(Sh.Range("DL"))) & ")" Then Sh.name = Trim(Sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(Sh.Range("DL"))) & ")"
     Else
-        If sh.Tab.color <> False Then sh.Tab.color = False
-        If Trim(sh.Range("DL")) <> "" Then
-            If sh.name <> Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")" Then sh.name = Trim(sh.Range("POLENUM")) & "(" & Trim(fixSpecialCharacters(sh.Range("DL"))) & ")"
-        ElseIf sh.name <> "4 Spans" And sh.name <> "8 Spans" And sh.name <> "12 Spans" Then
-            If sh.name <> Trim(sh.Range("POLENUM")) Then sh.name = sh.Range("POLENUM")
-        End If
+        If Sh.name <> Trim(Sh.Range("POLENUM")) Then Sh.name = Trim(Sh.Range("POLENUM"))
+    End If
+
+    If Trim(Sh.Range("DL")) <> "" And (Sh.Range("SUMSHEET4") = True Or Sh.Range("NJUNS") <> "") And Sh.Range("NJUNS") <> "COMM MAKE READY WORK" And ThisWorkbook.sheets("Control").Range("COLOR1").offSet(0, 1).Interior.ColorIndex <> xlNone Then
+        If Sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR1").offSet(0, 1).Interior.color Then Sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR1").offSet(0, 1).Interior.color
+    ElseIf Trim(Sh.Range("DL")) <> "" And ThisWorkbook.sheets("Control").Range("COLOR2").offSet(0, 1).Interior.ColorIndex <> xlNone Then
+        If Sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR2").offSet(0, 1).Interior.color Then Sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR2").offSet(0, 1).Interior.color
+    ElseIf Sh.Range("SUMSHEET9") = True And ThisWorkbook.sheets("Control").Range("COLOR3").offSet(0, 1).Interior.ColorIndex <> xlNone Then
+        If Sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR3").offSet(0, 1).Interior.color Then Sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR3").offSet(0, 1).Interior.color
+    ElseIf Sh.Range("SUMSHEET8") = True And Sh.Range("SUMSHEET4") = True And ThisWorkbook.sheets("Control").Range("COLOR4").offSet(0, 1).Interior.ColorIndex <> xlNone Then
+        If Sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR4").offSet(0, 1).Interior.color Then Sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR4").offSet(0, 1).Interior.color
+    ElseIf Sh.Range("SUMSHEET8") = True And ThisWorkbook.sheets("Control").Range("COLOR5").offSet(0, 1).Interior.ColorIndex <> xlNone Then
+        If Sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR5").offSet(0, 1).Interior.color Then Sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR5").offSet(0, 1).Interior.color
+    ElseIf Sh.Range("SUMSHEET4") = True And ThisWorkbook.sheets("Control").Range("COLOR6").offSet(0, 1).Interior.ColorIndex <> xlNone Then
+        If Sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR6").offSet(0, 1).Interior.color Then Sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR6").offSet(0, 1).Interior.color
+    ElseIf (Sh.Range("SUMSHEET1") = True Or Sh.Range("SUMSHEET7") = True) And ThisWorkbook.sheets("Control").Range("COLOR7").offSet(0, 1).Interior.ColorIndex <> xlNone Then
+        If Sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR7").offSet(0, 1).Interior.color Then Sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR7").offSet(0, 1).Interior.color
+    ElseIf InStr(Sh.Range("DET").offSet(0, 1), "Hammer Test") > 0 Then
+        If Sh.Tab.color <> ThisWorkbook.sheets("Control").Range("COLOR8").offSet(0, 1).Interior.color Then Sh.Tab.color = ThisWorkbook.sheets("Control").Range("COLOR8").offSet(0, 1).Interior.color
+    Else
+        If Sh.Tab.color <> False Then Sh.Tab.color = False
     End If
     
 End Sub
@@ -121,9 +119,6 @@ End Function
 Private Sub Workbook_Open()
     Call UpdatePoleDetailSheets.CheckVersion(True)
 End Sub
-
-
-
 
 
 
