@@ -56,43 +56,43 @@ Public Sub Initialize()
     Set json = PrintGenerator.ReadJSON("settings")
     
     If Not json Is Nothing Then
-        ShowDraw.Value = json("ShowDrawing")
+        ShowDraw.value = json("ShowDrawing")
         
-        Conductor.Value = json("DrawConductors")
-        Conductor1.Value = json("DrawPrimary")
-        Conductor2.Value = json("DrawSecondary")
-        Conductor3.Value = json("DrawOpenWire")
-        Conductor4.Value = json("DrawDeadends")
-        Conductor5.Value = json("ConductorInitOffset")
-        Conductor6.Value = json("ConductorOffsetAmount")
+        Conductor.value = json("DrawConductors")
+        Conductor1.value = json("DrawPrimary")
+        Conductor2.value = json("DrawSecondary")
+        Conductor3.value = json("DrawOpenWire")
+        Conductor4.value = json("DrawDeadends")
+        Conductor5.value = json("ConductorInitOffset")
+        Conductor6.value = json("ConductorOffsetAmount")
         
-        ROW.Value = json("DrawROW")
-        ROW1.Value = json("DrawCenterLines")
-        ROW1a.Value = json("DrawCenterLineDistances")
+        ROW.value = json("DrawROW")
+        ROW1.value = json("DrawCenterLines")
+        ROW1a.value = json("DrawCenterLineDistances")
         
-        DG.Value = json("DrawDownGuys")
-        SPG.Value = json("DrawSpanGuys")
-        CN.Value = json("DrawCrewNotes")
-        Tree.Value = json("DrawTrees")
+        DG.value = json("DrawDownGuys")
+        SPG.value = json("DrawSpanGuys")
+        CN.value = json("DrawCrewNotes")
+        Tree.value = json("DrawTrees")
         
-        Service.Value = json("DrawServices")
-        Service1.Value = json("DrawUGServices")
-        Service2.Value = json("DrawAdjacentServices")
+        Service.value = json("DrawServices")
+        Service1.value = json("DrawUGServices")
+        Service2.value = json("DrawAdjacentServices")
         
-        Equipment.Value = json("DrawEquipment")
-        Equipment1.Value = json("DrawAdjacentPoleEquipment")
-        Equipment2.Value = json("DrawTransformers")
-        Equipment3.Value = json("DrawStreetlights")
-        Equipment4.Value = json("DrawCapacitors")
-        Equipment5.Value = json("DrawRegulators")
-        Equipment6.Value = json("DrawIsolators")
-        Equipment7.Value = json("DrawFuses")
-        Equipment8.Value = json("DrawReclosers")
-        Equipment9.Value = json("DrawSectionalizers")
-        Equipment10.Value = json("DrawSwitches")
-        Equipment11.Value = json("DrawSensors")
-        Equipment12.Value = json("DrawSecondaryRisers")
-        Equipment13.Value = json("DrawPrimaryRisers")
+        Equipment.value = json("DrawEquipment")
+        Equipment1.value = json("DrawAdjacentPoleEquipment")
+        Equipment2.value = json("DrawTransformers")
+        Equipment3.value = json("DrawStreetlights")
+        Equipment4.value = json("DrawCapacitors")
+        Equipment5.value = json("DrawRegulators")
+        Equipment6.value = json("DrawIsolators")
+        Equipment7.value = json("DrawFuses")
+        Equipment8.value = json("DrawReclosers")
+        Equipment9.value = json("DrawSectionalizers")
+        Equipment10.value = json("DrawSwitches")
+        Equipment11.value = json("DrawSensors")
+        Equipment12.value = json("DrawSecondaryRisers")
+        Equipment13.value = json("DrawPrimaryRisers")
     End If
 End Sub
 
@@ -103,84 +103,84 @@ Private Sub CommandButton1_Click()
     
     If userResponse <> vbYes Then Exit Sub
     
-    ShowDrawing = ShowDraw.Value
+    ShowDrawing = ShowDraw.value
     
-    DrawConductors = Conductor.Value
-    DrawPrimary = Conductor1.Value And Conductor1.Enabled
-    DrawSecondary = Conductor2.Value And Conductor2.Enabled
-    DrawOpenWire = Conductor3.Value And Conductor3.Enabled
-    DrawDeadends = Conductor4.Value And Conductor4.Enabled
-    ConductorInitOffset = Conductor5.Value
-    ConductorOffsetAmount = Conductor6.Value
+    DrawConductors = Conductor.value
+    DrawPrimary = Conductor1.value And Conductor1.Enabled
+    DrawSecondary = Conductor2.value And Conductor2.Enabled
+    DrawOpenWire = Conductor3.value And Conductor3.Enabled
+    DrawDeadends = Conductor4.value And Conductor4.Enabled
+    ConductorInitOffset = Conductor5.value
+    ConductorOffsetAmount = Conductor6.value
     
-    DrawROW = ROW.Value
-    DrawCenterLines = ROW1.Value And ROW1.Enabled
-    DrawCenterLineDistances = ROW1a.Value And ROW1a.Enabled
+    DrawROW = ROW.value
+    DrawCenterLines = ROW1.value And ROW1.Enabled
+    DrawCenterLineDistances = ROW1a.value And ROW1a.Enabled
     
-    DrawDownGuys = DG.Value
-    DrawSpanGuys = SPG.Value
-    DrawCrewNotes = CN.Value
-    DrawTrees = Tree.Value
+    DrawDownGuys = DG.value
+    DrawSpanGuys = SPG.value
+    DrawCrewNotes = CN.value
+    DrawTrees = Tree.value
     
-    DrawServices = Service.Value
-    DrawUGServices = Service1.Value And Service1.Enabled
-    DrawAdjacentServices = Service2.Value And Service2.Enabled
+    DrawServices = Service.value
+    DrawUGServices = Service1.value And Service1.Enabled
+    DrawAdjacentServices = Service2.value And Service2.Enabled
     
-    DrawEquipment = Equipment.Value
-    DrawAdjacentPoleEquipment = Equipment1.Value And Equipment1.Enabled
-    DrawTransformers = Equipment2.Value And Equipment2.Enabled
-    DrawStreetlights = Equipment3.Value And Equipment3.Enabled
-    DrawCapacitors = Equipment4.Value And Equipment4.Enabled
-    DrawRegulators = Equipment5.Value And Equipment5.Enabled
-    DrawIsolators = Equipment6.Value And Equipment6.Enabled
-    DrawFuses = Equipment7.Value And Equipment7.Enabled
-    DrawReclosers = Equipment8.Value And Equipment8.Enabled
-    DrawSectionalizers = Equipment9.Value And Equipment9.Enabled
-    DrawSwitches = Equipment10.Value And Equipment10.Enabled
-    DrawSensors = Equipment11.Value And Equipment11.Enabled
-    DrawSecondaryRisers = Equipment12.Value And Equipment12.Enabled
-    DrawPrimaryRisers = Equipment13.Value And Equipment13.Enabled
+    DrawEquipment = Equipment.value
+    DrawAdjacentPoleEquipment = Equipment1.value And Equipment1.Enabled
+    DrawTransformers = Equipment2.value And Equipment2.Enabled
+    DrawStreetlights = Equipment3.value And Equipment3.Enabled
+    DrawCapacitors = Equipment4.value And Equipment4.Enabled
+    DrawRegulators = Equipment5.value And Equipment5.Enabled
+    DrawIsolators = Equipment6.value And Equipment6.Enabled
+    DrawFuses = Equipment7.value And Equipment7.Enabled
+    DrawReclosers = Equipment8.value And Equipment8.Enabled
+    DrawSectionalizers = Equipment9.value And Equipment9.Enabled
+    DrawSwitches = Equipment10.value And Equipment10.Enabled
+    DrawSensors = Equipment11.value And Equipment11.Enabled
+    DrawSecondaryRisers = Equipment12.value And Equipment12.Enabled
+    DrawPrimaryRisers = Equipment13.value And Equipment13.Enabled
     
     Dim varDict As Object
     Set varDict = CreateObject("Scripting.Dictionary")
     
-    varDict.Add "ShowDrawing", ShowDraw.Value
+    varDict.Add "ShowDrawing", ShowDraw.value
     
-    varDict.Add "DrawConductors", Conductor.Value
-    varDict.Add "DrawPrimary", Conductor1.Value
-    varDict.Add "DrawSecondary", Conductor2.Value
-    varDict.Add "DrawOpenWire", Conductor3.Value
-    varDict.Add "DrawDeadends", Conductor4.Value
-    varDict.Add "ConductorInitOffset", Conductor5.Value
-    varDict.Add "ConductorOffsetAmount", Conductor6.Value
+    varDict.Add "DrawConductors", Conductor.value
+    varDict.Add "DrawPrimary", Conductor1.value
+    varDict.Add "DrawSecondary", Conductor2.value
+    varDict.Add "DrawOpenWire", Conductor3.value
+    varDict.Add "DrawDeadends", Conductor4.value
+    varDict.Add "ConductorInitOffset", Conductor5.value
+    varDict.Add "ConductorOffsetAmount", Conductor6.value
     
-    varDict.Add "DrawROW", ROW.Value
-    varDict.Add "DrawCenterLines", ROW1.Value
-    varDict.Add "DrawCenterLineDistances", ROW1a.Value
+    varDict.Add "DrawROW", ROW.value
+    varDict.Add "DrawCenterLines", ROW1.value
+    varDict.Add "DrawCenterLineDistances", ROW1a.value
     
-    varDict.Add "DrawDownGuys", DG.Value
-    varDict.Add "DrawSpanGuys", SPG.Value
-    varDict.Add "DrawCrewNotes", CN.Value
-    varDict.Add "DrawTrees", Tree.Value
+    varDict.Add "DrawDownGuys", DG.value
+    varDict.Add "DrawSpanGuys", SPG.value
+    varDict.Add "DrawCrewNotes", CN.value
+    varDict.Add "DrawTrees", Tree.value
     
-    varDict.Add "DrawServices", Service.Value
-    varDict.Add "DrawUGServices", Service1.Value
-    varDict.Add "DrawAdjacentServices", Service2.Value
+    varDict.Add "DrawServices", Service.value
+    varDict.Add "DrawUGServices", Service1.value
+    varDict.Add "DrawAdjacentServices", Service2.value
     
-    varDict.Add "DrawEquipment", Equipment.Value
-    varDict.Add "DrawAdjacentPoleEquipment", Equipment1.Value
-    varDict.Add "DrawTransformers", Equipment2.Value
-    varDict.Add "DrawStreetlights", Equipment3.Value
-    varDict.Add "DrawCapacitors", Equipment4.Value
-    varDict.Add "DrawRegulators", Equipment5.Value
-    varDict.Add "DrawIsolators", Equipment6.Value
-    varDict.Add "DrawFuses", Equipment7.Value
-    varDict.Add "DrawReclosers", Equipment8.Value
-    varDict.Add "DrawSectionalizers", Equipment9.Value
-    varDict.Add "DrawSwitches", Equipment10.Value
-    varDict.Add "DrawSensors", Equipment11.Value
-    varDict.Add "DrawSecondaryRisers", Equipment12.Value
-    varDict.Add "DrawPrimaryRisers", Equipment13.Value
+    varDict.Add "DrawEquipment", Equipment.value
+    varDict.Add "DrawAdjacentPoleEquipment", Equipment1.value
+    varDict.Add "DrawTransformers", Equipment2.value
+    varDict.Add "DrawStreetlights", Equipment3.value
+    varDict.Add "DrawCapacitors", Equipment4.value
+    varDict.Add "DrawRegulators", Equipment5.value
+    varDict.Add "DrawIsolators", Equipment6.value
+    varDict.Add "DrawFuses", Equipment7.value
+    varDict.Add "DrawReclosers", Equipment8.value
+    varDict.Add "DrawSectionalizers", Equipment9.value
+    varDict.Add "DrawSwitches", Equipment10.value
+    varDict.Add "DrawSensors", Equipment11.value
+    varDict.Add "DrawSecondaryRisers", Equipment12.value
+    varDict.Add "DrawPrimaryRisers", Equipment13.value
     
     JsonString = JsonConverter.ConvertToJson(varDict, Whitespace:=4)
     
@@ -199,7 +199,7 @@ Private Sub Conductor_Click()
     Dim ctrl As control
     For Each ctrl In Me.Controls
         If InStr(ctrl.name, "Conductor") > 0 And ctrl.name <> "Conductor" Then
-            ctrl.Enabled = Conductor.Value
+            ctrl.Enabled = Conductor.value
         End If
     Next ctrl
 End Sub
@@ -208,7 +208,7 @@ Private Sub Service_Click()
     Dim ctrl As control
     For Each ctrl In Me.Controls
         If InStr(ctrl.name, "Service") > 0 And ctrl.name <> "Service" Then
-            ctrl.Enabled = Service.Value
+            ctrl.Enabled = Service.value
         End If
     Next ctrl
 End Sub
@@ -216,7 +216,7 @@ End Sub
 Private Sub ROW_Click()
     For Each ctrl In Me.Controls
         If InStr(ctrl.name, "ROW") > 0 And ctrl.name <> "ROW" Then
-            ctrl.Enabled = ROW.Value
+            ctrl.Enabled = ROW.value
         End If
     Next ctrl
 End Sub
@@ -224,7 +224,7 @@ End Sub
 Private Sub ROW1_Click()
     For Each ctrl In Me.Controls
         If InStr(ctrl.name, "ROW1") > 0 And ctrl.name <> "ROW1" Then
-            ctrl.Enabled = ROW1.Value
+            ctrl.Enabled = ROW1.value
         End If
     Next ctrl
 End Sub
@@ -232,7 +232,7 @@ End Sub
 Private Sub Equipment_Click()
     For Each ctrl In Me.Controls
         If InStr(ctrl.name, "Equipment") > 0 And ctrl.name <> "Equipment" Then
-            ctrl.Enabled = Equipment.Value
+            ctrl.Enabled = Equipment.value
         End If
     Next ctrl
 End Sub
