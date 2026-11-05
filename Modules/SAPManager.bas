@@ -272,6 +272,7 @@ Public Sub fillSAPInfoFromPDS()
         Loop
     End If
     
+    Dim ttcString As String
     For Each ttc In ttcLocations
         If ttcLocations(ttc).count > 0 Then
             If Environ$("USERNAME") = "aabraham" Then
@@ -282,11 +283,12 @@ Public Sub fillSAPInfoFromPDS()
                 End If
             End If
             
-            If SAP.ttc <> "" Then SAP.ttc = SAP.ttc & vbLf
-            SAP.ttc = SAP.ttc & "TTC " & ttc & ": " & compactListString(ttcLocations(ttc))
+            If ttcString <> "" Then ttcString = ttcString & vbLf
+            ttcString = ttcString & "TTC " & ttc & ": " & compactListString(ttcLocations(ttc))
         End If
     Next ttc
-    If SAP.ttc = "" Then SAP.ttc = "N/A"
+    If ttcString = "" Then ttcString = "N/A"
+    SAP.ttc = ttcString
     
     If Not treeWork Then
         SAP.treeWork = "N/A"
@@ -741,10 +743,10 @@ Function getLCPLocation(pole As pole, lcp As String, feederId As String, token A
     Dim poleCollection As Collection: Set poleCollection = New Collection
     poleCollection.Add pole
 
-    Dim jsonFuses As Object: Set jsonFuses = getElectricJson(poleCollection, 60, token, radius_:=6000)
-    Dim jsonReclosers As Object: Set jsonReclosers = getElectricJson(poleCollection, 70, token, radius_:=6000)
-    Dim jsonSectionalizers As Object: Set jsonSectionalizers = getElectricJson(poleCollection, 71, token, radius_:=6000)
-    Dim jsonSwitches As Object: Set jsonSwitches = getElectricJson(poleCollection, 65, token, radius_:=6000)
+    Dim jsonFuses As Object: Set jsonFuses = getElectricJson(poleCollection, 60, token, radius_:=12000)
+    Dim jsonReclosers As Object: Set jsonReclosers = getElectricJson(poleCollection, 70, token, radius_:=12000)
+    Dim jsonSectionalizers As Object: Set jsonSectionalizers = getElectricJson(poleCollection, 71, token, radius_:=12000)
+    Dim jsonSwitches As Object: Set jsonSwitches = getElectricJson(poleCollection, 65, token, radius_:=12000)
     
     If locationDescription = "" Then locationDescription = parseFeaturesForLCP(jsonFuses, lcp, feederId)
     If locationDescription = "" Then locationDescription = parseFeaturesForLCP(jsonReclosers, lcp, feederId)
