@@ -27,12 +27,12 @@ Public Sub Initialize()
 End Sub
 
 Private Sub CommandButton1_Click()
-    wireSize = ComboBox1.Value
-    wireSag = ComboBox2.Value
-    spanLength = TextBox1.Value
+    wireSize = ComboBox1.value
+    wireSag = ComboBox2.value
+    spanLength = TextBox1.value
     
     Me.StartUpPosition = 0
-    Me.Left = Application.Left + (0.5 * Application.Width) - (0.5 * Me.Width)
+    Me.Left = Application.Left + (0.5 * Application.width) - (0.5 * Me.width)
     Me.top = Application.top + (0.5 * Application.height) - (0.5 * Me.height)
     
     Dim xOffset As Double: xOffset = 0
