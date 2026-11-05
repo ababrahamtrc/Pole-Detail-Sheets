@@ -6,8 +6,18 @@ Sub GenerateMicrostationPrintFiles()
     
     restartMicrostationNeeded = False
     
+    Call ImportBently
+    
+    If Not generateJSON Then Exit Sub
+    
+    MsgBox "Press '9' to generate the print on open map utilities. Script will have to be rerun for future generations."
+End Sub
+
+Sub ImportBently()
     If Environ$("USERNAME") <> "aabraham" Then
-        restartMicrostationNeeded = injectHotkey()
+        restartMicrostationNeeded = InjectHotkey("9", "vba run GeneratePrint", "Generate Print")
+        restartMicrostationNeeded = InjectHotkey("8", "vba run AutofillTitleBlocks", "Autofill Title Blocks")
+        If Not ForceInjectModuleToBentley("TitleBlockGenerator") Then Exit Sub
         If Not ForceInjectModuleToBentley("PrintGenerator") Then Exit Sub
         If Not ForceInjectUserFormToBentley("PrintOptions") Then Exit Sub
         Call FixJsonConverter("Private Function json_ParseObject(json_String As String, ByRef json_Index As Long) As Dictionary", "Private Function json_ParseObject(json_String As String, ByRef json_Index As Long) As Object")
@@ -15,13 +25,9 @@ Sub GenerateMicrostationPrintFiles()
         If Not ForceInjectModuleToBentley("JsonConverter") Then Exit Sub
     End If
     
-    If Not generateJSON Then Exit Sub
-    
     If restartMicrostationNeeded Then
-        MsgBox "Restart Open Map Utilities if open for changes to take effect."
+        MsgBox "Restart Open Map Utilities if open for hotkey changes to take effect."
     End If
-    
-    MsgBox "Press '9' to generate the print on open map utilities. Script will have to be rerun for future generations."
 End Sub
 
 Sub FixJsonConverter(searchStr As String, replaceStr As String)
@@ -48,8 +54,15 @@ End Sub
 
 Sub ClipboardGISTokenURL()
     Dim url As String
-
-    url = "javascript:(function(){if(window.__CE_TOKEN_SEARCHER__){alert('Token searcher already active.\n\nPan/zoom to trigger requests.');return;}window.__CE_TOKEN_SEARCHER__=true;window.__CE_LAST_TOKEN__=null;function emit(t,src){if(!t||t===window.__CE_LAST_TOKEN__)return;window.__CE_LAST_TOKEN__=t;var payload={token:t,captured_at:new Date().toISOString(),source:src};console.log('[CE TOKEN]',payload);try{navigator.clipboard.writeText(JSON.stringify(payload,null,2));}catch(e)" & _
+    url = "javascript:(function(){    if(window.__CE_TOKEN_SEARCHER__){        alert('Token searcher already active.\n\nPan/zoom to trigger requests.');        return;    }    window.__CE_TOKEN_SEARCHER__ = true;    var originalXSend = XMLHttpRequest.prototype.send;    var originalFetch = window.fetch;    var captured = false;    function disarm(){        XMLHttpRequest.prototype.send = originalXSend;        window.fetch = originalFetch;        window.__CE_TOKEN_SEARCHER__ = false;" & _
+        "console.log('[CE TOKEN] Token captured. Searcher disarmed.');    }    function emit(token, source){        if(!token || captured){            return;        }        captured = true;        disarm();        var payload = {            token: token,            captured_at: new Date().toISOString(),            source: source        };        var json = JSON.stringify(payload, null, 2);        console.log('[CE TOKEN]', payload);        try{            navigator.clipboard.writeText(json); " & _
+        "}catch(e){            console.warn('[CE TOKEN] Clipboard copy failed:', e);        }        var blob = new Blob([json], {            type: 'application/json'        });        var url = URL.createObjectURL(blob);        var a = document.createElement('a');        a.href = url;        a.download = 'arcgis_token.json';        document.body.appendChild(a);        a.click();        a.remove();        setTimeout(function(){            URL.revokeObjectURL(url);        }, 1000);    }" & _
+        "XMLHttpRequest.prototype.send = function(body){        try{            if(                typeof body === 'string' &&                body.indexOf('token=') !== -1            ){                var params = new URLSearchParams(body);                var token = params.get('token');                if(token){                    emit(token, 'XMLHttpRequest.send');                }            }        }catch(e){            console.warn('[CE TOKEN] XHR inspection error:', e);        }" & _
+        "return originalXSend.apply(this, arguments);    };    window.fetch = function(){        try{ var input = arguments[0];            var options = arguments[1];            if(typeof input === 'string'){                var questionIndex = input.indexOf('?');                if(questionIndex !== -1){                    var query = input.substring(questionIndex + 1);                    var params = new URLSearchParams(query);                    var token = params.get('token');" & _
+        "if(token){                        emit(token, 'fetch(url)'); }                }            }            if(                options &&                typeof options.body === 'string' &&                options.body.indexOf('token=') !== -1            ){                var bodyParams = new URLSearchParams(options.body);                var bodyToken = bodyParams.get('token');                if(bodyToken){                    emit(bodyToken, 'fetch(body)');                }" & _
+        "}        }catch(e){            console.warn('[CE TOKEN] Fetch inspection error:', e);        }        return originalFetch.apply(this, arguments);    };    alert(        'ArcGIS token searcher armed.\n\n' +        'Pan, zoom, or toggle a layer to capture a token.\n\n' +        'It will automatically disarm after the first capture.'    );})();"
+    
+    'url = "javascript:(function(){if(window.__CE_TOKEN_SEARCHER__){alert('Token searcher already active.\n\nPan/zoom to trigger requests.');return;}window.__CE_TOKEN_SEARCHER__=true;window.__CE_LAST_TOKEN__=null;function emit(t,src){if(!t||t===window.__CE_LAST_TOKEN__)return;window.__CE_LAST_TOKEN__=t;var payload={token:t,captured_at:new Date().toISOString(),source:src};console.log('[CE TOKEN]',payload);try{navigator.clipboard.writeText(JSON.stringify(payload,null,2));}catch(e)" & _
         "{}var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='arcgis_token.json';a.click();}var xsend=XMLHttpRequest.prototype.send;XMLHttpRequest.prototype.send=function(b){try{if(typeof b==='string'&&b.indexOf('token=')>-1){var p=new URLSearchParams(b);emit(p.get('token'),'XMLHttpRequest.send');}}catch(e){}return xsend.apply(this,arguments);};var ffetch=window.fetch;window.fetch=function(){try{var u=arguments[0];if(typeof u==='string'&&u.indexOf('to" & _
         "ken=')>-1){var q=u.split('?%27)[1];if(q){var p2=new URLSearchParams(q);emit(p2.get(%27token%27),%27fetch(url)%27);}}if(arguments[1]&&arguments[1].body&&typeof arguments[1].body===%27string%27&&arguments[1].body.indexOf(%27token=%27)>-1){var p3=new URLSearchParams(arguments[1].body);emit(p3.get(%27token%27),%27fetch(body)%27);}}catch(e){}return ffetch.apply(this,arguments);};alert(%27ArcGIS token searcher armed.\n\nPan, zoom, or toggle a layer to capture token.%27);})();"
 
@@ -64,7 +77,7 @@ End Sub
 Function generateJSON() As Boolean
     Dim json As Scripting.Dictionary: Set json = New Scripting.Dictionary
     Dim project As project: Set project = New project
-    Call project.extractFromSheets
+    Call project.extractFromSheets(True)
     
     Dim jsonPole As Scripting.Dictionary
     Dim jsonPoles As Object
@@ -144,7 +157,9 @@ Function generateJSON() As Boolean
             lines = Split(crewNotes, vbLf)
             For Each line In lines
                 If InStr(line, "PRI") > 0 Then
-                    If priRegex.test(line) Then
+                    If priRegex.Test(line) Then
+                        pole.alt1 = Replace(pole.alt1, line & vbLf, "")
+                    
                         Set matches = priRegex.Execute(line)
                         Dim primaryReconductored As Scripting.Dictionary: Set primaryReconductored = New Scripting.Dictionary
                         primaryReconductored("distance") = CInt(matches(0).SubMatches(0))
@@ -171,7 +186,8 @@ Function generateJSON() As Boolean
                                             primaryReconductored("otherPole") = Span.otherPole
                                             
                                             For Each line2 In lines
-                                                If neutRegex.test(line2) Then
+                                                If neutRegex.Test(line2) Then
+                                                    pole.alt1 = Replace(pole.alt1, line2 & vbLf, "")
                                                     Set matches = neutRegex.Execute(line2)
                                                     If primaryReconductored("distance") = CInt(matches(0).SubMatches(0)) Then
                                                         primaryReconductored("neutSize") = matches(0).SubMatches(2)
@@ -219,7 +235,9 @@ Function generateJSON() As Boolean
             lines = Split(crewNotes, vbLf)
             For Each line In lines
                 If InStr(line, "SEC") > 0 Then
-                    If secRegex.test(line) Then
+                    If secRegex.Test(line) Then
+                        pole.alt1 = Replace(pole.alt1, line & vbLf, "")
+                    
                         Set matches = secRegex.Execute(line)
                         Set secReconductored = New Scripting.Dictionary
                         secReconductored("distance") = CInt(matches(0).SubMatches(0))
@@ -283,7 +301,9 @@ Function generateJSON() As Boolean
             lines = Split(crewNotes, vbLf)
             For Each line In lines
                 If InStr(line, "SEC") > 0 Then
-                    If owRegex.test(line) Then
+                    If owRegex.Test(line) Then
+                        pole.alt1 = Replace(pole.alt1, line & vbLf, "")
+                    
                         Set matches = owRegex.Execute(line)
                         Set owReconductored = New Scripting.Dictionary
                         owReconductored("distance") = CInt(matches(0).SubMatches(0))
@@ -441,14 +461,16 @@ Function generateJSON() As Boolean
                     For Each midspan In Service.midspans
                         Set jsonService = New Scripting.Dictionary
                         Set Span = pole.spans(midspan)
-                        jsonService("adjacent") = False
-                        jsonService("x") = pole.x
-                        jsonService("y") = pole.y
-                        jsonService("ug") = False
-                        jsonService("distance") = Span.distance
-                        jsonService("angle") = Span.angle
-                        jsonService("address") = Span.houseNumber
-                        json("services").Add jsonService
+                        If Not Span Is Nothing Then
+                            jsonService("adjacent") = False
+                            jsonService("x") = pole.x
+                            jsonService("y") = pole.y
+                            jsonService("ug") = False
+                            jsonService("distance") = Span.distance
+                            jsonService("angle") = Span.angle
+                            jsonService("address") = Span.houseNumber
+                            json("services").Add jsonService
+                        End If
                     Next midspan
                 Next Service
             End If
@@ -1102,6 +1124,8 @@ Function generateJSON() As Boolean
     Call LoadingBar_Form2.InitProgress(poleCollections.count * 2)
     
     For Each poleCollection In poleCollections
+        Call SleepMS(100)
+    
         If LoadingBar_Form2.gTotal = 0 Then Exit Function
         Call LoadingBar_Form2.UpdateProgress("Generating Print JSON", "Extracting Equipment GIS Information", True)
         Set jsonPoles = getElectricJson(poleCollection, 3, token)
@@ -1893,8 +1917,10 @@ Function GetToken() As String
     End If
 End Function
 
+Function InjectHotkey(ByVal button As String, _
+                      ByVal command As String, _
+                      Optional ByVal label As String = "") As Boolean
 
-Function injectHotkey() As Boolean
     Dim fileNum As Integer
     Dim fileText As String
     Dim lineBreakPos As Long
@@ -1903,52 +1929,90 @@ Function injectHotkey() As Boolean
     
     Dim filePath1 As String: filePath1 = "C:\ProgramData\Bentley\OpenUtilities Map Connect Edition\Configuration\Organization\USER_APPSETTINGS_DFLTS\Consumers_KeyboardShortcutsSeed.xml"
     Dim filePath2 As String: filePath2 = "C:\Users\" & Environ$("USERNAME") & "\AppData\Local\Bentley\OpenUtilitiesMap\10.0.0\prefs\Personal.KeyboardShortcuts.xml"
-    
+      
     If Dir(filePath2) <> "" Then
         filePath = filePath2
     ElseIf Dir(filePath1) <> "" Then
         filePath = filePath1
     Else
         MsgBox "Failed to find keyboard shortcut file. Can't inject hotkey."
-        injectHotkey = False
+        InjectHotkey = False
         Exit Function
     End If
     
-    Dim keyinShortcut As String: keyinShortcut = "" & _
-    vbTab & "<KeyboardShortcut ScanCode=""0x0a"" Comment=""9"">" & vbLf & _
-    vbTab & vbTab & "<Label>Generate Print</Label>" & vbLf & _
-    vbTab & vbTab & "<Keyin>vba run GeneratePrint</Keyin>" & vbLf & _
-    vbTab & "</KeyboardShortcut>" & vbLf
+    'If no label was supplied, use the command
+    If label = "" Then label = command
     
+    Dim keyinShortcut As String
+    
+    keyinShortcut = _
+        vbTab & "<KeyboardShortcut ScanCode=""" & GetScanCode(button) & _
+                """ Comment=""" & button & """>" & vbCrLf & _
+        vbTab & vbTab & "<Label>" & label & "</Label>" & vbCrLf & _
+        vbTab & vbTab & "<Keyin>" & command & "</Keyin>" & vbCrLf & _
+        vbTab & "</KeyboardShortcut>" & vbCrLf
+    
+    'Read file
     fileNum = FreeFile()
     Open filePath For Input As #fileNum
     fileText = Input$(LOF(fileNum), fileNum)
     Close #fileNum
     
-    If InStr(1, fileText, Trim(keyinShortcut), vbTextCompare) > 0 Then
-        injectHotkey = False
+    'Already exists
+    If InStr(1, fileText, Trim$(keyinShortcut), vbTextCompare) > 0 Then
+        InjectHotkey = False
         Exit Function
     End If
     
+    'Find third line
     lineBreakPos = 1
+    
     For i = 1 To 2
         lineBreakPos = InStr(lineBreakPos, fileText, vbCrLf)
+        
         If lineBreakPos = 0 Then
-            Debug.Print "File has fewer than 3 lines. Cannot inject.", vbExclamation
-            injectHotkey = False
+            Debug.Print "File has fewer than 3 lines. Cannot inject."
+            InjectHotkey = False
             Exit Function
         End If
+        
         lineBreakPos = lineBreakPos + 2
     Next i
     
-    fileText = Left(fileText, lineBreakPos - 1) & keyinShortcut & Mid(fileText, lineBreakPos)
+    'Insert shortcut
+    fileText = Left$(fileText, lineBreakPos - 1) & _
+               keyinShortcut & _
+               Mid$(fileText, lineBreakPos)
     
+    'Write file
     fileNum = FreeFile()
     Open filePath For Output As #fileNum
     Print #fileNum, fileText;
     Close #fileNum
+    
+    InjectHotkey = True
 
-    injectHotkey = True
+End Function
+
+Private Function GetScanCode(ByVal button As String) As String
+
+    Select Case UCase$(button)
+        Case "0": GetScanCode = "0x0b"
+        Case "1": GetScanCode = "0x02"
+        Case "2": GetScanCode = "0x03"
+        Case "3": GetScanCode = "0x04"
+        Case "4": GetScanCode = "0x05"
+        Case "5": GetScanCode = "0x06"
+        Case "6": GetScanCode = "0x07"
+        Case "7": GetScanCode = "0x08"
+        Case "8": GetScanCode = "0x09"
+        Case "9": GetScanCode = "0x0a"
+        
+        Case Else
+            Err.Raise vbObjectError + 1, "GetScanCode", _
+                      "Unsupported shortcut button: " & button
+    End Select
+
 End Function
 
 Function ForceInjectModuleToBentley(strModuleName As String) As Boolean
@@ -1965,7 +2029,7 @@ Function ForceInjectModuleToBentley(strModuleName As String) As Boolean
     strProjectNameOnly = CreateObject("Scripting.FileSystemObject").GetBaseName(strMVBAProjectPath)
 
     On Error Resume Next
-    ThisWorkbook.VBProject.VBComponents(strModuleName).Export strTempBasPath
+    ThisWorkbook.VBProject.VBComponents(strModuleName).export strTempBasPath
     If Err.Number <> 0 Then
         MsgBox "Failed to export Excel module. Go to Excel Trust Center and enable 'Trust access to the VBA project object model'.", vbCritical
         ForceInjectModuleToBentley = False
@@ -1989,9 +2053,11 @@ Function ForceInjectModuleToBentley(strModuleName As String) As Boolean
     On Error Resume Next
     For Each targetProject In BentleyEngine.VBE.VBProjects
         If UCase(targetProject.name) = UCase(strProjectNameOnly) Then
+            On Error Resume Next
             targetProject.VBComponents.Remove targetProject.VBComponents(strModuleName)
             targetProject.VBComponents.Import strTempBasPath
             fileFound = True
+            On Error GoTo 0
             Exit For
         End If
     Next targetProject
@@ -2029,7 +2095,7 @@ Function ForceInjectUserFormToBentley(strModuleName As String) As Boolean
     strProjectNameOnly = fso.GetBaseName(strMVBAProjectPath)
 
     On Error Resume Next
-    ThisWorkbook.VBProject.VBComponents(strModuleName).Export strTempFrmPath
+    ThisWorkbook.VBProject.VBComponents(strModuleName).export strTempFrmPath
     If Err.Number <> 0 Then
         MsgBox "Failed to export Excel form. Go to Excel Trust Center and enable 'Trust access to the VBA project object model'.", vbCritical
         ForceInjectUserFormToBentley = False
