@@ -1,7 +1,7 @@
 Attribute VB_Name = "Figures"
 Public Sub getFigures()
     Dim sheet As Worksheet: Set sheet = ThisWorkbook.ActiveSheet()
-    If sheet.name = "4 Spans" Or sheet.name = "8 Spans" Or sheet.name = "12 Spans" Or sheet.Cells(2, 2).Value <> "Notification:" Then
+    If sheet.name = "4 Spans" Or sheet.name = "8 Spans" Or sheet.name = "12 Spans" Or sheet.cells(2, 2).value <> "Notification:" Then
         MsgBox "You need to have a pole detail sheet active to run this script."
         Exit Sub
     End If
@@ -11,7 +11,7 @@ End Sub
 
 Public Sub clearFigures()
     Dim sheet As Worksheet: Set sheet = ThisWorkbook.ActiveSheet()
-    If sheet.name = "4 Spans" Or sheet.name = "8 Spans" Or sheet.name = "12 Spans" Or sheet.Cells(2, 2).Value <> "Notification:" Then
+    If sheet.name = "4 Spans" Or sheet.name = "8 Spans" Or sheet.name = "12 Spans" Or sheet.cells(2, 2).value <> "Notification:" Then
         MsgBox "You need to have a pole detail sheet active to run this script."
         Exit Sub
     End If
@@ -31,7 +31,7 @@ Public Sub getSheetFigures(sheet As Worksheet)
     Dim lines() As String
     Dim i As Integer
     Dim col As Integer
-    col = sheet.Range("DL").Column + 43
+    col = sheet.Range("DL").column + 43
     
     edemPath = "C:\Distrib\CE Standard Work\doc\edem\EDEM_"
     edmPath = "C:\Distrib\CE Standard Work\doc\edm\EDM_"
@@ -50,27 +50,27 @@ Public Sub getSheetFigures(sheet As Worksheet)
             regex.IgnoreCase = True
             regex.Global = False
             
-            If regex.test(line) Then
+            If regex.Test(line) Then
                 Set match = regex.Execute(line)(0)
                 
-                Set cell = sheet.Cells(linkCount + 2, col)
+                Set cell = sheet.cells(linkCount + 2, col)
                 If Not cell.Locked Then cell.Locked = False
                 
-                cell.Value = "FIGURE " & match.SubMatches(0)
+                cell.value = "FIGURE " & match.SubMatches(0)
                 cell.EntireColumn.AutoFit
                 cell.Hyperlinks.Add _
                     anchor:=cell, _
                     address:=IIf(match.SubMatches(0) = "22-405", edmPath, edemPath) & match.SubMatches(0) & ".html", _
-                    TextToDisplay:=cell.Value
+                    TextToDisplay:=cell.value
                 
                 linkCount = linkCount + 1
             End If
         End If
     Next i
     For i = linkCount To maxLinkCount
-        Set cell = sheet.Cells(i + 2, col)
+        Set cell = sheet.cells(i + 2, col)
         cell.Locked = False
-        If cell.Value <> "" Then cell.Value = ""
+        If cell.value <> "" Then cell.value = ""
     Next i
     
     sheet.Protect _
@@ -95,8 +95,8 @@ Public Sub clearSheetFigures(sheet As Worksheet)
     sheet.Unprotect
     
     For i = 0 To 10
-        Set cell = sheet.Cells(i + 2, 83)
-        If cell.Value <> "" Then cell.Value = ""
+        Set cell = sheet.cells(i + 2, 83)
+        If cell.value <> "" Then cell.value = ""
     Next i
 End Sub
 
