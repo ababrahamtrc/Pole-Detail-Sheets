@@ -37,11 +37,11 @@ Public Sub FixPoleForemanJSON()
             Set project = New project
             project.extractFromSheets
             For Each pole In project.poles
-                If pole.existingCEID = poleID Or poleID = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(project.permit) & "_" Then
+                If pole.existingCEID = poleID Or poleID = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(project.Permit) & "_" Then
                     If project.mode = "SYSTEM IMPROVEMENT" And pole.location <> "" Then
                         jsonPole("Structure")("Pole")("PoleNumber") = "PFF LOC " & pole.location
                     Else
-                        jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(project.permit) & "_"
+                        jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(project.Permit) & "_"
                     End If
                     found = True
                     Exit For
@@ -53,7 +53,7 @@ Public Sub FixPoleForemanJSON()
                 project.extractImportDataFormat
                 For Each pole In project.poles
                 If pole.existingCEID = poleID Then
-                    jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(project.permit) & "_"
+                    jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(project.Permit) & "_"
                     Exit For
                 End If
                 If pole.gisCEID = poleID Then
@@ -62,9 +62,9 @@ Public Sub FixPoleForemanJSON()
                     Call project2.extractFromSheets
                     Set Pole2 = project2.findPole(pole.poleNumber)
                     If Pole2 Is Nothing Then
-                        If Utilities.isCEID(pole.existingCEID) Or pole.existingCEID = "FOREIGN" Then jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(project.permit) & "_"
+                        If Utilities.isCEID(pole.existingCEID) Or pole.existingCEID = "FOREIGN" Then jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & pole.existingCEID & "_" & correctFileName(project.Permit) & "_"
                     Else
-                        If Utilities.isCEID(Pole2.existingCEID) Or Pole2.existingCEID = "FOREIGN" Then jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & Pole2.existingCEID & "_" & correctFileName(project.permit) & "_"
+                        If Utilities.isCEID(Pole2.existingCEID) Or Pole2.existingCEID = "FOREIGN" Then jsonPole("Structure")("Pole")("PoleNumber") = "M1P" & pole.poleNumber & "_" & Pole2.existingCEID & "_" & correctFileName(project.Permit) & "_"
                     End If
                     Exit For
                 End If
