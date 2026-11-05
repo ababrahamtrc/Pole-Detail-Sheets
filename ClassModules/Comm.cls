@@ -27,13 +27,13 @@ Public reasonForMovement As String
 Public reasonForAnchorMovement As String
 Public orientation As String
 
-Public Function Equals(other As Comm)
-    If other Is Nothing Then
+Public Function Equals(Other As comm)
+    If Other Is Nothing Then
         Equals = False
     Else
-        Equals = (Me.owner = other.owner) And _
-                 (Me.height = other.height) And _
-                 (Me.modification = other.modification)
+        Equals = (Me.owner = Other.owner) And _
+                 (Me.height = Other.height) And _
+                 (Me.modification = Other.modification)
     End If
 End Function
 
