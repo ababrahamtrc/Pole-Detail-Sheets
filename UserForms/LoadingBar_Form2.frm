@@ -34,7 +34,7 @@ Sub InitProgress(Total As Long, Optional starting As Boolean, Optional Total2 As
     
     If Not Me.visible Then
         Me.StartUpPosition = 0
-        Me.Left = Application.Left + (0.5 * Application.Width) - (0.5 * Me.Width)
+        Me.Left = Application.Left + (0.5 * Application.width) - (0.5 * Me.width)
         Me.top = Application.top + (0.5 * Application.height) - (0.5 * Me.height)
     End If
 
@@ -42,7 +42,7 @@ Sub InitProgress(Total As Long, Optional starting As Boolean, Optional Total2 As
     LoadingBar_Form2.barFill.height = LoadingBar_Form2.frmBar.height
 
     With LoadingBar_Form2
-        .barFill.Width = 0
+        .barFill.width = 0
         .Show vbModeless
     End With
 End Sub
@@ -53,7 +53,7 @@ Sub UpdateProgress(fileName As String, progressType As String, Optional noFiles 
 
     gCurrent = gCurrent + 1
 
-    maxWidth = LoadingBar_Form2.frmBar.Width
+    maxWidth = LoadingBar_Form2.frmBar.width
     pct = gCurrent / gTotal
 
     LoadingBar_Form2.Label1.caption = progressType & IIf(noFiles, "", " files") & "..." & gCurrent & "/" & gTotal
@@ -61,7 +61,7 @@ Sub UpdateProgress(fileName As String, progressType As String, Optional noFiles 
     LoadingBar_Form2.Label3.caption = gCurrent2 & "/" & gTotal2
     
     If pct > 1 Then pct = 1
-    LoadingBar_Form2.barFill.Width = maxWidth * pct
+    LoadingBar_Form2.barFill.width = maxWidth * pct
     DoEvents
 End Sub
  
