@@ -2,8 +2,8 @@ Attribute VB_Name = "UtilitiesSpidaCalc"
 Public Function InitProjectFromSpidaJson(ByVal json As Object) As project
     Dim project As project: Set project = New project
     
-    project.Notification = Trim(json("forms")(1)("fields")("Notification Number"))
-    project.permit = Trim(json("forms")(1)("fields")("Permit Number"))
+    project.notification = Trim(json("forms")(1)("fields")("Notification Number"))
+    project.Permit = Trim(json("forms")(1)("fields")("Permit Number"))
     project.applicant = Trim(json("forms")(1)("fields")("Applicant"))
     project.county = Trim(json("address")("county"))
     project.township = Trim(json("address")("city"))
@@ -50,17 +50,17 @@ Public Function InitProjectFromSpidaJson(ByVal json As Object) As project
             Set proposed = Nothing
             Set Remedy = Nothing
             
-            For Each design In jsonPole("designs")
-                If design("label") = "Existing" Then
-                    Set existing = design("structure")
+            For Each Design In jsonPole("designs")
+                If Design("label") = "Existing" Then
+                    Set existing = Design("structure")
                 End If
-                If design("label") = "Proposed" Then
-                    Set proposed = design("structure")
+                If Design("label") = "Proposed" Then
+                    Set proposed = Design("structure")
                 End If
-                If design("label") = "Remedy" Then
-                    Set Remedy = design("structure")
+                If Design("label") = "Remedy" Then
+                    Set Remedy = Design("structure")
                 End If
-            Next design
+            Next Design
             
             Set wiresToSpansDict = New Scripting.Dictionary
             
@@ -183,12 +183,12 @@ Public Function InitProjectFromSpidaJson(ByVal json As Object) As project
         Next jsonPole
     Next lead
     
-    If project.Notification = "" Then
-        project.Notification = InputBox("Enter the Notification:", "User Input")
+    If project.notification = "" Then
+        project.notification = InputBox("Enter the Notification:", "User Input")
     End If
     
-    If project.permit = "" Then
-        project.permit = InputBox("Enter the Permit:", "User Input")
+    If project.Permit = "" Then
+        project.Permit = InputBox("Enter the Permit:", "User Input")
     End If
     
     If project.county = "" Then
