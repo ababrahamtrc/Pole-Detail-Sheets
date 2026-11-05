@@ -100,10 +100,10 @@ Sub DownloadOutageLists()
         Dim file As Object
         Dim http As Object: Set http = CreateObject("MSXML2.XMLHTTP")
         http.Open "GET", url & "Blanks/" & OUTAGECARDNAME, False
-        http.setRequestHeader "User-Agent", "ExcelVBA"
-        http.send
+        http.SetRequestHeader "User-Agent", "ExcelVBA"
+        http.Send
         If http.status = 200 Then
-            Set file = JsonConverter.ParseJson(http.responseText)
+            Set file = JsonConverter.ParseJson(http.ResponseText)
             If Not UpdatePoleDetailSheets.DownloadFile(file) Then
                 MsgBox "Failed to download outage card template"
                 Exit Sub
@@ -344,12 +344,18 @@ Sub DownloadOutageLists()
         End If
     Next poleCollection
     
-    Dim downloadPath As String: downloadPath = GetLocalPath(ThisWorkbook.Path) & "\"
-    If InStr(downloadPath, "sharepoint") > 0 Then downloadPath = Environ("USERPROFILE") & "\Downloads\"
+    Dim downloadPath As String
+    jobFolderPath = Utilities.GetJobDirectory(project.notification)
+    If jobFolderPath <> "" And Dir(jobFolderPath & "\Design Related Materials\") <> "" Then
+        downloadPath = jobFolderPath & "\Design Related Materials\"
+    Else
+        downloadPath = GetLocalPath(ThisWorkbook.Path) & "\"
+        If InStr(downloadPath, "sharepoint") > 0 Then downloadPath = Environ("USERPROFILE") & "\Downloads\"
+    End If
     
     Set objNetwork = CreateObject("WScript.Network")
-    Dim DesignerName As String: DesignerName = GetObject("WinNT://" & objNetwork.UserDomain & "/" & objNetwork.UserName & ",user").FullName
-    If ThisWorkbook.sheets("Control").Range("NAME") <> "" Then DesignerName = ThisWorkbook.sheets("Control").Range("NAME")
+    Dim designerName As String: designerName = GetObject("WinNT://" & objNetwork.UserDomain & "/" & objNetwork.userName & ",user").FullName
+    If ThisWorkbook.sheets("Control").Range("NAME") <> "" Then designerName = ThisWorkbook.sheets("Control").Range("NAME")
     
     Dim phases As Scripting.Dictionary: Set phases = New Scripting.Dictionary
     phases(1) = "Z"
@@ -546,74 +552,75 @@ Sub DownloadOutageLists()
                 
                 Dim NewBook As Workbook
                 Set NewBook = Workbooks.Add(xlWBATWorksheet)
+                Call addSensitivityLabel(NewBook)
                 Dim sheet As Worksheet: Set sheet = NewBook.sheets(1)
                 
-                sheet.Cells(1, 1).Value = "Name"
-                sheet.Cells(1, 2).Value = "ReportDate"
-                sheet.Cells(1, 3).Value = "DeviceType"
-                sheet.Cells(1, 4).Value = "DeviceFID"
-                sheet.Cells(1, 5).Value = "DeviceOID"
-                sheet.Cells(1, 6).Value = "EID"
-                sheet.Cells(1, 7).Value = "FeederID"
-                sheet.Cells(2, 7).Value = feederId
-                sheet.Cells(1, 8).Value = "FeederID2"
-                sheet.Cells(2, 8).Value = feederId2
-                sheet.Cells(1, 9).Value = "Substation"
-                sheet.Cells(2, 9).Value = substation
-                sheet.Cells(1, 10).Value = "Message"
-                sheet.Cells(1, 11).Value = "Start Date"
-                sheet.Cells(1, 12).Value = "Finish Date"
-                sheet.Cells(1, 13).Value = "Alternate Start Date"
-                sheet.Cells(1, 14).Value = "Alternate Finish Date"
-                sheet.Cells(1, 15).Value = "ConnectedCustomers"
-                sheet.Cells(1, 16).Value = "Priority"
-                sheet.Cells(2, 16).Value = priorityCount
-                sheet.Cells(1, 17).Value = "Multiphase"
-                sheet.Cells(2, 17).Value = multiPhaseCount
-                sheet.Cells(1, 18).Value = "Other"
-                sheet.Cells(2, 18).Value = otherCount
-                sheet.Cells(1, 19).Value = "Critical"
-                sheet.Cells(2, 19).Value = criticalCount
-                sheet.Cells(1, 20).Value = "Disconnected"
-                sheet.Cells(2, 20).Value = disconnectedCount
-                sheet.Cells(1, 21).Value = "Connected"
-                sheet.Cells(2, 21).Value = connectedCount
-                sheet.Cells(1, 22).Value = "DisconnectedCustomers"
+                sheet.cells(1, 1).value = "Name"
+                sheet.cells(1, 2).value = "ReportDate"
+                sheet.cells(1, 3).value = "DeviceType"
+                sheet.cells(1, 4).value = "DeviceFID"
+                sheet.cells(1, 5).value = "DeviceOID"
+                sheet.cells(1, 6).value = "EID"
+                sheet.cells(1, 7).value = "FeederID"
+                sheet.cells(2, 7).value = feederId
+                sheet.cells(1, 8).value = "FeederID2"
+                sheet.cells(2, 8).value = feederId2
+                sheet.cells(1, 9).value = "Substation"
+                sheet.cells(2, 9).value = substation
+                sheet.cells(1, 10).value = "Message"
+                sheet.cells(1, 11).value = "Start Date"
+                sheet.cells(1, 12).value = "Finish Date"
+                sheet.cells(1, 13).value = "Alternate Start Date"
+                sheet.cells(1, 14).value = "Alternate Finish Date"
+                sheet.cells(1, 15).value = "ConnectedCustomers"
+                sheet.cells(1, 16).value = "Priority"
+                sheet.cells(2, 16).value = priorityCount
+                sheet.cells(1, 17).value = "Multiphase"
+                sheet.cells(2, 17).value = multiPhaseCount
+                sheet.cells(1, 18).value = "Other"
+                sheet.cells(2, 18).value = otherCount
+                sheet.cells(1, 19).value = "Critical"
+                sheet.cells(2, 19).value = criticalCount
+                sheet.cells(1, 20).value = "Disconnected"
+                sheet.cells(2, 20).value = disconnectedCount
+                sheet.cells(1, 21).value = "Connected"
+                sheet.cells(2, 21).value = connectedCount
+                sheet.cells(1, 22).value = "DisconnectedCustomers"
                 
-                sheet.Cells(2, 1).Value = "Customer List"
-                sheet.Cells(2, 2).Value = Format(Now, "m/d/yyyy hh:nn:ss")
-                sheet.Cells(2, 3).Value = "Secondary Transformers"
+                sheet.cells(2, 1).value = "Customer List"
+                sheet.cells(2, 2).value = Format(Now, "m/d/yyyy hh:nn:ss")
+                sheet.cells(2, 3).value = "Secondary Transformers"
                 
-                sheet.Cells(5, 1).Value = "Account"
-                sheet.Cells(5, 2).Value = "AccountType"
-                sheet.Cells(5, 3).Value = "LastName"
-                sheet.Cells(5, 4).Value = "FirstName"
-                sheet.Cells(5, 5).Value = "Street"
-                sheet.Cells(5, 6).Value = "City"
-                sheet.Cells(5, 7).Value = "State"
-                sheet.Cells(5, 8).Value = "PostalCode"
-                sheet.Cells(5, 9).Value = "Telephone"
-                sheet.Cells(5, 10).Value = "Telephone2"
-                sheet.Cells(5, 11).Value = "Telephone3"
-                sheet.Cells(5, 12).Value = "Telephone4"
-                sheet.Cells(5, 13).Value = "CallbackNumber"
-                sheet.Cells(5, 14).Value = "CriticalCustomer"
-                sheet.Cells(5, 15).Value = "ConnectStatus"
-                sheet.Cells(5, 16).Value = "Meter"
-                sheet.Cells(5, 17).Value = "DeviceOID"
-                sheet.Cells(5, 18).Value = "TLM"
-                sheet.Cells(5, 19).Value = "Phase"
-                sheet.Cells(5, 20).Value = "Groups"
+                sheet.cells(5, 1).value = "Account"
+                sheet.cells(5, 2).value = "AccountType"
+                sheet.cells(5, 3).value = "LastName"
+                sheet.cells(5, 4).value = "FirstName"
+                sheet.cells(5, 5).value = "Street"
+                sheet.cells(5, 6).value = "City"
+                sheet.cells(5, 7).value = "State"
+                sheet.cells(5, 8).value = "PostalCode"
+                sheet.cells(5, 9).value = "Telephone"
+                sheet.cells(5, 10).value = "Telephone2"
+                sheet.cells(5, 11).value = "Telephone3"
+                sheet.cells(5, 12).value = "Telephone4"
+                sheet.cells(5, 13).value = "CallbackNumber"
+                sheet.cells(5, 14).value = "CriticalCustomer"
+                sheet.cells(5, 15).value = "ConnectStatus"
+                sheet.cells(5, 16).value = "Meter"
+                sheet.cells(5, 17).value = "DeviceOID"
+                sheet.cells(5, 18).value = "TLM"
+                sheet.cells(5, 19).value = "Phase"
+                sheet.cells(5, 20).value = "Groups"
                 
                 For i = 1 To outageList.count
                     For j = 1 To outageList(i).count
-                        sheet.Cells(i + 5, j).Value = outageList(i)(j)
+                        sheet.cells(i + 5, j).value = outageList(i)(j)
                     Next j
                 Next i
                 
                 For Each cell In sheet.UsedRange
                     cell.WrapText = False
-                    If (cell.ROW < 3 And cell.Column < 23) Or (cell.Column < 21 And cell.ROW > 4) Then
+                    If (cell.ROW < 3 And cell.column < 23) Or (cell.column < 21 And cell.ROW > 4) Then
                         With cell.Borders
                             .LineStyle = xlContinuous
                             .Weight = xlThin
@@ -623,12 +630,12 @@ Sub DownloadOutageLists()
                         cell.Font.Bold = True
                     End If
                 Next cell
-                sheet.Cells.EntireColumn.AutoFit
-                sheet.Cells.EntireRow.AutoFit
+                sheet.cells.EntireColumn.AutoFit
+                sheet.cells.EntireRow.AutoFit
                 
                 locationNumbers = compactListString(locationsUsed)
                 
-                fileName = project.Notification & " - Outage List Loc " & locationNumbers & ".xlsx"
+                fileName = project.notification & " - Outage List Loc " & locationNumbers & ".xlsx"
                 NewBook.SaveAs fileName:=downloadPath & fileName, FileFormat:=xlOpenXMLWorkbook
                 NewBook.Close savechanges:=False
                 
@@ -658,6 +665,7 @@ Sub DownloadOutageLists()
                     wdapp.AutomationSecurity = 1
                     wdapp.DisplayAlerts = 0
                     Set wdDoc = wdapp.Documents.Open(Environ("TEMP") & "\" & OUTAGECARDNAME)
+                    Call addSensitivityLabel(wdDoc)
                     wdapp.DisplayAlerts = -1
         
                     On Error GoTo errorHandler
@@ -679,7 +687,7 @@ Sub DownloadOutageLists()
                     Dim reconductored As Boolean
                     For Each line In lines
                         If InStr(line, "SEC") > 0 Then
-                            If secRegex.test(line) Then
+                            If secRegex.Test(line) Then
                                 reconductored = True
                                 Exit For
                             End If
@@ -700,7 +708,7 @@ Sub DownloadOutageLists()
                     
                     Call ReplaceNthOccurrence(wdDoc, "Click or tap here to enter text.", WorksheetFunction.Proper(county & "/" & city), 17)
                     Call ReplaceNthOccurrence(wdDoc, "Click or tap here to enter text.", JoinCollection(cardStreets, ", "), 16)
-                    Call ReplaceNthOccurrence(wdDoc, "Click or tap here to enter text.", project.Notification, 15)
+                    Call ReplaceNthOccurrence(wdDoc, "Click or tap here to enter text.", project.notification, 15)
                     Call ReplaceNthOccurrence(wdDoc, "Click or tap here to enter text.", comCount + resCount, 14)
                     Call ReplaceNthOccurrence(wdDoc, "Click or tap here to enter text.", reason, 13)
                     If feederId <> "" Then
@@ -709,10 +717,10 @@ Sub DownloadOutageLists()
                     End If
                     
                     Call ReplaceNthOccurrence(wdDoc, "Click or tap here to enter text.", JoinCollection(locationTLMs(pole.location), ", "), 10)
-                    Call ReplaceNthOccurrence(wdDoc, "Click or tap here to enter text.", DesignerName, 1)
+                    Call ReplaceNthOccurrence(wdDoc, "Click or tap here to enter text.", designerName, 1)
                     Call ReplaceNthOccurrence(wdDoc, "Choose an Item.", center, 1)
                     
-                    fileName = project.Notification & " - Outage Card Loc " & locationNumbers & ".docx"
+                    fileName = project.notification & " - Outage Card Loc " & locationNumbers & ".docx"
                     wdDoc.saveAs2 downloadPath & fileName
                     wdDoc.Close savechanges:=False
                     wdapp.Quit
