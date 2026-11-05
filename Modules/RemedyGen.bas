@@ -15,7 +15,7 @@ Sub RemedyGenerator()
     Dim midspans As Scripting.Dictionary
     Dim overlash As Boolean
     
-    If sheet.name = "4 Spans" Or sheet.name = "8 Spans" Or sheet.name = "12 Spans" Or sheet.Cells(2, 2).Value <> "Notification:" Then
+    If sheet.name = "4 Spans" Or sheet.name = "8 Spans" Or sheet.name = "12 Spans" Or sheet.cells(2, 2).value <> "Notification:" Then
         MsgBox "You need to have a pole detail sheet active to run this script."
         Exit Sub
     End If
@@ -62,11 +62,11 @@ Sub RemedyGenerator()
         applicant.modification = applicant.height
     End If
     For i = 1 To spans
-        If Trim(Replace(sheet.Range("TOPOLE" & i).OFFSET(1, 0).text, "-", "")) <> "" Then
-            Dim midspan As Integer: midspan = Utilities.convertToInches(sheet.Range("TOPOLE" & i).OFFSET(1, 0).text)
+        If Trim(Replace(sheet.Range("TOPOLE" & i).offSet(1, 0).text, "-", "")) <> "" Then
+            Dim midspan As Integer: midspan = Utilities.convertToInches(sheet.Range("TOPOLE" & i).offSet(1, 0).text)
             midspans.Add i, midspan
             If Not weps.exists(i) Then weps.Add i, sheet.Range("TOPOLE" & i).text
-            If regex.test(weps(i)) Then
+            If regex.Test(weps(i)) Then
                 Set matches = regex.Execute(weps(i))
                 Dim otherSheetName As String: otherSheetName = matches(0)
                 If SheetExists(otherSheetName) Then
@@ -94,19 +94,19 @@ Sub RemedyGenerator()
     Set modificationCells = New Collection
     Set otherModificationCells = New Scripting.Dictionary
     For i = 0 To 50
-        If sheet.Range("CMOWNER").OFFSET(i, 0).Interior.color = 16777215 Then Exit For
-        If sheet.Range("CMOWNER").OFFSET(i, 0) = "" Then Exit For
-        If sheet.Range("CMOWNER").OFFSET(i, 0).text = "Clearance Requirment" Then Exit For
+        If sheet.Range("CMOWNER").offSet(i, 0).Interior.color = 16777215 Then Exit For
+        If sheet.Range("CMOWNER").offSet(i, 0) = "" Then Exit For
+        If sheet.Range("CMOWNER").offSet(i, 0).text = "Clearance Requirment" Then Exit For
         addComm = True
-        Dim owner As String: owner = Trim(UCase(Replace(Replace(sheet.Range("CMOWNER").OFFSET(i, 0).text, " MSG", ""), " SVC", "")))
-        Dim height As Integer: height = Utilities.convertToInches(sheet.Range("CMHEIGHT").OFFSET(i, 0).text)
+        Dim owner As String: owner = Trim(UCase(Replace(Replace(sheet.Range("CMOWNER").offSet(i, 0).text, " MSG", ""), " SVC", "")))
+        Dim height As Integer: height = Utilities.convertToInches(sheet.Range("CMHEIGHT").offSet(i, 0).text)
         
-        If InStr(sheet.Range("CMOWNER").OFFSET(i, 0).text, "SVC") > 0 Then
+        If InStr(sheet.Range("CMOWNER").offSet(i, 0).text, "SVC") > 0 Then
             For j = 0 To 50
-                If sheet.Range("CMOWNER").OFFSET(j, 0).Interior.color = 16777215 Then Exit For
-                If sheet.Range("CMOWNER").OFFSET(j, 0) = "" Then Exit For
-                If sheet.Range("CMOWNER").OFFSET(j, 0).text = "Clearance Requirment" Then Exit For
-                If Replace(Trim(sheet.Range("CMOWNER").OFFSET(j, 0).text), " MSG", "") = owner Then
+                If sheet.Range("CMOWNER").offSet(j, 0).Interior.color = 16777215 Then Exit For
+                If sheet.Range("CMOWNER").offSet(j, 0) = "" Then Exit For
+                If sheet.Range("CMOWNER").offSet(j, 0).text = "Clearance Requirment" Then Exit For
+                If Replace(Trim(sheet.Range("CMOWNER").offSet(j, 0).text), " MSG", "") = owner Then
                     addComm = False
                     Exit For
                 End If
@@ -116,25 +116,27 @@ Sub RemedyGenerator()
             Set midspans = New Scripting.Dictionary
             Set adjacentHeights = New Scripting.Dictionary
             For j = 1 To spans
-                midspan = Utilities.convertToInches(sheet.Range("CMMIDSPAN" & j).OFFSET(i, 0).text)
+                midspan = Utilities.convertToInches(sheet.Range("CMMIDSPAN" & j).offSet(i, 0).text)
                 If midspan > 0 Then
                     midspans.Add j, midspan
-                    If Not weps.exists(j) Then weps.Add j, sheet.Range("TOPOLE" & j).Value
-                    If regex.test(weps(j)) Then
+                    If Not weps.exists(j) Then weps.Add j, sheet.Range("TOPOLE" & j).value
+                    If regex.Test(weps(j)) Then
                         Set matches = regex.Execute(weps(j))
                         otherSheetName = matches(0)
                         If SheetExists(otherSheetName) Then
                             Set otherSheet = Utilities.GetPDS(otherSheetName)
                             If Not otherModificationCells.exists(otherSheet.name) Then otherModificationCells.Add otherSheet.name, New Collection
                             adjacentHeight = getHeight(otherSheet, owner, midspan, sheet.Range("POLENUM").text)
-                            Set modCell = findModCell(otherSheet, adjacentHeight, owner, False, otherModificationCells(otherSheet.name))
-                            adjacentModification = Utilities.convertToInches(modCell.Value)
-                            If adjacentModification < 1 Then adjacentModification = adjacentHeight
-                            
-                            If adjacentModification > 0 Then
-                                adjacentHeights.Add j, New Collection
-                                adjacentHeights(j).Add adjacentHeight
-                                adjacentHeights(j).Add adjacentModification
+                            Set modcell = findModCell(otherSheet, adjacentHeight, owner, False, otherModificationCells(otherSheet.name))
+                            If Not modcell Is Nothing Then
+                                adjacentModification = Utilities.convertToInches(modcell.value)
+                                If adjacentModification < 1 Then adjacentModification = adjacentHeight
+                                
+                                If adjacentModification > 0 Then
+                                    adjacentHeights.Add j, New Collection
+                                    adjacentHeights(j).Add adjacentHeight
+                                    adjacentHeights(j).Add adjacentModification
+                                End If
                             End If
                         End If
                     End If
@@ -162,7 +164,7 @@ Sub RemedyGenerator()
                     Else
                         applicant.midspans.Add key, midspans.item(key)
                         If Not adjacentHeights.exists(key) Then
-                            If regex.test(weps(key)) Then
+                            If regex.Test(weps(key)) Then
                                 Set matches = regex.Execute(weps(key))
                                 otherSheetName = matches(0)
                                 If SheetExists(otherSheetName) Then
@@ -199,8 +201,8 @@ Sub RemedyGenerator()
                 wire.owner = owner
                 wire.height = height
                 Dim modification As String
-                Set modCell = findModCell(sheet, wire.height, wire.owner, False, modificationCells)
-                wire.modification = Utilities.convertToInches(modCell.Value)
+                Set modcell = findModCell(sheet, wire.height, wire.owner, False, modificationCells)
+                If Not modcell Is Nothing Then wire.modification = Utilities.convertToInches(modcell.value)
                 If wire.modification < 1 Then wire.modification = wire.height
                 
                 duplicate = False
@@ -289,8 +291,8 @@ Sub RemedyGenerator()
     Dim OGClearanceMidspans As Scripting.Dictionary: Set OGClearanceMidspans = New Scripting.Dictionary
     
     For Each wep In weps
-        If sheet.Range("CMMIDSPAN" & wep).OFFSET(-2, 0).text <> "" Then
-            parts = Split(sheet.Range("CMMIDSPAN" & wep).OFFSET(-2, 0).text, vbLf)
+        If sheet.Range("CMMIDSPAN" & wep).offSet(-2, 0).text <> "" Then
+            parts = Split(sheet.Range("CMMIDSPAN" & wep).offSet(-2, 0).text, vbLf)
             OGClearanceMidspans.Add wep, Utilities.convertToInches(parts(0)) + 30
             If UBound(parts) > 0 Then
                 If Utilities.convertToInches(parts(1)) > 0 Then
@@ -308,7 +310,7 @@ Sub RemedyGenerator()
     Next wep
     
     Dim IgnoreBolt As Boolean
-    If InStr(sheet.Range("NJUNSTICKET"), "PT") > 0 Or sheet.Range("REPLACEPOLE").Value = True Then IgnoreBolt = True
+    If InStr(sheet.Range("NJUNSTICKET"), "PT") > 0 Or sheet.Range("REPLACEPOLE").value = True Then IgnoreBolt = True
     
     Dim Bonded As Boolean
     If sheet.Range("BONDED") = "Yes" Then
@@ -331,11 +333,11 @@ Private Function getMod(sheet As Worksheet, height As Integer, owner As String, 
         For Each commCellName In comms
             If InStr(sheet.Range(commCellName).text, "COMM #") > 0 Then Exit For
             If InStr(1, sheet.Range(commCellName).text, owner, vbTextCompare) > 0 Then
-                Set startingPoint = sheet.Range(commCellName).OFFSET(1, 0)
+                Set startingPoint = sheet.Range(commCellName).offSet(1, 0)
                 For i = 1 To 100 Step 2
-                    If startingPoint.OFFSET(i, 0).text = "" Then Exit For
-                    If Utilities.convertToInches(startingPoint.OFFSET(i, 0).text) = height And Utilities.convertToInches(startingPoint.OFFSET(i, 1).text) > 0 Then
-                        getMod = Utilities.convertToInches(startingPoint.OFFSET(i, 0).OFFSET(0, 1).text)
+                    If startingPoint.offSet(i, 0).text = "" Then Exit For
+                    If Utilities.convertToInches(startingPoint.offSet(i, 0).text) = height And Utilities.convertToInches(startingPoint.offSet(i, 1).text) > 0 Then
+                        getMod = Utilities.convertToInches(startingPoint.offSet(i, 0).offSet(0, 1).text)
                         Exit Function
                     End If
                 Next i
@@ -357,7 +359,7 @@ Private Function getHeight(sheet As Worksheet, owner As String, midspan As Integ
     Dim Span As Integer: Span = 0
     For i = 1 To 12
         If Utilities.RangeExists(sheet, "TOPOLE" & i) Then
-            If regex.test(sheet.Range("TOPOLE" & i)) Then
+            If regex.Test(sheet.Range("TOPOLE" & i)) Then
                 Set matches = regex.Execute(sheet.Range("TOPOLE" & i))
                 If matches(0) = poleNumber Then
                     Span = i
@@ -370,9 +372,9 @@ Private Function getHeight(sheet As Worksheet, owner As String, midspan As Integ
     
     If Span <> 0 Then
         For i = 0 To 100
-            If sheet.Range("CMMIDSPAN" & Span).OFFSET(i + 1, 0).Interior.color <> 16312794 Then Exit For
-            If Utilities.convertToInches(sheet.Range("CMMIDSPAN" & Span).OFFSET(i, 0).text) = midspan And InStr(sheet.Range("CMOWNER").OFFSET(i, 0).text, owner) > 0 Then
-                getHeight = Utilities.convertToInches(sheet.Range("CMHEIGHT").OFFSET(i, 0).text)
+            If sheet.Range("CMMIDSPAN" & Span).offSet(i + 1, 0).Interior.color <> 16312794 Then Exit For
+            If Utilities.convertToInches(sheet.Range("CMMIDSPAN" & Span).offSet(i, 0).text) = midspan And InStr(sheet.Range("CMOWNER").offSet(i, 0).text, owner) > 0 Then
+                getHeight = Utilities.convertToInches(sheet.Range("CMHEIGHT").offSet(i, 0).text)
                 Exit Function
             End If
         Next i
@@ -391,7 +393,7 @@ Public Sub calculateProposedMidspans(Optional poleSheet As Worksheet)
         Call LogMessage.SendLogMessage("calculateProposedMidspans")
     
         Set sheet = ThisWorkbook.ActiveSheet()
-        If sheet.name = "4 Spans" Or sheet.name = "8 Spans" Or sheet.name = "12 Spans" Or sheet.Cells(2, 2).Value <> "Notification:" Then
+        If sheet.name = "4 Spans" Or sheet.name = "8 Spans" Or sheet.name = "12 Spans" Or sheet.cells(2, 2).value <> "Notification:" Then
             MsgBox "You need to have a pole detail sheet active to run this script."
             Exit Sub
         End If
@@ -399,8 +401,8 @@ Public Sub calculateProposedMidspans(Optional poleSheet As Worksheet)
         Set sheet = poleSheet
     End If
     
-    PROPOSEDHEIGHT = sheet.Range("PROPOSEDHEIGHT").Value
-    finalHeight = sheet.Range("CMRF1").Value
+    PROPOSEDHEIGHT = sheet.Range("PROPOSEDHEIGHT").value
+    finalHeight = sheet.Range("CMRF1").value
     
     If Utilities.convertToInches(PROPOSEDHEIGHT) < 1 Then
         If poleSheet Is Nothing Then
@@ -430,11 +432,11 @@ Public Sub calculateProposedMidspans(Optional poleSheet As Worksheet)
         Set toPoleCell = Nothing
         If Utilities.RangeExists(sheet, "TOPOLE" & i) Then Set toPoleCell = sheet.Range("TOPOLE" & i)
         If toPoleCell Is Nothing Then Exit For
-        midspan = toPoleCell.OFFSET(1, 0).Value
+        midspan = toPoleCell.offSet(1, 0).value
         If Utilities.convertToInches(midspan) > 0 Then
-            parenth = InStr(toPoleCell.Value, "(")
+            parenth = InStr(toPoleCell.value, "(")
             If parenth > 0 Then
-                pole = Left(toPoleCell.Value, parenth - 1)
+                pole = Left(toPoleCell.value, parenth - 1)
                 If Utilities.SheetExists(pole) Then
                     For Each oSheet In ThisWorkbook.sheets
                         If ThisWorkbook.RemoveParentheses(oSheet.name) = pole Then
@@ -445,13 +447,13 @@ Public Sub calculateProposedMidspans(Optional poleSheet As Worksheet)
                     
                     direction = " @P" & pole
                     
-                    If Utilities.convertToInches(Sheet2.Range("CMRF1").Value) > 0 Then
-                        proposedHeight2 = Sheet2.Range("PROPOSEDHEIGHT").Value
-                        finalHeight2 = Sheet2.Range("CMRF1").Value
+                    If Utilities.convertToInches(Sheet2.Range("CMRF1").value) > 0 Then
+                        proposedHeight2 = Sheet2.Range("PROPOSEDHEIGHT").value
+                        finalHeight2 = Sheet2.Range("CMRF1").value
                         difference2 = Utilities.convertToInches(finalHeight2) - Utilities.convertToInches(proposedHeight2)
                         midspanChange2 = difference2 / 2
                         
-                        If InStr(Sheet2.Range("CMRF2").Value, " @P" & sheet.Range("POLENUM")) > 0 Then
+                        If InStr(Sheet2.Range("CMRF2").value, " @P" & sheet.Range("POLENUM")) > 0 Then
                             If poleSheet Is Nothing Then
                                 answer = MsgBox("Do you want to update the value of midspans on pole " & pole, vbYesNoCancel + vbQuestion, "Confirmation")
                             Else
@@ -460,13 +462,13 @@ Public Sub calculateProposedMidspans(Optional poleSheet As Worksheet)
                             
                             If answer = vbYes Then
                                 Dim lines() As String
-                                lines = Split(Sheet2.Range("CMRF2").Value, vbLf)
+                                lines = Split(Sheet2.Range("CMRF2").value, vbLf)
                                 For j = LBound(lines) To UBound(lines)
                                     If InStr(lines(j), " @P" & sheet.Range("POLENUM")) > 0 Then
                                         lines(j) = Utilities.inchesToFeetInches(Utilities.convertToInches(midspan) + Int(midspanChange + midspanChange2)) & " @P" & sheet.Range("POLENUM")
                                     End If
                                 Next j
-                                Sheet2.Range("CMRF2").Value = Join(lines, vbLf)
+                                Sheet2.Range("CMRF2").value = Join(lines, vbLf)
                                 If polesChanged <> "" Then polesChanged = polesChanged & ", "
                                 polesChanged = polesChanged & pole
                             End If
@@ -487,12 +489,12 @@ Public Sub calculateProposedMidspans(Optional poleSheet As Worksheet)
     Next i
     
     If updatedMidspans <> "" And polesChanged <> "" Then
-        sheet.Range("CMRF2").Value = updatedMidspans
+        sheet.Range("CMRF2").value = updatedMidspans
         If poleSheet Is Nothing Then
             MsgBox "Updated the midspans on this pole" & vbLf & "Poles: " & polesChanged & " have also had their midspans updated on a different page"
         End If
     ElseIf updatedMidspans <> "" Then
-        sheet.Range("CMRF2").Value = updatedMidspans
+        sheet.Range("CMRF2").value = updatedMidspans
         If poleSheet Is Nothing Then
             MsgBox "Updated the midspans on this pole"
         End If
@@ -518,23 +520,23 @@ Public Function findModCell(sheet As Worksheet, height As Integer, owner As Stri
             commCellName = "COMM" & i
             If InStr(sheet.Range(commCellName).text, "COMM #") > 0 Then Exit For
             If InStr(1, sheet.Range(commCellName).text, owner, vbTextCompare) > 0 Then
-                Set startingPoint = sheet.Range(commCellName).OFFSET(1, 0)
+                Set startingPoint = sheet.Range(commCellName).offSet(1, 0)
                 For j = 1 To 100 Step 2
-                    If startingPoint.OFFSET(j, 0).text = "" Then Exit For
-                    If Utilities.convertToInches(startingPoint.OFFSET(j, 0)) = height Then
-                        If (findEmpty And startingPoint.OFFSET(j, 0).OFFSET(0, 1) = "") Or Not findEmpty Then
+                    If startingPoint.offSet(j, 0).text = "" Then Exit For
+                    If Utilities.convertToInches(startingPoint.offSet(j, 0)) = height Then
+                        If (findEmpty And startingPoint.offSet(j, 0).offSet(0, 1) = "") Or Not findEmpty Then
                             Unique = True
                             If Not modificationCells Is Nothing Then
                                 For Each cell In modificationCells
-                                    If cell.address = startingPoint.OFFSET(j, 0).OFFSET(0, 1).address Then
+                                    If cell.address = startingPoint.offSet(j, 0).offSet(0, 1).address Then
                                         Unique = False
                                         Exit For
                                     End If
                                 Next cell
                             End If
                             If Unique Then
-                                Set findModCell = startingPoint.OFFSET(j, 0).OFFSET(0, 1)
-                                If Not modificationCells Is Nothing Then modificationCells.Add startingPoint.OFFSET(j, 0).OFFSET(0, 1)
+                                Set findModCell = startingPoint.offSet(j, 0).offSet(0, 1)
+                                If Not modificationCells Is Nothing Then modificationCells.Add startingPoint.offSet(j, 0).offSet(0, 1)
                                 Exit Function
                             End If
                         End If
@@ -551,10 +553,10 @@ Public Sub clearModCells(sheet As Worksheet)
     For i = 1 To 8
         commCellName = "COMM" & i
         If InStr(sheet.Range(commCellName).text, "COMM #") > 0 Then Exit For
-        Set startingPoint = sheet.Range(commCellName).OFFSET(1, 0)
+        Set startingPoint = sheet.Range(commCellName).offSet(1, 0)
         For j = 1 To 100 Step 2
-            If startingPoint.OFFSET(j, 0).text = "" Then Exit For
-            startingPoint.OFFSET(j, 0).OFFSET(0, 1) = ""
+            If startingPoint.offSet(j, 0).text = "" Then Exit For
+            startingPoint.offSet(j, 0).offSet(0, 1) = ""
         Next j
     Next i
 End Sub
