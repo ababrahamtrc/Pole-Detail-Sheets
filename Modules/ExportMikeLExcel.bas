@@ -7,12 +7,13 @@ Sub MikeLExcel()
     Call LogMessage.SendLogMessage("mikeLExcel")
     
     Dim MikeLExcel As Workbook: Set MikeLExcel = Workbooks.Add
+    Call addSensitivityLabel(MikeLExcel)
     
     Application.EnableEvents = False
     Application.DisplayAlerts = False
     
-    MikeLExcel.sheets(1).Cells(1, 1).Value = "LOC #"
-    MikeLExcel.sheets(1).Cells(1, 2).Value = "CREW NOTES"
+    MikeLExcel.sheets(1).cells(1, 1).value = "LOC #"
+    MikeLExcel.sheets(1).cells(1, 2).value = "CREW NOTES"
     With MikeLExcel.sheets(1).Range("A1:B1")
         .Font.Bold = True
         .Font.name = "Aptos Narrow"
@@ -27,7 +28,7 @@ Sub MikeLExcel()
     colors.Add RGB(218, 242, 208)
     colors.Add RGB(202, 237, 251)
     
-    Dim Notification As String: Notification = ""
+    Dim notification As String: notification = ""
     Dim ROW As Integer: ROW = 2
     
     Dim locations As Collection: Set locations = New Collection
@@ -36,9 +37,9 @@ Sub MikeLExcel()
     Dim outageWorkLocations As Collection: Set outageWorkLocations = New Collection
     
     For Each sheet In ThisWorkbook.sheets
-        If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" And sheet.Cells(2, 2).Value = "Notification:" Then
-            If Notification = "" And sheet.Range("NOTIFICATION").Value <> "" Then Notification = sheet.Range("NOTIFICATION").Value
-            If sheet.Range("DL").Value <> "" Then
+        If sheet.name <> "4 Spans" And sheet.name <> "8 Spans" And sheet.name <> "12 Spans" And sheet.cells(2, 2).value = "Notification:" Then
+            If notification = "" And sheet.Range("NOTIFICATION").value <> "" Then notification = sheet.Range("NOTIFICATION").value
+            If sheet.Range("DL").value <> "" Then
                 If locations.count = 0 Then
                     locations.Add sheet.Range("DL")
                 Else
@@ -60,7 +61,7 @@ Sub MikeLExcel()
     For Each location In locations
         Set sheet = Nothing
         For Each ws In ThisWorkbook.sheets
-            If ws.name <> "4 Spans" And ws.name <> "8 Spans" And ws.name <> "12 Spans" And ws.Cells(2, 2).Value = "Notification:" Then
+            If ws.name <> "4 Spans" And ws.name <> "8 Spans" And ws.name <> "12 Spans" And ws.cells(2, 2).value = "Notification:" Then
                 If location = ws.Range("DL") Then
                     Set sheet = ws
                     Exit For
@@ -90,7 +91,7 @@ Sub MikeLExcel()
             Exit Sub
         End If
     
-        Call generateMikeLExcelRow(MikeLExcel, ROW, "P" & sheet.Range("POLENUM").Value & "-L" & sheet.Range("DL").Value, sheet.Range("ALTONE").Value)
+        Call generateMikeLExcelRow(MikeLExcel, ROW, "P" & sheet.Range("POLENUM").value & "-L" & sheet.Range("DL").value, sheet.Range("ALTONE").value)
         ROW = ROW + 1
     Next location
     
@@ -115,11 +116,11 @@ Sub MikeLExcel()
     
     
     MikeLExcel.sheets(1).Columns(2).ColumnWidth = 200
-    MikeLExcel.sheets(1).Cells.EntireColumn.AutoFit
-    MikeLExcel.sheets(1).Cells.EntireRow.AutoFit
+    MikeLExcel.sheets(1).cells.EntireColumn.AutoFit
+    MikeLExcel.sheets(1).cells.EntireRow.AutoFit
     
-    filePath = GetLocalPath(ThisWorkbook.Path) & "\" & Notification & " - Mike L Excel.xlsx"
-    If InStr(filePath, "sharepoint") > 0 Then filePath = Environ("USERPROFILE") & "\" & Notification & " - Mike L Excel.xlsx"
+    filePath = GetLocalPath(ThisWorkbook.Path) & "\" & notification & " - Mike L Excel.xlsx"
+    If InStr(filePath, "sharepoint") > 0 Then filePath = Environ("USERPROFILE") & "\" & notification & " - Mike L Excel.xlsx"
     
     MikeLExcel.SaveAs fileName:=filePath
     
@@ -129,8 +130,8 @@ Sub MikeLExcel()
 End Sub
 
 Private Sub generateMikeLExcelRow(MikeLExcel As Workbook, ROW As Integer, value1 As String, value2 As String)
-    With MikeLExcel.sheets(1).Cells(ROW, 1)
-            .Value = value1
+    With MikeLExcel.sheets(1).cells(ROW, 1)
+            .value = value1
             .Font.name = "Calibri"
             .Font.size = 11
             .Interior.color = colors((ROW Mod 2) + 1)
@@ -138,8 +139,8 @@ Private Sub generateMikeLExcelRow(MikeLExcel As Workbook, ROW As Integer, value1
             .Borders.Weight = xlThin
             .Borders.ColorIndex = 1
     End With
-    With MikeLExcel.sheets(1).Cells(ROW, 2)
-            .Value = value2
+    With MikeLExcel.sheets(1).cells(ROW, 2)
+            .value = value2
             .Font.name = "Arial"
             .Font.size = 9
             .VerticalAlignment = xlVAlignTop
