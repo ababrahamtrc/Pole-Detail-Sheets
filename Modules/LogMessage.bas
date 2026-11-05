@@ -5,19 +5,22 @@ Sub SendLogMessage(script As String)
     On Error Resume Next
 
     Dim url As String
-    Dim UserName As String
+    Dim userName As String
+    Dim project As project: Set project = New project
     
-    UserName = Environ$("USERNAME")
+    mode = IIf(project.mode = "MAKE READY", "MKR", "SI")
+    
+    userName = Environ$("USERNAME")
     
     If Environ$("USERDOMAIN") = "CE" Then
-        Debug.Print "Sending log message for " & UserName & ": " & script
+        Debug.Print "Sending log message for " & userName & ": " & script
         url = "https://script.google.com/macros/s/AKfycbwsg9vKpbad32eug1B0lSddjABtCb0MmZBjygFLXt3UlNiPdDhupg3gwYbSQpsviE8H4w/exec" & _
-             "?user=" & UserName & _
-             "&message=" & "PDS " & script
+             "?user=" & userName & _
+             "&message=" & "PDS " & mode & " " & script
     
        Set httpAsync = CreateObject("MSXML2.XMLHTTP.6.0")
        httpAsync.Open "Get", url, True
-       httpAsync.send
+       httpAsync.Send
     End If
 End Sub
 
