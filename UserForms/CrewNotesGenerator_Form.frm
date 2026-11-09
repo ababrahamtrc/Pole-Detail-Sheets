@@ -228,7 +228,7 @@ Public Sub Initialize(sheet As Worksheet)
         If InStr(pds.Range("UTTYPE").offSet(i, 0).text, "DG") > 0 And InStr(pds.Range("UTSIZE").offSet(i, 0).text, "20K") Then dg20KCount = dg20KCount + 1
         If InStr(pds.Range("UTTYPE").offSet(i, 0).text, "SVC") > 0 Then
             For j = 1 To 12
-                For Each name In pds.names
+                For Each name In pds.Names
                     If name.name = "'" & pds.name & "'" & "!" & "TOPOLE" & j Then
                         If Trim(Replace(pds.Range("UTMIDSPAN" & j).offSet(i, 0), "-", "")) <> "" Then
                             ohsCount = ohsCount + 1
@@ -239,7 +239,7 @@ Public Sub Initialize(sheet As Worksheet)
         End If
         If InStr(pds.Range("UTTYPE").offSet(i, 0).text, "SPG") > 0 Then
             For j = 1 To 12
-                For Each name In pds.names
+                For Each name In pds.Names
                     If name.name = "'" & pds.name & "'" & "!" & "TOPOLE" & j Then
                         If Trim(Replace(pds.Range("UTMIDSPAN" & j).offSet(i, 0), "-", "")) <> "" And InStr(pds.Range("UTSIZE").offSet(i, 0).text, "11K") Then spg11KCount = spg11KCount + 1
                         If Trim(Replace(pds.Range("UTMIDSPAN" & j).offSet(i, 0), "-", "")) <> "" And InStr(pds.Range("UTSIZE").offSet(i, 0).text, "20K") Then spg20KCount = spg20KCount + 1
@@ -249,7 +249,7 @@ Public Sub Initialize(sheet As Worksheet)
         End If
         If InStr(pds.Range("UTTYPE").offSet(i, 0).text, "OW") > 0 Or InStr(pds.Range("UTTYPE").offSet(i, 0).text, "SEC") > 0 Or InStr(pds.Range("UTTYPE").offSet(i, 0).text, "NEUT") > 0 Then
             For j = 1 To 12
-                For Each name In pds.names
+                For Each name In pds.Names
                     If name.name = "'" & pds.name & "'" & "!" & "TOPOLE" & j Then
                         If Trim(Replace(pds.Range("UTMIDSPAN" & j).offSet(i, 0), "-", "")) <> "" Then snC = snC + 1
                     End If
@@ -753,7 +753,7 @@ Private Function getOpenWireSizeFromSpan(Span As String) As String
     Dim name As Variant
     Dim openWireSizes As String: output = ""
     For i = 1 To 12
-        For Each name In pds.names
+        For Each name In pds.Names
             If name.name = "'" & pds.name & "'" & "!" & "TOPOLE" & i Then
                 If pds.Range("TOPOLE" & i).value = Span Then found = i
                 Exit For
@@ -2623,7 +2623,7 @@ Private Sub Initialize_Reconductor()
     spanAray(0) = ""
     Dim name As Variant
     For i = 1 To 12
-        For Each name In pds.names
+        For Each name In pds.Names
             If name.name = "'" & pds.name & "'" & "!" & "TOPOLE" & i Then
                 If Trim(Replace(pds.Range("TOPOLE" & i).value, "-", "")) <> "" Then
                     For j = 1 To 50
