@@ -36,6 +36,7 @@ Sub exportCMRF(Optional ignoreMessage As Boolean)
     End If
     
     Dim cmrfWs As Worksheet: Set cmrfWs = ThisWorkbook.sheets("CMRF")
+    Call cmrfWs.Unprotect
     Dim newWorkBook As Workbook: Set newWorkBook = Workbooks.Add
     cmrfWs.visible = xlSheetVisible
     cmrfWs.Copy After:=newWorkBook.sheets(1)
@@ -211,6 +212,7 @@ Sub exportSS(Optional ignoreMessage As Boolean)
     End If
     
     Dim ssWs As Worksheet: Set ssWs = ThisWorkbook.sheets("SS")
+    Call ssWs.Unprotect
     Dim newWorkBook As Workbook: Set newWorkBook = Workbooks.Add
     ssWs.visible = xlSheetVisible
     ssWs.Copy After:=newWorkBook.sheets(1)
@@ -280,6 +282,7 @@ Sub exportCS(Optional ignoreMessage As Boolean)
     End If
     
     Dim csWs As Worksheet: Set csWs = ThisWorkbook.sheets("CS")
+    Call csWs.Unprotect
     Dim newWorkBook As Workbook: Set newWorkBook = Workbooks.Add
     csWs.visible = xlSheetVisible
     csWs.Copy After:=newWorkBook.sheets(1)
