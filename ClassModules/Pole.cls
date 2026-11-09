@@ -659,8 +659,8 @@ Public Sub fillSheet(sheet As Worksheet, maxSpans As Integer, project As project
     If Me.utilComponents.count > 12 Then
         For i = 1 To Me.utilComponents.count - 12
             Application.CutCopyMode = False
-            sheet.Rows(28).Copy
-            sheet.Rows(29).Insert shift:=DOWN
+            sheet.Rows(29).Copy
+            sheet.Rows(30).Insert shift:=DOWN
             Application.CutCopyMode = False
         Next i
     End If
