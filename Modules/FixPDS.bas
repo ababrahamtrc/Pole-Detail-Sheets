@@ -20,7 +20,7 @@ Public Sub fixAttachmentHeights()
     Application.DisplayAlerts = False
     
     For i = 1 To 12
-        For Each name In sheet.names
+        For Each name In sheet.Names
             If name.name = "'" & sheet.name & "'" & "!" & "TOPOLE" & i Then spans = spans + 1
         Next name
     Next i
