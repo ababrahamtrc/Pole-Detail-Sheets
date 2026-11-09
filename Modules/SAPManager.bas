@@ -486,16 +486,16 @@ End Function
 Public Sub fillSAPNoPermits()
     Dim SAP As SAP: Set SAP = New SAP
     
-    SAP.permits = "N/A"
-    SAP.permitType = "N/A"
-    SAP.permitCost = "N/A"
-    SAP.permitLocations = "N/A"
+    If SAP.permits <> "" Then SAP.permits = "N/A"
+    If SAP.permitType <> "" Then SAP.permitType = "N/A"
+    If SAP.permitCost <> "" Then SAP.permitCost = "N/A"
+    If SAP.permitLocations <> "" Then SAP.permitLocations = "N/A"
     
-    SAP.mdot5Day = "N/A"
-    SAP.mdotTree = "N/A"
+    If SAP.mdot5Day <> "" Then SAP.mdot5Day = "N/A"
+    If SAP.mdotTree <> "" Then SAP.mdotTree = "N/A"
     
-    SAP.raildroadPermitRequired = "N/A"
-    SAP.railroadPermitCost = "N/A"
+    If SAP.raildroadPermitRequired <> "" Then SAP.raildroadPermitRequired = "N/A"
+    If SAP.railroadPermitCost <> "" Then SAP.railroadPermitCost = "N/A"
     
     Call SAP.fillSheet
 End Sub
@@ -633,7 +633,7 @@ Public Sub fillSAPInfoFromGIS()
             Dim transformerJson As Object: Set transformerJson = getElectricJson(poleCol, 27, token, , 100)
             
             Test = getClosestPole(transformerJson, pole.x, pole.y)
-            tlm = Test(0)("attributes")("TLM")
+            If Not Test(0) Is Nothing Then tlm = Test(0)("attributes")("TLM")
         End If
         
         If hotLineTagging Then
