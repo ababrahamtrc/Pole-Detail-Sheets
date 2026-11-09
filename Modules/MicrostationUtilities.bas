@@ -206,7 +206,7 @@ Public Function getClosestAngle(sheet As Worksheet, ByVal k As Integer, ByVal an
     size = ""
     
     For i = 1 To 12
-        For Each name In sheet.names
+        For Each name In sheet.Names
             If name.name = "'" & sheet.name & "'" & "!TOPOLE" & i Then
                 If Trim(Replace(sheet.Range("TOPOLE" & i), "-", "")) <> "" Then
                     If Replace(sheet.Range("UTMIDSPAN" & i).offSet(k, 0), "-", "") <> "" Then
