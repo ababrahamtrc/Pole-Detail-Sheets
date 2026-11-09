@@ -285,7 +285,7 @@ Private Function QACheck(pds As Worksheet) As String
         .Global = False
     End With
     For i = 1 To 12
-        For Each name In pds.names
+        For Each name In pds.Names
             If name.name = "'" & pds.name & "'" & "!TOPOLE" & i Then
                 If Trim(Replace(pds.Range("TOPOLE" & i), "-", "")) <> "" Then
                     If Trim(Replace(pds.Range("TOPOLE" & i).offSet(1, 0), "-", "")) <> "" Then
@@ -306,7 +306,7 @@ Private Function QACheck(pds As Worksheet) As String
                             Next oSheet
                             
                             For j = 1 To 12
-                                For Each otherName In otherSheet.names
+                                For Each otherName In otherSheet.Names
                                     If otherName.name = "'" & otherSheet.name & "'" & "!TOPOLE" & j Then
                                         If regex.Test(otherSheet.Range("TOPOLE" & j)) Then
                                             Set matches = regex.Execute(otherSheet.Range("TOPOLE" & j))
@@ -466,7 +466,7 @@ Private Function QACheck(pds As Worksheet) As String
         If pds.Range("UTMIDSPAN1").offSet(i, 0).Interior.color <> 16312794 Then utilityBoundryReached = True
         If pds.Range("CMMIDSPAN1").offSet(i + 1, 0).Interior.color <> 16312794 Then comBoundryReached = True
         For j = 1 To 12
-            For Each name In pds.names
+            For Each name In pds.Names
                 If name.name = "'" & pds.name & "'" & "!UTMIDSPAN" & j Then
                     If Not utilityBoundryReached And Trim(pds.Range("UTMIDSPAN" & j).offSet(i, 0)) = "0'0""" Then utilityMidspanIssue = True
                     If Not comBoundryReached And Trim(pds.Range("CMMIDSPAN" & j).offSet(i, 0)) = "0'0""" Then comMidspanIssue = True
