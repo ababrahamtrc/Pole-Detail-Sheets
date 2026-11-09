@@ -40,7 +40,7 @@ Sub RemedyGenerator()
     Dim found As Boolean
     For i = 1 To 12
         found = False
-        For Each name In sheet.names
+        For Each name In sheet.Names
             If name.name = "'" & sheet.name & "'" & "!" & "TOPOLE" & i Then
                 found = True
                 spans = i
