@@ -285,6 +285,7 @@ Public Sub fillSheet()
     If Me.permitType <> "" Then sapWs.cells.Find("Type of Permit:", LookAt:=xlWhole).offSet(0, 1).value = Me.permitType
     If Me.permitCost <> "" Then sapWs.cells.Find("Permit Cost:", LookAt:=xlWhole).offSet(0, 1).value = Me.permitCost
     If Me.permitLocations <> "" Then sapWs.cells.Find("Design Locations requiring permit:", LookAt:=xlWhole).offSet(0, 1).value = Me.permitLocations
+    sapWs.cells.Find("Design Locations requiring MISS DIG forms:", LookAt:=xlWhole).offSet(0, 1).NumberFormat = "@"
     If Me.missdigLocations <> "" Then sapWs.cells.Find("Design Locations requiring MISS DIG forms:", LookAt:=xlWhole).offSet(0, 1).value = Me.missdigLocations
     If Me.mdot5Day <> "" Then sapWs.cells.Find("Design Locations requiring MDOT 5-day notify forms:", LookAt:=xlWhole).offSet(0, 1).value = Me.mdot5Day
     If Me.mdotTree <> "" Then sapWs.cells.Find("Design Locations requiring MDOT tree-permit forms:", LookAt:=xlWhole).offSet(0, 1).value = Me.mdotTree
@@ -294,6 +295,7 @@ Public Sub fillSheet()
     If Me.treeWork <> "" Then sapWs.cells.Find("Tree Work:", LookAt:=xlWhole).offSet(0, 1).value = Me.treeWork
     If Me.njunsProject <> "" Then sapWs.cells.Find("NJUNS Project Number:", LookAt:=xlWhole).offSet(0, 1).value = Me.njunsProject
     If Me.njunsLocations <> "" Then sapWs.cells.Find("NJUNS Locations:", LookAt:=xlWhole).offSet(0, 1).value = Me.njunsLocations
+    sapWs.cells.Find("Design Location Numbers Staked:", LookAt:=xlWhole).offSet(0, 1).NumberFormat = "@"
     If Me.stakedLocations <> "" Then sapWs.cells.Find("Design Location Numbers Staked:", LookAt:=xlWhole).offSet(0, 1).value = Me.stakedLocations
     If Me.stakedBy <> "" Then sapWs.cells.Find("Staked by:", LookAt:=xlWhole).offSet(0, 1).value = Me.stakedBy
     If Me.stakedDate <> "" Then sapWs.cells.Find("Date Pole Staked:", LookAt:=xlWhole).offSet(0, 1).value = Me.stakedDate
