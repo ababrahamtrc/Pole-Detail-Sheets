@@ -229,6 +229,7 @@ Private Function GetPoleSortKey(ByVal pole As pole) As String
     GetPoleSortKey = key
 End Function
 
+
 Private Function getSelectProjectTabCode(project As project) As String
     Dim copiedCode As String
     
@@ -244,7 +245,7 @@ Private Function getSelectProjectTabCode(project As project) As String
     copiedCode = copiedCode & vbLf & "if (document.querySelector('.v-tabsheet-scrollerPrev-disabled')) {"
     copiedCode = copiedCode & vbLf & "throw new Error(""Can't find job"");"
     copiedCode = copiedCode & vbLf & "} else {"
-    copiedCode = copiedCode & vbLf & "realClick(document.querySelector('.v-tabsheet-scrollerPrev'));"
+    copiedCode = copiedCode & vbLf & "realClick(document.querySelector('.v-tabsheet-scrollerPrev'), false, false);"
     copiedCode = copiedCode & vbLf & "}"
     copiedCode = copiedCode & vbLf & "}"
     
@@ -255,7 +256,7 @@ Private Function getSelectProjectTabCode(project As project) As String
     copiedCode = copiedCode & vbLf & "for (z = 0; z < document.querySelectorAll('.c-groupbox-expander').length; z++) {"
     copiedCode = copiedCode & vbLf & "let el = document.querySelectorAll('.c-groupbox-expander')[z];"
     copiedCode = copiedCode & vbLf & "if (!el.classList.contains('expanded')) {"
-    copiedCode = copiedCode & vbLf & "realClick(el);"
+    copiedCode = copiedCode & vbLf & "await realClick(el);"
     copiedCode = copiedCode & vbLf & "await new Promise(r => setTimeout(r, 500));"
     copiedCode = copiedCode & vbLf & "}}"
 
