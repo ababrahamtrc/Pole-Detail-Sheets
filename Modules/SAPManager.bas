@@ -550,8 +550,12 @@ Public Sub fillSAPInfoFromGIS()
     Dim upstreamDeviceLocastions As Scripting.Dictionary: Set upstreamDeviceLocastions = New Scripting.Dictionary
     Dim trsLocations As Scripting.Dictionary: Set trsLocations = New Scripting.Dictionary
     Dim taxLocations As Scripting.Dictionary: Set taxLocations = New Scripting.Dictionary
+    Dim countyLocations As Scripting.Dictionary: Set countyLocations = New Scripting.Dictionary
+    Dim townLocations As Scripting.Dictionary: Set townLocations = New Scripting.Dictionary
     Dim hotLineTaggingLocations As Collection: Set hotLineTaggingLocations = New Collection
     Dim tlm As String
+    Dim transformerJson As Object
+    Dim circuitJson As Object
     
     Dim pole As pole
     For Each pole In project.poles
@@ -559,7 +563,7 @@ Public Sub fillSAPInfoFromGIS()
         Dim poleCol As Collection: Set poleCol = New Collection
         poleCol.Add pole
         If pole.location <> "" Then
-            Dim circuitJson As Object: Set circuitJson = getElectricJson(poleCol, 123, token, , 1)
+            Set circuitJson = getElectricJson(poleCol, 123, token, , 1)
             For Each jsonFeature In circuitJson("features")
                 Dim substation As String, circuit As String, hdq As String, systemOwner As String, voltage As String, feederId As String, upstreamDevice As String, deviceLocation As String
                 
@@ -612,25 +616,63 @@ Public Sub fillSAPInfoFromGIS()
             Next jsonFeature
             
             Dim sectionJson As Object: Set sectionJson = getROWJSON(poleCol, 30, token, 1)
-            For Each jsonFeature In sectionJson("features")
-                Dim trs As String
-            
-                If Not IsNull(jsonFeature("attributes")("SECTIONNAME")) Then trs = jsonFeature("attributes")("SECTIONNAME")
-                If trs <> "" And Not trsLocations.exists(trs) Then Set trsLocations(trs) = New Collection
-                If trs <> "" Then trsLocations(trs).Add pole.location
-            Next jsonFeature
+            If Not sectionJson("features") Is Nothing Then
+                For Each jsonFeature In sectionJson("features")
+                    Dim trs As String
+                
+                    If Not IsNull(jsonFeature("attributes")("SECTIONNAME")) Then trs = jsonFeature("attributes")("SECTIONNAME")
+                    If trs <> "" And Not trsLocations.exists(trs) Then Set trsLocations(trs) = New Collection
+                    If trs <> "" Then trsLocations(trs).Add pole.location
+                Next jsonFeature
+            End If
             
             Dim taxJson As Object: Set taxJson = getROWJSON(poleCol, 35, token, 1)
-            For Each jsonFeature In taxJson("features")
-                Dim taxCode As String
+            If Not taxJson("features") Is Nothing Then
+                For Each jsonFeature In taxJson("features")
+                    Dim taxCode As String
+                
+                    If Not IsNull(jsonFeature("attributes")("TAXID")) Then taxCode = jsonFeature("attributes")("TAXID")
+                    If taxCode <> "" And Not taxLocations.exists(taxCode) Then Set taxLocations(taxCode) = New Collection
+                    If taxCode <> "" Then taxLocations(taxCode).Add pole.location
+                Next jsonFeature
+            End If
             
-                If Not IsNull(jsonFeature("attributes")("TAXID")) Then taxCode = jsonFeature("attributes")("TAXID")
-                If taxCode <> "" And Not taxLocations.exists(taxCode) Then Set taxLocations(taxCode) = New Collection
-                If taxCode <> "" Then taxLocations(taxCode).Add pole.location
-            Next jsonFeature
+            Dim countyJson As Object: Set countyJson = getROWJSON(poleCol, 37, token, 1)
+            If Not countyJson("features") Is Nothing Then
+                For Each jsonFeature In countyJson("features")
+                    Dim countyName As String
+                    Dim countyNumber As String
+                    Dim countyCombined As String
+                
+                    If Not IsNull(jsonFeature("attributes")("BOUNDARYNAMECD")) Then countyName = jsonFeature("attributes")("BOUNDARYNAMECD")
+                    If Not IsNull(jsonFeature("attributes")("CECOUNTYNUMBER")) Then countyNumber = jsonFeature("attributes")("CECOUNTYNUMBER")
+                    If countyName <> "" And countyNumber <> "" Then countyCombined = countyName & " - " & countyNumber
+                    
+                    If countyCombined <> "" And Not countyLocations.exists(countyCombined) Then Set countyLocations(countyCombined) = New Collection
+                    If countyCombined <> "" Then countyLocations(countyCombined).Add pole.location
+                Next jsonFeature
+            End If
+            
+            Dim townJson As Object: Set townJson = getElectricJson(poleCol, 122, token, , 1)
+            If Not townJson("features") Is Nothing Then
+                For Each jsonFeature In townJson("features")
+                    Dim townName As String
+                    
+                
+                    If Not IsNull(jsonFeature("attributes")("BOUNDARYTYPE")) Then
+                        If jsonFeature("attributes")("BOUNDARYTYPE") = 3 Or jsonFeature("attributes")("BOUNDARYTYPE") = 4 Then
+                            If Not IsNull(jsonFeature("attributes")("BOUNDARYNAMECD")) Then townName = jsonFeature("attributes")("BOUNDARYNAMECD")
+                        End If
+                    End If
+                    
+                    If townName <> "" And Not townLocations.exists(townName) Then Set townLocations(townName) = New Collection
+                    If townName <> "" Then townLocations(townName).Add pole.location
+                Next jsonFeature
+            End If
+
         End If
         If tlm = "" And pole.transformerSizes <> 0 Then
-            Dim transformerJson As Object: Set transformerJson = getElectricJson(poleCol, 27, token, , 100)
+            Set transformerJson = getElectricJson(poleCol, 27, token, , 100)
             
             Test = getClosestPole(transformerJson, pole.x, pole.y)
             If Not Test(0) Is Nothing Then tlm = Test(0)("attributes")("TLM")
@@ -641,6 +683,180 @@ Public Sub fillSAPInfoFromGIS()
         End If
     Next pole
     
+    On Error Resume Next
+    If tlm = "" Then
+        Dim poleCollections As Collection: Set poleCollections = findPoleGroups(project.poles)
+        Dim poleCollection As Collection
+        For Each poleCollection In poleCollections
+
+            Dim secondaryJson As Object: Set secondaryJson = getElectricJson(poleCollection, 32, token)
+            Dim secondaryUGJson As Object: Set secondaryUGJson = getElectricJson(poleCollection, 33, token)
+            For Each jsonFeature In secondaryUGJson("features")
+                secondaryJson("features").Add jsonFeature
+            Next jsonFeature
+            Set transformerJson = getElectricJson(poleCollection, 27, token)
+            Dim transformerConnectorJson As Object: Set transformerConnectorJson = getElectricJson(poleCollection, 30, token)
+            Dim tapPointsJson As Object: Set tapPointsJson = getElectricJson(poleCollection, 13, token)
+            Dim polesJson As Object: Set polesJson = getElectricJson(poleCollection, 3, token)
+            Dim serviceJson As Object: Set serviceJson = getElectricJson(poleCollection, 26, token)
+            Call serviceJsons.Add(serviceJson)
+            Set circuitJson = getElectricJson(poleCollection, 123, token)
+            For Each pole In poleCollection
+                If tlm <> "" Then Exit For
+                
+                If pole.secondaries.count > 0 Or pole.openWires.count > 0 Or pole.transformerSizes > 0 Then
+                    results = getClosestPole(polesJson, pole.x, pole.y)
+                    Dim closestPole As Object: Set closestPole = results(0)
+                    Dim sourceX As Double: sourceX = 0
+                    Dim sourceY As Double: sourceY = 0
+                    Dim x As Double, y As Double, x1 As Double, y1 As Double, x2 As Double, y2 As Double
+                    x = 0: y = 0: x1 = 0: y1 = 0: x2 = 0: y2 = 0
+                    If Not closestPole Is Nothing Then
+                        Dim closestPoleX As Double: closestPoleX = closestPole("geometry")("x")
+                        Dim closestPoleY As Double: closestPoleY = closestPole("geometry")("y")
+                    
+                        For Each jsonFeature In secondaryJson("features")
+                            For Each Path In jsonFeature("geometry")("paths")
+                                For Each Point In Path
+                                    If AreTwoPointsEqual(CDbl(Point(1)), CDbl(Point(2)), closestPoleX, closestPoleY) Then
+                                        sourceX = closestPole("geometry")("x")
+                                        sourceY = closestPole("geometry")("y")
+                                        tlm = FindTLMFromSec(jsonFeature, secondaryJson, transformerJson, True)
+                                        If tlm <> "" Then Exit For
+                                    End If
+                                Next Point
+                                If tlm <> "" Then Exit For
+                            Next Path
+                            If tlm <> "" Then Exit For
+                        Next jsonFeature
+                        
+                        If tlm <> "" Then Exit For
+                        
+                        Dim attributes As Scripting.Dictionary: Set attributes = New Scripting.Dictionary
+                        Set attributes("SUBTYPECD") = New Collection
+                        attributes("SUBTYPECD").Add 8
+                        attributes("SUBTYPECD").Add 7
+                        results = getClosestPole(tapPointsJson, closestPoleX, closestPoleY, attributes, True)
+                        If results(1) > 0 And results(1) < secondaryOffsetMaxDistance Then
+                            Set closestSource = results(0)
+                            sourceX = closestSource("geometry")("x")
+                            sourceY = closestSource("geometry")("y")
+                            For Each jsonFeature In secondaryJson("features")
+                                For Each Path In jsonFeature("geometry")("paths")
+                                    For Each Point In Path
+                                        If AreTwoPointsEqual(CDbl(Point(1)), CDbl(Point(2)), sourceX, sourceY) Then
+                                            tlm = FindTLMFromSec(jsonFeature, secondaryJson, transformerJson, True)
+                                            If tlm <> "" Then Exit For
+                                        End If
+                                    Next Point
+                                    If tlm <> "" Then Exit For
+                                Next Path
+                                If tlm <> "" Then Exit For
+                            Next jsonFeature
+                        End If
+                        
+                        If tlm <> "" Then Exit For
+                        
+                        If sourceX = 0 And sourceY = 0 Then
+                            For Each jsonFeature In secondaryJson("features")
+                                For Each Path In jsonFeature("geometry")("paths")
+                                    For Each Point In Path
+                                        x = Point(1)
+                                        y = Point(2)
+                                        distance = Sqr((closestPoleX - x) ^ 2 + (closestPoleY - y) ^ 2)
+                                        If distance < secondaryOffsetMaxDistance Then
+                                            tlm = FindTLMFromSec(jsonFeature, secondaryJson, transformerJson, True)
+                                            If tlm <> "" Then Exit For
+                                        End If
+                                    Next Point
+                                    If tlm <> "" Then Exit For
+                                Next Path
+                                If tlm <> "" Then Exit For
+                            Next jsonFeature
+                        End If
+                        
+                        If tlm <> "" Then Exit For
+                        
+                        If sourceX = 0 And sourceY = 0 Then
+                            For Each jsonFeature In secondaryJson("features")
+                                For Each Path In jsonFeature("geometry")("paths")
+                                    For i = 1 To Path.count - 1
+                                        Set point1 = Path(i)
+                                        Set point2 = Path(i + 1)
+                                        result = GetClosestPointOnLine(CDbl(point1(1)), CDbl(point1(2)), CDbl(point2(1)), CDbl(point2(2)), closestPoleX, closestPoleY)
+                                        x = result(0)
+                                        y = result(1)
+                                        distance = Sqr((closestPoleX - x) ^ 2 + (closestPoleY - y) ^ 2)
+                                        If distance < secondaryOffsetMaxDistance Then
+                                            tlm = FindTLMFromSec(jsonFeature, secondaryJson, transformerJson, True)
+                                            If tlm <> "" Then Exit For
+                                        End If
+                                    Next i
+                                    If tlm <> "" Then Exit For
+                                Next Path
+                                If tlm <> "" Then Exit For
+                            Next jsonFeature
+                        End If
+                        
+                        If tlm <> "" Then Exit For
+                        
+                        If sourceX <> 0 And sourceY <> 0 Then
+                            For Each jsonFeature In tapPointsJson("features")
+                                If jsonFeature("attributes")("SUBTYPECD") = 9 Then
+                                    x = jsonFeature("geometry")("x")
+                                    y = jsonFeature("geometry")("y")
+                                    distance = Sqr((sourceX - x) ^ 2 + (sourceY - y) ^ 2)
+                                    If distance < secondaryOffsetMaxDistance Then
+                                        For Each jsonSecondaryFeature In secondaryJson("features")
+                                            For Each Path In jsonSecondaryFeature("geometry")("paths")
+                                                For Each Point In Path
+                                                    If Point(1) = x And Point(2) = y Then
+                                                        tlm = FindTLMFromSec(jsonSecondaryFeature, secondaryJson, transformerJson, True)
+                                                        If tlm <> "" Then Exit For
+                                                    End If
+                                                Next Point
+                                                If tlm <> "" Then Exit For
+                                            Next Path
+                                            If tlm <> "" Then Exit For
+                                        Next jsonSecondaryFeature
+                                    End If
+                                End If
+                                If tlm <> "" Then Exit For
+                            Next jsonFeature
+                        End If
+                        
+                        If tlm <> "" Then Exit For
+                        
+                        For Each jsonFeature In tapPointsJson("features")
+                            If jsonFeature("attributes")("SUBTYPECD") = 9 Then
+                                x = jsonFeature("geometry")("x")
+                                y = jsonFeature("geometry")("y")
+                                distance = Sqr((closestPoleX - x) ^ 2 + (closestPoleY - y) ^ 2)
+                                If distance < secondaryOffsetMaxDistance Then
+                                    For Each jsonSecondaryFeature In secondaryJson("features")
+                                        For Each Path In jsonSecondaryFeature("geometry")("paths")
+                                            For Each Point In Path
+                                                If Point(1) = x And Point(2) = y Then
+                                                    tlm = FindTLMFromSec(jsonSecondaryFeature, secondaryJson, transformerJson, True)
+                                                    If tlm <> "" Then Exit For
+                                                End If
+                                            Next Point
+                                            If tlm <> "" Then Exit For
+                                        Next Path
+                                        If tlm <> "" Then Exit For
+                                    Next jsonSecondaryFeature
+                                End If
+                            End If
+                            If tlm <> "" Then Exit For
+                        Next jsonFeature
+                    End If
+                End If
+                If tlm <> "" Then Exit For
+            Next pole
+        Next poleCollection
+    End If
+    On Error GoTo 0
+    
     SAP.substation = compactLocations(substationLocations)
     SAP.circuit = compactLocations(circuitLocations)
     SAP.hdq = compactLocations(hdqLocations)
@@ -649,10 +865,29 @@ Public Sub fillSAPInfoFromGIS()
     SAP.upstreamDevices = compactLocations(upstreamDeviceLocastions)
     SAP.trs = compactLocations(trsLocations)
     SAP.taxCode = compactLocations(taxLocations)
+    If townLocations.count > 0 Then
+        Trim(UCase(SAP.twp)) = Trim(UCase(townLocations.keys(0)))
+        If project.township <> SAP.twp Then
+            Dim sheet As Worksheet
+            For Each sheet In ThisWorkbook.sheets
+                If Utilities.IsPDS(sheet) Then
+                    If Utilities.RangeExists(sheet, "TWP") Then sheet.Range("TWP") = SAP.twp
+                End If
+            Next sheet
+        End If
+    End If
+    If countyLocations.count > 0 Then SAP.county = compactLocations(countyLocations)
+    
     SAP.tlm = tlm
     If SAP.upstreamDevices <> "" Then SAP.hotLineTagging = compactListString(hotLineTaggingLocations)
     
-    county = Utilities.OnlyLetters(SAP.county)
+    If InStr(SAP.county, vbLf) > 0 Then
+        county = Utilities.OnlyLetters(Replace(Split(SAP.county, vbLf)(0), "LOC", ""))
+    Else
+        county = Utilities.OnlyLetters(SAP.county)
+    End If
+    
+    
     If getCountyCode(county) <> "" And Len(tlm) >= 8 Then
         SAP.functionalLoc = "CA-" & getCountyCode(county) & "-" & Left(tlm, 8) & "-01"
     ElseIf getCountyCode(county) <> "" And SAP.trs <> "" Then
