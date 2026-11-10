@@ -227,16 +227,16 @@ Public Function sortComponents(components As Variant) As Collection
         Next i
     ElseIf TypeOf components Is Scripting.Dictionary Then
         If components.count < 2 Then
-            For Each v In components.items: sortedcomponents.Add v: Next
+            For Each v In components.Items: sortedcomponents.Add v: Next
             Set sortComponents = sortedcomponents
             Exit Function
         End If
     
-        items = components.items
+        Items = components.Items
         
         ReDim arr(0 To components.count - 1)
         For i = 0 To components.count - 1
-            Set arr(i) = items(i)
+            Set arr(i) = Items(i)
         Next i
     Else
         Set sortComponents = Nothing
