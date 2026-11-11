@@ -665,8 +665,8 @@ Public Sub fillSAPInfoFromGIS()
                         End If
                     End If
                     
-                    If townName <> "" And Not townLocations.exists(townName) Then Set townLocations(townName) = New Collection
-                    If townName <> "" Then townLocations(townName).Add pole.location
+                    If townName <> "" And Not townLocations.exists(townName) Then townLocations(townName) = 0
+                    If townName <> "" Then townLocations(townName) = townLocations(townName) + 1
                 Next jsonFeature
             End If
 
@@ -866,14 +866,25 @@ Public Sub fillSAPInfoFromGIS()
     SAP.trs = compactLocations(trsLocations)
     SAP.taxCode = compactLocations(taxLocations)
     If townLocations.count > 0 Then
-        Trim(UCase(SAP.twp)) = Trim(UCase(townLocations.keys(0)))
-        If project.township <> SAP.twp Then
-            Dim sheet As Worksheet
-            For Each sheet In ThisWorkbook.sheets
-                If Utilities.IsPDS(sheet) Then
-                    If Utilities.RangeExists(sheet, "TWP") Then sheet.Range("TWP") = SAP.twp
-                End If
-            Next sheet
+        townName = ""
+        townCount = 0
+        For Each town In townLocations
+            If townLocations(town) > townCount Then
+                townName = town
+                townCount = townLocations(town)
+            End If
+        Next town
+    
+        If townName <> "" Then
+            SAP.twp = Trim(UCase(townName))
+            If Trim(UCase(project.township)) <> SAP.twp Then
+                Dim sheet As Worksheet
+                For Each sheet In ThisWorkbook.sheets
+                    If Utilities.IsPDS(sheet) Then
+                        If Utilities.RangeExists(sheet, "TWP") Then sheet.Range("TWP") = SAP.twp
+                    End If
+                Next sheet
+            End If
         End If
     End If
     If countyLocations.count > 0 Then SAP.county = compactLocations(countyLocations)
