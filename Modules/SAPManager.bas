@@ -61,6 +61,8 @@ Public Sub exportSAPTxt()
             SapTxt = SapTxt & "DEMO Design Document: " & SAP.demoDesDoc & vbLf
             SapTxt = SapTxt & "Construction Measure: " & SAP.demoConstructionMeasure & vbLf
             SapTxt = SapTxt & "Order: " & SAP.demoOrder & vbLf
+            SapTxt = SapTxt & "LLTM Notification: " & SAP.demoLongLeadNotification & vbLf
+            SapTxt = SapTxt & "LLTM Order: " & SAP.demoLongLeadOrder & vbLf
             SapTxt = SapTxt & "Planning Hours: " & SAP.demoHours & vbLf
             SapTxt = SapTxt & "Cost: " & SAP.demoCost & vbLf & vbLf
         End If
@@ -84,7 +86,11 @@ Public Sub exportSAPTxt()
     
     SapTxt = SapTxt & "647 Forms: " & SAP.forms647 & vbLf & vbLf
     
-    SapTxt = SapTxt & "Comm Make Ready form included: Yes" & vbLf & vbLf
+    If SAP.mode = "MAKE READY" Then
+        SapTxt = SapTxt & "Comm Make Ready form included: Yes" & vbLf & vbLf
+    Else
+        SapTxt = SapTxt & "Comm Make Ready form included: No" & vbLf & vbLf
+    End If
     
     SapTxt = SapTxt & "Design Locations requiring permit: " & SAP.permits & vbLf
     SapTxt = SapTxt & "Design Locations requiring MISS DIG forms: " & SAP.missdigLocations & vbLf
@@ -159,15 +165,7 @@ Sub fillSITreeWork(SAP As SAP, project As project)
         End If
     Next pole
     If treeWorkString <> "" Then
-        Dim dataWs As Worksheet
-        Set dataWs = ThisWorkbook.sheets("DATA")
-        Set hdqcell = dataWs.cells.Find(Utilities.OnlyLetters(SAP.hdq))
-        forester = "Forester"
-        If Not hdqcell Is Nothing Then
-            foresterName = WorksheetFunction.Proper(hdqcell.offSet(0, 3).value)
-            If foresterName <> "" Then forester = forester & " (" & foresterName & ")"
-        End If
-        treeWorkString = treeWorkString & vbLf & "Per: " & forester
+        treeWorkString = treeWorkString & vbLf & "Per: Designer"
     End If
     
     If treeWorkString = "" Then
@@ -486,16 +484,16 @@ End Function
 Public Sub fillSAPNoPermits()
     Dim SAP As SAP: Set SAP = New SAP
     
-    If SAP.permits <> "" Then SAP.permits = "N/A"
-    If SAP.permitType <> "" Then SAP.permitType = "N/A"
-    If SAP.permitCost <> "" Then SAP.permitCost = "N/A"
-    If SAP.permitLocations <> "" Then SAP.permitLocations = "N/A"
+    If SAP.permits = "" Then SAP.permits = "N/A"
+    If SAP.permitType = "" Then SAP.permitType = "N/A"
+    If SAP.permitCost = "" Then SAP.permitCost = "N/A"
+    If SAP.permitLocations = "" Then SAP.permitLocations = "N/A"
     
-    If SAP.mdot5Day <> "" Then SAP.mdot5Day = "N/A"
-    If SAP.mdotTree <> "" Then SAP.mdotTree = "N/A"
+    If SAP.mdot5Day = "" Then SAP.mdot5Day = "N/A"
+    If SAP.mdotTree = "" Then SAP.mdotTree = "N/A"
     
-    If SAP.raildroadPermitRequired <> "" Then SAP.raildroadPermitRequired = "N/A"
-    If SAP.railroadPermitCost <> "" Then SAP.railroadPermitCost = "N/A"
+    If SAP.raildroadPermitRequired = "" Then SAP.raildroadPermitRequired = "N/A"
+    If SAP.railroadPermitCost = "" Then SAP.railroadPermitCost = "N/A"
     
     Call SAP.fillSheet
 End Sub
