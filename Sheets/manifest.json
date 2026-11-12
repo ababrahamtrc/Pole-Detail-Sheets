@@ -26,6 +26,9 @@
   "SI SAP": {
     "visible": true
   },
+  "Tree ROW": {
+    "visible": false
+  },
   "Control": {
     "visible": true
   },
@@ -33,9 +36,6 @@
     "visible": false
   },
   "SS": {
-    "visible": false
-  }
-  "Tree ROW": {
     "visible": false
   }
 }
