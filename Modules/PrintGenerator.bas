@@ -692,6 +692,8 @@ Sub placeTransformer(jsonTransformer)
         cellName = "TRF2"
     ElseIf phase = "3P" Then
         cellName = "TRF3"
+    Else
+        cellName = "TRF1"
     End If
     
     Set transformer = CreateCellElement2(cellName & IIf(size2 <> "", "RP", ""), pt, scl, True, Matrix3dIdentity)
