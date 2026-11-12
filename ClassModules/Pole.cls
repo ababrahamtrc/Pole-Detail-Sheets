@@ -1012,6 +1012,18 @@ Public Sub fillCMRF(sheet As Worksheet)
         comms(wire.owner).Add wire
     Next wire
     
+    Dim maxComms As Integer
+    For Each commOwner In comms
+        If comms(commOwner).count > maxComms Then maxComms = comms(commOwner).count
+    Next commOwner
+    
+    If maxComms > 1 Then
+        targetRow = sheet.Range("TROWTOP").ROW
+        rowsToAdd = 2 * (maxComms - 1)
+        sheet.Rows(targetRow).Resize(rowsToAdd).Insert shift:=xlDown
+        sheet.Rows(targetRow).Resize(rowsToAdd).ClearFormats
+    End If
+    
     Dim commOwnerCount As Integer
     For Each commOwner In comms
         commOwnerCount = commOwnerCount + 1
