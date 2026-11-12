@@ -75,17 +75,17 @@ Public Sub EmailFielderRequest()
     Next leadEmail
     
     If stakeNumber > 0 And tagNumber > 0 Then
-        Subject = project.notification & " - Staking/Customer Contact Request - " & project.Town
+        Subject = project.notification & " - Staking/Customer Contact Request - " & project.town
     End If
     If stakeNumber > 0 Then
-        If Subject = "" Then Subject = project.notification & " - Staking Request - " & project.Town
+        If Subject = "" Then Subject = project.notification & " - Staking Request - " & project.town
         stakingBody = "I need (" & stakeNumber & ") guy" & IIf(stakeNumber > 1, "s", "") & " staked for " & stakeNumber & " location" & IIf(stakeNumber > 1, "s", "") & " on this job. See Attached Design print for details.<br>"
         stakingBody = stakingBody & "Write Notification # and ""Proposed Anchor"" on stakes<br>"
         stakingBody = stakingBody & "Take 2 Pictures of each stake.<br><br>"
         body = body & stakingBody
     End If
     If tagNumber > 0 Then
-        If Subject = "" Then Subject = project.notification & " - Customer Contact for Tree Trimming - " & project.Town
+        If Subject = "" Then Subject = project.notification & " - Customer Contact for Tree Trimming - " & project.town
         tagbody = "I need " & tagNumber & " customer" & IIf(tagNumber <> 1, "s", "") & " contacted for tree trimming for " & treeLocations.count & " location" & IIf(treeLocations.count <> 1, "s", "") & " on this job. See attached design print for details.<br><br>"
         body = body & tagbody
     End If
@@ -230,8 +230,11 @@ Public Sub EmailSIInternalReview()
         End If
     Next leadEmail
 
-    If InStr(LCase(SAP.treeWork), "n/a") > 0 Or InStr(LCase(SAP.treeWork), "na") > 0 Or InStr(LCase(SAP.treeWork), "no") > 0 Then SAP.treeWork = "No"
-    If InStr(LCase(SAP.treeWork), "yes") = 0 And InStr(SAP.treeWork, "no") = 0 Then SAP.treeWork = "Yes"
+    If InStr(LCase(SAP.treeWork), "n/a") > 0 Or InStr(LCase(SAP.treeWork), "na") > 0 Or InStr(LCase(SAP.treeWork), "no") > 0 Then
+        SAP.treeWork = "No"
+    ElseIf InStr(LCase(SAP.treeWork), "yes") = 0 And InStr(SAP.treeWork, "no") = 0 Then
+        SAP.treeWork = "Yes" & vbLf & SAP.treeWork
+    End If
     
     Call initEmail
     
@@ -332,8 +335,11 @@ Public Sub EmailSICEReview()
         End If
     Next leadEmail
 
-    If InStr(LCase(SAP.treeWork), "n/a") > 0 Or InStr(LCase(SAP.treeWork), "na") > 0 Or InStr(LCase(SAP.treeWork), "no") > 0 Then SAP.treeWork = "No"
-    If InStr(LCase(SAP.treeWork), "yes") = 0 And InStr(SAP.treeWork, "no") = 0 Then SAP.treeWork = "Yes"
+    If InStr(LCase(SAP.treeWork), "n/a") > 0 Or InStr(LCase(SAP.treeWork), "na") > 0 Or InStr(LCase(SAP.treeWork), "no") > 0 Then
+        SAP.treeWork = "No"
+    ElseIf InStr(LCase(SAP.treeWork), "yes") = 0 And InStr(SAP.treeWork, "no") = 0 Then
+        SAP.treeWork = "Yes" & vbLf & SAP.treeWork
+    End If
     
     Call initEmail
     
@@ -434,8 +440,11 @@ Public Sub EmailSIDesignComplete()
         End If
     Next leadEmail
 
-    If InStr(LCase(SAP.treeWork), "n/a") > 0 Or InStr(LCase(SAP.treeWork), "na") > 0 Or InStr(LCase(SAP.treeWork), "no") > 0 Then SAP.treeWork = "No"
-    If InStr(LCase(SAP.treeWork), "yes") = 0 And InStr(SAP.treeWork, "no") = 0 Then SAP.treeWork = "Yes"
+    If InStr(LCase(SAP.treeWork), "n/a") > 0 Or InStr(LCase(SAP.treeWork), "na") > 0 Or InStr(LCase(SAP.treeWork), "no") > 0 Then
+        SAP.treeWork = "No"
+    ElseIf InStr(LCase(SAP.treeWork), "yes") = 0 And InStr(SAP.treeWork, "no") = 0 Then
+        SAP.treeWork = "Yes" & vbLf & SAP.treeWork
+    End If
     
     Call initEmail
     
