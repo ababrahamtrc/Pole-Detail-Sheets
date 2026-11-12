@@ -597,8 +597,8 @@ Function generateJSON() As Boolean
                                      
                                     jsonsecWire("group") = pole.groupNumber
                                     json("secWires").Add jsonsecWire
-                                    layerNumber = layerNumber + 1
                                     nonPriLayerNumber = layerNumber
+                                    layerNumber = layerNumber + 1
                                 End If
                                 
                                 If wire.componentType = "OW" And Not openWireDone Then
@@ -718,8 +718,8 @@ Function generateJSON() As Boolean
                                             
                                             jsonOpenwire("group") = pole.groupNumber
                                             json("openWires").Add jsonOpenwire
-                                            layerNumber = layerNumber + 1
                                             nonPriLayerNumber = layerNumber
+                                            layerNumber = layerNumber + 1
                                         End If
                                     Next owWires
                                 End If
@@ -1609,13 +1609,19 @@ Function generateJSON() As Boolean
             If LoadingBar_Form2.gTotal = 0 Then Exit Function
             ' Get Transformers
             If pole.transformerSizes <> 0 Then
-                Set jsonXFMR = New Scripting.Dictionary
+                Set jsonxfmr = New Scripting.Dictionary
                 If pole.poleNumber = "NEWGISPOLE" Then
-                    jsonXFMR("adjacent") = True
+                    jsonxfmr("adjacent") = True
                 Else
-                    jsonXFMR("adjacent") = False
+                    jsonxfmr("adjacent") = False
                 End If
-                jsonXFMR("size") = ""
+                If pole.transformerSizes > 0 Then
+                    jsonxfmr("size") = pole.transformerSizes
+                    jsonxfmr("x") = pole.x
+                    jsonxfmr("y") = pole.y
+                Else
+                    jsonxfmr("size") = ""
+                End If
                 replaceSection = False
                 crewNotes = pole.alt1
                 Call Utilities.applyStandardAbbreviations(crewNotes)
@@ -1627,9 +1633,9 @@ Function generateJSON() As Boolean
                     If replaceSection Then
                         If InStr(line, "XFMR") > 0 Then
                             If InStr(line, "/") > 0 Then line = Split(line, "/")(1)
-                            If InStr(line, "KVA") > 0 Then jsonXFMR("size2") = Left(line, InStr(line, "KVA") - 1)
-                            If IsNumeric(jsonXFMR("size2")) Then jsonXFMR("size2") = CInt(jsonXFMR("size2"))
-                            If size2 = 0 Then Call jsonXFMR.Remove("size2")
+                            If InStr(line, "KVA") > 0 Then jsonxfmr("size2") = Left(line, InStr(line, "KVA") - 1)
+                            If IsNumeric(jsonxfmr("size2")) Then jsonxfmr("size2") = CInt(jsonxfmr("size2"))
+                            If size2 = 0 Then Call jsonxfmr.Remove("size2")
                         End If
                     End If
                 Next line
@@ -1657,17 +1663,16 @@ Function generateJSON() As Boolean
                             If x2 And y2 <> 0 Then
                                 For Each jsonTransformer In jsonTransformers("features")
                                     If jsonTransformer("geometry")("x") = x2 And jsonTransformer("geometry")("y") = y2 Then
-                                        jsonXFMR("x") = x
-                                        jsonXFMR("y") = y
-                                        jsonXFMR("phase") = phases(jsonTransformer("attributes")("PHASEDESIGNATION"))
+                                        jsonxfmr("x") = x
+                                        jsonxfmr("y") = y
+                                        jsonxfmr("phase") = phases(jsonTransformer("attributes")("PHASEDESIGNATION"))
                                         If pole.transformerSizes > 0 Then
-                                            jsonXFMR("size") = pole.transformerSizes
+                                            jsonxfmr("size") = pole.transformerSizes
                                         Else
-                                            jsonXFMR("size") = CInt(Utilities.OnlyNumbers(CStr(jsonTransformer("attributes")("RATEDKVA"))))
+                                            jsonxfmr("size") = CInt(Utilities.OnlyNumbers(CStr(jsonTransformer("attributes")("RATEDKVA"))))
                                         End If
-                                        jsonXFMR("TLM") = Mid(jsonTransformer("attributes")("TLM"), Len(jsonTransformer("attributes")("TLM")) - 3)
-                                        jsonXFMR("lowSideVoltage") = lowSideVoltages(jsonTransformer("attributes")("LOWSIDEVOLTAGE"))
-                                        json("transformers").Add jsonXFMR
+                                        jsonxfmr("TLM") = Mid(jsonTransformer("attributes")("TLM"), Len(jsonTransformer("attributes")("TLM")) - 3)
+                                        jsonxfmr("lowSideVoltage") = lowSideVoltages(jsonTransformer("attributes")("LOWSIDEVOLTAGE"))
                                         Exit For
                                     End If
                                 Next jsonTransformer
@@ -1677,7 +1682,7 @@ Function generateJSON() As Boolean
 
                         closestDistance = -1
                         Dim closestTransformer As Object
-                        If jsonXFMR.count = 0 Then
+                        If jsonxfmr.count = 0 Then
                             For Each jsonTransformer In jsonTransformers("features")
                                 x2 = jsonTransformer("geometry")("x")
                                 y2 = jsonTransformer("geometry")("y")
@@ -1706,17 +1711,16 @@ Function generateJSON() As Boolean
                             
                                 If Not closestPole Is Nothing Then
                                     If pole.existingCEID = closestPole("attributes")("CE_TAG") Or pole.gisCEID = closestPole("attributes")("CE_TAG") Then
-                                        jsonXFMR("x") = x
-                                        jsonXFMR("y") = y
-                                        jsonXFMR("phase") = phases(closestTransformer("attributes")("PHASEDESIGNATION"))
+                                        jsonxfmr("x") = x
+                                        jsonxfmr("y") = y
+                                        jsonxfmr("phase") = phases(closestTransformer("attributes")("PHASEDESIGNATION"))
                                         If pole.transformerSizes > 0 Then
-                                            jsonXFMR("size") = pole.transformerSizes
+                                            jsonxfmr("size") = pole.transformerSizes
                                         Else
-                                            jsonXFMR("size") = CInt(Utilities.OnlyNumbers(CStr(closestTransformer("attributes")("RATEDKVA"))))
+                                            jsonxfmr("size") = CInt(Utilities.OnlyNumbers(CStr(closestTransformer("attributes")("RATEDKVA"))))
                                         End If
-                                        jsonXFMR("TLM") = Mid(closestTransformer("attributes")("TLM"), Len(closestTransformer("attributes")("TLM")) - 3)
-                                        jsonXFMR("lowSideVoltage") = lowSideVoltages(closestTransformer("attributes")("LOWSIDEVOLTAGE"))
-                                        json("transformers").Add jsonXFMR
+                                        jsonxfmr("TLM") = Mid(closestTransformer("attributes")("TLM"), Len(closestTransformer("attributes")("TLM")) - 3)
+                                        jsonxfmr("lowSideVoltage") = lowSideVoltages(closestTransformer("attributes")("LOWSIDEVOLTAGE"))
                                     End If
                                 End If
                             End If
@@ -1725,6 +1729,8 @@ Function generateJSON() As Boolean
                         Exit For
                     End If
                 Next jsonFeature
+                
+                If jsonxfmr("size") <> "" Then json("transformers").Add jsonxfmr
             End If
             ' End Transformers
             
